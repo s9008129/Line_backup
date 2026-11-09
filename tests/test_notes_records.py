@@ -18,6 +18,7 @@ from line_backup_batch.daily import DailyError
 from line_backup_batch.notes import (
     LOCAL_CHANGED,
     LOCAL_MISSING,
+    LOCAL_VERIFIED,
     PHOTO,
     VIDEO,
     NotesCollection,
@@ -461,6 +462,95 @@ class NotesRecordsTests(unittest.TestCase):
         for mutation in ('missing', 'extra', 'hash', 'symlink'):
             with self.subTest(mutation=mutation):
                 self.assert_completed_local_state(mutation, LOCAL_CHANGED)
+
+    def test_completion_environment_file_keeps_verified_state_without_being_read(self):
+        records, summary, post_key_value, identity, completion = (
+            self.completed_ledger('environment'))
+        directory = Path(completion['data']['destination'])
+        environment = directory / '.DS_Store'
+        before_events = self.event_bytes(records)
+        original_read = notes.read_file
+
+        def guarded_read(path, *args, **kwargs):
+            if Path(path).name == '.DS_Store':
+                raise AssertionError('environment file must not be read')
+            return original_read(path, *args, **kwargs)
+
+        for payload in (b'environment', b'changed environment'):
+            environment.write_bytes(payload)
+            reopened = self.reopen(records)
+            key = notes.media_key(
+                summary['list_key'], post_key_value, identity)
+            with mock.patch.object(notes, 'read_file', side_effect=guarded_read):
+                result = reopened.summary()
+            row = next(item for item in result['media']
+                       if item['media_key'] == key)
+            self.assertEqual((row['status'], row['local_files']),
+                             ('COMPLETED', LOCAL_VERIFIED))
+
+        environment.unlink()
+        reopened = self.reopen(records)
+        key = notes.media_key(summary['list_key'], post_key_value, identity)
+        result = reopened.summary()
+        row = next(item for item in result['media'] if item['media_key'] == key)
+        self.assertEqual((row['status'], row['local_files']),
+                         ('COMPLETED', LOCAL_VERIFIED))
+        self.assertEqual(self.event_bytes(reopened), before_events)
+        self.assertFalse(any(
+            b'.DS_Store' in raw for raw in self.event_bytes(reopened).values()))
+        self.assertEqual(summary['list_key'], reopened.list_data['list_key'])
+
+    def test_irregular_completion_environment_entry_is_local_changed(self):
+        for entry_type in ('symlink', 'directory', 'hardlink'):
+            with self.subTest(entry_type=entry_type):
+                records, _summary, post_key_value, identity, completion = (
+                    self.completed_ledger('environment-' + entry_type))
+                directory = Path(completion['data']['destination'])
+                environment = directory / '.DS_Store'
+                if entry_type == 'symlink':
+                    target = self.base / ('environment-' + entry_type)
+                    target.write_bytes(b'environment symlink target')
+                    environment.symlink_to(target)
+                elif entry_type == 'directory':
+                    environment.mkdir()
+                else:
+                    media = directory / completion['data']['target_file']['name']
+                    os.link(media, environment)
+                reopened = self.reopen(records)
+                result = reopened.summary()
+                key = self.media_key(reopened, post_key_value, identity)
+                row = next(item for item in result['media']
+                           if item['media_key'] == key)
+                self.assertEqual((row['status'], row['local_files']),
+                                 ('COMPLETED', LOCAL_CHANGED))
+
+    def test_completion_environment_file_survives_session_without_unknown(self):
+        records, summary, post_key_value, identity, completion = (
+            self.completed_ledger('environment-new-session'))
+        directory = Path(completion['data']['destination'])
+        environment = directory / '.DS_Store'
+        environment.write_bytes(b'cross-session environment')
+        before = self.event_bytes(records)
+        reopened = self.reopen(records)
+        reopened.summary()
+        self.bind(reopened, 'new-session-environment')
+        key = notes.media_key(summary['list_key'], post_key_value, identity)
+        result = reopened.summary()
+        row = next(item for item in result['media'] if item['media_key'] == key)
+        self.assertEqual((row['status'], row['local_files']),
+                         ('COMPLETED', LOCAL_VERIFIED))
+        self.observe_post(
+            reopened, summary['list_key'], 'post-environment-new-session',
+            [identity], session='new-session-environment')
+        with self.assertRaisesRegex(
+                NotesError, 'COMPLETED_OR_EXCLUDED_NO_REDOWNLOAD'):
+            reopened.intent(
+                session_id='new-session-environment', media_key_value=key)
+        self.assertEqual(environment.read_bytes(),
+                         b'cross-session environment')
+        preserved = self.event_bytes(reopened)
+        for name, raw in before.items():
+            self.assertEqual(preserved[name], raw)
 
     def test_entire_completed_post_directory_missing_is_local_missing(self):
         records, summary, post_key_value, identity, completion = (

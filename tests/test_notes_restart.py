@@ -2053,6 +2053,93 @@ class NotesRestartTests(unittest.TestCase):
         for name, raw in before.items():
             self.assertEqual(after[name], raw)
 
+    def test_active_candidate_environment_file_keeps_verified_state(self):
+        context = self.one_media_restart_context('restart-environment-active')
+        attempt = self.restart_download(
+            self.records, context['key'], 'new.png', png((41, 42, 43)),
+            context['preview']['restart_id'])
+        candidate = self.records.verify(
+            session_id=self.session, attempt_id=attempt['attempt_id'],
+            verifier=self.pass_verifier, stability_interval=0)
+        activated = self.records.restart_resume(
+            session_id=self.session, verifier=self.pass_verifier,
+            stability_interval=0)
+        self.assertEqual(activated['action'], 'RESTART_ACTIVATED')
+        directory = Path(candidate['candidate']['path']).parent
+        environment = directory / '.DS_Store'
+        before_events = self.event_files()
+        original_read = notes.read_file
+
+        def guarded_read(path, *args, **kwargs):
+            if Path(path).name == '.DS_Store':
+                raise AssertionError('environment file must not be read')
+            return original_read(path, *args, **kwargs)
+
+        for payload in (b'environment', b'changed environment'):
+            environment.write_bytes(payload)
+            with mock.patch.object(notes, 'read_file', side_effect=guarded_read):
+                self.assertEqual(
+                    self.records._candidate_file_availability(
+                        candidate['candidate']), LOCAL_VERIFIED)
+                summary = self.records.summary()
+            row = next(
+                item for item in summary['media']
+                if item['media_key'] == context['key'])
+            self.assertEqual((row['status'], row['local_files']),
+                             ('COMPLETED', LOCAL_VERIFIED))
+
+        environment.unlink()
+        self.assertEqual(
+            self.records._candidate_file_availability(candidate['candidate']),
+            LOCAL_VERIFIED)
+        self.assertEqual(self.event_files(), before_events)
+        self.assertFalse(any(
+            b'.DS_Store' in raw for raw in self.event_files().values()))
+
+    def test_irregular_active_candidate_environment_entry_fails_closed(self):
+        context = self.one_media_restart_context(
+            'restart-environment-irregular')
+        attempt = self.restart_download(
+            self.records, context['key'], 'new.png', png((51, 52, 53)),
+            context['preview']['restart_id'])
+        candidate = self.records.verify(
+            session_id=self.session, attempt_id=attempt['attempt_id'],
+            verifier=self.pass_verifier, stability_interval=0)
+        candidate_path = Path(candidate['candidate']['path'])
+        for entry_type in ('symlink', 'directory', 'hardlink'):
+            with self.subTest(entry_type=entry_type):
+                environment = candidate_path.parent / '.DS_Store'
+                if entry_type == 'symlink':
+                    target = self.base / 'candidate-environment-target'
+                    target.write_bytes(b'candidate environment target')
+                    environment.symlink_to(target)
+                elif entry_type == 'directory':
+                    environment.mkdir()
+                else:
+                    os.link(candidate_path, environment)
+                self.assertEqual(
+                    self.records._candidate_file_availability(
+                        candidate['candidate']), notes.LOCAL_CHANGED)
+                if environment.is_dir():
+                    environment.rmdir()
+                else:
+                    environment.unlink()
+
+        environment = candidate_path.parent / '.DS_Store'
+        environment.symlink_to(self.base / 'candidate-environment-activation')
+        before = self.event_files()
+        with self.assertRaisesRegex(
+                NotesError, 'RESTART_VERSION_DIRECTORY_UNEXPECTED_CONTENT'):
+            self.records.restart_resume(
+                session_id=self.session, verifier=self.pass_verifier,
+                stability_interval=0)
+        self.assertFalse(any(
+            event['kind'] == 'restart-activation'
+            for event in self.records.events))
+        after = self.event_files()
+        for name, raw in before.items():
+            self.assertEqual(after[name], raw)
+
     def test_candidate_symlink_hardlink_and_inode_drift_are_rejected(self):
         context = self.one_media_restart_context('restart-c10-identity')
         attempt = self.restart_download(

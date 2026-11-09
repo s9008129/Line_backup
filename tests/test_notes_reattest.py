@@ -792,6 +792,183 @@ except NotesLockBusy as exc:
         self.assertEqual(raised.exception.reason,
                          'REATTEST_UNSUPPORTED_STATE')
 
+    def test_environment_files_do_not_change_witness_or_confirmation(self):
+        ledger = self.prepare_batch()
+        records = ledger['records']
+        baseline = records.reattest_preview(session_id=ledger['session'])
+        self.assertEqual(baseline['status'], 'CONFIRMATION_REQUIRED')
+
+        list_directory = records.current_list_directory
+        completion = next(
+            event for event in records.events
+            if event['kind'] == 'completion' and
+            Path(event['data']['destination']).parent == list_directory)
+        completion_path = Path(completion['data']['destination']) / \
+            completion['data']['target_file']['name']
+        completion_info = os.stat(str(completion_path), follow_symlinks=False)
+        completion_bytes = completion_path.read_bytes()
+        environment_paths = (
+            list_directory / '.DS_Store',
+            Path(completion['data']['destination']) / '.DS_Store',
+            Path(ledger['unknown_intent']['destination']) / '.DS_Store')
+
+        for index, path in enumerate(environment_paths, 1):
+            path.write_bytes(b'synthetic environment item %d' % index)
+        before_preview = self.snapshot_tree(ledger['case'])
+        self.assertEqual(
+            records.reattest_preview(session_id=ledger['session']), baseline)
+        self.assertEqual(self.snapshot_tree(ledger['case']), before_preview)
+
+        for index, path in enumerate(environment_paths, 100):
+            path.write_bytes(b'synthetic changed environment item %d' % index)
+        self.assertEqual(
+            records.reattest_preview(session_id=ledger['session']), baseline)
+
+        for path in environment_paths:
+            path.unlink()
+        self.assertEqual(
+            records.reattest_preview(session_id=ledger['session']), baseline)
+
+        for index, path in enumerate(environment_paths, 200):
+            path.write_bytes(b'synthetic final environment item %d' % index)
+        preview = records.reattest_preview(session_id=ledger['session'])
+        self.assertEqual(preview, baseline)
+        self.assertTrue(all(row['children'] == []
+                            for row in preview['scope']['witness']['staging']))
+
+        old_event_bytes = {
+            path.name: path.read_bytes()
+            for path in (records.records / 'events').iterdir()}
+        for index, path in enumerate(environment_paths, 300):
+            path.write_bytes(b'synthetic confirm-time environment %d' % index)
+        result = self.confirm_preview(ledger, preview)
+        self.assertEqual(result['status'], 'CONFIRMED')
+        self.assertFalse(result['replayed'])
+        self.assertEqual(len(records.events), len(old_event_bytes) + 1)
+        new_event_bytes = {
+            path.name: path.read_bytes()
+            for path in (records.records / 'events').iterdir()}
+        for name, raw in old_event_bytes.items():
+            self.assertEqual(new_event_bytes[name], raw)
+        transition = next(event for event in records.events
+                          if event['kind'] == 'list-directory-reattest')
+        self.assertEqual(transition['data']['scope'], baseline['scope'])
+        self.assertEqual(transition['data']['preview_digest'],
+                         baseline['preview_digest'])
+
+        after_info = os.stat(str(completion_path), follow_symlinks=False)
+        self.assertEqual(
+            (after_info.st_dev, after_info.st_ino, after_info.st_size,
+             after_info.st_mtime_ns, after_info.st_ctime_ns),
+            (completion_info.st_dev, completion_info.st_ino,
+             completion_info.st_size, completion_info.st_mtime_ns,
+             completion_info.st_ctime_ns))
+        self.assertEqual(completion_path.read_bytes(), completion_bytes)
+
+    def test_environment_boundary_survives_new_session_without_reenabling_unknown(self):
+        ledger = self.prepare_batch()
+        scope_post = ledger['confirmation']['data']['scope']['posts'][0]
+        current = dict(name='current', identity=scope_post['identity'],
+                       date='synthetic',
+                       media=[row['identity'] for row in scope_post['media']])
+        self.scan_posts(ledger, [current], recovery=True)
+        baseline = ledger['records'].reattest_preview(
+            session_id=ledger['session'])
+        list_directory = ledger['records'].current_list_directory
+        completion = next(
+            event for event in ledger['records'].events
+            if event['kind'] == 'completion' and
+            Path(event['data']['destination']).parent == list_directory)
+        completion_path = Path(completion['data']['destination']) / \
+            completion['data']['target_file']['name']
+        completion_file_before = os.stat(
+            str(completion_path), follow_symlinks=False)
+        completion_hash_before = hashlib.sha256(
+            completion_path.read_bytes()).hexdigest()
+        for path in (
+                list_directory / '.DS_Store',
+                Path(completion['data']['destination']) / '.DS_Store',
+                Path(ledger['unknown_intent']['destination']) / '.DS_Store'):
+            path.write_bytes(b'synthetic cross-session environment')
+        self.confirm_preview(ledger, baseline)
+
+        records = ledger['records']
+        old_event_bytes = {
+            path.name: path.read_bytes()
+            for path in (records.records / 'events').iterdir()}
+        completion_event = next(
+            event for event in records.events
+            if event['kind'] == 'completion' and
+            event['data']['media_key'] == ledger['completion_key'])
+        unknown_event = next(
+            event for event in records.events
+            if event['kind'] == 'intent' and
+            event['data']['media_key'] == ledger['current_key'])
+        self.assertEqual(completion_event['data']['target_file']['sha256'],
+                         completion_hash_before)
+
+        new_session = 'reattest-environment-session-' + str(self.case_number)
+        records.bind(
+            session_id=new_session,
+            observation=self.evidence(ledger['list_key']),
+            handoff=self.evidence(ledger['list_key']))
+        ledger['session'] = new_session
+        reopened = notes.NotesRecords(
+            str(records.records), _allow_injected_verification=True)
+        ledger['records'] = reopened
+        reopened.summary()
+        new_event_bytes = {
+            path.name: path.read_bytes()
+            for path in (reopened.records / 'events').iterdir()}
+        for name, raw in old_event_bytes.items():
+            self.assertEqual(new_event_bytes[name], raw)
+        self.assertEqual(
+            next(event for event in reopened.events
+                 if event['kind'] == 'intent' and
+                 event['data']['media_key'] == ledger['current_key']),
+            unknown_event)
+        event_count = len(reopened.events)
+        replay = self.confirm_preview(ledger, baseline)
+        self.assertTrue(replay['replayed'])
+        self.assertEqual(replay['current_session'], new_session)
+        self.assertEqual(len(reopened.events), event_count)
+        attempts_before = len([
+            event for event in reopened.events if event['kind'] == 'intent'])
+        with self.assertRaisesRegex(
+                notes.NotesError, 'POST_REATTEST_RECOVERY_SCAN_REQUIRED'):
+            reopened.intent(
+                session_id=new_session, media_key_value=ledger['current_key'],
+                restart_id=ledger['confirmation']['data']['restart_id'])
+        self.assertEqual(len([
+            event for event in reopened.events if event['kind'] == 'intent']),
+            attempts_before)
+
+        self.scan_posts(ledger, [current], recovery=True)
+        intent = reopened.intent(
+            session_id=new_session, media_key_value=ledger['current_key'],
+            restart_id=ledger['confirmation']['data']['restart_id'])
+        self.assertEqual(intent['schema'], 'line-notes-intent/v3')
+        self.assertNotEqual(intent['destination'],
+                            ledger['unknown_intent']['destination'])
+        self.assertTrue(Path(ledger['unknown_intent']['destination']).exists())
+        self.assertEqual(
+            next(event for event in reopened.events
+                 if event['kind'] == 'intent' and
+                 event['data']['media_key'] == ledger['current_key'] and
+                 event['data']['schema'] == 'line-notes-intent/v2'),
+            unknown_event)
+        after_info = os.stat(str(completion_path), follow_symlinks=False)
+        self.assertEqual(
+            (after_info.st_dev, after_info.st_ino, after_info.st_size,
+             after_info.st_mtime_ns, after_info.st_ctime_ns),
+            (completion_file_before.st_dev, completion_file_before.st_ino,
+             completion_file_before.st_size,
+             completion_file_before.st_mtime_ns,
+             completion_file_before.st_ctime_ns))
+        self.assertEqual(
+            hashlib.sha256(completion_path.read_bytes()).hexdigest(),
+            completion_hash_before)
+
     def test_same_device_returns_no_change_with_empty_witness(self):
         ledger = self.prepare_batch(change_device=False)
         before = self.snapshot_tree(ledger['case'])
@@ -816,12 +993,59 @@ except NotesLockBusy as exc:
         ledger = self.prepare_batch(include_completion=False)
         self.assert_refused_without_mutation(ledger, 'REATTEST_NO_WITNESS')
 
-    def test_extra_list_entry_is_refused(self):
+    def test_unregistered_list_entry_is_refused(self):
         ledger = self.prepare_batch()
-        (ledger['records'].current_list_directory / '.DS_Store').write_bytes(
+        (ledger['records'].current_list_directory / 'Thumbs.db').write_bytes(
             b'synthetic extra list entry')
         self.assert_refused_without_mutation(
             ledger, 'REATTEST_UNSUPPORTED_LAYOUT')
+
+    def test_irregular_environment_names_are_refused(self):
+        for name in ('.AppleDouble', '.DS_Store.backup'):
+            with self.subTest(name=name):
+                ledger = self.prepare_batch()
+                (ledger['records'].current_list_directory / name).write_bytes(
+                    b'synthetic other environment-like file')
+                self.assert_refused_without_mutation(
+                    ledger, 'REATTEST_UNSUPPORTED_LAYOUT')
+
+    def test_managed_name_takes_precedence_over_environment_classification(self):
+        ledger = self.prepare_batch()
+        directory = ledger['case'] / 'environment-classification'
+        directory.mkdir()
+        environment = directory / '.DS_Store'
+        environment.write_bytes(b'synthetic environment bytes')
+        self.assertFalse(notes._is_environment_attachment(
+            environment, directory=directory,
+            reserved_names={'.DS_Store'}))
+        self.assertFalse(notes._is_environment_attachment(
+            environment, directory=directory,
+            reserved_names={'media_001.png', '.DS_Store'}))
+        self.assertTrue(notes._is_environment_attachment(
+            environment, directory=directory,
+            reserved_names={'media_001.png'}))
+
+        entries = ('symlink', 'directory', 'hardlink')
+        for entry_type in entries:
+            with self.subTest(entry_type=entry_type):
+                ledger = self.prepare_batch()
+                environment = (
+                    ledger['records'].current_list_directory / '.DS_Store')
+                if entry_type == 'symlink':
+                    target = ledger['case'] / 'environment-target'
+                    target.write_bytes(b'synthetic symlink target')
+                    environment.symlink_to(target)
+                elif entry_type == 'directory':
+                    environment.mkdir()
+                else:
+                    completion = next(
+                        event for event in ledger['records'].events
+                        if event['kind'] == 'completion')
+                    media = Path(completion['data']['destination']) / \
+                        completion['data']['target_file']['name']
+                    os.link(media, environment)
+                self.assert_refused_without_mutation(
+                    ledger, 'REATTEST_UNSUPPORTED_LAYOUT')
 
     def test_unknown_staging_directory_is_refused(self):
         ledger = self.prepare_batch()
@@ -841,13 +1065,15 @@ except NotesLockBusy as exc:
         self.assert_refused_without_mutation(
             ledger, 'REATTEST_WITNESS_CHANGED')
 
-        ledger = self.prepare_batch()
-        completion = next(event for event in ledger['records'].events
-                          if event['kind'] == 'completion')
-        directory = Path(completion['data']['destination'])
-        (directory / 'unexpected.bin').write_bytes(b'synthetic extra file')
-        self.assert_refused_without_mutation(
-            ledger, 'REATTEST_UNSUPPORTED_LAYOUT')
+        for name in ('unexpected.bin', 'unexpected.mp4'):
+            with self.subTest(name=name):
+                ledger = self.prepare_batch()
+                completion = next(event for event in ledger['records'].events
+                                  if event['kind'] == 'completion')
+                directory = Path(completion['data']['destination'])
+                (directory / name).write_bytes(b'synthetic extra file')
+                self.assert_refused_without_mutation(
+                    ledger, 'REATTEST_UNSUPPORTED_LAYOUT')
 
     def test_list_and_completion_inode_changes_are_refused(self):
         ledger = self.prepare_batch()
@@ -901,6 +1127,30 @@ except NotesLockBusy as exc:
         staging.rmdir()
         self.assert_refused_without_mutation(
             ledger, 'REATTEST_WITNESS_CHANGED')
+
+    def test_staging_content_appearing_during_read_is_refused(self):
+        ledger = self.prepare_batch()
+        staging = Path(ledger['unknown_intent']['destination'])
+        original_iterdir = Path.iterdir
+        calls = 0
+
+        def raced_iterdir(path):
+            nonlocal calls
+            if Path(path) == staging:
+                calls += 1
+                if calls == 2:
+                    (staging / 'unexpected-during-read.bin').write_bytes(
+                        b'synthetic late staging content')
+            return original_iterdir(path)
+
+        with mock.patch.object(Path, 'iterdir', raced_iterdir):
+            with self.assertRaises(notes.NotesReattestError) as raised:
+                ledger['records'].reattest_preview(
+                    session_id=ledger['session'])
+        self.assertEqual(raised.exception.reason,
+                         'REATTEST_WITNESS_CHANGED')
+        self.assertEqual(raised.exception.classification,
+                         'STAGING_DIRECTORY_CHANGED_DURING_READ')
 
     def test_changed_completion_hash_and_metadata_are_refused(self):
         for mode in ('hash', 'size', 'mtime', 'ctime', 'inode'):

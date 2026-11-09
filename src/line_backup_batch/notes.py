@@ -111,6 +111,26 @@ def _entry(path):
         return None
 
 
+def _is_environment_attachment(path, *, directory, reserved_names):
+    path = Path(path)
+    directory = Path(directory)
+    if (path.name != '.DS_Store' or path.name in reserved_names or
+            path.parent != directory):
+        return False
+    try:
+        directory_entry = _entry(directory)
+        if (directory_entry is None or
+                not stat.S_ISDIR(directory_entry.st_mode) or
+                directory.is_symlink() or
+                directory != directory.resolve(strict=True)):
+            return False
+        entry = _entry(path)
+        return (entry is not None and stat.S_ISREG(entry.st_mode) and
+                entry.st_nlink == 1 and not path.is_symlink())
+    except (OSError, RuntimeError, ValueError):
+        return False
+
+
 def _hex(value, code):
     need(isinstance(value, str) and bool(re.fullmatch(r'[0-9a-f]{64}', value)), code)
     return value
@@ -2759,7 +2779,10 @@ class NotesRecords:
                     'REATTEST_WITNESS_CHANGED', 'STAGING_IDENTITY_CHANGED',
                     (_event_ref(event),))
             try:
-                children = sorted(child.name for child in path.iterdir())
+                children = sorted(
+                    child.name for child in path.iterdir()
+                    if not _is_environment_attachment(
+                        child, directory=path, reserved_names=set()))
             except OSError as exc:
                 raise NotesReattestError(
                     'REATTEST_WITNESS_CHANGED', 'STAGING_READ_FAILED',
@@ -2772,7 +2795,16 @@ class NotesRecords:
                 path, reason='REATTEST_WITNESS_CHANGED',
                 classification='STAGING_DIRECTORY_CHANGED',
                 event_refs=(_event_ref(event),))
-            if after != info:
+            try:
+                children_after = sorted(
+                    child.name for child in path.iterdir()
+                    if not _is_environment_attachment(
+                        child, directory=path, reserved_names=set()))
+            except OSError as exc:
+                raise NotesReattestError(
+                    'REATTEST_WITNESS_CHANGED', 'STAGING_READ_FAILED',
+                    (_event_ref(event),)) from exc
+            if after != info or children_after != children:
                 raise NotesReattestError(
                     'REATTEST_WITNESS_CHANGED',
                     'STAGING_DIRECTORY_CHANGED_DURING_READ',
@@ -2796,13 +2828,17 @@ class NotesRecords:
             raise NotesReattestError(
                 'REATTEST_BINDING_CHANGED', 'LIST_DIRECTORY_MAPPING_CHANGED',
                 (confirmation_ref,))
+        expected_names = {path.name for path in expected_directories}
         try:
-            names_before = {child.name for child in list_directory.iterdir()}
+            names_before = {
+                child.name for child in list_directory.iterdir()
+                if not _is_environment_attachment(
+                    child, directory=list_directory,
+                    reserved_names=expected_names)}
         except OSError as exc:
             raise NotesReattestError(
                 'REATTEST_WITNESS_CHANGED', 'LIST_DIRECTORY_READ_FAILED',
                 (confirmation_ref,)) from exc
-        expected_names = {path.name for path in expected_directories}
         extra_names = names_before - expected_names
         missing_names = expected_names - names_before
         if extra_names:
@@ -2864,7 +2900,11 @@ class NotesRecords:
                     'COMPLETION_DIRECTORY_IDENTITY_CHANGED',
                     tuple(_event_ref(row) for row in rows))
             try:
-                directory_names = {child.name for child in directory.iterdir()}
+                directory_names = {
+                    child.name for child in directory.iterdir()
+                    if not _is_environment_attachment(
+                        child, directory=directory,
+                        reserved_names=expected_files)}
             except OSError as exc:
                 raise NotesReattestError(
                     'REATTEST_WITNESS_CHANGED',
@@ -2916,7 +2956,11 @@ class NotesRecords:
                 classification='COMPLETION_DIRECTORY_CHANGED',
                 event_refs=tuple(_event_ref(row) for row in rows))
             try:
-                names_after = {child.name for child in directory.iterdir()}
+                names_after = {
+                    child.name for child in directory.iterdir()
+                    if not _is_environment_attachment(
+                        child, directory=directory,
+                        reserved_names=expected_files)}
             except OSError as exc:
                 raise NotesReattestError(
                     'REATTEST_WITNESS_CHANGED',
@@ -2939,7 +2983,11 @@ class NotesRecords:
                 list_directory).as_posix())
 
         try:
-            names_after = {child.name for child in list_directory.iterdir()}
+            names_after = {
+                child.name for child in list_directory.iterdir()
+                if not _is_environment_attachment(
+                    child, directory=list_directory,
+                    reserved_names=expected_names)}
         except OSError as exc:
             raise NotesReattestError(
                 'REATTEST_WITNESS_CHANGED', 'LIST_DIRECTORY_READ_FAILED',
@@ -4024,7 +4072,11 @@ class NotesRecords:
                  directory == directory.resolve(strict=True),
                  'ACTIVE_CANDIDATE_CHANGED')
             expected_names = self._target_names_for_directory(directory)
-            actual_names = {child.name for child in directory.iterdir()}
+            actual_names = {
+                child.name for child in directory.iterdir()
+                if not _is_environment_attachment(
+                    child, directory=directory,
+                    reserved_names=expected_names)}
             need(actual_names <= expected_names,
                  'ACTIVE_CANDIDATE_CHANGED')
             return LOCAL_VERIFIED
@@ -4207,7 +4259,11 @@ class NotesRecords:
                     expected_names.add(event['data']['target_file']['name'])
                 expected_names |= plan_names.get(directory_string, set())
                 expected_names |= active_names.get(directory_string, set())
-                actual_names = {path.name for path in directory.iterdir()}
+                actual_names = {
+                    child.name for child in directory.iterdir()
+                    if not _is_environment_attachment(
+                        child, directory=directory,
+                        reserved_names=expected_names)}
                 need(actual_names == expected_names,
                      'COMPLETED_DIRECTORY_CONTENTS_CHANGED')
                 for event in entries:
