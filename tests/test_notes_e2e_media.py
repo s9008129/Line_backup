@@ -271,9 +271,18 @@ class NotesE2EMediaTests(unittest.TestCase):
         video_progress = []
         video_attempt, video_staging, video_source = self._download_finished(
             keys[2], 'clip.mp4', self.video.read_bytes())
+        post_directory = Path(photo_completions[0]['data']['destination'])
+        target_environment = post_directory / '.DS_Store'
+        target_environment.write_bytes(b'post environment bytes')
+        staging_environment = video_staging / '.DS_Store'
+        staging_environment.write_bytes(b'staging environment bytes')
         video_completion = self._verify(video_attempt,
                                         progress=video_progress)
-        self.assertFalse(video_staging.exists())
+        self.assertTrue(video_staging.is_dir())
+        self.assertEqual([path.name for path in video_staging.iterdir()],
+                         ['.DS_Store'])
+        self.assertEqual(staging_environment.read_bytes(),
+                         b'staging environment bytes')
         self.assertFalse(video_source.exists())
 
         for completion, key in zip(photo_completions, keys[:2]):
@@ -314,10 +323,21 @@ class NotesE2EMediaTests(unittest.TestCase):
         self.assertEqual(video_verification['tools']['ffprobe']['path'],
                          str(notes.FFPROBE))
 
-        post_directory = Path(video_completion['data']['destination'])
+        self.assertEqual(post_directory,
+                         Path(video_completion['data']['destination']))
         self.assertEqual(
             sorted(path.name for path in post_directory.iterdir()),
-            ['media_001.png', 'media_002.png', 'media_003.mp4'])
+            ['.DS_Store', 'media_001.png', 'media_002.png', 'media_003.mp4'])
+        self.assertEqual(target_environment.read_bytes(),
+                         b'post environment bytes')
+        verification_event = next(
+            event for event in self.records.events
+            if event['kind'] == 'verification' and
+            event['data']['attempt_id'] == video_attempt['attempt_id'])
+        self.assertEqual(verification_event['data']['manifest'],
+                         [video_completion['data']['source_manifest']])
+        self.assertFalse(any(
+            b'.DS_Store' in raw for raw in self._event_bytes().values()))
 
         reopened = NotesRecords(str(self.records.records))
         summary = reopened.summary()
@@ -356,6 +376,8 @@ class NotesE2EMediaTests(unittest.TestCase):
             self.memory['list_key'], post_key_value, identity)
         attempt, staging, staged = self._download_finished(
             key, 'truncated.mp4', self.truncated_video.read_bytes())
+        environment = staging / '.DS_Store'
+        environment.write_bytes(b'truncated video environment')
         before_events = self._event_bytes()
         before_staged = staged.read_bytes()
 
@@ -366,7 +388,9 @@ class NotesE2EMediaTests(unittest.TestCase):
         self.assertEqual(self._event_bytes(), before_events)
         self.assertTrue(staging.is_dir())
         self.assertEqual(sorted(path.name for path in staging.iterdir()),
-                         ['truncated.mp4'])
+                         ['.DS_Store', 'truncated.mp4'])
+        self.assertEqual(environment.read_bytes(),
+                         b'truncated video environment')
         self.assertEqual(staged.read_bytes(), before_staged)
 
         reopened = NotesRecords(str(self.records.records))

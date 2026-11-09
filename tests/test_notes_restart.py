@@ -2033,6 +2033,8 @@ class NotesRestartTests(unittest.TestCase):
         candidate_path = Path(candidate['candidate']['path'])
         extra_path = candidate_path.parent / 'unexpected-extra.bin'
         extra_path.write_bytes(b'unexpected')
+        environment_path = candidate_path.parent / '.DS_Store'
+        environment_path.write_bytes(b'candidate environment')
         self.assertEqual(
             self.records._candidate_file_availability(candidate['candidate']),
             notes.LOCAL_CHANGED)
@@ -2049,9 +2051,185 @@ class NotesRestartTests(unittest.TestCase):
         self.assertTrue(self.records.summary()['restart_batch_open'])
         self.assertTrue(candidate_path.exists())
         self.assertEqual(extra_path.read_bytes(), b'unexpected')
+        self.assertEqual(environment_path.read_bytes(),
+                         b'candidate environment')
         after = self.event_files()
         for name, raw in before.items():
             self.assertEqual(after[name], raw)
+
+    def test_candidate_extra_directory_fails_closed_without_activation(self):
+        context = self.one_media_restart_context(
+            'restart-c10-extra-directory')
+        attempt = self.restart_download(
+            self.records, context['key'], 'new.png', png((37, 38, 39)),
+            context['preview']['restart_id'])
+        candidate = self.records.verify(
+            session_id=self.session, attempt_id=attempt['attempt_id'],
+            verifier=self.pass_verifier, stability_interval=0)
+        candidate_path = Path(candidate['candidate']['path'])
+        extra_directory = candidate_path.parent / 'unexpected-directory'
+        extra_directory.mkdir()
+        environment_path = candidate_path.parent / '.DS_Store'
+        environment_path.write_bytes(b'candidate environment')
+
+        before = self.event_files()
+        with self.assertRaisesRegex(
+                NotesError, 'RESTART_VERSION_DIRECTORY_UNEXPECTED_CONTENT'):
+            self.records.restart_resume(
+                session_id=self.session, verifier=self.pass_verifier,
+                stability_interval=0)
+        self.assertFalse(any(
+            event['kind'] == 'restart-activation'
+            for event in self.records.events))
+        self.assertTrue(candidate_path.is_file())
+        self.assertTrue(extra_directory.is_dir())
+        self.assertEqual(environment_path.read_bytes(),
+                         b'candidate environment')
+        before_count = len(before)
+        after = self.event_files()
+        self.assertEqual(
+            [event['kind'] for event in self.records.events[before_count:]],
+            ['restart-copy-plan'])
+        self.assertLessEqual(set(before), set(after))
+        for name, raw in before.items():
+            self.assertEqual(after[name], raw)
+
+    def test_restart_environment_attachment_allows_copy_and_activation(self):
+        context = self.one_media_restart_context(
+            'restart-environment-f2')
+        original = notes._new_unique_directory
+
+        def create_irregular_staging(parent, prefix):
+            staging = original(parent, prefix)
+            (staging / '.DS_Store').mkdir()
+            return staging
+
+        before = self.event_files()
+        with mock.patch.object(
+                notes, '_new_unique_directory',
+                side_effect=create_irregular_staging):
+            with self.assertRaisesRegex(
+                    NotesError, 'EMPTY_STAGING_REQUIRED'):
+                self.records.intent(
+                    session_id=self.session, media_key_value=context['key'],
+                    restart_id=context['preview']['restart_id'])
+        self.assertEqual(self.event_files(), before)
+
+        def create_staging_with_unknown(parent, prefix):
+            staging = original(parent, prefix)
+            (staging / '.DS_Store').write_bytes(b'valid environment')
+            (staging / 'unexpected.bin').write_bytes(b'unknown staging entry')
+            return staging
+
+        before_unknown = self.event_files()
+        with mock.patch.object(
+                notes, '_new_unique_directory',
+                side_effect=create_staging_with_unknown):
+            with self.assertRaisesRegex(
+                    NotesError, 'EMPTY_STAGING_REQUIRED'):
+                self.records.intent(
+                    session_id=self.session, media_key_value=context['key'],
+                    restart_id=context['preview']['restart_id'])
+        self.assertEqual(self.event_files(), before_unknown)
+
+        version_directory = Path(
+            context['preview']['scope']['posts'][0]['version_directory'])
+        version_directory.mkdir(parents=True)
+        version_environment = version_directory / '.DS_Store'
+        version_environment.write_bytes(b'version environment 0')
+
+        def create_staging(parent, prefix):
+            staging = original(parent, prefix)
+            (staging / '.DS_Store').write_bytes(b'staging environment 0')
+            return staging
+
+        with mock.patch.object(
+                notes, '_new_unique_directory', side_effect=create_staging):
+            attempt = self.records.intent(
+                session_id=self.session, media_key_value=context['key'],
+                restart_id=context['preview']['restart_id'])
+        staging = Path(attempt['destination'])
+        staging_environment = staging / '.DS_Store'
+        source = staging / 'new.png'
+        source.write_bytes(png((61, 62, 63)))
+        source_bytes = source.read_bytes()
+        self.records.outcome(
+            session_id=self.session, attempt_id=attempt['attempt_id'],
+            outcome='DOWNLOAD_FINISHED',
+            evidence=self.attempt_evidence(self.records, attempt))
+
+        original_inventory = notes._inventory_row
+        samples = []
+
+        def changing_inventory(path):
+            row = original_inventory(path)
+            if Path(path).name != '.DS_Store':
+                samples.append(row)
+                payload = ('environment %d' % len(samples)).encode('ascii')
+                staging_environment.write_bytes(payload)
+                version_environment.write_bytes(payload)
+            return row
+
+        with mock.patch.object(
+                notes, '_inventory_row', side_effect=changing_inventory):
+            candidate = self.records.verify(
+                session_id=self.session, attempt_id=attempt['attempt_id'],
+                verifier=self.pass_verifier, stability_interval=0)
+        self.assertGreaterEqual(len(samples), 4)
+        self.assertEqual(candidate['status'], 'CANDIDATE_VERIFIED')
+        self.assertEqual(candidate['manifest'],
+                         [candidate['candidate']])
+        candidate_path = Path(candidate['candidate']['path'])
+        self.assertEqual(candidate_path.parent, version_directory)
+        self.assertEqual(
+            sorted(path.name for path in version_directory.iterdir()),
+            ['.DS_Store', candidate_path.name])
+        self.assertEqual(self.records._candidate_file_availability(
+            candidate['candidate']), LOCAL_VERIFIED)
+        self.assertEqual(source.read_bytes(), source_bytes)
+        self.assertEqual(staging_environment.read_bytes(),
+                         ('environment %d' % len(samples)).encode('ascii'))
+
+        version_environment.write_bytes(b'changed version environment')
+        staging_environment.write_bytes(b'changed staging environment')
+        self.assertEqual(self.records._candidate_file_availability(
+            candidate['candidate']), LOCAL_VERIFIED)
+        resumed = self.records.restart_resume(
+            session_id=self.session, verifier=self.pass_verifier,
+            stability_interval=0)
+        self.assertEqual(resumed['action'], 'RESTART_ACTIVATED')
+        self.assertEqual(sum(
+            event['kind'] == 'restart-candidate' for event in self.records.events),
+            1)
+        self.assertEqual(sum(
+            event['kind'] == 'restart-activation' for event in self.records.events),
+            1)
+        self.assertEqual(version_environment.read_bytes(),
+                         b'changed version environment')
+        self.assertEqual(staging_environment.read_bytes(),
+                         b'changed staging environment')
+        self.assertEqual(source.read_bytes(), source_bytes)
+
+        reopened = self.reopen(self.records)
+        summary = reopened.summary()
+        self.assertEqual(summary['status_counts']['COMPLETED'], 1)
+        self.assertEqual(summary['local_counts'][LOCAL_VERIFIED], 1)
+        self.assertTrue(summary['all_known_media_complete'])
+        self.assertEqual(summary['dispatch_blockers'], [])
+        before_replay = self.event_files()
+        replay = reopened.restart_resume(
+            session_id=self.session, verifier=self.pass_verifier,
+            stability_interval=0)
+        self.assertEqual(replay['action'], 'ALREADY_ACTIVATED')
+        self.assertEqual(sum(
+            event['kind'] == 'restart-activation'
+            for event in reopened.events), 1)
+        self.assertEqual(self.event_files(), before_replay)
+        self.assertFalse(any(
+            marker in raw
+            for raw in self.event_files().values()
+            for marker in (b'.DS_Store', b'staging environment',
+                           b'version environment')))
 
     def test_active_candidate_environment_file_keeps_verified_state(self):
         context = self.one_media_restart_context('restart-environment-active')
@@ -2323,6 +2501,8 @@ class NotesRestartTests(unittest.TestCase):
         post_key_value = notes.post_key(
             self.records.list_data['list_key'], context['post_identity'])
         new_key = self.media_key(post_key_value, new_photo)
+        active_environment = active_directory / '.DS_Store'
+        active_environment.write_bytes(b'active version environment')
         _new_attempt, completion = self.download(
             self.records, new_key, 'next.png', png((77, 88, 99)))
         self.assertEqual(completion['data']['destination'],
@@ -2334,6 +2514,10 @@ class NotesRestartTests(unittest.TestCase):
                    if item['media_key'] == new_key)
         self.assertEqual(row['status'], 'COMPLETED')
         self.assertEqual(row['local_files'], LOCAL_VERIFIED)
+        self.assertEqual(active_environment.read_bytes(),
+                         b'active version environment')
+        self.assertFalse(any(
+            b'.DS_Store' in raw for raw in self.event_files().values()))
 
     def test_no_outcome_pre_restart_attempt_is_superseded_without_fake_stop(self):
         photo = notes.media_identity(

@@ -345,6 +345,493 @@ class NotesRecordsTests(unittest.TestCase):
         self.assertNotEqual(third['destination'], second['destination'])
         self.assertEqual(len(list(Path(first['destination']).iterdir())), 0)
 
+    def test_new_intent_staging_allows_environment_attachment(self):
+        identity = notes.media_identity(
+            kind=PHOTO, visual_key='intent-environment')
+        _, post_key_value, _ = self.observe_post(
+            self.records, self.summary['list_key'],
+            'post-intent-environment', [identity])
+        key = self.media_key(self.records, post_key_value, identity)
+        original = notes._new_unique_directory
+
+        def create_staging(parent, prefix):
+            staging = original(parent, prefix)
+            (staging / '.DS_Store').write_bytes(
+                b'synthetic new-intent environment')
+            return staging
+
+        before = self.event_bytes()
+        with mock.patch.object(
+                notes, '_new_unique_directory', side_effect=create_staging):
+            attempt = self.records.intent(
+                session_id=self.session, media_key_value=key)
+        staging = Path(attempt['destination'])
+        self.assertEqual([path.name for path in staging.iterdir()],
+                         ['.DS_Store'])
+        self.assertEqual(
+            (staging / '.DS_Store').read_bytes(),
+            b'synthetic new-intent environment')
+        self.assertEqual(attempt['status'], 'UNKNOWN')
+        self.assertFalse(attempt['dispatch_authorized'])
+        self.assertEqual(self.records._validate_staging(attempt), staging)
+        intent_events = [event for event in self.records.events
+                         if event['kind'] == 'intent']
+        self.assertEqual(len(intent_events), 1)
+        self.assertEqual(intent_events[0]['data']['destination'], str(staging))
+        after = self.event_bytes()
+        self.assertEqual(len(after), len(before) + 1)
+        self.assertLessEqual(set(before), set(after))
+
+    def test_new_intent_staging_refuses_non_environment_entries(self):
+        identity = notes.media_identity(
+            kind=PHOTO, visual_key='intent-invalid-environment')
+        _, post_key_value, _ = self.observe_post(
+            self.records, self.summary['list_key'],
+            'post-intent-invalid-environment', [identity])
+        key = self.media_key(self.records, post_key_value, identity)
+        original = notes._new_unique_directory
+
+        for entry_type in (
+                'unknown-file', 'other-dotfile', 'unknown-directory',
+                'environment-symlink', 'environment-directory',
+                'environment-hardlink', 'extra-media'):
+            with self.subTest(entry_type=entry_type):
+                hardlink_target = self.base / (
+                    'intent-hardlink-target-' + entry_type)
+
+                def create_staging(parent, prefix):
+                    staging = original(parent, prefix)
+                    environment = staging / '.DS_Store'
+                    if entry_type == 'unknown-file':
+                        (staging / 'unexpected.bin').write_bytes(b'unexpected')
+                    elif entry_type == 'other-dotfile':
+                        (staging / '.AppleDouble').write_bytes(b'other dotfile')
+                    elif entry_type == 'unknown-directory':
+                        (staging / 'unexpected-directory').mkdir()
+                    elif entry_type == 'environment-symlink':
+                        hardlink_target.write_bytes(b'link target')
+                        environment.symlink_to(hardlink_target)
+                    elif entry_type == 'environment-directory':
+                        environment.mkdir()
+                    elif entry_type == 'environment-hardlink':
+                        hardlink_target.write_bytes(b'hardlink target')
+                        os.link(hardlink_target, environment)
+                    else:
+                        environment.write_bytes(b'environment bytes')
+                        (staging / 'unexpected.mp4').write_bytes(b'extra video')
+                    return staging
+
+                before = self.event_bytes()
+                with mock.patch.object(
+                        notes, '_new_unique_directory',
+                        side_effect=create_staging):
+                    with self.assertRaisesRegex(
+                            NotesError, 'EMPTY_STAGING_REQUIRED'):
+                        self.records.intent(
+                            session_id=self.session, media_key_value=key)
+                self.assertEqual(self.event_bytes(), before)
+
+    def test_environment_attachment_survives_inventory_publish_and_cleanup(self):
+        first_identity = notes.media_identity(
+            kind=PHOTO, visual_key='publish-environment-first')
+        second_identity = notes.media_identity(
+            kind=PHOTO, visual_key='publish-environment-second')
+        _, post_key_value, _ = self.observe_post(
+            self.records, self.summary['list_key'],
+            'post-publish-environment', [first_identity, second_identity])
+        first_key = self.media_key(
+            self.records, post_key_value, first_identity)
+        second_key = self.media_key(
+            self.records, post_key_value, second_identity)
+        _first_attempt, first_completion = self.download(
+            self.records, first_key, 'first.png', png())
+        post_directory = Path(first_completion['data']['destination'])
+        first_target = post_directory / first_completion['data']['target_file']['name']
+        first_bytes = first_target.read_bytes()
+        first_info = first_target.stat()
+        target_environment = post_directory / '.DS_Store'
+        target_environment.write_bytes(b'target environment bytes')
+
+        original = notes._new_unique_directory
+
+        def create_staging(parent, prefix):
+            staging = original(parent, prefix)
+            (staging / '.DS_Store').write_bytes(b'staging environment 0')
+            return staging
+
+        with mock.patch.object(
+                notes, '_new_unique_directory', side_effect=create_staging):
+            attempt = self.records.intent(
+                session_id=self.session, media_key_value=second_key)
+        staging = Path(attempt['destination'])
+        staging_environment = staging / '.DS_Store'
+        (staging / 'second.png').write_bytes(png((0, 255, 0)))
+        self.records.outcome(
+            session_id=self.session, attempt_id=attempt['attempt_id'],
+            outcome='DOWNLOAD_FINISHED',
+            evidence=self.attempt_evidence(self.records, attempt))
+
+        original_inventory = notes._inventory_row
+        samples = []
+
+        def changing_inventory(path):
+            row = original_inventory(path)
+            if Path(path).name != '.DS_Store':
+                samples.append(row)
+                staging_environment.write_bytes(
+                    ('staging environment %d' % len(samples)).encode('ascii'))
+            return row
+
+        with mock.patch.object(
+                notes, '_inventory_row', side_effect=changing_inventory):
+            completion = self.records.verify(
+                session_id=self.session, attempt_id=attempt['attempt_id'],
+                verifier=self.pass_verifier, stability_interval=0)
+        self.assertEqual(len(samples), 4)
+        self.assertEqual(completion['data']['media_key'], second_key)
+        self.assertEqual(completion['data']['source_manifest']['name'],
+                         'second.png')
+        verification = next(
+            event for event in self.records.events
+            if event['kind'] == 'verification' and
+            event['data']['attempt_id'] == attempt['attempt_id'])
+        self.assertEqual(verification['data']['manifest'],
+                         [completion['data']['source_manifest']])
+        self.assertEqual(staging_environment.read_bytes(),
+                         b'staging environment 4')
+        self.assertEqual([path.name for path in staging.iterdir()],
+                         ['.DS_Store'])
+        self.assertEqual(target_environment.read_bytes(),
+                         b'target environment bytes')
+        self.assertEqual(
+            sorted(path.name for path in post_directory.iterdir()),
+            ['.DS_Store', 'media_001.png', 'media_002.png'])
+        self.assertEqual(first_target.read_bytes(), first_bytes)
+        self.assertEqual(first_target.stat().st_ino, first_info.st_ino)
+        self.assertFalse(any(
+            b'.DS_Store' in raw for raw in self.event_bytes().values()))
+        self.assertEqual(self.records._pending_publish_plans(), [])
+
+        reopened = self.reopen(self.records)
+        summary = reopened.summary()
+        self.assertEqual(summary['status_counts']['COMPLETED'], 2)
+        self.assertEqual(summary['local_counts'][LOCAL_VERIFIED], 2)
+        self.assertTrue(summary['all_known_media_complete'])
+        self.assertEqual(summary['dispatch_blockers'], [])
+        self.assertEqual(reopened.resume()['action'], 'NO_NAMING_TRANSACTION')
+        self.assertEqual(reopened.resume()['pending'], [])
+        self.assertEqual(sum(
+            event['kind'] == 'outcome' and
+            event['data']['attempt_id'] == attempt['attempt_id']
+            for event in reopened.events), 1)
+        self.assertEqual(sum(
+            event['kind'] == 'completion' and
+            event['data']['media_key'] == second_key
+            for event in reopened.events), 1)
+
+        staging_environment.unlink()
+        self.assertEqual(self.reopen(self.records).summary()['local_counts'][
+            LOCAL_VERIFIED], 2)
+        self.assertTrue(staging.is_dir())
+        self.assertEqual(list(staging.iterdir()), [])
+
+    def test_publish_rejects_extra_video_and_target_collision(self):
+        for mutation, error in (
+                ('extra-video', 'POST_DIRECTORY_UNEXPECTED_CONTENT'),
+                ('target-collision', 'TARGET_ALREADY_EXISTS')):
+            with self.subTest(mutation=mutation):
+                records, summary = self.new_ledger(
+                    'publish-negative-' + mutation,
+                    recovery_authorized=True)
+                first_identity = notes.media_identity(
+                    kind=PHOTO, visual_key=mutation + '-first')
+                second_identity = notes.media_identity(
+                    kind=PHOTO, visual_key=mutation + '-second')
+                _, post_key_value, _ = self.observe_post(
+                    records, summary['list_key'],
+                    'post-' + mutation, [first_identity, second_identity])
+                second_key = self.media_key(
+                    records, post_key_value, second_identity)
+                post_directory, existed = \
+                    records._post_directory_for_publish(post_key_value)
+                self.assertFalse(existed)
+                post_directory.mkdir(parents=True)
+                environment = post_directory / '.DS_Store'
+                environment.write_bytes(b'post environment bytes')
+                if mutation == 'extra-video':
+                    protected = post_directory / 'unexpected.mp4'
+                    protected.write_bytes(b'protected extra video')
+
+                attempt = records.intent(
+                    session_id=self.session, media_key_value=second_key)
+                (Path(attempt['destination']) / 'first.png').write_bytes(
+                    png((0, 0, 255)))
+                records.outcome(
+                    session_id=self.session,
+                    attempt_id=attempt['attempt_id'],
+                    outcome='DOWNLOAD_FINISHED',
+                    evidence=self.attempt_evidence(records, attempt))
+
+                if mutation == 'extra-video':
+                    with self.assertRaisesRegex(NotesError, error):
+                        records.verify(
+                            session_id=self.session,
+                            attempt_id=attempt['attempt_id'],
+                            verifier=self.pass_verifier,
+                            stability_interval=0)
+                else:
+                    original_publish_directory = \
+                        records._post_directory_for_publish
+                    collision_written = []
+
+                    def publish_directory_with_collision(
+                            post_key, original=original_publish_directory):
+                        result = original(post_key)
+                        protected = post_directory / 'media_001.png'
+                        protected.write_bytes(b'protected collision bytes')
+                        collision_written.append(protected)
+                        return result
+
+                    with mock.patch.object(
+                            records, '_post_directory_for_publish',
+                            side_effect=publish_directory_with_collision):
+                        with self.assertRaisesRegex(NotesError, error):
+                            records.verify(
+                                session_id=self.session,
+                                attempt_id=attempt['attempt_id'],
+                                verifier=self.pass_verifier,
+                                stability_interval=0)
+                    self.assertEqual(len(collision_written), 1)
+                    protected = collision_written[0]
+
+                self.assertEqual(environment.read_bytes(),
+                                 b'post environment bytes')
+                if mutation == 'extra-video':
+                    self.assertEqual(protected.read_bytes(),
+                                     b'protected extra video')
+                else:
+                    self.assertEqual(protected.read_bytes(),
+                                     b'protected collision bytes')
+                self.assertFalse(any(
+                    event['kind'] == 'completion' and
+                    event['data']['media_key'] == second_key
+                    for event in records.events))
+                self.assertFalse(any(
+                    event['kind'] == 'publish-plan' and
+                    event['data']['attempt_id'] == attempt['attempt_id']
+                    for event in records.events))
+                self.assertFalse(any(
+                    b'.DS_Store' in raw for raw in self.event_bytes(records).values()))
+
+    def test_inventory_environment_filter_does_not_mask_unknown_entries(self):
+        for mutation, error in (
+                ('unknown-file', 'DOWNLOAD_COUNT_MISMATCH'),
+                ('other-dotfile', 'UNEXPECTED_DOWNLOAD_ENTRY'),
+                ('unknown-directory', 'UNEXPECTED_DOWNLOAD_ENTRY'),
+                ('environment-symlink', 'UNEXPECTED_DOWNLOAD_ENTRY'),
+                ('environment-directory', 'UNEXPECTED_DOWNLOAD_ENTRY'),
+                ('environment-hardlink', 'UNEXPECTED_DOWNLOAD_ENTRY'),
+                ('extra-video', 'DOWNLOAD_COUNT_MISMATCH')):
+            with self.subTest(mutation=mutation):
+                records, summary = self.new_ledger(
+                    'inventory-negative-' + mutation,
+                    recovery_authorized=True)
+                identity = notes.media_identity(
+                    kind=PHOTO, visual_key=mutation + '-media')
+                _, post_key_value, _ = self.observe_post(
+                    records, summary['list_key'], 'post-' + mutation,
+                    [identity])
+                key = self.media_key(records, post_key_value, identity)
+                attempt = records.intent(
+                    session_id=self.session, media_key_value=key)
+                staging = Path(attempt['destination'])
+                (staging / 'first.png').write_bytes(png((1, 2, 3)))
+                environment = staging / '.DS_Store'
+                if mutation == 'unknown-file':
+                    environment.write_bytes(b'environment bytes')
+                    protected = staging / 'unexpected.bin'
+                    protected.write_bytes(b'protected unknown file')
+                elif mutation == 'other-dotfile':
+                    environment.write_bytes(b'environment bytes')
+                    protected = staging / '.AppleDouble'
+                    protected.write_bytes(b'protected other dotfile')
+                elif mutation == 'unknown-directory':
+                    environment.write_bytes(b'environment bytes')
+                    protected = staging / 'unexpected-directory'
+                    protected.mkdir()
+                elif mutation == 'environment-symlink':
+                    protected = self.base / 'inventory-environment-target'
+                    protected.write_bytes(b'protected symlink target')
+                    environment.symlink_to(protected)
+                elif mutation == 'environment-directory':
+                    environment.mkdir()
+                    protected = environment
+                elif mutation == 'environment-hardlink':
+                    protected = self.base / 'inventory-hardlink-target'
+                    protected.write_bytes(b'protected hardlink target')
+                    os.link(protected, environment)
+                else:
+                    environment.write_bytes(b'environment bytes')
+                    protected = staging / 'unexpected.mp4'
+                    protected.write_bytes(b'protected extra video')
+
+                records.outcome(
+                    session_id=self.session, attempt_id=attempt['attempt_id'],
+                    outcome='DOWNLOAD_FINISHED',
+                    evidence=self.attempt_evidence(records, attempt))
+                before = self.event_bytes(records)
+                with self.assertRaisesRegex(NotesError, error):
+                    records.verify(
+                        session_id=self.session,
+                        attempt_id=attempt['attempt_id'],
+                        verifier=self.pass_verifier,
+                        stability_interval=0)
+                self.assertEqual(self.event_bytes(records), before)
+                self.assertFalse(any(
+                    event['kind'] in ('verification', 'completion')
+                    for event in records.events
+                    if event['data'].get('attempt_id') == attempt['attempt_id']))
+
+    def test_inventory_environment_filter_does_not_mask_real_media_drift(self):
+        identity = notes.media_identity(
+            kind=PHOTO, visual_key='inventory-media-drift')
+        _, post_key_value, _ = self.observe_post(
+            self.records, self.summary['list_key'],
+            'post-inventory-media-drift', [identity])
+        key = self.media_key(self.records, post_key_value, identity)
+        attempt = self.records.intent(
+            session_id=self.session, media_key_value=key)
+        staging = Path(attempt['destination'])
+        source = staging / 'first.png'
+        original_bytes = png((1, 2, 3))
+        changed_bytes = png((3, 2, 1))
+        source.write_bytes(original_bytes)
+        environment = staging / '.DS_Store'
+        environment.write_bytes(b'protected inventory environment')
+        self.records.outcome(
+            session_id=self.session, attempt_id=attempt['attempt_id'],
+            outcome='DOWNLOAD_FINISHED',
+            evidence=self.attempt_evidence(self.records, attempt))
+
+        original_inventory = notes._inventory_once
+        samples = []
+
+        def mutate_media_after_first_sample(directory):
+            rows = original_inventory(directory)
+            samples.append(rows)
+            if len(samples) == 1:
+                source.write_bytes(changed_bytes)
+            return rows
+
+        before = self.event_bytes()
+        with mock.patch.object(
+                notes, '_inventory_once',
+                side_effect=mutate_media_after_first_sample):
+            with self.assertRaisesRegex(NotesError, 'DOWNLOAD_NOT_STABLE'):
+                self.records.verify(
+                    session_id=self.session,
+                    attempt_id=attempt['attempt_id'],
+                    verifier=self.pass_verifier,
+                    stability_interval=0)
+        self.assertEqual(len(samples), 2)
+        self.assertEqual(source.read_bytes(), changed_bytes)
+        self.assertEqual(environment.read_bytes(),
+                         b'protected inventory environment')
+        self.assertEqual(self.event_bytes(), before)
+        self.assertFalse(any(
+            event['kind'] in ('verification', 'completion') and
+            event['data'].get('attempt_id') == attempt['attempt_id']
+            for event in self.records.events))
+
+    def test_new_publish_post_directory_with_only_environment_attachment(self):
+        identity = notes.media_identity(
+            kind=PHOTO, visual_key='new-post-environment')
+        _, post_key_value, _ = self.observe_post(
+            self.records, self.summary['list_key'],
+            'post-new-post-environment', [identity])
+        key = self.media_key(self.records, post_key_value, identity)
+        post_directory, existed = self.records._post_directory_for_publish(
+            post_key_value)
+        self.assertFalse(existed)
+        self.assertFalse(post_directory.exists())
+        post_directory.mkdir(parents=True)
+        environment = post_directory / '.DS_Store'
+        environment.write_bytes(b'new post environment')
+        payload = png((5, 6, 7))
+
+        _attempt, completion = self.download(
+            self.records, key, 'first.png', payload)
+
+        self.assertEqual(completion['data']['target_file']['name'],
+                         'media_001.png')
+        self.assertEqual(completion['data']['source_manifest']['name'],
+                         'first.png')
+        verification = next(
+            event for event in self.records.events
+            if event['kind'] == 'verification' and
+            event['data']['media_key'] == key)
+        self.assertEqual(
+            verification['data']['manifest'],
+            [completion['data']['source_manifest']])
+        self.assertEqual(environment.read_bytes(), b'new post environment')
+        self.assertEqual((post_directory / 'media_001.png').read_bytes(), payload)
+        self.assertEqual(
+            sorted(path.name for path in post_directory.iterdir()),
+            ['.DS_Store', 'media_001.png'])
+        self.assertEqual(self.records._pending_publish_plans(), [])
+        self.assertEqual(self.reopen(self.records).resume()['action'],
+                         'NO_NAMING_TRANSACTION')
+        self.assertFalse(any(
+            b'.DS_Store' in raw for raw in self.event_bytes().values()))
+
+    def test_publish_rejects_unknown_staging_entry_after_environment(self):
+        identity = notes.media_identity(
+            kind=PHOTO, visual_key='publish-staging-negative')
+        _, post_key_value, _ = self.observe_post(
+            self.records, self.summary['list_key'],
+            'post-publish-staging-negative', [identity])
+        key = self.media_key(self.records, post_key_value, identity)
+        attempt = self.records.intent(
+            session_id=self.session, media_key_value=key)
+        staging = Path(attempt['destination'])
+        source = staging / 'first.png'
+        source.write_bytes(png((4, 5, 6)))
+        environment = staging / '.DS_Store'
+        environment.write_bytes(b'protected staging environment')
+        self.records.outcome(
+            session_id=self.session, attempt_id=attempt['attempt_id'],
+            outcome='DOWNLOAD_FINISHED',
+            evidence=self.attempt_evidence(self.records, attempt))
+
+        original_unlink = notes._unlink_regular
+        added = []
+
+        def unlink_then_add_unknown(source_path, code):
+            result = original_unlink(source_path, code)
+            extra = staging / 'unexpected.bin'
+            extra.write_bytes(b'protected post-link extra')
+            added.append(extra)
+            return result
+
+        with mock.patch.object(
+                notes, '_unlink_regular', side_effect=unlink_then_add_unknown):
+            with self.assertRaisesRegex(
+                    NotesError, 'STAGING_NOT_EMPTY_AFTER_PUBLISH'):
+                self.records.verify(
+                    session_id=self.session,
+                    attempt_id=attempt['attempt_id'],
+                    verifier=self.pass_verifier,
+                    stability_interval=0)
+        self.assertEqual(len(added), 1)
+        self.assertEqual(environment.read_bytes(),
+                         b'protected staging environment')
+        self.assertEqual(added[0].read_bytes(), b'protected post-link extra')
+        self.assertFalse(any(
+            event['kind'] == 'completion' and
+            event['data']['media_key'] == key
+            for event in self.records.events))
+        self.assertEqual(len(self.records._pending_publish_plans()), 1)
+
     def test_naming_interruption_resumes_same_transaction(self):
         identity = notes.media_identity(kind=PHOTO, visual_key='naming-photo')
         _, post_key_value, _ = self.observe_post(
@@ -523,6 +1010,28 @@ class NotesRecordsTests(unittest.TestCase):
                            if item['media_key'] == key)
                 self.assertEqual((row['status'], row['local_files']),
                                  ('COMPLETED', LOCAL_CHANGED))
+
+    def test_completion_environment_and_other_dotfile_together_are_local_changed(self):
+        records, summary, post_key_value, identity, completion = (
+            self.completed_ledger('environment-and-other-dotfile'))
+        directory = Path(completion['data']['destination'])
+        environment = directory / '.DS_Store'
+        environment.write_bytes(b'completion environment')
+        other_dotfile = directory / '.AppleDouble'
+        other_dotfile.write_bytes(b'other completion dotfile')
+        before = self.event_bytes(records)
+
+        reopened = self.reopen(records)
+        result = reopened.summary()
+        key = self.media_key(reopened, post_key_value, identity)
+        row = next(item for item in result['media'] if item['media_key'] == key)
+
+        self.assertEqual((row['status'], row['local_files']),
+                         ('COMPLETED', LOCAL_CHANGED))
+        self.assertEqual(environment.read_bytes(), b'completion environment')
+        self.assertEqual(other_dotfile.read_bytes(),
+                         b'other completion dotfile')
+        self.assertEqual(self.event_bytes(reopened), before)
 
     def test_completion_environment_file_survives_session_without_unknown(self):
         records, summary, post_key_value, identity, completion = (

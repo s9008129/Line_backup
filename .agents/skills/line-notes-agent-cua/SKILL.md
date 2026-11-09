@@ -71,7 +71,7 @@ page 前的來源卡片台帳、部分／高卡片、雙向對帳及 finish 前�
 - confirm 會寫入新版事件；舊版 CLI 讀到後會拒絕。首次真實 confirm 前核對後續 session 使用相容版本；寫入後不刪事件、不回退成空帳。
 - 來源已明確到期且原最新 attempt 為 `STOPPED` 時，才可追加 `source-unavailable`；它只記 `SOURCE_EXPIRED`，不是完成、排除、重試授權或服務端已回收的證明。該項不得再建立 intent，其他項仍受列表級 blocker 約束。
 - 命名交易、暫名與目標身分可唯一核對時用 `resume`；無法唯一下一步時保留原檔與 pending 證據並停止，不手動改資料夾或重下。
-- 已完成事實與本機可用性分開：整篇目錄缺席記 `LOCAL_MISSING` 並保留完成、禁止重下；目錄仍存在但有缺檔、額外檔、hash／身分漂移或 symlink 時記 `LOCAL_CHANGED`。`LOCAL_CHANGED` 僅可在精確確認批次 scope 內保留原檔並複製到新版本目錄重建；scope 外仍停止新派送。
+- 已完成事實與本機可用性分開：整篇目錄缺席記 `LOCAL_MISSING` 並保留完成、禁止重下；目錄仍存在但有缺檔、非屬合格環境附屬項的額外檔、hash／身分漂移或 symlink 時記 `LOCAL_CHANGED`。`LOCAL_CHANGED` 僅可在精確確認批次 scope 內保留原檔並複製到新版本目錄重建；scope 外仍停止新派送。
 - 六類業務狀態為 `COMPLETED`、`EXCLUDED`、`PENDING`、`PREVIOUSLY_INCOMPLETE`、`UNKNOWN`、`PROTECTED_HISTORY`。`NO_MEDIA` 是貼文層級標記，不是第七類，也不是下載完成。
 - 不發訊息、刪除、分享、覆寫照片或變更舊完成事實；不擴及其他列表。工具拒絕、身分歧義、寫入衝突或不明派送時停止依賴該前提的動作，不換入口繞過。
 

@@ -4762,7 +4762,11 @@ class NotesRecords:
             self._assert_dispatch_coverage()
             staging = _new_unique_directory(list_directory,
                                              '.line-notes-incoming-')
-            need(not any(staging.iterdir()), 'EMPTY_STAGING_REQUIRED')
+            need(not [
+                child for child in staging.iterdir()
+                if not _is_environment_attachment(
+                    child, directory=staging, reserved_names=set())],
+                 'EMPTY_STAGING_REQUIRED')
             info = staging.stat()
             effective_kind, kind_correction_ref = self._effective_media_kind(
                 media_key_value, target['identity']['kind'])
@@ -4851,7 +4855,11 @@ class NotesRecords:
                      'ANOTHER_MEDIA_ATTEMPT_UNRESOLVED')
             staging = _new_unique_directory(list_directory,
                                              '.line-notes-incoming-')
-            need(not any(staging.iterdir()), 'EMPTY_STAGING_REQUIRED')
+            need(not [
+                child for child in staging.iterdir()
+                if not _is_environment_attachment(
+                    child, directory=staging, reserved_names=set())],
+                 'EMPTY_STAGING_REQUIRED')
             info = staging.stat()
             recovery_ref = (
                 _preserve_evidence(
@@ -5512,7 +5520,12 @@ class NotesRecords:
         need(candidate.is_dir() and
              candidate == candidate.resolve(strict=True) and
              not candidate.is_symlink(), 'POST_DIRECTORY_CHANGED')
-        need(not any(candidate.iterdir()), 'POST_DIRECTORY_UNEXPECTED_CONTENT')
+        reserved_names = self._target_names_for_directory(candidate)
+        need(not [
+            child for child in candidate.iterdir()
+            if not _is_environment_attachment(
+                child, directory=candidate, reserved_names=reserved_names)],
+             'POST_DIRECTORY_UNEXPECTED_CONTENT')
         return candidate, True
 
     def _next_media_number(self, post_key_value, directory):
@@ -5652,7 +5665,11 @@ class NotesRecords:
              target_directory == target_directory.resolve(strict=True),
              'POST_DIRECTORY_CHANGED')
         expected_names = self._target_names_for_directory(target_directory)
-        actual_names = {path.name for path in target_directory.iterdir()}
+        actual_names = {
+            path.name for path in target_directory.iterdir()
+            if not _is_environment_attachment(
+                path, directory=target_directory,
+                reserved_names=expected_names)}
         need(actual_names <= expected_names,
              'POST_DIRECTORY_UNEXPECTED_CONTENT')
         info = target_directory.stat()
@@ -5775,10 +5792,17 @@ class NotesRecords:
                                        sha256=source['sha256']))
         staging = source_path.parent
         if _entry(staging) is not None:
-            need(staging.is_dir() and not staging.is_symlink() and
-                 not any(staging.iterdir()), 'STAGING_NOT_EMPTY_AFTER_PUBLISH')
-            os.rmdir(str(staging))
-            sync_dir(staging.parent)
+            need(staging.is_dir() and not staging.is_symlink(),
+                 'STAGING_NOT_EMPTY_AFTER_PUBLISH')
+            children = list(staging.iterdir())
+            need(not [
+                child for child in children
+                if not _is_environment_attachment(
+                    child, directory=staging, reserved_names=set())],
+                 'STAGING_NOT_EMPTY_AFTER_PUBLISH')
+            if not children:
+                os.rmdir(str(staging))
+                sync_dir(staging.parent)
         target_info = os.stat(str(target_path), follow_symlinks=False)
         need(target_info.st_nlink == 1 and target_info.st_size == source['size'] and
              (target_info.st_dev, target_info.st_ino) ==
@@ -5948,7 +5972,11 @@ class NotesRecords:
                  directory == directory.resolve(strict=True),
                  'RESTART_VERSION_DIRECTORY_CHANGED')
         expected = self._target_names_for_directory(target_directory)
-        actual = {path.name for path in target_directory.iterdir()}
+        actual = {
+            path.name for path in target_directory.iterdir()
+            if not _is_environment_attachment(
+                path, directory=target_directory,
+                reserved_names=expected)}
         need(actual <= expected, 'RESTART_VERSION_DIRECTORY_UNEXPECTED_CONTENT')
         return target_directory
 
@@ -6618,6 +6646,9 @@ def _inventory_once(directory):
                                          'DOWNLOAD_DIRECTORY_CHANGED')
     rows = []
     for path in sorted(root.iterdir()):
+        if _is_environment_attachment(
+                path, directory=root, reserved_names=set()):
+            continue
         need(not path.name.startswith('.') and not path.is_symlink() and
              path.is_file(), 'UNEXPECTED_DOWNLOAD_ENTRY')
         rows.append(_inventory_row(path))

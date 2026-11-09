@@ -16,6 +16,10 @@
 - 成功以 exit 0 回傳 JSON；實際使用時記錄命令、exit code 與原始輸出摘要。看到 70 時必須原樣記錄並停止，不能降格成 exit 4 或其他業務狀態。
 - 業務拒絕後不得改寫事件、另開空帳、重設 ledger、換目的地或改走相簿流程繞過。先讀拒絕原因及既有事件，仍不能安全處理就保留阻塞。
 
+## 合格環境附屬項
+
+「合格環境附屬項」僅指位於 canonical 且非 symlink 的 notes 媒體容器內、名稱精確為 `.DS_Store`、以不跟隨連結 metadata 確認為 regular file 且 `nlink=1`，且未被帳本、manifest、證據或交易引用或保留的檔案。受管理名稱、manifest 目標或發布目標與其碰撞時，碰撞規則優先；其他 dotfile、未知檔／staging、額外影片、特殊檔及異常連結仍拒絕。此類環境項存在、bytes 改變或消失，均不列入 witness、manifest 或媒體計數，也不改變 completion 或 `LOCAL_VERIFIED`；此定義不新增日常步驟。
+
 ## 目前子命令
 
 以下是目前實作的命令面。實際 flags 與 JSON 欄位以當次 `--help` 及執行結果為準；離線測試通過不表示真實 GUI 或 LINE E2E 已驗證。
@@ -130,7 +134,7 @@ protect      --records-root RECORDS_ROOT --media-key KEY
 2. **精確確認。** Agent 以白話列出列表、受影響貼文／媒體、已完成 sibling、舊版位置、新 `versions/gNNNNNNNN/` 目錄、額外空間估算、來源缺項與 `EXCLUDED`／`PROTECTED_HISTORY` 保留項。Owner 明示同意後，以同一次 session 執行 `restart confirm`；preview 建議存成私有 JSON，使用 `--preview @PREVIEW_JSON` 傳入。confirmation evidence 必須是 v2 bundle，context 為 `list_key` 加 preview 的 `scope.scan_id`。CLI 在鎖內重算 expected tip 與 scope digest；preview 後的任何漂移以 `RESTART_EXPECTED_TIP_CHANGED`／`RESTART_PREVIEW_CHANGED` 拒絕，不建立確認。
 3. **確認後重新盤點。** confirm 成功後必須以 `scan start --recovery` 完成一次新的完整 recovery scan；若目前仍有尚未結束的 scan，先以新 Session 明確 `scan interrupt`，不能假設 `bind` 或 `restart confirm` 會替舊 scan 收尾。不可拿 confirm 前的 page rows、cursor 或舊 scan 直接建立新 attempt。未做此 scan 時 `intent --restart-id` 回 `POST_CONFIRMATION_RECOVERY_SCAN_REQUIRED`。新 scan 只證明目前 scope／來源身分，不改寫舊 attempt 的 scan binding。
 4. **逐項新 attempt。** 對 scope 內每個合格媒體執行 `intent --records-root ... --session-id ... --media-key ... --restart-id RESTART_ID`。每次仍建立新的空白 staging，當次下載控制與 chooser 最終確認各最多一次；不得使用舊 raw 路徑、舊 chooser、舊座標或舊 attempt 再按一次。沒有 outcome 時先記第一筆結果；結果未知記 `UNKNOWN`，不可偽造 `STOPPED`。
-5. **候選與 activation。** `verify` 只在同一 attempt 為 `DOWNLOAD_FINISHED` 後，將 staging 檔案獨立 copy 到新 generation 目錄，形成不同 inode 的 candidate；不是 rename 或 hard link 成目前結果。candidate 需通過 regular file、nlink、symlink、parent、inode／size／mtime／ctime／SHA-256、額外檔及解碼檢查。全部 scope candidate 成立後，才執行一次 `restart resume` 追加單筆 activation。`restart resume` 只做檔案／candidate／activation，不按 GUI、不下載、不重送。
+5. **候選與 activation。** `verify` 只在同一 attempt 為 `DOWNLOAD_FINISHED` 後，將 staging 檔案獨立 copy 到新 generation 目錄，形成不同 inode 的 candidate；不是 rename 或 hard link 成目前結果。candidate 需通過 regular file、nlink、symlink、parent、inode／size／mtime／ctime／SHA-256、非屬合格環境附屬項的額外檔及解碼檢查。全部 scope candidate 成立後，才執行一次 `restart resume` 追加單筆 activation。`restart resume` 只做檔案／candidate／activation，不按 GUI、不下載、不重送。
 6. **再次中斷。** 同一個已確認 scope 在完成前再次中斷時，可用 `RESTART_REQUIRED`／`OPEN_BATCH` 找回原批次；已驗證 candidate 與原歷史保留，只對未完成或結果不確定的項目建立新的 v3 attempt。scope、媒體身分、舊版本、目的地或版本策略改變，必須重新 preview 與取得新的 Owner 明示同意。確認不涵蓋另一個列表、其他貼文或無限次重送。
 
 scope 內舊 `UNKNOWN`、無 outcome 或 pending 可被新 attempt 取代，但這不證明舊操作已停止；舊事件、舊 raw、舊 completion 與 UNKNOWN 全部保留。`LOCAL_CHANGED` 只在精確 scope 內以新版本目錄重建，舊目錄不搬動、不覆寫、不自動清理。`LOCAL_MISSING` 不觸發重下；scope 外 `LOCAL_CHANGED`、`EXCLUDED`、`PROTECTED_HISTORY` 與來源 missing／expired 仍保留欠件，不得宣稱整份列表完成。`dispatch_authorized=false` 不是 GUI grant；preview／confirm／resume 的成功都只證明簿記與指定狀態，不證明真實 LINE 派送或 E2E。
@@ -260,7 +264,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
 6. **記錄第一筆 outcome。** 先確認該 attempt 是否已有 outcome 事件，不從 `memory` 顯示的 `UNKNOWN` 猜測。沒有 outcome 時只執行一次 `outcome`，依第一筆真實結果記錄；若只有逾時、畫面未變、進度未終止、chooser／檔案的歸屬不足或其他不確定訊號，就記 `UNKNOWN`，不得改寫成 `NOT_SENT`／`STOPPED`，也不得先呼叫 `reconcile`。已有 `outcome=UNKNOWN` 時，才可以在取得新證據後使用 `reconcile`；不得再做第二次 `outcome`。
 7. **未收斂即停止。** 結果未達可進入驗證的正面終結前，不得 `verify`、建立新 intent、重下或派送下一項；晚到結果只能先歸回原 attempt 並調和，不能算成下一項。相同查證連續兩次沒有新資訊就停止，不重置次數或換入口繞過。只有可歸屬且足以排除原操作稍後繼續的明確停止／未派送證據，才可能進 `STOPPED`／`NOT_SENT`；目前是否能取得此證據仍 `UNKNOWN`。
 8. **驗證與完成。** 只有具備可歸屬的下載終結結果及穩定結果檔，才可記 `DOWNLOAD_FINISHED` 並執行 `verify`。`verify` 先保存命名／發布交易，再核對穩定檔集、預期數、非空、SHA-256、逐檔內容解碼及前後身分；成功才追加不可覆寫 completion 並讀回。驗證或紀錄寫入失敗時保留原檔，不重新下載補帳。
-9. **命名中斷。** 只要來源、暫名、目標及 journal 可唯一核對，執行 `resume` 接續同一交易；`resume` 不得觸發下載。目標已存在、額外檔、symlink、hash／mtime／ctime 漂移或來源與目標歧義時，保護原檔並停止，不用手動改名解鎖。
+9. **命名中斷。** 只要來源、暫名、目標及 journal 可唯一核對，執行 `resume` 接續同一交易；`resume` 不得觸發下載。目標已存在、非屬合格環境附屬項的額外檔、symlink、hash／mtime／ctime 漂移或來源與目標歧義時，保護原檔並停止，不用手動改名解鎖。
 
 每次下載控制、chooser 確認、outcome、reconcile、更正與恢復前，先依 [證據範本](evidence-template.md) 寫當次私有 statement，再把 statement 與必要截圖／AX／input receipt／stdout／stderr 等原件用 `evidence-pack` 封裝；有 `--evidence` 或其他證據參數的子命令傳回傳的 `bundle_path`。`intent` 沒有一般 evidence 參數，其預檢與讀回證據留在私有任務區，不能冒充 CLI 欄位。同一 attempt 可多次 reconcile；每次完成後都要追加該次 sequence／event SHA-256 與結果引用，保留全部歷史，不以最後一筆覆寫。bundle 只證明指定 bytes 與 context 一致，不解析 statement 的語意真假；缺少必要值時寫 `UNKNOWN`，不可由檔名、猜測或另一個來源補值。
 
@@ -269,7 +273,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
 | 既有狀態／證據 | 下一步 |
 |---|---|
 | `COMPLETED` 且本地完整，或整篇目錄已 `LOCAL_MISSING` | 保留完成並跳過；`LOCAL_MISSING` 回報本機不可用，不重下、不證明外部副本 |
-| 完成目錄仍存在但缺檔、額外檔、hash／身分漂移或 symlink | `LOCAL_CHANGED`：保護原件。scope 外停止新派送；只有 `restart preview` 精確列出且 Owner 確認該 scope 時，才可在新 generation 重建，不重下補帳或覆寫舊目錄 |
+| 完成目錄仍存在但缺檔、非屬合格環境附屬項的額外檔、hash／身分漂移或 symlink | `LOCAL_CHANGED`：保護原件。scope 外停止新派送；只有 `restart preview` 精確列出且 Owner 確認該 scope 時，才可在新 generation 重建，不重下補帳或覆寫舊目錄 |
 | 已 `DOWNLOAD_FINISHED`、尚未 completion | 驗證現有暫存／目標並完成或 `resume`，不重下 |
 | 命名／發布交易中斷 | `resume` 同一交易；不得重送下載 |
 | 已有 `outcome=UNKNOWN` | 先 `reconcile`；沒有新資訊就停止相同查證。未收斂前不得一般 verify、建新 attempt、重下或派下一項；只有精確 restart preview 與 Owner 明示確認該 scope 後，才可用 `intent --restart-id` 建立新 generation attempt。舊 UNKNOWN 保留，不宣稱已停止 |

@@ -46,7 +46,7 @@
 
 每張照片至少要有：
 
-- 穩定檔集與預期數量相符；不含未釐清 partial、暫存、額外檔或 symlink。
+- 穩定檔集與預期數量相符；不含未釐清 partial、暫存、非屬合格環境附屬項的額外檔或 symlink。
 - 檔案存在、非空、大小／ SHA-256 與穩定前後樣本一致，且不與 completion manifest 衝突。
 - 使用 ImageIO decoder，例如由本專案既有 `src/line_backup_batch/image_decode.swift` 建置的執行檔；`--decoder` 由呼叫端提供，實作者必須核對其建置來源、路徑與版本。notes CLI 只核對呼叫端提供的 SHA-256，並確認執行前後是同一個 binary、沒有內容漂移，不能證明它來自該 Swift 原始碼。使用時記錄 binary 路徑、SHA-256、真正 exit code、`verdict=PASS`、`readOnly=true`、expected／actual 數量及逐檔 decoded／SHA-256。
 - 解碼器在只含本次單一目標檔的乾淨目錄執行，不讓同目錄其他檔案影響結果；逐檔調用與匯總由 notes verifier 負責。
@@ -99,7 +99,7 @@ ffmpeg 完整解碼仍不能保證偵測所有靜默損壞，也不代表與服�
 - 相同 basename、相同可見名稱、隱藏副檔名或缺少來源 metadata 只供顯示，不證明同一媒體、既有命名來源或可合併；每次 attempt 仍使用獨立空白目的地，metadata 不足記 `UNKNOWN`，不新增全域改名器。
 - completion 必須保存可核對的來源身分、目的地、檔集、manifest、驗證工具與證據摘要，寫入後讀回。舊 completion 不改寫，新狀態以追加事件表達。
 - 檔案驗證完成但 completion 寫入失敗時，回報「檔案已驗證、completion 尚未保存」；保留原檔，不重下、不手寫 completion。
-- 命名／發布中斷使用 `resume`。只有來源、暫名、目標、journal 與 hash 可唯一對應才接續；目標既有內容、額外檔、symlink、inode／device 漂移或 hash 不符時 fail closed，保留原件，不重送下載。
+- 命名／發布中斷使用 `resume`。只有來源、暫名、目標、journal 與 hash 可唯一對應才接續；目標既有內容、非屬合格環境附屬項的額外檔、symlink、inode／device 漂移或 hash 不符時 fail closed，保留原件，不重送下載。
 
 ## 六類狀態與貼文層 NO_MEDIA
 
@@ -123,7 +123,7 @@ ffmpeg 完整解碼仍不能保證偵測所有靜默損壞，也不代表與服�
 業務完成事實與目前照片區是否可用分開投影：
 
 - `LOCAL_MISSING`：整篇完成目錄不存在。保留 `COMPLETED` 與禁止重下，回報「本機不可用；外部副本未驗證」。不要求外接硬碟在線或歸檔登記，也不因此把 completion 降格。
-- `LOCAL_CHANGED`：目錄仍存在，但有部分缺檔、額外檔、檔名／大小／SHA-256／mtime／ctime 漂移、inode／device 改變、symlink、或 manifest／身分不符。保護原件，scope 外停止新派送並回報差異；只有 fresh `restart preview` 精確列出該篇且 Owner 明示確認該批後，才保留舊目錄並在新 `versions/gNNNNNNNN/` 目錄重建。仍不重下補帳、不原地覆寫、不重建空目錄、不手改紀錄。
+- `LOCAL_CHANGED`：目錄仍存在，但有部分缺檔、非屬合格環境附屬項的額外檔、檔名／大小／SHA-256／mtime／ctime 漂移、inode／device 改變、symlink、或 manifest／身分不符。保護原件，scope 外停止新派送並回報差異；只有 fresh `restart preview` 精確列出該篇且 Owner 明示確認該批後，才保留舊目錄並在新 `versions/gNNNNNNNN/` 目錄重建。仍不重下補帳、不原地覆寫、不重建空目錄、不手改紀錄。合格環境附屬項的存在、bytes 改變或消失不列入 witness、manifest 或媒體計數，也不改變 completion 或 `LOCAL_VERIFIED`。
 - 目錄讀取權限異常、只有部分目錄可見或不能區分是缺席還是損壞時，不自動歸類為 `LOCAL_MISSING`；先保留阻塞並查證。
 
 `LOCAL_MISSING`／`LOCAL_CHANGED` 都不是六類業務狀態，也不得自行解除 `UNKNOWN`、活動下載或未完成命名交易；只有精確 restart 批次可在已確認 scope 內以新版本重建 `LOCAL_CHANGED`。照片區可被 Owner 搬走或整個刪除；帳本、證據與 completion 必須留在照片區外。
@@ -136,7 +136,7 @@ ffmpeg 完整解碼仍不能保證偵測所有靜默損壞，也不代表與服�
 |---|---|
 | `COMPLETED` 且檔案完整 | 跳過並讀回 completion；不重下 |
 | `COMPLETED` 但整篇目錄缺席 | 保留完成，標 `LOCAL_MISSING`；不重下，不聲稱外部副本已驗證 |
-| 完成目錄存在但部分缺檔／漂移／symlink | 標 `LOCAL_CHANGED`，保護原件，scope 外停止新派送；只有 fresh restart preview 精確列出且 Owner 明示確認該批，才保留原檔並在新版本目錄重建 |
+| 完成目錄存在但部分缺檔／非屬合格環境附屬項的額外檔／漂移／symlink | 標 `LOCAL_CHANGED`，保護原件，scope 外停止新派送；只有 fresh restart preview 精確列出且 Owner 明示確認該批，才保留原檔並在新版本目錄重建 |
 | 已下載完成、尚未 verify | 驗證現有檔案並保存 completion；不重下 |
 | 命名／發布 journal 中斷 | `resume` 同一交易；不重送下載 |
 | `STOPPED`／`NOT_SENT` 且未完成、原授權涵蓋恢復、帳本已持久化 `recovery_authorized=true` 且有充分停止證據 | 保留原檔，依 [下載與 notes CLI](download-and-ledger.md) 以 `intent --recovery-evidence` 建立另一個新空白恢復目錄及新 attempt；授權未持久化或證據不足時停止，已完成項跳過 |
@@ -157,7 +157,7 @@ notes 功能至少需以合成 fixture 覆蓋以下驗證，實際執行結果�
 - 兩照片一影片端到端：初始化 → 盤點 → intent → outcome → verify → completion → 新 Session 查詢跳過。
 - 重送拒絕、記事本當次下載控制（若 UI 顯示 Save All，須證明是本記事本自己的控制）單次限制、UNKNOWN `reconcile`、命名中斷 `resume`。
 - 跨列表隔離、缺帳本、索引毀損與不開空帳。
-- 完成後整個貼文目錄刪除仍不解鎖；部分缺檔、hash／身分漂移、額外檔與 symlink 保護。
+- 完成後整個貼文目錄刪除仍不解鎖；部分缺檔、hash／身分漂移、非屬合格環境附屬項的額外檔與 symlink 保護。
 - 來源重排、新增媒體、刪除媒體、編輯貼文與 `NO_MEDIA`。
 - 有聲影片、無聲影片、截斷檔、解碼失敗、只有 attached picture／沒有有效影像、長影片 stall／等待。
 - 照片完整解碼、非空檔、穩定前後 hash、非預期 stderr 與工具版本／binary hash。
