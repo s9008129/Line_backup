@@ -1,7 +1,9 @@
 """Synthetic offline verification tests; no LINE, GUI, or private media."""
+import copy
 import hashlib
 import json
 from pathlib import Path
+import shutil
 import struct
 import subprocess
 import sys
@@ -271,6 +273,22 @@ class VideoVerifierTests(unittest.TestCase):
         else:
             cls.bad_frames.write_bytes(cls.av.read_bytes()[:1])
 
+    def stderr_decode_factory(self, stderr):
+        commands = []
+        script = (
+            'import sys\n'
+            "sys.stdout.write('frame=10\\nout_time_us=1000000\\nprogress=end\\n')\n"
+            "sys.stdout.flush()\n"
+            "sys.stderr.buffer.write({!r})\n"
+            "sys.stderr.buffer.flush()\n"
+        ).format(stderr)
+
+        def popen(command, **kwargs):
+            commands.append(command)
+            return subprocess.Popen([sys.executable, '-c', script], **kwargs)
+
+        return popen, commands
+
     def test_tools_are_the_fixed_pair_and_record_versions_and_hashes(self):
         tools = inspect_video_tools()
         self.assertEqual(tools['ffmpeg']['configured_path'], str(FFMPEG_PATH))
@@ -296,6 +314,9 @@ class VideoVerifierTests(unittest.TestCase):
                 result = verify_video(path, stable_interval=0, stable_samples=3)
                 self.assertEqual(result['verdict'], 'PASS')
                 self.assertEqual(
+                    result['decode_stderr_policy'],
+                    media_verify.VIDEO_DECODE_STDERR_POLICY)
+                self.assertEqual(
                     {row['stream']['codec_type'] for row in result['streams']},
                     expected_types)
                 self.assertEqual(len(result['streams']),
@@ -307,6 +328,41 @@ class VideoVerifierTests(unittest.TestCase):
                     self.assertEqual(row['decode']['exit_code'], 0)
                     self.assertTrue(row['decode']['stderr_empty'])
 
+    def test_complete_coverage_preserves_known_and_unknown_diagnostics(self):
+        diagnostics = (
+            b'Non-monotonic DTS in output stream 0:0; synthetic boundary.\n',
+            b'synthetic unclassified decoder diagnostic\n',
+        )
+        for diagnostic in diagnostics:
+            with self.subTest(diagnostic=diagnostic):
+                popen, commands = self.stderr_decode_factory(diagnostic)
+                result = verify_video(
+                    self.av, stable_interval=0, stable_samples=3,
+                    popen_factory=popen)
+                self.assertEqual(result['verdict'], 'PASS')
+                self.assertEqual(result['decode_stderr_policy'],
+                                 media_verify.VIDEO_DECODE_STDERR_POLICY)
+                self.assertEqual(len(commands), 2)
+                for command in commands:
+                    self.assertIn('-err_detect', command)
+                    self.assertIn('explode', command)
+                    self.assertIn('-xerror', command)
+                    self.assertIn('error', command)
+                for row in result['streams']:
+                    decode = row['decode']
+                    self.assertEqual(decode['exit_code'], 0)
+                    self.assertTrue(decode['stdout_eof'])
+                    self.assertFalse(decode['stderr_empty'])
+                    self.assertEqual(decode['stderr_bytes'], len(diagnostic))
+                    self.assertEqual(
+                        decode['stderr_sha256'],
+                        hashlib.sha256(diagnostic).hexdigest())
+                    self.assertEqual(
+                        decode['stderr_preview'],
+                        diagnostic[:4000].decode('utf-8', 'replace'))
+                    self.assertTrue(row['coverage']['duration_covered'])
+                    self.assertTrue(row['coverage']['frames_covered'])
+
     def test_audio_only_is_not_a_valid_video(self):
         with self.assertRaises(MediaVerificationError) as raised:
             verify_video(self.audio_only, stable_interval=0, stable_samples=2)
@@ -317,13 +373,44 @@ class VideoVerifierTests(unittest.TestCase):
             verify_video(self.truncated, stable_interval=0, stable_samples=2)
         self.assertIn(raised.exception.code,
                       {'PROBE_FAILED', 'PROBE_STDERR', 'INVALID_PROBE_JSON',
-                       'DECODE_NONZERO_EXIT', 'DECODE_STDERR',
+                       'DECODE_NONZERO_EXIT', 'DECODE_PROGRESS_NOT_EOF',
                        'DURATION_COVERAGE_SHORT', 'FRAME_COVERAGE_SHORT'})
 
     def test_corrupt_frames_never_pass(self):
         with self.assertRaises(MediaVerificationError) as raised:
             verify_video(self.bad_frames, stable_interval=0, stable_samples=2)
         self.assertFalse(getattr(raised.exception, 'evidence', {}).get('verdict') == 'PASS')
+
+    def test_video_content_drift_during_decode_is_rejected(self):
+        target = self.root / 'content-drift.mp4'
+        shutil.copyfile(self.silent, target)
+        script = (
+            'import sys\n'
+            "sys.stdout.write('frame=10\\nout_time_us=1000000\\nprogress=end\\n')\n"
+        )
+
+        def drifting_popen(command, **kwargs):
+            with target.open('ab') as stream:
+                stream.write(b'synthetic drift')
+            return subprocess.Popen([sys.executable, '-c', script], **kwargs)
+
+        with self.assertRaises(MediaVerificationError) as raised:
+            verify_video(target, stable_interval=0, stable_samples=2,
+                         popen_factory=drifting_popen)
+        self.assertEqual(raised.exception.code,
+                         'CONTENT_CHANGED_AFTER_DECODE')
+
+    def test_video_tool_drift_during_decode_is_rejected(self):
+        tools = inspect_video_tools()
+        changed = copy.deepcopy(tools)
+        changed['ffmpeg']['sha256'] = '0' * 64
+        with mock.patch.object(
+                media_verify, 'inspect_video_tools',
+                side_effect=[tools, changed]):
+            with self.assertRaises(MediaVerificationError) as raised:
+                verify_video(self.silent, stable_interval=0, stable_samples=2)
+        self.assertEqual(raised.exception.code,
+                         'VIDEO_TOOL_CHANGED_DURING_DECODE')
 
     def test_duplicate_probe_json_keys_are_rejected(self):
         real_run = subprocess.run

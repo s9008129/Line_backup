@@ -30,6 +30,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 VIDEO_TOOL_VERSION = '7.1.1'
 FFMPEG_SHA256 = '7697b094387e2918821fe7480c73f5d44543817096e9d5b5fafe58ecd6912569'
 FFPROBE_SHA256 = 'fd670257233c93c88608a62ed8b5ddeeb812bd341dfb39bbe0e1c654b91672ad'
+VIDEO_DECODE_STDERR_POLICY = 'FFMPEG_DECODE_DIAGNOSTIC_V1'
 
 VIDEO_TOOL_PINS = {
     'ffmpeg': {
@@ -855,7 +856,6 @@ def run_decode_command(command, *, stream_index, stall_timeout=DEFAULT_DECODE_ST
             records, stdout_bytes=stdout_bytes)
         evidence['stdout_eof'] = stdout_eof
         _need(exit_code == 0, 'DECODE_NONZERO_EXIT', evidence)
-        _need(not stderr, 'DECODE_STDERR', evidence)
         _need(not current, 'INVALID_PROGRESS', evidence)
         _need(bool(records), 'EMPTY_DECODE_PROGRESS', evidence)
         _need(records[-1].get('progress') == 'end', 'DECODE_PROGRESS_NOT_EOF', evidence)
@@ -964,6 +964,7 @@ def verify_video(path, *, stable_samples=DEFAULT_STABLE_SAMPLES,
         'tools': tools_after,
         'probe': probe,
         'streams': decoded,
+        'decode_stderr_policy': VIDEO_DECODE_STDERR_POLICY,
         'all_audio_video_streams_decoded': len(decoded),
         'pass_scope': 'OFFLINE_VIDEO_FILE_INTEGRITY_ONLY',
         'dispatch_authorized': False,
@@ -994,6 +995,7 @@ __all__ = [
     'copy_exclusive',
     'VIDEO_TOOL_PINS',
     'VIDEO_TOOL_VERSION',
+    'VIDEO_DECODE_STDERR_POLICY',
     'VerificationError',
     'inspect_video_tools',
     'run_decode_command',

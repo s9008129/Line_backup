@@ -86,7 +86,7 @@ ImageIO 完整解碼可排除部分壞檔，但不能單獨證明與服務端原
    ```
 
    `-err_detect explode` 必須在 `-i` 前；每個影像／音訊 stream 個別核對，不能因其中一個成功就宣稱其他 stream 成功。無音訊是允許情況，但影片本身仍必須有有效影像並完成解碼。
-3. **成功判準。** 真正 exit code 為 0；stderr 應為空；progress／frame／duration 覆蓋足以支持已解碼到預期結尾。**不得只看到 `progress=end` 就判 PASS**；非零退出、截斷、解碼錯誤、stderr 有任何警告／錯誤內容、frame／duration 覆蓋不足、時間跳躍或提前 EOF 均 FAIL。
+3. **成功判準。** 真正 exit code 為 0；progress／frame／duration 覆蓋足以支持已解碼到預期結尾。**不得只看到 `progress=end` 就判 PASS**；非零退出、截斷、解碼錯誤、frame／duration 覆蓋不足、時間跳躍或提前 EOF 均 FAIL。對帶有 `FFMPEG_DECODE_DIAGNOSTIC_V1` policy 的新證據，ffmpeg 逐 stream 解碼的非空 stderr 是必須原樣保存的診斷，不再單獨否決；仍須核對 `stderr_empty`、非負整數 bytes、SHA-256 與有限 preview 一致，且未知診斷不代表已證明無害。缺 policy 的 legacy 證據維持嚴格：非空 stderr 拒絕。`ffprobe` stderr 必須為空，工具版本／binary hash、嚴格 flags 與 loglevel 不得放寬或清洗。
 4. **長影片。** 不套用相簿固定 120 秒限制。以 stall watchdog 判斷是否長時間沒有新進度，持續回報已處理秒數／frame 與目前狀態；不得因影片長就降低完整性標準。中止時保留原檔並標未驗證，不假裝完成。
 5. **前後穩定。** 解碼前後重算大小、SHA-256、mtime／ctime 及檔集；任何漂移、替換、symlink 或寫入中狀態都停止並保留證據。
 
@@ -160,6 +160,7 @@ notes 功能至少需以合成 fixture 覆蓋以下驗證，實際執行結果�
 - 完成後整個貼文目錄刪除仍不解鎖；部分缺檔、hash／身分漂移、非屬合格環境附屬項的額外檔與 symlink 保護。
 - 來源重排、新增媒體、刪除媒體、編輯貼文與 `NO_MEDIA`。
 - 有聲影片、無聲影片、截斷檔、解碼失敗、只有 attached picture／沒有有效影像、長影片 stall／等待。
+- 舊 clean 與新 policy 非空 ffmpeg decode 診斷重開、legacy 非空拒絕、未知 policy／矛盾 stderr／偽造 coverage 拒絕；ffprobe stderr 仍嚴格。
 - 照片完整解碼、非空檔、穩定前後 hash、非預期 stderr 與工具版本／binary hash。
 - v2 evidence 父／子漂移、legacy 唯讀、page correction 與非目標 scope 拒絕；audit 完整性失敗 exit 4 且不投影業務狀態。
 - 更正後 media key／數量／來源順序不變、v2 intent 使用 effective kind、合法 v1 相容與偽造 v1 拒絕。

@@ -234,6 +234,110 @@ class NotesRestartTests(unittest.TestCase):
         del path, identity
         return dict(verdict='PASS', sha256=row['sha256'])
 
+    @staticmethod
+    def strict_public_source(path):
+        path = Path(path)
+        raw = path.read_bytes()
+        info = path.stat()
+        return {
+            'name': path.name,
+            'size': len(raw),
+            'sha256': hashlib.sha256(raw).hexdigest(),
+            'mtime_ns': info.st_mtime_ns,
+            'ctime_ns': info.st_ctime_ns,
+        }
+
+    def strict_video_pass(self, path, diagnostic=None):
+        source = self.strict_public_source(path)
+        manifest = [source]
+        stream = {
+            'index': 0,
+            'codec_type': 'video',
+            'codec_name': 'h264',
+            'duration_seconds': 1.0,
+            'expected_frames': 1,
+            'attached_pic': False,
+        }
+        result = {
+            'verdict': 'PASS',
+            'kind': VIDEO,
+            'source': source,
+            'manifest': manifest,
+            'manifest_sha256': digest(encoded(manifest)),
+            'stable_samples': [source, source, source],
+            'stable_sample_count': 3,
+            'pass_scope': 'SYNTHETIC_STRICT_VIDEO_VERIFIER',
+            'dispatch_authorized': False,
+            'sensor_verified': False,
+            'real_line_e2e': 'NOT_TESTED',
+            'tools': {
+                'ffmpeg': {
+                    'configured_path': str(notes.FFMPEG),
+                    'version': media_verify.VIDEO_TOOL_VERSION,
+                    'version_first_line': 'ffmpeg version synthetic',
+                    'sha256': media_verify.FFMPEG_SHA256,
+                    'expected_sha256': media_verify.FFMPEG_SHA256,
+                    'executable': True,
+                },
+                'ffprobe': {
+                    'configured_path': str(notes.FFPROBE),
+                    'version': media_verify.VIDEO_TOOL_VERSION,
+                    'version_first_line': 'ffprobe version synthetic',
+                    'sha256': media_verify.FFPROBE_SHA256,
+                    'expected_sha256': media_verify.FFPROBE_SHA256,
+                    'executable': True,
+                },
+            },
+            'probe': {
+                'streams': [stream],
+                'result': {},
+                'exit_code': 0,
+                'stderr_empty': True,
+                'command': ['/synthetic/ffprobe', str(path)],
+            },
+            'streams': [{
+                'stream': stream,
+                'decode': {
+                    'stream_index': 0,
+                    'command': ['/synthetic/ffmpeg', '-map', '0:0',
+                                '-f', 'null', '-'],
+                    'exit_code': 0,
+                    'stdout_eof': True,
+                    'stdout_bytes': 1,
+                    'stdout_sha256': '0' * 64,
+                    'stderr_empty': True,
+                    'stderr_bytes': 0,
+                    'stderr_sha256': hashlib.sha256(b'').hexdigest(),
+                    'stderr_preview': '',
+                    'progress': {
+                        'final_progress': 'end',
+                        'final_out_time_us': 1000000,
+                        'final_frame': 1,
+                        'last': {'progress': 'end'},
+                    },
+                },
+                'coverage': {
+                    'duration_covered': True,
+                    'frames_covered': True,
+                    'duration_seconds': 1.0,
+                    'expected_frames': 1,
+                    'observed_out_time_us': 1000000,
+                    'observed_frames': 1,
+                },
+            }],
+            'all_audio_video_streams_decoded': 1,
+        }
+        if diagnostic is not None:
+            result['decode_stderr_policy'] = \
+                media_verify.VIDEO_DECODE_STDERR_POLICY
+            result['streams'][0]['decode'].update(
+                stderr_empty=False,
+                stderr_bytes=len(diagnostic),
+                stderr_sha256=hashlib.sha256(diagnostic).hexdigest(),
+                stderr_preview=diagnostic[:4000].decode('utf-8', 'replace'),
+            )
+        return result
+
     def download(self, records, key, name, payload, *, session=None,
                  outcome='DOWNLOAD_FINISHED', verifier=None):
         session = session or self.session
@@ -314,6 +418,43 @@ class NotesRestartTests(unittest.TestCase):
         return dict(key=key, photo=photo, post_identity=post_identity,
                     initial_scan=initial_scan, old=old, old_raw=old_raw,
                     preview=preview)
+
+    def two_video_restart_context(self, label):
+        first = notes.media_identity(
+            kind=VIDEO, visual_key=label + '-legacy')
+        second = notes.media_identity(
+            kind=VIDEO, visual_key=label + '-diagnostic')
+        post_identity = notes.post_identity(visual_key=label + '-post')
+        observed = self.scan_posts(
+            self.records,
+            [dict(name='post', identity=post_identity, date='2026-11-03',
+                  media=[first, second])])
+        post_key_value, _ = observed['post']
+        identities = [first, second]
+        keys = [self.media_key(post_key_value, identity)
+                for identity in identities]
+        completed_attempt, completed = self.download(
+            self.records, keys[0], 'old-complete.mp4', video_bytes(0))
+        unknown = self.records.intent(
+            session_id=self.session, media_key_value=keys[1])
+        (Path(unknown['destination']) / 'old-unknown.mp4').write_bytes(
+            video_bytes(1))
+        self.records.outcome(
+            session_id=self.session, attempt_id=unknown['attempt_id'],
+            outcome='UNKNOWN',
+            evidence=self.attempt_evidence(self.records, unknown))
+        preview = self.records.restart_preview()
+        self.assertEqual(preview['status'], 'RESTART_REQUIRED')
+        self.confirm_restart(self.records, preview)
+        self.scan_after_confirm(
+            self.records,
+            [dict(name='post', identity=post_identity, date='2026-11-03',
+                  media=identities)])
+        return dict(keys=keys, identities=identities,
+                    post_identity=post_identity,
+                    completed_attempt=completed_attempt,
+                    completed_completion=completed,
+                    unknown_attempt=unknown, preview=preview)
 
     def second_generation_restart_context(self, label):
         context = self.one_media_restart_context(label)
@@ -2660,6 +2801,73 @@ class NotesRestartTests(unittest.TestCase):
         summary = reopened.summary()
         self.assertEqual(summary['status_counts']['COMPLETED'], 1)
         self.assertFalse(summary['restart_batch_open'])
+
+    def test_mixed_legacy_and_new_policy_video_candidates_reopen_and_activate(self):
+        context = self.two_video_restart_context('restart-stderr-mixed')
+        before_candidates = self.event_files()
+        legacy_attempt = self.restart_download(
+            self.records, context['keys'][0], 'legacy.mp4', video_bytes(31),
+            context['preview']['restart_id'])
+        diagnostic = b'Non-monotonic DTS in output stream 0:0; synthetic.\n'
+        diagnostic_attempt = self.restart_download(
+            self.records, context['keys'][1], 'diagnostic.mp4',
+            video_bytes(32), context['preview']['restart_id'])
+        responses = iter([None, diagnostic])
+
+        def payload(path, kind, **_kwargs):
+            self.assertEqual(kind, VIDEO)
+            return self.strict_video_pass(path, next(responses))
+
+        with mock.patch.object(media_verify, 'verify_media', side_effect=payload):
+            legacy_candidate = self.records.verify(
+                session_id=self.session,
+                attempt_id=legacy_attempt['attempt_id'],
+                stability_interval=0)
+            diagnostic_candidate = self.records.verify(
+                session_id=self.session,
+                attempt_id=diagnostic_attempt['attempt_id'],
+                stability_interval=0)
+
+        self.assertEqual(legacy_candidate['status'], 'CANDIDATE_VERIFIED')
+        self.assertEqual(diagnostic_candidate['status'], 'CANDIDATE_VERIFIED')
+        legacy_verification = legacy_candidate['verification']
+        self.assertNotIn('decode_stderr_policy', legacy_verification)
+        self.assertTrue(
+            legacy_verification['decoded_streams'][0]['decode'][
+                'stderr_empty'])
+        diagnostic_verification = diagnostic_candidate['verification']
+        self.assertEqual(
+            diagnostic_verification['decode_stderr_policy'],
+            media_verify.VIDEO_DECODE_STDERR_POLICY)
+        diagnostic_decode = diagnostic_verification['decoded_streams'][0][
+            'decode']
+        self.assertFalse(diagnostic_decode['stderr_empty'])
+        self.assertEqual(diagnostic_decode['stderr_bytes'], len(diagnostic))
+        self.assertEqual(diagnostic_decode['stderr_sha256'],
+                         hashlib.sha256(diagnostic).hexdigest())
+
+        reopened = self.reopen(self.records)
+        before_resume = reopened.summary()
+        self.assertTrue(before_resume['restart_batch_open'])
+        self.assertFalse(before_resume['all_known_media_complete'])
+        resumed = reopened.restart_resume(
+            session_id=self.session, stability_interval=0)
+        self.assertEqual(resumed['action'], 'RESTART_ACTIVATED')
+
+        reopened_final = self.reopen(reopened)
+        final = reopened_final.summary()
+        self.assertEqual(final['status_counts']['COMPLETED'], 2)
+        self.assertTrue(final['all_known_media_complete'])
+        self.assertFalse(final['restart_batch_open'])
+        self.assertEqual(final['dispatch_blockers'], [])
+        replay_attempts = reopened_final._attempt_projection()
+        self.assertEqual(
+            reopened_final._attempt_result(
+                context['unknown_attempt']['attempt_id'], replay_attempts),
+            'UNKNOWN')
+        after_candidates = self.event_files(reopened_final)
+        for name, raw in before_candidates.items():
+            self.assertEqual(after_candidates[name], raw)
 
 
 

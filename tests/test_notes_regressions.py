@@ -637,10 +637,290 @@ class NotesRegressionTests(unittest.TestCase):
             event for event in reopened.events
             if event['kind'] == 'verification' and
             event['data']['attempt_id'] == attempt['attempt_id'])
-        rows = verification_event['data']['verification']['decoded_streams']
+        verification = verification_event['data']['verification']
+        self.assertNotIn('decode_stderr_policy', verification)
+        rows = verification['decoded_streams']
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]['index'], 0)
         self.assertNotIn('stream', rows[0])
+
+    def test_new_video_stderr_policy_round_trips_nonempty_diagnostic(self):
+        ledger = self.new_ledger('strict-video-diagnostic')
+        _identity, _key, attempt, _target = self.prepare_download(
+            ledger, VIDEO, 'strict-video-diagnostic-media')
+        diagnostic = b'Non-monotonic DTS in output stream 0:0; synthetic.\n'
+
+        def payload(path, kind):
+            result = self.strict_pass(path, kind)
+            result['decode_stderr_policy'] = \
+                media_verify.VIDEO_DECODE_STDERR_POLICY
+            decode = result['streams'][0]['decode']
+            decode.update(
+                stderr_empty=False,
+                stderr_bytes=len(diagnostic),
+                stderr_sha256=hashlib.sha256(diagnostic).hexdigest(),
+                stderr_preview=diagnostic.decode('utf-8'),
+            )
+            return result
+
+        with self.strict_dispatch(payload):
+            completion = ledger.records.verify(
+                session_id=ledger.session,
+                attempt_id=attempt['attempt_id'],
+                stability_interval=0,
+                stall_seconds=0.01,
+            )
+        self.assertEqual(completion['kind'], 'completion')
+
+        verification_event = next(
+            event for event in ledger.records.events
+            if event['kind'] == 'verification' and
+            event['data']['attempt_id'] == attempt['attempt_id'])
+        verification = verification_event['data']['verification']
+        self.assertEqual(
+            verification['decode_stderr_policy'],
+            media_verify.VIDEO_DECODE_STDERR_POLICY)
+        decode = verification['decoded_streams'][0]['decode']
+        self.assertFalse(decode['stderr_empty'])
+        self.assertEqual(decode['stderr_bytes'], len(diagnostic))
+        self.assertEqual(decode['stderr_sha256'],
+                         hashlib.sha256(diagnostic).hexdigest())
+        self.assertEqual(decode['stderr_preview'],
+                         diagnostic.decode('utf-8'))
+
+        reopened = self.reopen(ledger)
+        summary = reopened.summary()
+        self.assertEqual(summary['status_counts']['COMPLETED'], 1)
+        replay_event = next(
+            event for event in reopened.events
+            if event['kind'] == 'verification' and
+            event['data']['attempt_id'] == attempt['attempt_id'])
+        self.assertEqual(
+            replay_event['data']['verification']['decode_stderr_policy'],
+            media_verify.VIDEO_DECODE_STDERR_POLICY)
+
+    def test_legacy_nonempty_video_evidence_is_rejected_on_reload(self):
+        ledger = self.new_ledger('strict-video-legacy-nonempty')
+        _identity, _key, attempt, _target = self.prepare_download(
+            ledger, VIDEO, 'strict-video-legacy-nonempty-media')
+        diagnostic = b'legacy nonempty decode diagnostic\n'
+
+        def payload(path, kind):
+            result = self.strict_pass(path, kind)
+            result['decode_stderr_policy'] = \
+                media_verify.VIDEO_DECODE_STDERR_POLICY
+            decode = result['streams'][0]['decode']
+            decode.update(
+                stderr_empty=False,
+                stderr_bytes=len(diagnostic),
+                stderr_sha256=hashlib.sha256(diagnostic).hexdigest(),
+                stderr_preview=diagnostic.decode('utf-8'),
+            )
+            return result
+
+        with self.strict_dispatch(payload):
+            ledger.records.verify(
+                session_id=ledger.session,
+                attempt_id=attempt['attempt_id'],
+                stability_interval=0,
+                stall_seconds=0.01,
+            )
+        events = self.read_events(ledger.records)
+        verification = next(
+            event for event in events
+            if event['kind'] == 'verification' and
+            event['data']['attempt_id'] == attempt['attempt_id'])
+        verification['data']['verification'].pop('decode_stderr_policy')
+        self.rewrite_events(ledger.records, events)
+        with self.assertRaisesRegex(
+                NotesError, 'INVALID_VIDEO_DECODE_EVIDENCE'):
+            self.reopen(ledger).summary()
+
+    def test_video_stderr_policy_rejects_malformed_evidence_without_events(self):
+        diagnostic = b'synthetic decode diagnostic\n'
+        empty_hash = hashlib.sha256(b'').hexdigest()
+        nonempty_hash = hashlib.sha256(diagnostic).hexdigest()
+
+        def set_stderr(result, raw=diagnostic):
+            decode = result['streams'][0]['decode']
+            decode.update(
+                stderr_empty=not raw,
+                stderr_bytes=len(raw),
+                stderr_sha256=hashlib.sha256(raw).hexdigest(),
+                stderr_preview=raw[:4000].decode('utf-8', 'replace'),
+            )
+            return result
+
+        def new_policy(result, raw=diagnostic):
+            result['decode_stderr_policy'] = \
+                media_verify.VIDEO_DECODE_STDERR_POLICY
+            return set_stderr(result, raw)
+
+        def mutate_bytes_bool(result):
+            decode = set_stderr(result)['streams'][0]['decode']
+            result['decode_stderr_policy'] = \
+                media_verify.VIDEO_DECODE_STDERR_POLICY
+            decode['stderr_bytes'] = True
+            return result
+
+        def mutate_bytes_float(result):
+            decode = set_stderr(result)['streams'][0]['decode']
+            result['decode_stderr_policy'] = \
+                media_verify.VIDEO_DECODE_STDERR_POLICY
+            decode['stderr_bytes'] = float(len(diagnostic))
+            return result
+
+        def mutate_short_duration(result):
+            result = new_policy(result)
+            row = result['streams'][0]
+            row['decode']['progress']['final_out_time_us'] = 0
+            row['coverage']['observed_out_time_us'] = 0
+            row['coverage']['duration_covered'] = False
+            return result
+
+        def mutate_short_frames(result):
+            result = new_policy(result)
+            row = result['streams'][0]
+            row['decode']['progress']['final_frame'] = 0
+            row['coverage']['observed_frames'] = 0
+            row['coverage']['frames_covered'] = False
+            return result
+
+        def mutate_forged_duration(result):
+            result = new_policy(result)
+            row = result['streams'][0]
+            row['decode']['progress']['final_out_time_us'] = 0
+            row['coverage']['observed_out_time_us'] = 0
+            return result
+
+        def mutate_missing_stream(result):
+            result = new_policy(result)
+            result['streams'] = []
+            return result
+
+        def mutate_duplicate_stream(result):
+            result = new_policy(result)
+            result['streams'].append(copy.deepcopy(result['streams'][0]))
+            return result
+
+        def mutate_probe_stderr(result):
+            result = new_policy(result)
+            result['probe']['stderr_empty'] = False
+            return result
+
+        def mutate_empty_flag(result):
+            result = new_policy(result)
+            result['streams'][0]['decode']['stderr_empty'] = True
+            return result
+
+        def mutate_empty_hash(result):
+            result = new_policy(result)
+            result['streams'][0]['decode']['stderr_sha256'] = empty_hash
+            return result
+
+        def mutate_nonempty_hash(result):
+            result = new_policy(result, b'')
+            result['streams'][0]['decode']['stderr_sha256'] = nonempty_hash
+            return result
+
+        def mutate_empty_preview(result):
+            result = new_policy(result)
+            result['streams'][0]['decode']['stderr_preview'] = ''
+            return result
+
+        def mutate_nonempty_preview(result):
+            result = new_policy(result, b'')
+            result['streams'][0]['decode']['stderr_preview'] = 'diagnostic'
+            return result
+
+        def mutate_missing_preview(result):
+            result = new_policy(result)
+            result['streams'][0]['decode'].pop('stderr_preview')
+            return result
+
+        def mutate_long_preview(result):
+            result = new_policy(result)
+            result['streams'][0]['decode']['stderr_preview'] = 'x' * 4001
+            return result
+
+        def mutate_missing_eof(result):
+            result = new_policy(result)
+            result['streams'][0]['decode']['stdout_eof'] = False
+            return result
+
+        cases = {
+            'legacy_nonempty': (lambda result: set_stderr(result),
+                                'INVALID_VIDEO_DECODE_EVIDENCE'),
+            'unknown_policy': (
+                lambda result: dict(result, decode_stderr_policy='UNKNOWN'),
+                'INVALID_VIDEO_DECODE_EVIDENCE'),
+            'policy_wrong_type': (
+                lambda result: dict(result, decode_stderr_policy=True),
+                'INVALID_VIDEO_DECODE_EVIDENCE'),
+            'stderr_bytes_bool': (
+                mutate_bytes_bool, 'INVALID_VIDEO_DECODE_EVIDENCE'),
+            'stderr_bytes_float': (
+                mutate_bytes_float, 'INVALID_VIDEO_DECODE_EVIDENCE'),
+            'empty_flag_for_nonempty': (
+                mutate_empty_flag,
+                'INVALID_VIDEO_DECODE_EVIDENCE'),
+            'empty_hash_for_nonempty': (
+                mutate_empty_hash,
+                'INVALID_VIDEO_DECODE_EVIDENCE'),
+            'nonempty_hash_for_empty': (
+                mutate_nonempty_hash,
+                'INVALID_VIDEO_DECODE_EVIDENCE'),
+            'preview_empty_for_nonempty': (
+                mutate_empty_preview,
+                'INVALID_VIDEO_DECODE_EVIDENCE'),
+            'preview_nonempty_for_empty': (
+                mutate_nonempty_preview,
+                'INVALID_VIDEO_DECODE_EVIDENCE'),
+            'preview_missing_for_nonempty': (
+                mutate_missing_preview,
+                'INVALID_VIDEO_DECODE_EVIDENCE'),
+            'preview_too_long': (
+                mutate_long_preview,
+                'INVALID_VIDEO_DECODE_EVIDENCE'),
+            'missing_stdout_eof': (
+                mutate_missing_eof,
+                'INVALID_VIDEO_DECODE_EVIDENCE'),
+            'short_duration': (
+                mutate_short_duration, 'INVALID_VIDEO_DECODE_EVIDENCE'),
+            'short_frames': (
+                mutate_short_frames, 'INVALID_VIDEO_DECODE_EVIDENCE'),
+            'forged_duration_coverage': (
+                mutate_forged_duration, 'INVALID_VIDEO_DECODE_EVIDENCE'),
+            'missing_stream': (
+                mutate_missing_stream, 'INVALID_VIDEO_DECODE_EVIDENCE'),
+            'duplicate_stream': (
+                mutate_duplicate_stream, 'INVALID_VIDEO_DECODE_EVIDENCE'),
+            'probe_stderr': (
+                mutate_probe_stderr, 'INVALID_VIDEO_PROBE_EVIDENCE'),
+        }
+        for label, (mutate, expected_code) in cases.items():
+            with self.subTest(label=label):
+                ledger = self.new_ledger('policy-' + label)
+                _identity, _key, attempt, _target = self.prepare_download(
+                    ledger, VIDEO, 'policy-media-' + label)
+                before = self.event_bytes(ledger.records)
+
+                def payload(path, kind, mutate=mutate):
+                    return mutate(self.strict_pass(path, kind))
+
+                with self.strict_dispatch(payload):
+                    with self.assertRaises(NotesError) as raised:
+                        ledger.records.verify(
+                            session_id=ledger.session,
+                            attempt_id=attempt['attempt_id'],
+                            stability_interval=0,
+                            stall_seconds=0.01,
+                        )
+                self.assertEqual(raised.exception.args[0], expected_code)
+                self.assertEqual(self.event_bytes(ledger.records), before)
+                self.assertFalse(any(
+                    event['kind'] in ('verification', 'completion')
+                    for event in ledger.records.events))
 
     def test_photo_verification_loader_requires_exact_entry_counts(self):
         for mutation in ('actual_bool', 'actual_float',

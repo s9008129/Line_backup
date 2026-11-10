@@ -6387,7 +6387,39 @@ def _is_positive_json_number(value):
     return type(value) is float and math.isfinite(value) and value > 0
 
 
-def _validate_video_decode_stream(row, probe_stream):
+def _video_decode_stderr_policy(verification):
+    if 'decode_stderr_policy' not in verification:
+        return None
+    need(verification['decode_stderr_policy'] ==
+         media_verify.VIDEO_DECODE_STDERR_POLICY,
+         'INVALID_VIDEO_DECODE_EVIDENCE')
+    return verification['decode_stderr_policy']
+
+
+def _validate_video_stderr_evidence(decode, *, allow_nonempty):
+    code = 'INVALID_VIDEO_DECODE_EVIDENCE'
+    empty = decode.get('stderr_empty')
+    count = decode.get('stderr_bytes')
+    digest_value = decode.get('stderr_sha256')
+    empty_digest = hashlib.sha256(b'').hexdigest()
+    need(type(empty) is bool, code)
+    need(_is_nonnegative_int(count), code)
+    need(empty == (count == 0), code)
+    need(_is_hex(digest_value), code)
+    if count == 0:
+        need(digest_value == empty_digest, code)
+    else:
+        need(digest_value != empty_digest, code)
+        need(allow_nonempty, code)
+    if 'stderr_preview' in decode:
+        preview = decode['stderr_preview']
+        need(isinstance(preview, str) and len(preview) <= 4000, code)
+        need((count == 0) == (preview == ''), code)
+    else:
+        need(not allow_nonempty, code)
+
+
+def _validate_video_decode_stream(row, probe_stream, *, allow_nonempty_stderr):
     code = 'INVALID_VIDEO_DECODE_EVIDENCE'
     required = ('index', 'codec_type', 'codec_name', 'duration',
                 'nb_frames', 'decode', 'coverage')
@@ -6416,12 +6448,8 @@ def _validate_video_decode_stream(row, probe_stream):
     need(type(decode.get('stdout_bytes')) is int and
          decode['stdout_bytes'] > 0, code)
     need(_is_hex(decode.get('stdout_sha256')), code)
-    need(decode.get('stderr_empty') is True and
-         type(decode.get('stderr_bytes')) is int and
-         decode['stderr_bytes'] == 0, code)
-    need(_is_hex(decode.get('stderr_sha256')), code)
-    if 'stderr_preview' in decode:
-        need(isinstance(decode['stderr_preview'], str), code)
+    _validate_video_stderr_evidence(
+        decode, allow_nonempty=allow_nonempty_stderr)
     progress = decode.get('progress')
     need(isinstance(progress, dict), code)
     need(progress.get('final_progress') == 'end', code)
@@ -6542,6 +6570,9 @@ def _validate_verification_payload(kind, source, verification, *,
          verification['valid_video_streams'] > 0 and
          verification.get('source_sha256') == public_source['sha256'],
          'INVALID_VIDEO_VERIFICATION')
+    decode_stderr_policy = _video_decode_stderr_policy(verification)
+    allow_nonempty_stderr = (
+        decode_stderr_policy == media_verify.VIDEO_DECODE_STDERR_POLICY)
     tools = verification.get('tools')
     expected_tools = {
         'ffmpeg': (str(FFMPEG), media_verify.FFMPEG_SHA256),
@@ -6605,7 +6636,8 @@ def _validate_verification_payload(kind, source, verification, *,
              'INVALID_VIDEO_DECODE_EVIDENCE')
         decoded_indexes.add(row['index'])
         _validate_video_decode_stream(
-            row, probe_streams.get(row['index']))
+            row, probe_streams.get(row['index']),
+            allow_nonempty_stderr=allow_nonempty_stderr)
     need(decoded_indexes == set(probe_streams) and
          verification.get('all_audio_video_streams_decoded') ==
          len(probe_streams) and
@@ -6757,6 +6789,7 @@ def _verify_video_strict(path, row, records, progress_callback,
     tools = result.get('tools')
     probe = result.get('probe')
     streams = result.get('streams')
+    _video_decode_stderr_policy(result)
     need(isinstance(tools, dict) and isinstance(probe, dict) and
          isinstance(streams, list), 'VIDEO_VERIFICATION_EVIDENCE_REQUIRED')
     for name in ('ffmpeg', 'ffprobe'):
@@ -6787,13 +6820,16 @@ def _verify_video_strict(path, row, records, progress_callback,
             nb_frames=stream.get('expected_frames'),
             decode=item['decode'],
             coverage=item.get('coverage')))
-    return dict(result,
-                verifier='FFMPEG_NULL_DECODE',
-                tools=tools,
-                valid_video_streams=valid_video_streams,
-                decoded_streams=decoded_streams,
-                completed=True,
-                source_sha256=row['sha256'])
+    verification = dict(result,
+                        verifier='FFMPEG_NULL_DECODE',
+                        tools=tools,
+                        valid_video_streams=valid_video_streams,
+                        decoded_streams=decoded_streams,
+                        completed=True,
+                        source_sha256=row['sha256'])
+    _validate_verification_payload(VIDEO, row, verification,
+                                   allow_injected=False)
+    return verification
 
 
 def _verify_media(*, kind, path, row, identity, records, decoder,
