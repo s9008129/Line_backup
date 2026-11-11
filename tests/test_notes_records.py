@@ -81,8 +81,9 @@ class NotesRecordsTests(unittest.TestCase):
             context=context, output_dir=str(output))['bundle_path']
 
     def new_ledger(self, visual_key, *, recovery_authorized=False,
-                   display_name='Synthetic Notes'):
-        identity = notes.list_identity(visual_key=visual_key)
+                   display_name='Synthetic Notes', context_id=None):
+        identity = notes.list_identity(visual_key=visual_key,
+                                       context_id=context_id)
         list_key_value = notes.list_key(identity)
         evidence = self.make_evidence(list_key=list_key_value)
         summary = self.collection.create(
@@ -249,6 +250,51 @@ class NotesRecordsTests(unittest.TestCase):
             reopened.intent(
                 session_id='synthetic-session-2', media_key_value=keys[0])
         self.assertEqual(summary['status_counts']['COMPLETED'], 3)
+
+    def test_bind_omitted_context_inherits_saved_context(self):
+        records, _summary = self.new_ledger(
+            'context-bind', context_id='saved-context')
+        before = self.event_bytes(records)
+        with self.assertRaisesRegex(NotesError, 'WRONG_NOTES_CONTEXT'):
+            records.bind(
+                session_id='wrong-context-session',
+                observation=self.make_evidence(
+                    list_key=records.list_data['list_key']),
+                handoff=self.make_evidence(
+                    list_key=records.list_data['list_key']),
+                context_id='different-context')
+        self.assertEqual(self.event_bytes(records), before)
+
+        binding = self.bind(records, 'omitted-context-session')
+        self.assertEqual(binding['context_id'], 'saved-context')
+        explicit = records.bind(
+            session_id='explicit-context-session',
+            observation=self.make_evidence(
+                list_key=records.list_data['list_key']),
+            handoff=self.make_evidence(
+                list_key=records.list_data['list_key']),
+            context_id='saved-context')
+        self.assertEqual(explicit['context_id'], 'saved-context')
+        events = [json.loads(path.read_text())
+                  for path in sorted((records.records / 'events').iterdir())]
+        self.assertEqual(events[-1]['data']['context_id'], 'saved-context')
+
+        cli_records, _ = self.new_ledger(
+            'context-bind-cli', context_id='saved-cli-context')
+        args = ('bind', '--records-root', cli_records.records,
+                '--session-id', 'cli-fresh-session',
+                '--observation', self.make_evidence(
+                    list_key=cli_records.list_data['list_key']),
+                '--handoff', self.make_evidence(
+                    list_key=cli_records.list_data['list_key']))
+        before = self.event_bytes(cli_records)
+        rejected = self.run_cli(*args, '--context-id', 'wrong-cli-context')
+        self.assertEqual(rejected.returncode, 4)
+        self.assertEqual(self.event_bytes(cli_records), before)
+        accepted = self.run_cli(*args, '--context-id', 'saved-cli-context')
+        self.assertEqual(accepted.returncode, 0, accepted.stderr)
+        result = json.loads(accepted.stdout)
+        self.assertEqual(result['context_id'], 'saved-cli-context')
 
     def test_replay_second_outcome_and_second_save_all_are_refused(self):
         identity = notes.media_identity(kind=PHOTO, visual_key='single-photo')

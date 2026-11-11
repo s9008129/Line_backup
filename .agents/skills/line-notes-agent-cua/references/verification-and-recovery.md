@@ -1,6 +1,6 @@
 # 驗證、狀態與恢復
 
-本文件定義記事本照片／影片下載後的驗證標準、六類業務狀態、本機可用性及恢復決策。驗證只證明指定檔案的指定性質；不證明檔案與 LINE 服務端原始位元完全相同，也不代替 GUI 授權、真人觀察或獨立驗收。
+本文件定義記事本照片／影片下載後的驗證標準、六類業務狀態、本機可用性及恢復決策。完整卡片覆蓋是全列表派送前置；普通 intent 的細盤資格只看目標貼文及媒體。驗證只證明指定檔案的指定性質；不證明檔案與 LINE 服務端原始位元完全相同，也不代替 GUI 授權、真人觀察或獨立驗收。
 
 ## 四個證據層次
 
@@ -166,7 +166,7 @@ notes 功能至少需以合成 fixture 覆蓋以下驗證，實際執行結果�
 - v2 evidence 父／子漂移、legacy 唯讀、page correction 與非目標 scope 拒絕；audit 完整性失敗 exit 4 且不投影業務狀態。
 - 更正後 media key／數量／來源順序不變、v2 intent 使用 effective kind、合法 v1 相容與偽造 v1 拒絕。
 - 單項 `SOURCE_EXPIRED` 維持欠件、禁止 recovery／intent，且未授權時不改完成／排除計數。
-- 新 scan 的共享 coverage gate、未決 attempt／pending naming blocker，以及 resume scan binding mismatch 零檔案 mutation。
+- 新 scan 的完整卡片覆蓋 gate、未決 attempt／pending naming blocker，以及 resume scan binding mismatch 零檔案 mutation；普通 intent 僅要求目標貼文媒體細盤完整。
 
 合成 fixture 的 PASS 只證明該次實作在該測試矩陣下的簿記、檔案與解碼行為；不證明真實 LINE 記事本畫面、下載按鈕、popup、chooser、混合附件、跨 Session 或使用者驗收。真實 GUI 場景必須另有一次正式任務及有效前景交接，才能標 `OBSERVED` 或進一步的 E2E；沒有當次執行就維持 `NOT_RUN`。
 

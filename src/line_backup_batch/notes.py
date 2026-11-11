@@ -2479,14 +2479,12 @@ class NotesRecords:
                     if event['kind'] == 'binding']
         return bindings[-1] if bindings else None
 
-    def _require_session(self, session_id, context_id=None):
+    def _require_session(self, session_id):
         need(isinstance(session_id, str) and bool(session_id),
              'SESSION_REQUIRED')
         binding = self._latest_binding()
         need(binding is not None and binding['session_id'] == session_id,
              'FRESH_FOREGROUND_BINDING_REQUIRED')
-        if context_id is not None:
-            need(binding['context_id'] == context_id, 'WRONG_NOTES_CONTEXT')
         expected = self.list_data.get('context_id')
         if expected is not None:
             need(binding['context_id'] == expected, 'WRONG_NOTES_CONTEXT')
@@ -2496,7 +2494,9 @@ class NotesRecords:
              'SESSION_REQUIRED')
         with self.locked():
             expected = self.list_data.get('context_id')
-            if expected is not None:
+            if context_id is None:
+                context_id = expected
+            elif expected is not None:
                 need(context_id == expected, 'WRONG_NOTES_CONTEXT')
             need(not any(event['kind'] == 'binding' and
                          event['data']['session_id'] == session_id
@@ -3304,9 +3304,6 @@ class NotesRecords:
                 need(scans[latest]['complete'] is not None or
                      scans[latest]['interrupted'] is not None,
                      'SCAN_ALREADY_OPEN')
-                if scans[latest]['complete'] is not None and not recovery:
-                    coverage_errors = self._coverage_errors()
-                    need(not coverage_errors, 'SCAN_COVERAGE_INCOMPLETE')
             scan_id = uuid.uuid4().hex
             context = _evidence_context(
                 list_key=self.list_data['list_key'])
@@ -4836,7 +4833,6 @@ class NotesRecords:
                  'STALE_POST_DETAIL')
             need(target.get('scan_id') == latest_scan_id,
                  'STALE_MEDIA_INVENTORY')
-            self._assert_dispatch_coverage()
             attempts = self._attempt_projection()
             prior = attempts['latest_by_media'].get(media_key_value)
             if prior is not None:
@@ -6973,7 +6969,8 @@ def _build_notes_parser():
                       help='Private fresh list observation evidence')
     bind.add_argument('--handoff', required=True,
                       help='Private foreground handoff evidence')
-    bind.add_argument('--context-id')
+    bind.add_argument('--context-id',
+                      help='List context (defaults to the saved ledger context)')
 
     scan = sub.add_parser(
         'scan', help='Start, finish, or interrupt a complete list scan')

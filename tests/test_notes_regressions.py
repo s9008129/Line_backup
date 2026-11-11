@@ -1217,7 +1217,7 @@ class NotesRegressionTests(unittest.TestCase):
         self.assertIn('POST_COVERAGE_INCOMPLETE',
                       summary['dispatch_blockers'])
 
-    def test_start_scan_and_intent_share_coverage_gate(self):
+    def test_fresh_scan_can_resume_after_partial_detail_and_intent_is_local(self):
         ledger = self.new_ledger('scan-coverage-gate')
         detailed_post = notes.post_identity(
             visual_key='scan-coverage-detailed-post')
@@ -1252,42 +1252,159 @@ class NotesRegressionTests(unittest.TestCase):
 
         summary = ledger.records.summary()
         self.assertIn('POST_DETAIL_PENDING', summary['dispatch_blockers'])
+        fresh_session = ledger.session + '-fresh'
+        ledger.records.bind(
+            session_id=fresh_session,
+            observation=ledger.evidence(list_key=ledger.summary['list_key']),
+            handoff=ledger.evidence(list_key=ledger.summary['list_key']))
         before = self.event_bytes(ledger.records)
-        with self.assertRaises(NotesError) as raised:
-            ledger.records.scan(
-                session_id=ledger.session, action='START',
-                evidence=ledger.evidence_for_scan())
-        self.assertEqual(raised.exception.args[0],
-                         'SCAN_COVERAGE_INCOMPLETE')
-        self.assertEqual(self.event_bytes(ledger.records), before)
-
-        with self.assertRaises(NotesError) as raised:
-            ledger.records.intent(
-                session_id=ledger.session,
-                media_key_value=media_key_value)
-        self.assertEqual(raised.exception.args[0], 'POST_DETAIL_PENDING')
-        self.assertEqual(self.event_bytes(ledger.records), before)
-
-        ledger.records.record_post(
-            session_id=ledger.session,
-            post_key_value=pending_key,
-            date_summary='synthetic',
-            media_count=0,
-            text_sha256=None,
-            evidence=ledger.evidence_for_post(pending_key),
-            no_media=True,
-        )
-        summary = self.reopen(ledger).summary()
-        pending = next(row for row in summary['posts']
-                       if row['post_key'] == pending_key)
-        self.assertEqual(pending['state'], 'NO_MEDIA')
-        self.assertNotIn('POST_DETAIL_PENDING', summary['dispatch_blockers'])
-        self.assertNotIn('POST_COVERAGE_INCOMPLETE',
-                         summary['dispatch_blockers'])
         scan = ledger.records.scan(
-            session_id=ledger.session, action='START',
+            session_id=fresh_session, action='START',
             evidence=ledger.evidence_for_scan())
         self.assertIn('scan_id', scan)
+        after = self.event_bytes(ledger.records)
+        self.assertEqual(len(after), len(before) + 1)
+        with self.assertRaisesRegex(
+                NotesError, 'COMPLETE_NOTES_SCAN_REQUIRED'):
+            ledger.records.intent(
+                session_id=fresh_session,
+                media_key_value=media_key_value)
+
+    def test_intent_allows_complete_target_while_other_post_detail_is_pending(self):
+        ledger = self.new_ledger('local-intent-coverage')
+        first = notes.post_identity(visual_key='eligible-post')
+        pending = notes.post_identity(visual_key='pending-post')
+        self.scan_with_pages(ledger, [([first, pending], [])])
+        first_key = notes.post_key(ledger.summary['list_key'], first)
+        pending_key = notes.post_key(ledger.summary['list_key'], pending)
+        identity = notes.media_identity(
+            kind=PHOTO, visual_key='eligible-media')
+        target_key = self.media_key(ledger, first_key, identity)
+        ledger.records.record_post(
+            session_id=ledger.session, post_key_value=first_key,
+            date_summary='synthetic', media_count=1, text_sha256=None,
+            evidence=ledger.evidence_for_post(first_key), no_media=False)
+        ledger.records.record_media(
+            session_id=ledger.session, post_key_value=first_key,
+            items=[dict(identity=identity)], missing=[],
+            evidence=ledger.evidence_for_post(first_key))
+
+        attempt = ledger.records.intent(
+            session_id=ledger.session, media_key_value=target_key)
+        self.assertTrue(Path(attempt['destination']).is_dir())
+        summary = ledger.records.summary()
+        row = next(item for item in summary['posts']
+                   if item['post_key'] == pending_key)
+        self.assertEqual(row['state'], 'DETAIL_PENDING')
+        self.assertFalse(summary['all_known_media_complete'])
+        self.assertIn('POST_DETAIL_PENDING', summary['dispatch_blockers'])
+
+        staging = Path(attempt['destination'])
+        (staging / 'eligible.png').write_bytes(b'synthetic completion')
+        ledger.records.outcome(
+            session_id=ledger.session, attempt_id=attempt['attempt_id'],
+            outcome='DOWNLOAD_FINISHED',
+            evidence=ledger.evidence_for_attempt(attempt))
+        completion = ledger.records.verify(
+            session_id=ledger.session, attempt_id=attempt['attempt_id'],
+            verifier=self.pass_verifier, stability_interval=0)
+        self.assertEqual(completion['data']['media_key'], target_key)
+
+        self.assertFalse(ledger.records.summary()['all_known_media_complete'])
+
+        pending_identity = notes.media_identity(
+            kind=PHOTO, visual_key='pending-post-media')
+        pending_media_key = self.media_key(
+            ledger, pending_key, pending_identity)
+        ledger.records.record_post(
+            session_id=ledger.session, post_key_value=pending_key,
+            date_summary='synthetic', media_count=1, text_sha256=None,
+            evidence=ledger.evidence_for_post(pending_key), no_media=False)
+        ledger.records.record_media(
+            session_id=ledger.session, post_key_value=pending_key,
+            items=[dict(identity=pending_identity)], missing=[],
+            evidence=ledger.evidence_for_post(pending_key))
+        pending_attempt = ledger.records.intent(
+            session_id=ledger.session, media_key_value=pending_media_key)
+        pending_staging = Path(pending_attempt['destination'])
+        (pending_staging / 'pending.png').write_bytes(b'synthetic completion')
+        ledger.records.outcome(
+            session_id=ledger.session,
+            attempt_id=pending_attempt['attempt_id'],
+            outcome='DOWNLOAD_FINISHED',
+            evidence=ledger.evidence_for_attempt(pending_attempt))
+        pending_completion = ledger.records.verify(
+            session_id=ledger.session,
+            attempt_id=pending_attempt['attempt_id'],
+            verifier=self.pass_verifier, stability_interval=0)
+        self.assertEqual(pending_completion['data']['media_key'],
+                         pending_media_key)
+        self.assertTrue(ledger.records.summary()['all_known_media_complete'])
+
+        fresh_session = ledger.session + '-next'
+        ledger.records.bind(
+            session_id=fresh_session,
+            observation=ledger.evidence(list_key=ledger.summary['list_key']),
+            handoff=ledger.evidence(list_key=ledger.summary['list_key']))
+        ledger.session = fresh_session
+        self.scan_with_pages(ledger, [([first, pending], [])])
+        ledger.records.record_post(
+            session_id=fresh_session, post_key_value=first_key,
+            date_summary='synthetic', media_count=1, text_sha256=None,
+            evidence=ledger.evidence_for_post(first_key), no_media=False)
+        ledger.records.record_media(
+            session_id=fresh_session, post_key_value=first_key,
+            items=[dict(identity=identity)], missing=[],
+            evidence=ledger.evidence_for_post(first_key))
+        with self.assertRaisesRegex(
+                NotesError, 'COMPLETED_OR_EXCLUDED_NO_REDOWNLOAD'):
+            ledger.records.intent(
+                session_id=fresh_session, media_key_value=target_key)
+
+    def test_unknown_attempt_for_other_post_blocks_intent_without_new_staging(self):
+        ledger = self.new_ledger('other-unknown-blocks-intent')
+        first = notes.post_identity(visual_key='first-post')
+        second = notes.post_identity(visual_key='second-post')
+        self.scan_with_pages(ledger, [([first, second], [])])
+        first_key = notes.post_key(ledger.summary['list_key'], first)
+        second_key = notes.post_key(ledger.summary['list_key'], second)
+        first_media = notes.media_identity(
+            kind=PHOTO, visual_key='first-photo')
+        second_media = notes.media_identity(
+            kind=PHOTO, visual_key='second-photo')
+        for post_key_value, identity in ((first_key, first_media),
+                                         (second_key, second_media)):
+            ledger.records.record_post(
+                session_id=ledger.session, post_key_value=post_key_value,
+                date_summary='synthetic', media_count=1, text_sha256=None,
+                evidence=ledger.evidence_for_post(post_key_value),
+                no_media=False)
+            ledger.records.record_media(
+                session_id=ledger.session, post_key_value=post_key_value,
+                items=[dict(identity=identity)], missing=[],
+                evidence=ledger.evidence_for_post(post_key_value))
+
+        second_media_key = self.media_key(ledger, second_key, second_media)
+        active = ledger.records.intent(
+            session_id=ledger.session, media_key_value=second_media_key)
+        ledger.records.outcome(
+            session_id=ledger.session, attempt_id=active['attempt_id'],
+            outcome='UNKNOWN', evidence=ledger.evidence_for_attempt(active))
+        first_media_key = self.media_key(ledger, first_key, first_media)
+        before_events = self.event_bytes(ledger.records)
+        before_staging = sorted(
+            str(path.relative_to(ledger.photo_root))
+            for path in ledger.photo_root.rglob('.line-notes-incoming-*'))
+        with self.assertRaisesRegex(
+                NotesError, 'ANOTHER_MEDIA_ATTEMPT_UNRESOLVED'):
+            ledger.records.intent(
+                session_id=ledger.session, media_key_value=first_media_key)
+        self.assertEqual(self.event_bytes(ledger.records), before_events)
+        self.assertEqual(
+            sorted(str(path.relative_to(ledger.photo_root))
+                   for path in ledger.photo_root.rglob(
+                       '.line-notes-incoming-*')),
+            before_staging)
 
     def test_start_scan_blocks_unresolved_attempts_and_verify_required(self):
         ledger = self.new_ledger('scan-unresolved-attempt')

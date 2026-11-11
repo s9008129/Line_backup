@@ -13,7 +13,7 @@
 - 若要以 wrapper 保存一次 child 的 request、stdout／stderr、exit／signal 與程式身分，使用既有 `notes_capture --output-root ABS_PRIVATE_TASK_DIR -- <notes argv>`；`--output-root` 必須是已存在、專案私有的絕對路徑。capture receipt 不是 CUA／GUI 原始回傳，也不證明輸入。wrapper 保存失敗就停止，不為補輸出重跑 child；拒絕與成功各自保存新 receipt。
 - 成功的 JSON 與業務拒絕 JSON 固定含 `dispatch_authorized=false`；參數／必填欄位錯誤以 exit 2 結束，只在 stderr 顯示 argparse 錯誤，不輸出 JSON；已列業務拒絕以 exit 4 回傳 JSON；未預期內部錯誤以 exit 70 回傳 `status=INTERNAL_ERROR`、`reason=UNEXPECTED_EXCEPTION`、`dispatch_authorized=false`。`dispatch_authorized=false` 是簿記聲明，不是 GUI grant、已派送證明或 E2E PASS；不得把它改成 true 或當成 Owner 同意。
 - exit 70 不是可重試業務拒絕，不得據此重送、改寫 ledger、建立新 attempt、換目的地或換入口繞過；先停止並保留現場、原始 JSON、命令與證據，回報實作者／維護者。
-- 成功以 exit 0 回傳 JSON；實際使用時記錄命令、exit code 與原始輸出摘要。看到 70 時必須原樣記錄並停止，不能降格成 exit 4 或其他業務狀態。
+- 成功以 exit 0 回傳 JSON；實際使用時記錄命令、exit code 與原始輸出摘要。看到 70 時必須原樣記錄並停止，不能降格成 exit 4 或其他業務狀態。exit 2 僅表示參數／必填欄位錯誤；在尚無派送或不明寫入、可由現有輸出確定正確值時，可修正命令前置條件後重跑相同的唯讀／綁定操作。exit 4 只有在明確業務原因、`retry_safe` 與可證明無資料變更均成立時，才可依輸出修正前置條件；例如序列處理 `NOTES_LOCK_BUSY`。最多三次有證據嘗試，連續兩次無新資訊就停止。不得重播 intent／GUI、改帳本／目的地、手改 events，或把 exit 70 當可重試拒絕。
 - 業務拒絕後不得改寫事件、另開空帳、重設 ledger、換目的地或改走相簿流程繞過。先讀拒絕原因及既有事件，仍不能安全處理就保留阻塞。
 
 ## 合格環境附屬項
@@ -189,7 +189,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes_capture \
   summary --records-root "$ABS_LEDGER"
 ```
 
-查詢既有帳本時，先用 collection 取得全部摘要列，只選出與當次入口、列表身分及歷史唯一相符的那一列，再把該列的 `records_root` 原值傳給 `summary`：
+查詢既有帳本時，`lists` 已包含全部帳本的摘要列；先用它唯一定位與當次入口、列表身分及歷史相符的帳本，通常不必再查。需要刷新選中帳本的摘要時，將該列的 `records_root` 原值傳給 `summary`：
 
 ```sh
 TASK_PROJECT_ROOT="$(cd "$(git rev-parse --show-toplevel)" && pwd -P)"
@@ -214,7 +214,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
 
 `summary` 的 `scan_coverage`、`dispatch_blockers`、`unresolved_attempts` 與 `scan_binding_match` 是唯讀事實投影，不是下載許可。新 Session 先以 `summary` 找舊 attempt，核對當次入口／前景並成功 `bind` 後，才使用要求 Session 的交易命令；不能因為尚無綁定就沿用舊 Session ID。`has_outcome=false` 時依原 attempt 的真實證據先用 `outcome` 保存第一筆結果，證據不足可記 `UNKNOWN`，不得先 `reconcile`；已有 `outcome=UNKNOWN` 才以新證據 `reconcile`；`DOWNLOAD_FINISHED` 先 `verify`，pending naming 先 `resume`。無新證據就保留原狀，不補造結果或重送；在這些狀態未處理前不得開始普通新 scan。只有完成精確 `restart confirm` 後，才可用 `scan start --recovery` 建立新的完整 recovery scan，再逐項 `intent --restart-id`；這不是用新 scan 掩蓋舊問題，也不改寫舊 attempt 的 scan binding。`bind` 若因未完成 scan、身分或證據等條件拒絕，停止並保留原狀，不重建空帳或以新 scan 掩蓋。
 
-普通 `scan start` 會拒絕待命名交易、尚有未解 attempt，或上一個 scan 的貼文／媒體 coverage 不完整；`scan start --recovery` 只在 STOPPED／NOT_SENT 恢復或已確認 restart 批次的路徑使用，仍受 bind、Session、完整掃描與各自 gate 限制，不是通用解鎖。已完成項與正面 `STOPPED`／`NOT_SENT` 不會被重下；後者仍需原恢復授權與充分證據才可另建 attempt。`summary` 與 `intent` 共用細盤 coverage gate：頂底／重疊、所有現存貼文 detail、media 數量與本 scan inventory 必須一致；純文字貼文以 `NO_MEDIA` 表示，不可當成缺少媒體。
+普通 `scan start` 會拒絕待命名交易、尚有未解 attempt 或仍 open 的 scan；已結束的上一個 scan 即使部分貼文媒體 detail 未完成，也可重新觀察並開始新 scan。新 scan 仍須完成頂底／重疊與完整卡片覆蓋。`scan start --recovery` 只在 STOPPED／NOT_SENT 恢復或已確認 restart 批次的路徑使用，仍受 bind、Session、完整掃描與各自 gate 限制，不是通用解鎖。已完成項與正面 `STOPPED`／`NOT_SENT` 不會被重下；後者仍需原恢復授權與充分證據才可另建 attempt。普通 `intent` 要求最新完整 scan 的卡片覆蓋，以及目標貼文 detail、媒體數量／順序與目標 media 身分完整；`dispatch_blockers` 中 `POST_DETAIL_PENDING`、`STALE_POST_DETAIL` 等局部貼文資訊不會自動阻止其他合格目標。其他貼文待細盤不阻止此目標。列表覆蓋／身分不明、未決 attempt、活動下載、UNKNOWN 或 pending naming 等全局阻塞仍須停止新派送。摘要仍如實列出待盤貼文，`all_known_media_complete` 在全列表媒體細盤未完成時保持 false。純文字貼文以 `NO_MEDIA` 表示，不可當成缺少媒體。
 
 若舊 attempt 的 `scan_binding_match=false` 或 `resume` 回 `SCAN_BINDING_REVIEW_REQUIRED`，不得改綁定、重寫舊 intent、開新 scan 覆蓋、隱藏該項或自動另建 attempt；只保留原資料、收集最小證據並交人工審查。
 
@@ -222,20 +222,21 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
 
 ## 啟動與帳本對帳
 
-1. 先執行 `lists`，再讀 `.local/line-backup/active-notes-task.json`；以本次連續入口與當次畫面核對相符的 `local_list_id`，不要只讀最近一個帳本。需要單帳本摘要時，從唯一相符列的 `records_root` 執行 `summary`，不從名稱猜路徑。
-2. 以 `memory` 讀摘要中的列表、貼文／媒體狀態、缺項、`unresolved_attempts`、`dispatch_blockers`、scan binding 與本機可用性；需要 staging 目的地或 completion 細節時，依上節回到 `intent`／`verify` 結果及追加事件。索引缺失、帳本損壞、證據鏈異常或出現兩個可能列表時停止相關動作，不建立新空帳。
-3. 新列表只有在入口、列表身分與歷史均確認，且沒有缺損／歧義時才建立。Agent 先固定同一組 `visual_key`、適用 `context_id` 與 signals 輸入，以 `list-key` 取得 key；用同一 `list_key` context 分別建立 binding／history 兩份 v2 evidence；再以完全相同的 identity 參數與兩份 bundle 執行 `init`，最後以回傳的 `records_root` 執行 `summary` 讀回相同 `list_key`。鏈如下；`CONTEXT_ID` 不適用時整項省略，不是空字串或 `UNKNOWN`，SIGNALS 未使用時同樣省略：
+1. 先執行 `lists`，再讀 `.local/line-backup/active-notes-task.json`；以本次連續入口與當次畫面核對相符的 `local_list_id`，不要只讀最近一個帳本。`lists` 已含全部帳本摘要；只有需刷新選中帳本時，才從唯一相符列的 `records_root` 序列執行一次 `summary`，不再為同一 lock domain 平行查 `memory`。
+2. 使用已取得的摘要核對列表、貼文／媒體狀態、缺項、`unresolved_attempts`、`dispatch_blockers`、scan binding 與本機可用性；需要 staging 目的地或 completion 細節時，依上節回到 `intent`／`verify` 結果及追加事件。索引缺失、帳本損壞、證據鏈異常或出現兩個可能列表時停止相關動作，不建立新空帳。
+3. 新列表只有在入口、列表身分與歷史均確認，且沒有缺損／歧義時才建立。Agent 固定同一組 `visual_key`、適用 `context_id` 與 signals 輸入，以 `list-key` 取得 key；若同一完整觀察涵蓋 init 所需的 binding 與 history 命題，且 context 相同，可共用一份 v2 bundle；命題或 context 不同才分開建立。再以完全相同的 identity 參數執行 `init`，最後讀回相同 `list_key`。鏈如下；`CONTEXT_ID` 不適用時整項省略，不是空字串或 `UNKNOWN`，SIGNALS 未使用時同樣省略：
 
    ```sh
    PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes list-key \
      --visual-key "$VISUAL_KEY" --context-id "$CONTEXT_ID" --signals "$SIGNALS_INPUT"
 
+   # 同一完整觀察可同時支持 binding 與 history 時，只封裝一次。
    PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes evidence-pack \
-     --statement "$BINDING_STATEMENT" --asset screenshot "$BINDING_SCREENSHOT" \
-     --output-dir "$BINDING_EVIDENCE_NEW_DIR" --list-key "$LIST_KEY"
-   PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes evidence-pack \
-     --statement "$HISTORY_STATEMENT" --asset screenshot "$HISTORY_SCREENSHOT" \
-     --output-dir "$HISTORY_EVIDENCE_NEW_DIR" --list-key "$LIST_KEY"
+     --statement "$INIT_STATEMENT" --asset screenshot "$INIT_SCREENSHOT" \
+     --output-dir "$INIT_EVIDENCE_NEW_DIR" --list-key "$LIST_KEY"
+   BINDING_BUNDLE="$INIT_BUNDLE"
+   HISTORY_BUNDLE="$INIT_BUNDLE"
+   # 若兩項命題需要不同原件或 context，才分別建立 bundle 並設定以上兩個變數。
 
    PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes init \
      --collection "$ABS_COLLECTION" --photo-root "$ABS_PHOTO_ROOT" \
@@ -248,7 +249,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
      --records-root "$ABS_LEDGER"
    ```
 
-   `SIGNALS_INPUT` 是明示的 strict JSON 文字或 `@` 加指定 JSON 檔的絕對路徑；未使用 signals 時連同整個 flag 省略。當次任務已授權確認停止後的恢復時，在真正新建帳本的 `init` 命令加上 `--recovery-authorized`，並從回傳／摘要讀回 `recovery_authorized=true`；未獲授權不得加此 flag。既有帳本不重新 init，也不手改 false 的授權值。先核對兩份 bundle 的 context 都等於 list-key 結果，再執行 `init`；若 identity 輸入或明示 signals 檔在期間改變，舊 bundle 不可沿用。`init` 後只使用其回傳的 `records_root` 讀回 key，不一致或有未預期副作用就停止；不得先建空帳取得 key、手填 key／JSON，或讓適用 ID 留 `UNKNOWN`。新列表讀回成功、或既有列表從 `lists`／`memory` 找到相符帳本後，先核對當次入口與有效前景，再依序 **`bind` → 處理舊 attempt／命名交易 → `scan start`**；沒有未決項才直接進新 scan。每一命令仍須滿足自己的 scan binding／資料完整性 gate，不能因已 bind 就視為舊 attempt 已獲重送或恢復許可。不因新 Session、照片 root 改變或使用者重交前景而重新初始化。
+   `SIGNALS_INPUT` 是明示的 strict JSON 文字或 `@` 加指定 JSON 檔的絕對路徑；未使用 signals 時連同整個 flag 省略。當次任務已授權確認停止後的恢復時，在真正新建帳本的 `init` 命令加上 `--recovery-authorized`，並從回傳／摘要讀回 `recovery_authorized=true`；未獲授權不得加此 flag。既有帳本不重新 init，也不手改 false 的授權值。先核對所用 bundle 的 context 等於 list-key 結果，再執行 `init`；若 identity 輸入、觀察命題或明示 signals 檔在期間改變，舊 bundle 不可沿用。`init` 後只使用其回傳的 `records_root` 讀回 key，不一致或有未預期副作用就停止；不得先建空帳取得 key、手填 key／JSON，或讓適用 ID 留 `UNKNOWN`。新列表讀回成功、或既有列表從 `lists`／`memory` 找到相符帳本後，先核對當次入口與有效前景，再依序 **`bind` → 處理舊 attempt／命名交易 → `scan start`**；沒有未決項才直接進新 scan。每一命令仍須滿足自己的 scan binding／資料完整性 gate，不能因已 bind 就視為舊 attempt 已獲重送或恢復許可。不因新 Session、照片 root 改變或使用者重交前景而重新初始化。
 4. `scan start` → `page`… → `scan finish` → `post`／`media` 保存本輪完整盤點。`scan finish` 前必須已看到頂端、底端與有序重疊；`post`／`media` 需要最新完成的 scan。新 Session 必須重新看頂底與重疊，不沿用上一個 Session 的畫面 cursor。純文字貼文由 `post` 記 `NO_MEDIA`，不建立媒體下載項。
 5. 重新更換照片 root 時用 `destination` 追加綁定；舊 completion 路徑不改，UNKNOWN、活動下載、pending 命名或 `LOCAL_CHANGED` 不因換位置解鎖。
 
@@ -266,7 +267,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
 8. **驗證與完成。** 只有具備可歸屬的下載終結結果及穩定結果檔，才可記 `DOWNLOAD_FINISHED` 並執行 `verify`。`verify` 先保存命名／發布交易，再核對穩定檔集、預期數、非空、SHA-256、逐檔內容解碼及前後身分；成功才追加不可覆寫 completion 並讀回。驗證或紀錄寫入失敗時保留原檔，不重新下載補帳。
 9. **命名中斷。** 只要來源、暫名、目標及 journal 可唯一核對，執行 `resume` 接續同一交易；`resume` 不得觸發下載。目標已存在、非屬合格環境附屬項的額外檔、symlink、hash／mtime／ctime 漂移或來源與目標歧義時，保護原檔並停止，不用手動改名解鎖。
 
-每次下載控制、chooser 確認、outcome、reconcile、更正與恢復前，先依 [證據範本](evidence-template.md) 寫當次私有 statement，再把 statement 與必要截圖／AX／input receipt／stdout／stderr 等原件用 `evidence-pack` 封裝；有 `--evidence` 或其他證據參數的子命令傳回傳的 `bundle_path`。`intent` 沒有一般 evidence 參數，其預檢與讀回證據留在私有任務區，不能冒充 CLI 欄位。同一 attempt 可多次 reconcile；每次完成後都要追加該次 sequence／event SHA-256 與結果引用，保留全部歷史，不以最後一筆覆寫。bundle 只證明指定 bytes 與 context 一致，不解析 statement 的語意真假；缺少必要值時寫 `UNKNOWN`，不可由檔名、猜測或另一個來源補值。
+每個 GUI 控制／chooser 操作當下保存定位觀察與工具原始回傳；原件不可事後重建。intent 仍須先保存並讀回。需要寫入有 evidence 參數的事件前，才依 [證據範本](evidence-template.md) 整理 statement，將同一 attempt、同一 context 適用的原件一併封裝並傳入 CLI 回傳的 `bundle_path`；若新事件需要新的事實或 context，另建 bundle。`intent` 沒有一般 evidence 參數，其預檢與讀回證據留在私有任務區，不能冒充 CLI 欄位。同一 attempt 可多次 reconcile；每次完成後都要追加該次 sequence／event SHA-256 與結果引用，保留全部歷史，不以最後一筆覆寫。bundle 只證明指定 bytes 與 context 一致，不解析 statement 的語意真假；缺少必要值時寫 `UNKNOWN`，不可由檔名、猜測或另一個來源補值。
 
 ## 恢復與不可解鎖狀態
 

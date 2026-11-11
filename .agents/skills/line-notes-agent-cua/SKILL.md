@@ -19,7 +19,7 @@ Agent 的任務是完成整份列表，而不是等 Owner 逐步操作：
 
 1. 自動查全部記事本帳本、目前任務與相符的永久記憶，先讀 `summary` 的 `unresolved_attempts`、`dispatch_blockers` 與掃描覆蓋。
 2. 核對列表；證明是新列表且沒有缺損歷史或候選歧義時自動初始化，既有列表則綁定原帳本。新掃描前先處理舊 attempt；掃描綁定不符時只做唯讀查證並停止待人工審查。
-3. 先建立來源卡片台帳，從頂端到底端完整盤點貼文，頁前雙向對帳，再逐篇核對照片／影片；盤點是下載前必要階段。
+3. 先建立完整來源卡片台帳，從頂端到底端盤點貼文並完成頁面雙向對帳；之後逐篇細盤媒體並處理合格項，不要求其他貼文的媒體細盤先全部完成。
 4. 依紀錄跳過已處理項，對每個合格項只送出一次下載派送，並在結果後驗證、發布及讀回 completion。
 5. 遇到已授權的中斷恢復時，保留原檔並自動接續或建立新的空白恢復 attempt；UNKNOWN、活動下載及未完成命名交易先查證，不以重下解鎖。
 6. 最後重新對帳，主動回報總數、逐篇狀態、缺項、已驗證內容及未測範圍。
@@ -49,9 +49,9 @@ Agent 的任務是完成整份列表，而不是等 Owner 逐步操作：
 
 ## 工作流程
 
-1. **找回前次任務。** 先查全部記事本帳本與 active-notes-task，再讀相符帳本的 `memory` 摘要。不能用缺少帳本、索引缺失或 active-task 不存在推論為空帳。新列表須有完整、無歧義的新列表證據：固定同一組 identity 先執行 `list-key`，以該 key context 建立兩份 v2 evidence，再以相同 identity `init` 並讀回 key。新／既有列表都須核對當次入口與有效前景後 `bind`，再依 [下載與 notes CLI](references/download-and-ledger.md#啟動與帳本對帳) 處理舊 attempt／命名交易。普通情境先收斂舊項再 `scan start`；若已確認 restart 批次，則在 `restart confirm` 後先中斷尚未結束的 scan，再以 `scan start --recovery` 建立新的完整 recovery scan，普通 scan 不得用來掩蓋舊問題。不能在未綁定時先寫 outcome／reconcile，也不重用舊 Session ID 繞過綁定拒絕。`memory` 不含完整 attempt、staging 目的地或 completion manifest；交易細節以 `intent`／`verify` 結果及追加事件為準。新一批目的地以 `destination` 追加，保留舊完成路徑。
+1. **找回前次任務。** 先查全部記事本帳本與 active-notes-task；`lists` 已回全部帳本摘要，只有需要刷新選中帳本時才序列讀一次 `summary`（`memory` 是同一摘要的別名）；不能用缺少帳本、索引缺失或 active-task 不存在推論為空帳。新列表須有完整、無歧義的新列表證據：固定同一組 identity 先執行 `list-key`，以該 key context 建立可供 init 使用的證據，再以相同 identity `init` 並讀回 key。新／既有列表都須核對當次入口與有效前景後 `bind`；若歷史帳本已有 context 且當次未提供 context，沿用已保存值，明示不同值仍須拒絕。依 [下載與 notes CLI](references/download-and-ledger.md#啟動與帳本對帳) 處理舊 attempt／命名交易。普通情境先收斂未決項再 `scan start`；若已確認 restart 批次，則保留精確 scope、新 recovery scan 與其前置條件。上一個已結束 scan 若只有部分貼文媒體細節未完成，且沒有未決 attempt／命名交易，可重新開始普通 scan；尚 open 的 scan 須先明確 interrupt。不能在未綁定時先寫 outcome／reconcile，也不重用舊 Session ID 繞過綁定拒絕。`summary` 不含完整 attempt、staging 目的地或 completion manifest；交易細節以 `intent`／`verify` 結果及追加事件為準。新一批目的地以 `destination` 追加，保留舊完成路徑。
 2. **判定入口。** 在有效前景交接內用當次 AX／畫面確認目標是記事本列表，不是相簿、聊天、貼文檢視器或出處不明頁面。需要返回時只使用當次可靠控制項或已證實且符合角色／焦點的快捷鍵；不得猜 Escape、Command-W 或關閉。入口未確認前不捲動、不盤點、不下載。
-3. **完整盤點與頁面覆蓋。** 依 [GUI 導覽與盤點](references/gui-inventory.md) 從頂端到底端，以有序重疊避免漏篇；先保存來源逐卡紀錄，再產生 page rows，呼叫 `page` 前完成來源↔rows 雙向對帳。逐篇核對媒體縮圖、更多指示、viewer 與來源順序；viewer 尚未就緒時不定位下載控制、不先建媒體身分，也不以黑底、disabled slider、`00:00` 或缺少影片控制判定種類。只有來源覆蓋、頂底、重疊、篇數與逐篇媒體覆蓋已成立，才可產生合格下載排程。純文字貼文記 `NO_MEDIA`，不得當成下載完成。
+3. **完整卡片盤點與逐篇媒體細盤。** 依 [GUI 導覽與盤點](references/gui-inventory.md) 從頂端到底端，以有序重疊避免漏篇；先保存來源逐卡紀錄，再產生 page rows，呼叫 `page` 前完成來源↔rows 雙向對帳。完整卡片覆蓋、頂底與重疊是任何下載的共同前置。再逐篇核對媒體縮圖、更多指示、viewer 與來源順序；viewer 尚未就緒時不定位下載控制、不先建媒體身分，也不以黑底、disabled slider、`00:00` 或缺少影片控制判定種類。普通下載只要求目標貼文的最新細盤、媒體數量／順序及目標媒體身分完整；`dispatch_blockers` 中的 `POST_DETAIL_PENDING`、`STALE_POST_DETAIL` 等局部貼文資訊不會自動阻止其他合格貼文。另一貼文尚待細盤時可先處理合格目標，不得把待盤貼文記成 `NO_MEDIA`、排除或完成。列表覆蓋／身分不明、未決 attempt、活動下載、UNKNOWN 或 pending naming 等全局阻塞仍須停止新派送。純文字貼文記 `NO_MEDIA`，不得當成下載完成。
 4. **一次一項下載。** 依 [下載與 notes CLI](references/download-and-ledger.md) 在 intent 前確認資格、來源及記事本控制；為每次 attempt 保存並讀回 intent、新空白暫存目錄及禁止重送紀錄，讀回後在輸入前再次定位同一列表／貼文／媒體／viewer／控制。**每個 attempt 的下載控制呼叫與 chooser 最終確認各最多一次**，兩者分開保存真實工具回傳；若 UI 顯示 Save All，須先證明它是本記事本自己的控制，不得沿用相簿入口。chooser 須可歸屬同一 attempt、精確讀回完整暫存路徑後才確認一次。
 5. **結果、驗證與命名。** 先查該 attempt 是否已有 outcome／UNKNOWN：沒有 outcome 時用 `outcome` 記錄第一筆真實結果（可為 UNKNOWN）；已有 `outcome=UNKNOWN` 才用 `reconcile`。沒有精確確認批次時，未收斂不得 verify、建立新 intent、重下或派下一項；只有 `DOWNLOAD_FINISHED` 才能 `verify`。命名／發布交易中斷用 `resume` 接續同一交易，絕不重下。若完整盤點後 `restart preview` 回報 `RESTART_REQUIRED`／`OPEN_BATCH`，依下列確認取代流程處理；檔案驗證見 [驗證與恢復](references/verification-and-recovery.md)。
 6. **逐項循環與結束對帳。** 完成一項後保存並讀回 completion，重新觀察原貼文／列表，再定位下一個合格項。遇到新媒體、重排、刪除、編輯或檔案異常時先更新盤點與狀態，不覆寫舊完成事實。最後先重讀本輪原件，依 GUI 本文核對各 page 讀回與有序去重聯集，再以 `summary` 與當次畫面交叉核對；只有覆蓋完整且所有未解類別已誠實列出，才回報本次工作結果。
