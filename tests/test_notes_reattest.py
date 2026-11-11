@@ -144,6 +144,33 @@ class NotesReattestPreviewTests(unittest.TestCase):
                        verifier=verifier, stability_interval=0)
         return attempt
 
+    def test_reattested_list_binding_remains_device_strict(self):
+        ledger = self.prepare_batch(include_completion=True)
+        records = ledger['records']
+        code, preview = self.run_preview(ledger)
+        self.assertEqual(code, 0)
+        self.assertEqual(preview['status'], 'CONFIRMATION_REQUIRED')
+        self.confirm_preview(ledger, preview)
+        binding = records._effective_list_binding()
+        self.assertEqual(binding[0]['kind'], 'list-directory-reattest')
+        directory = Path(binding[1]['list_directory'])
+        changed = directory.stat().st_dev + 1
+        original_stat = Path.stat
+
+        def drifted_stat(path, *args, **kwargs):
+            result = original_stat(path, *args, **kwargs)
+            if Path(path) == directory:
+                return type(result)(tuple(
+                    changed if index == 2 else value
+                    for index, value in enumerate(result)))
+            return result
+
+        with mock.patch.object(Path, 'stat', new=drifted_stat):
+            with self.assertRaisesRegex(
+                    notes.NotesError,
+                    'CURRENT_NOTES_LIST_DIRECTORY_CHANGED'):
+                records._require_current_list_directory()
+
     def unknown_media(self, ledger, post_key, media_key):
         records = ledger['records']
         attempt = records.intent(

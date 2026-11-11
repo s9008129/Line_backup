@@ -43,7 +43,7 @@
 | `verify` | 穩定檔案、hash、解碼、發布及保存 completion | 只接受已證明 `DOWNLOAD_FINISHED` 的 attempt；不重下補帳 |
 | `resume` | 接續中斷的命名／發布交易 | 只用唯一可核對的同一交易；不重送下載、不手動改名 |
 | `restart` | `preview`／`confirm`／`resume` 一個確認取代批次 | preview 唯讀；confirm 需精確 scope、證據與 Owner 同意；resume 只驗證 candidate／activation，不按 GUI、不下載 |
-| `reattest` | `preview`／`confirm` 一次 list directory device-only binding 轉接 | 僅限既有 OPEN_BATCH 與完整 witness；confirm 需本次精確 Owner 同意；不解除 UNKNOWN／LOCAL_CHANGED，也不授權 GUI |
+| `reattest` | `preview`／`confirm` 一次已轉接 list binding 的 device-only 重新見證 | 僅限既有 OPEN_BATCH 與完整 witness；confirm 需本次精確 Owner 同意；不解除 UNKNOWN／LOCAL_CHANGED，也不授權 GUI。普通 `created`／`destination` 列表只有歷史 device 差異時直接沿日常流程；不新增 reattest |
 | `summary` | 投影本次盤點與六類狀態、缺項及完成數 | `all_known_media_complete=true` 只代表摘要投影一致，不是畫面／檔案獨立驗收，也不是真實 LINE E2E |
 | `evidence-correct` | 針對已精確核對的 page 追加 replacement evidence 更正 | 只修 page 引用；不改 page 成員／順序／頂底／scan 覆蓋，也不把更正當成原證據或完成證明 |
 | `media-kind-correct` | 在任何 attempt 前更正已盤點媒體的種類 | 只限最新完整 scan、尚無 intent／verification／completion／排除／保護的項目；不改 media key、貼文、數量或來源順序 |
@@ -141,7 +141,7 @@ scope 內舊 `UNKNOWN`、無 outcome 或 pending 可被新 attempt 取代，但�
 
 ### List directory device 轉接（reattest）
 
-此協議只處理既有 OPEN_BATCH 中，canonical list path 與 inode 不變而 device 改變的情況。它保留原 restart confirmation 與 scope；不證明 remount、相同實體 volume 或排除 matching clone。每個帳本最多新增一筆轉接。
+此協議只處理既有 OPEN_BATCH 中，canonical list path 與 inode 不變而 device 改變、且有效 binding 尚非 reattest 的情況。普通 `created`／`destination` 列表歷史 device 差異由共用容器檢查容忍，不呼叫本命令。轉接事件建立後，該有效 binding 對後續 device／inode 漂移維持嚴格；再次漂移時停止。協議保留原 restart confirmation 與 scope；不證明 remount、相同實體 volume 或排除 matching clone。每個帳本最多新增一筆轉接。
 
 confirm 會追加 `list-directory-reattest` 事件。新版本可讀舊帳本；舊版本遇到此事件會以 `UNKNOWN_NOTES_EVENT_KIND` 拒絕。首次真實 confirm 前須確認後續 session 使用相容版本；事件寫入後不得刪除事件或回退成空帳。
 

@@ -510,11 +510,12 @@ NOTES_BACKUP_ROOT 留空時使用目前專案根目錄的 backup/記事本/；
 已完成項跳過，
 待驗證項先驗證，命名交易中斷接續原交易而不重下。
 來源到期依 Skill 保留欠件，不重送、不推論其他項也到期。
-若既有 OPEN_BATCH 遇到 list directory device 變化，Agent 會先做唯讀
-`reattest preview` 並向我說明精確列表、舊／新 binding、既有批次、完整 witness
-摘要及信任模型剩餘風險。只有我明示同意該 preview 後，才可 `reattest confirm`；
-成功後必須重新完成完整 recovery scan，才按原批次逐項接續。每個帳本最多轉接一次；
-再次漂移、資料不符或預覽拒絕時停止，不換目的地或重送。
+普通 `created`／`destination` 列表只有歷史 device 值改變時，沿日常流程核對
+列表／貼文／媒體、path／inode 與授權目的地，不必另外確認或執行 reattest。
+已完成媒體、staging、pending 交易與 UNKNOWN 仍依各自證據核對，不能藉此重送或覆寫。
+若有效 binding 已經是 `list-directory-reattest`，則保留原有嚴格 device／inode 規則：
+既有 OPEN_BATCH 須先唯讀 preview、完整 witness、Owner 明示同意精確 preview，
+confirm 後完成完整 recovery scan；每個帳本最多一次，再次漂移時停止，不換目的地或重送。
 轉接會寫入新版帳本事件；後續記事本備份需使用相容新版工具，不得以舊版覆寫或清除事件。
 
 若完整盤點後 restart preview 回報無法直接接續的舊交易或 LOCAL_CHANGED，

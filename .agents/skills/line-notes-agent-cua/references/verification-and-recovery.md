@@ -123,7 +123,7 @@ ffmpeg 完整解碼仍不能保證偵測所有靜默損壞，也不代表與服�
 業務完成事實與目前照片區是否可用分開投影：
 
 - `LOCAL_MISSING`：整篇完成目錄不存在。保留 `COMPLETED` 與禁止重下，回報「本機不可用；外部副本未驗證」。不要求外接硬碟在線或歸檔登記，也不因此把 completion 降格。
-- `LOCAL_CHANGED`：目錄仍存在，但有部分缺檔、非屬合格環境附屬項的額外檔、檔名／大小／SHA-256／mtime／ctime 漂移、inode／device 改變、symlink、或 manifest／身分不符。保護原件，scope 外停止新派送並回報差異；只有 fresh `restart preview` 精確列出該篇且 Owner 明示確認該批後，才保留舊目錄並在新 `versions/gNNNNNNNN/` 目錄重建。仍不重下補帳、不原地覆寫、不重建空目錄、不手改紀錄。合格環境附屬項的存在、bytes 改變或消失不列入 witness、manifest 或媒體計數，也不改變 completion 或 `LOCAL_VERIFIED`。
+- `LOCAL_CHANGED`：目錄仍存在，但有部分缺檔、非屬合格環境附屬項的額外檔、檔名／大小／SHA-256／mtime／ctime 漂移、inode／device 改變、symlink、或 manifest／身分不符。此分類核對的是受管理完成媒體或其交易目錄；普通列表容器單獨的歷史 device 差異不會把媒體改列 `LOCAL_CHANGED`。保護原件，scope 外停止新派送並回報差異；只有 fresh `restart preview` 精確列出該篇且 Owner 明示確認該批後，才保留舊目錄並在新 `versions/gNNNNNNNN/` 目錄重建。仍不重下補帳、不原地覆寫、不重建空目錄、不手改紀錄。合格環境附屬項的存在、bytes 改變或消失不列入 witness、manifest 或媒體計數，也不改變 completion 或 `LOCAL_VERIFIED`。
 - 目錄讀取權限異常、只有部分目錄可見或不能區分是缺席還是損壞時，不自動歸類為 `LOCAL_MISSING`；先保留阻塞並查證。
 
 `LOCAL_MISSING`／`LOCAL_CHANGED` 都不是六類業務狀態，也不得自行解除 `UNKNOWN`、活動下載或未完成命名交易；只有精確 restart 批次可在已確認 scope 內以新版本重建 `LOCAL_CHANGED`。照片區可被 Owner 搬走或整個刪除；帳本、證據與 completion 必須留在照片區外。
@@ -142,7 +142,8 @@ ffmpeg 完整解碼仍不能保證偵測所有靜默損壞，也不代表與服�
 | `STOPPED`／`NOT_SENT` 且未完成、原授權涵蓋恢復、帳本已持久化 `recovery_authorized=true` 且有充分停止證據 | 保留原檔，依 [下載與 notes CLI](download-and-ledger.md) 以 `intent --recovery-evidence` 建立另一個新空白恢復目錄及新 attempt；授權未持久化或證據不足時停止，已完成項跳過 |
 | 已有 `outcome=UNKNOWN` 或 intent 尚無 outcome | 先以原事件、目的地與當次畫面／檔案查證；已有 outcome 才 `reconcile`，尚無 outcome 先保存第一筆真實結果。未收斂前不 verify、不重送、不建新 attempt、不派下一項；沒有新資訊就停止相同查證。只有 fresh restart preview 精確列出該媒體、Owner 明示確認該批，且 confirm 後完成新的完整 recovery scan，才可 `intent --restart-id`；舊 UNKNOWN／無 outcome 保留，不偽造 STOPPED |
 | `restart preview` 回報 `RESTART_REQUIRED`／`OPEN_BATCH` | Agent 出示精確列表、受影響貼文／媒體、已完成 sibling、舊版位置、新 `versions/gNNNNNNNN/`、額外空間及缺項／保留項；Owner 明示同意該 scope 才可 `restart confirm`。confirm 後以 `scan start --recovery` 完成新的完整 recovery scan，才逐項 `intent --restart-id`。同一已確認 scope 完成前再次中斷可從 `OPEN_BATCH` 找回，只對未完成或結果不確定的項目另建 attempt；scope／身分／目的地／版本策略改變要重新預覽與確認 |
-| 既有 `OPEN_BATCH` 中 list directory path／inode 相同但 device 改變 | 執行唯讀 `reattest preview`。只在 `CONFIRMATION_REQUIRED`、完整 witness 與精確 scope 均可解釋，且 Owner 另行明示同意該 preview 後，才 `reattest confirm`。成功後完成新的 recovery scan，才接續原批次。每帳本最多一次；再次漂移或任何拒絕都停止，不換目的地或重送 |
+| 普通 `created`／`destination` 列表只有歷史 device 值改變 | 沿原日常流程核對列表／貼文／媒體、path／inode／授權邊界及 ledger 狀態；不單獨拒絕、不呼叫 reattest。UNKNOWN、pending、已完成媒體或實際身分疑義仍照各自規則停止 |
+| 有效 binding 已是 `list-directory-reattest`，path／inode 相同但 device 改變 | 執行唯讀 `reattest preview`。只在 `CONFIRMATION_REQUIRED`、完整 witness 與精確 scope 均可解釋，且 Owner 另行明示同意該 preview 後，才 `reattest confirm`。成功後完成新的 recovery scan，才接續原批次。每帳本最多一次；再次漂移或任何拒絕都停止，不換目的地或重送 |
 | 單項來源已明確到期，最新 attempt 為 `STOPPED` | 以精確 attempt context 的 v2 evidence 追加 `source-unavailable`；該項列 `source_availability=EXPIRED`、`resume` 行動為 `SOURCE_UNAVAILABLE`，不建立新 intent、不排除、不計完成。不要推論其他項或把標記當成服務端已回收證明 |
 | `scan_binding_match=false`／`SCAN_BINDING_REVIEW_REQUIRED` | 保留舊 scan、intent 與目的地；不改綁定、不自動新 scan、不另建 attempt。收集最小證據交人工審查 |
 | 缺帳本、索引毀損或多個列表候選 | 保留原件與來源，停止相關寫入；不以空帳、重掃或改名解鎖 |

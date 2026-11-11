@@ -2536,9 +2536,16 @@ class NotesRecords:
              list_directory == list_directory.resolve(strict=True) and
              list_directory.is_dir(), 'CURRENT_NOTES_LIST_DIRECTORY_CHANGED')
         info = list_directory.stat()
-        need(info.st_dev == state['directory_device'] and
-             info.st_ino == state['directory_inode'],
+        # The ordinary list binding names an authorized container. Its saved
+        # st_dev is diagnostic history, not permanent volume identity. A
+        # reattested binding remains strict so later drift cannot bypass the
+        # existing witness and recovery contract.
+        need(info.st_ino == state['directory_inode'],
              'CURRENT_NOTES_LIST_DIRECTORY_CHANGED')
+        if effective is not None and effective[0]['kind'] == \
+                'list-directory-reattest':
+            need(info.st_dev == state['directory_device'],
+                 'CURRENT_NOTES_LIST_DIRECTORY_CHANGED')
         return list_directory
 
     def _require_reattest_fresh_scan(self, start_event):

@@ -1,5 +1,6 @@
 """Offline end-to-end tests through NotesRecords production verifiers."""
 import hashlib
+import os
 from pathlib import Path
 import struct
 import subprocess
@@ -366,6 +367,61 @@ class NotesE2EMediaTests(unittest.TestCase):
             target = Path(data['destination']) / data['target_file']['name']
             self.assertEqual(hashlib.sha256(target.read_bytes()).hexdigest(),
                              data['source_manifest']['sha256'])
+
+    def test_list_device_drift_two_photos_across_sessions_use_imageio(self):
+        photos = [
+            notes.media_identity(kind=PHOTO, visual_key='drift-photo-red'),
+            notes.media_identity(kind=PHOTO, visual_key='drift-photo-green'),
+        ]
+        post_key_value = self._observe_post('post-list-device-drift', photos)
+        keys = [notes.media_key(self.memory['list_key'], post_key_value,
+                                identity) for identity in photos]
+        directory = self.records.current_list_directory
+        original_stat = Path.stat
+
+        def report_list_device_drift(path, *args, **kwargs):
+            result = original_stat(path, *args, **kwargs)
+            if Path(path) == directory:
+                values = list(result)
+                values[2] += 1
+                return os.stat_result(values)
+            return result
+
+        created_path = self.records.records / 'events' / '00000001.json'
+        created_bytes = created_path.read_bytes()
+        with mock.patch.object(Path, 'stat', new=report_list_device_drift):
+            actual = directory.stat()
+            created = self.records.events[0]['data']
+            self.assertNotEqual(actual.st_dev, created['directory_device'])
+            self.assertEqual(actual.st_ino, created['directory_inode'])
+            completions = []
+            for index, (identity, key) in enumerate(zip(photos, keys)):
+                attempt, _, _ = self._download_finished(
+                    key, 'photo-%d.png' % index,
+                    png((255, 0, 0) if index == 0 else (0, 255, 0)))
+                completion = self._verify(attempt)
+                completions.append(completion)
+                if index == 0:
+                    next_session = self.session + '-continued'
+                    self.records.bind(
+                        session_id=next_session,
+                        observation=self._evidence(
+                            list_key=self.memory['list_key']),
+                        handoff=self._evidence(
+                            list_key=self.memory['list_key']))
+                    self.session = next_session
+                    self._observe_post('post-list-device-drift', photos)
+                    with self.assertRaisesRegex(
+                            NotesError,
+                            'COMPLETED_OR_EXCLUDED_NO_REDOWNLOAD'):
+                        self.records.intent(
+                            session_id=self.session,
+                            media_key_value=keys[0])
+            summary = self.records.summary()
+        self.assertEqual(len(completions), 2)
+        self.assertEqual(summary['status_counts']['COMPLETED'], 2)
+        self.assertEqual(summary['status_counts']['PENDING'], 0)
+        self.assertEqual(created_path.read_bytes(), created_bytes)
 
     def test_truncated_video_fails_without_events_or_staging_upgrade(self):
         identity = notes.media_identity(
