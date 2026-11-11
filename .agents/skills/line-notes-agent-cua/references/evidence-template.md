@@ -36,6 +36,52 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes evidence-pack \
 - 其他安全拒絕仍成立：input symlink 為 `EVIDENCE_SYMLINK_REFUSED`、多 hard link 為 `EVIDENCE_SOURCE_CHANGED`、輸出已存在為 `EVIDENCE_OUTPUT_DIRECTORY_EXISTS`、輸出逸出私有 tasks 為 `PROJECT_PRIVATE_EVIDENCE_REQUIRED`。舊紀錄沒有當時 argv 時保留 `UNKNOWN`，不要重跑一次來猜原失敗屬於哪一類。
 - 成功後只把 CLI 回傳的絕對 `bundle_path` 作 context 引用。原始 GUI／AX／input receipt 與整理 statement 分開保存；statement 的說明不能冒充工具原始回傳，bundle 只核對 bytes／context，不證明畫面真實或控制命中。
 
+## CUA 觀察原件落地
+
+CUA 的觀察結果不會自動成為專案檔案。使用同一次 `getAXStateAndScreenshot` 取得完整 AX 與截圖，再從 CUA 的 Node runtime 直接寫入已存在的專案私有 task directory；不要從聊天摘要重建原件，也不要把 CUA 回傳貼進手寫 JSON。
+
+先在終端機確認 `TASK_PRIVATE_DIR` 是本次任務在 `.local/line-backup/tasks/` 下的 canonical 私有目錄，並建立尚不存在的 `OBSERVATION_DIR`。產生新的唯一檔名，將絕對路徑代入下列 CUA 呼叫。`flag: 'wx'` 防止覆寫，`mode: 0o600` 限制新檔權限；寫後逐 bytes 讀回比對。若 API 沒有回傳非空的 full AX string 或 screenshot `Uint8Array`，或任一檔案寫入／讀回失敗，停止並保留部分原件，不執行 `bind`，也不要重跑 GUI 輸入來補證據。
+
+```js
+await (async () => {
+  const fs = await import('node:fs/promises');
+  const app = await cua.getApp('jp.naver.line.mac');
+  const capture = await app.getAXStateAndScreenshot({
+    disableDiffing: true,
+    emit: false,
+  });
+  if (typeof capture.state !== 'string' || capture.state.length === 0 ||
+      !(capture.screenshot instanceof Uint8Array) ||
+      capture.screenshot.length === 0) {
+    throw new Error('CUA_RAW_OBSERVATION_UNAVAILABLE');
+  }
+
+  const axPath = '/ABS/TASK/observations/UNIQUE.ax.txt';
+  const screenshotPath = '/ABS/TASK/observations/UNIQUE.screenshot.bin';
+  const axBytes = new TextEncoder().encode(capture.state);
+  await fs.writeFile(axPath, axBytes, { flag: 'wx', mode: 0o600 });
+  await fs.writeFile(screenshotPath, capture.screenshot,
+                     { flag: 'wx', mode: 0o600 });
+  const [savedAx, savedScreenshot] = await Promise.all([
+    fs.readFile(axPath),
+    fs.readFile(screenshotPath),
+  ]);
+  if (!Buffer.from(savedAx).equals(Buffer.from(axBytes)) ||
+      !Buffer.from(savedScreenshot).equals(Buffer.from(capture.screenshot))) {
+    throw new Error('CUA_RAW_OBSERVATION_READBACK_MISMATCH');
+  }
+  nodeRepl.write(JSON.stringify({
+    ax_path: axPath,
+    ax_bytes: savedAx.length,
+    screenshot_path: screenshotPath,
+    screenshot_bytes: savedScreenshot.length,
+    persistence_readback: 'MATCH',
+  }));
+})();
+```
+
+這段只保存 CUA 回傳的 bytes，不代表畫面真實、列表身分已確認或 GUI 權限成立。statement 另記實際 app／window、API、範圍與時間來源；未知值照實填 `UNKNOWN`。以剛保存的路徑作 `--asset ax` 與 `--asset screenshot` 執行既有 `evidence-pack`，再把 CLI 回傳的 bundle path 傳給 `bind --observation`／`--handoff`。兩個命題只有在同一原件確實支持且 context 相同時才共用 bundle；否則各自封裝適用原件，不複製或擴張原件能證明的範圍。
+
 ## 必錄欄位
 
 | 區塊 | 欄位／內容 | 最低要求 |
