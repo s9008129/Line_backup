@@ -222,8 +222,14 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
 
 ## 啟動與帳本對帳
 
-1. 先執行 `lists`，再讀 `.local/line-backup/active-notes-task.json`；以本次連續入口與當次畫面核對相符的 `local_list_id`，不要只讀最近一個帳本。`lists` 已含全部帳本摘要；只有需刷新選中帳本時，才從唯一相符列的 `records_root` 序列執行一次 `summary`，不再為同一 lock domain 平行查 `memory`。
-2. 使用已取得的摘要核對列表、貼文／媒體狀態、缺項、`unresolved_attempts`、`dispatch_blockers`、scan binding 與本機可用性；需要 staging 目的地或 completion 細節時，依上節回到 `intent`／`verify` 結果及追加事件。索引缺失、帳本損壞、證據鏈異常或出現兩個可能列表時停止相關動作，不建立新空帳。
+1. 以本節前述既有 `notes_capture` 用法執行並保存一次 `lists` 的完整 request、stdout、stderr、exit code 與 capture receipt；先確認 exit 0 且輸出完整可解析，不能以截斷畫面、`head` 或不完整摘要當成全部結果。
+
+   為每一個候選列出內部短表，保留可用的 `local_list_id`、`records_root`、`list_key`、identity／context、覆蓋、六類計數、未決交易及 blockers 等辨識資訊，再讀 `.local/line-backup/active-notes-task.json` 作定位提示。hint 的 root＋ID 必須分別精確對應候選列的 `records_root` 與 `local_list_id`，仍須以本次連續入口及當次畫面核對列表身分與 context；hint 缺席或不符時保留並核對全部候選，不能因此推論新列表或建立空帳。
+
+   沒有相符既有帳本本身不代表帳本為空；只有完整查閱並核對全部歷史候選、未見缺損或歧義，且具備第 3 步所述完整、無歧義的新列表證據時，才走既有新列表 `init` 流程。當次來源無法唯一對應歷史候選且也不符合新列表條件，或發現輸出不完整／不可解析、索引／歷史異常時，停止相關寫入與新派送並回報具體缺口。
+
+   只有確需刷新已選帳本摘要時，才以其原值 `records_root` 序列 capture 一次 `summary`；不為同一 lock domain 平行查 `memory`，也不沿用 hint 中的舊 Session ID 作當次 `bind`。
+2. 使用已取得的摘要核對列表、貼文／媒體狀態、缺項、`unresolved_attempts`、`dispatch_blockers`、scan binding 與本機可用性；需要 staging 目的地或 completion 細節時，依上節回到 `intent`／`verify` 結果及追加事件。索引缺失、帳本損壞、證據鏈異常，或仍有多個可能對應當次列表的歷史候選而無法消除歧義時，停止相關動作，不建立新空帳。
 3. 新列表只有在入口、列表身分與歷史均確認，且沒有缺損／歧義時才建立。Agent 固定同一組 `visual_key`、適用 `context_id` 與 signals 輸入，以 `list-key` 取得 key；若同一完整觀察涵蓋 init 所需的 binding 與 history 命題，且 context 相同，可共用一份 v2 bundle；命題或 context 不同才分開建立。再以完全相同的 identity 參數執行 `init`，最後讀回相同 `list_key`。鏈如下；`CONTEXT_ID` 不適用時整項省略，不是空字串或 `UNKNOWN`，SIGNALS 未使用時同樣省略：
 
    ```sh
