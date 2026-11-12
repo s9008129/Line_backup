@@ -40,45 +40,315 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes evidence-pack \
 
 CUA 的觀察結果不會自動成為專案檔案。使用同一次 `getAXStateAndScreenshot` 取得完整 AX 與截圖，再從 CUA 的 Node runtime 直接寫入已存在的專案私有 task directory；不要從聊天摘要重建原件，也不要把 CUA 回傳貼進手寫 JSON。
 
-先在終端機確認 `TASK_PRIVATE_DIR` 是本次任務在 `.local/line-backup/tasks/` 下的 canonical 私有目錄，並建立尚不存在的 `OBSERVATION_DIR`。產生新的唯一檔名，將絕對路徑代入下列 CUA 呼叫。`flag: 'wx'` 防止覆寫，`mode: 0o600` 限制新檔權限；寫後逐 bytes 讀回比對。若 API 沒有回傳非空的 full AX string 或 screenshot `Uint8Array`，或任一檔案寫入／讀回失敗，停止並保留部分原件，不執行 `bind`，也不要重跑 GUI 輸入來補證據。
+先在終端機確認 `TASK_PRIVATE_DIR` 是本次任務在 `.local/line-backup/tasks/` 下的 canonical 私有目錄，建立尚不存在的 `OBSERVATION_DIR`，並產生只含英數、點、底線或連字號的唯一 `OBSERVATION_ID`。三個值都要代入絕對路徑；範例會再核對兩者是 canonical 路徑，且 observation directory 位於 task directory 下。檔名碰撞不是重試訊號；改用新的 observation ID。
 
+下列第一段只在 CUA Node runtime 定義工具，第二段才實際取得並保存同一次回傳。`util.types.isUint8Array` 可接受真正的 Buffer／Uint8Array，包括 CUA 跨 realm 回傳值；`instanceof`、constructor 名稱或任意 array-like 都不是型別證明。副本只取 view 的 `byteLength`，不會把整個 backing buffer 當成影像。兩段之間不要另做 capture，也不要用 statement 或聊天摘要重建原件。
+
+<!-- cua-evidence-tools:start -->
 ```js
-await (async () => {
+const evidenceTools = await (async () => {
   const fs = await import('node:fs/promises');
-  const app = await cua.getApp('jp.naver.line.mac');
-  const capture = await app.getAXStateAndScreenshot({
-    disableDiffing: true,
-    emit: false,
-  });
-  if (typeof capture.state !== 'string' || capture.state.length === 0 ||
-      !(capture.screenshot instanceof Uint8Array) ||
-      capture.screenshot.length === 0) {
-    throw new Error('CUA_RAW_OBSERVATION_UNAVAILABLE');
+  const path = await import('node:path');
+  const { Buffer } = await import('node:buffer');
+  const { createHash } = await import('node:crypto');
+  const { types: utilTypes } = await import('node:util');
+
+  function describeError(error) {
+    return {
+      name: error && typeof error.name === 'string' ? error.name : 'UNKNOWN',
+      code: error && typeof error.code === 'string' ? error.code : 'UNKNOWN',
+      message: String(error && error.message ? error.message : error).slice(0, 500),
+    };
   }
 
-  const axPath = '/ABS/TASK/observations/UNIQUE.ax.txt';
-  const screenshotPath = '/ABS/TASK/observations/UNIQUE.screenshot.bin';
-  const axBytes = new TextEncoder().encode(capture.state);
-  await fs.writeFile(axPath, axBytes, { flag: 'wx', mode: 0o600 });
-  await fs.writeFile(screenshotPath, capture.screenshot,
-                     { flag: 'wx', mode: 0o600 });
-  const [savedAx, savedScreenshot] = await Promise.all([
-    fs.readFile(axPath),
-    fs.readFile(screenshotPath),
-  ]);
-  if (!Buffer.from(savedAx).equals(Buffer.from(axBytes)) ||
-      !Buffer.from(savedScreenshot).equals(Buffer.from(capture.screenshot))) {
-    throw new Error('CUA_RAW_OBSERVATION_READBACK_MISMATCH');
+  function sha256(bytes) {
+    return createHash('sha256').update(bytes).digest('hex');
   }
-  nodeRepl.write(JSON.stringify({
-    ax_path: axPath,
-    ax_bytes: savedAx.length,
-    screenshot_path: screenshotPath,
-    screenshot_bytes: savedScreenshot.length,
-    persistence_readback: 'MATCH',
-  }));
+
+  function copyExactUint8Array(value) {
+    try {
+      if (!utilTypes.isUint8Array(value)) {
+        return { ok: false, reason: 'NOT_UINT8ARRAY' };
+      }
+      const bytes = Buffer.allocUnsafe(value.byteLength);
+      bytes.set(new Uint8Array(value.buffer, value.byteOffset, value.byteLength));
+      return { ok: true, bytes };
+    } catch (error) {
+      return { ok: false, reason: 'VIEW_COPY_FAILED', error: describeError(error) };
+    }
+  }
+
+  async function writeExclusive(filePath, bytes) {
+    try {
+      await fs.writeFile(filePath, bytes, { flag: 'wx', mode: 0o600 });
+      return { status: 'WRITTEN' };
+    } catch (error) {
+      return { status: 'FAILED', error: describeError(error) };
+    }
+  }
+
+  async function readbackExact(filePath, expectedBytes) {
+    try {
+      const saved = await fs.readFile(filePath);
+      const expected_sha256 = sha256(expectedBytes);
+      const saved_sha256 = sha256(saved);
+      return {
+        status: saved.length === expectedBytes.length &&
+                saved_sha256 === expected_sha256 ? 'MATCH' : 'MISMATCH',
+        expected_bytes: expectedBytes.length,
+        saved_bytes: saved.length,
+        expected_sha256,
+        saved_sha256,
+      };
+    } catch (error) {
+      return {
+        status: 'FAILED',
+        expected_bytes: expectedBytes.length,
+        expected_sha256: sha256(expectedBytes),
+        error: describeError(error),
+      };
+    }
+  }
+
+  async function persistAsset(metadata, role, filePath, bytes) {
+    const asset = {
+      path: filePath,
+      bytes: bytes.length,
+      sha256: sha256(bytes),
+      write: 'NOT_RUN',
+      readback: 'NOT_RUN',
+    };
+    metadata.assets[role] = asset;
+    const write = await writeExclusive(filePath, bytes);
+    asset.write = write.status;
+    if (write.error) asset.write_error = write.error;
+    if (write.status !== 'WRITTEN') return false;
+    const readback = await readbackExact(filePath, bytes);
+    asset.readback = readback.status;
+    asset.saved_bytes = readback.saved_bytes;
+    asset.saved_sha256 = readback.saved_sha256;
+    if (readback.error) asset.readback_error = readback.error;
+    return readback.status === 'MATCH';
+  }
+
+  async function validatePrivatePaths(taskDir, observationDir) {
+    try {
+      if (!path.isAbsolute(taskDir) || !path.isAbsolute(observationDir)) {
+        return { ok: false, error: { code: 'ABSOLUTE_PATH_REQUIRED' } };
+      }
+      const taskReal = await fs.realpath(taskDir);
+      const observationReal = await fs.realpath(observationDir);
+      if (path.resolve(taskDir) !== taskReal ||
+          path.resolve(observationDir) !== observationReal) {
+        return { ok: false, error: { code: 'CANONICAL_PRIVATE_PATH_REQUIRED' } };
+      }
+      if (observationReal === taskReal ||
+          !observationReal.startsWith(taskReal + path.sep)) {
+        return { ok: false, error: { code: 'PRIVATE_TASK_SUBDIRECTORY_REQUIRED' } };
+      }
+      return { ok: true, task_dir: taskReal, observation_dir: observationReal };
+    } catch (error) {
+      return { ok: false, error: describeError(error) };
+    }
+  }
+
+  async function persistObservation(options) {
+    const metadata = {
+      schema_version: 1,
+      observation_id: options.observationId,
+      created_at: {
+        value: new Date().toISOString(),
+        source: 'CUA Node runtime Date',
+      },
+      task_dir: options.taskDir,
+      observation_dir: options.observationDir,
+      files: {
+        ax: path.join(options.observationDir, options.observationId + '.ax.txt'),
+        screenshot: path.join(options.observationDir,
+                              options.observationId + '.screenshot.bin'),
+        diagnostic: path.join(options.observationDir,
+                              options.observationId + '.diagnostic.json'),
+      },
+      stages: {},
+      assets: {},
+      ready_for_bind: false,
+    };
+    const setStage = (name, status, detail) => {
+      metadata.stages[name] = Object.assign({ status }, detail || {});
+    };
+    const result = (blockers) => Object.assign({
+      ready_for_bind: false,
+      blockers,
+      observation_id: options.observationId,
+      files: metadata.files,
+    }, metadata);
+
+    if (typeof options.observationId !== 'string' ||
+        !/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(options.observationId)) {
+      setStage('OBSERVATION_ID', 'INVALID');
+      return result(['OBSERVATION_ID:INVALID']);
+    }
+    setStage('OBSERVATION_ID', 'OK');
+
+    const paths = await validatePrivatePaths(options.taskDir, options.observationDir);
+    if (!paths.ok) {
+      setStage('PRIVATE_PATHS', 'FAILED', { error: paths.error });
+      return result(['PRIVATE_PATHS:FAILED']);
+    }
+    setStage('PRIVATE_PATHS', 'OK');
+
+    const capture = options.capture;
+    const blockers = [];
+    if (options.captureError) {
+      setStage('CAPTURE', 'FAILED', { error: options.captureError });
+      blockers.push('CAPTURE:FAILED');
+    } else if (!capture || typeof capture !== 'object' || Array.isArray(capture)) {
+      setStage('CAPTURE', 'FAILED', { error: { code: 'CAPTURE_SHAPE_INVALID' } });
+      blockers.push('CAPTURE:FAILED');
+    } else {
+      setStage('CAPTURE', 'OK');
+      if (capture.regions !== undefined && capture.regions !== null) {
+        setStage('CAPTURE_SHAPE', 'UNSUPPORTED_REGIONS');
+        blockers.push('CAPTURE_SHAPE:UNSUPPORTED_REGIONS');
+      } else {
+        setStage('CAPTURE_SHAPE', 'SUPPORTED_SINGLE_SCREENSHOT');
+      }
+    }
+
+    let axBytes = null;
+    if (capture && typeof capture.state === 'string' && capture.state.length > 0) {
+      axBytes = Buffer.from(capture.state, 'utf8');
+      setStage('AX', 'OK', { utf8_bytes: axBytes.length });
+    } else if (capture && typeof capture.state === 'string') {
+      setStage('AX', 'EMPTY');
+      blockers.push('AX:EMPTY');
+    } else if (capture) {
+      setStage('AX', 'INVALID_TYPE',
+               { observed_type: capture.state === null ? 'null' : typeof capture.state });
+      blockers.push('AX:INVALID_TYPE');
+    } else {
+      setStage('AX', 'NOT_AVAILABLE');
+    }
+
+    let screenshotBytes = null;
+    if (capture) {
+      const copied = copyExactUint8Array(capture.screenshot);
+      if (!copied.ok && copied.reason === 'NOT_UINT8ARRAY') {
+        setStage('SCREENSHOT_TYPE', 'INVALID_TYPE');
+        blockers.push('SCREENSHOT_TYPE:INVALID_TYPE');
+      } else if (!copied.ok) {
+        setStage('SCREENSHOT_TYPE', 'COPY_FAILED', { error: copied.error });
+        blockers.push('SCREENSHOT_TYPE:COPY_FAILED');
+      } else {
+        setStage('SCREENSHOT_TYPE', 'OK');
+        if (copied.bytes.length === 0) {
+          setStage('SCREENSHOT_LENGTH', 'EMPTY');
+          blockers.push('SCREENSHOT_LENGTH:EMPTY');
+        } else {
+          screenshotBytes = copied.bytes;
+          setStage('SCREENSHOT_LENGTH', 'OK',
+                   { bytes: screenshotBytes.length });
+        }
+      }
+    } else {
+      setStage('SCREENSHOT_TYPE', 'NOT_AVAILABLE');
+      setStage('SCREENSHOT_LENGTH', 'NOT_AVAILABLE');
+    }
+
+    if (axBytes !== null) {
+      if (await persistAsset(metadata, 'ax', metadata.files.ax, axBytes)) {
+        setStage('AX_PERSISTENCE', 'MATCH');
+      } else {
+        setStage('AX_PERSISTENCE', 'FAILED');
+        blockers.push('AX_PERSISTENCE:FAILED');
+      }
+    } else {
+      setStage('AX_PERSISTENCE', 'SKIPPED');
+    }
+
+    if (screenshotBytes !== null) {
+      if (await persistAsset(metadata, 'screenshot', metadata.files.screenshot,
+                             screenshotBytes)) {
+        setStage('SCREENSHOT_PERSISTENCE', 'MATCH');
+      } else {
+        setStage('SCREENSHOT_PERSISTENCE', 'FAILED');
+        blockers.push('SCREENSHOT_PERSISTENCE:FAILED');
+      }
+    } else {
+      setStage('SCREENSHOT_PERSISTENCE', 'SKIPPED');
+    }
+
+    const diagnosticBytes = Buffer.from(JSON.stringify(metadata, null, 2) + '\n', 'utf8');
+    const diagnosticWrite = await writeExclusive(metadata.files.diagnostic,
+                                                  diagnosticBytes);
+    const diagnostic = {
+      path: metadata.files.diagnostic,
+      bytes: diagnosticBytes.length,
+      sha256: sha256(diagnosticBytes),
+      write: diagnosticWrite.status,
+      readback: 'NOT_RUN',
+    };
+    if (diagnosticWrite.error) diagnostic.write_error = diagnosticWrite.error;
+    if (diagnosticWrite.status === 'WRITTEN') {
+      const readback = await readbackExact(metadata.files.diagnostic, diagnosticBytes);
+      diagnostic.readback = readback.status;
+      diagnostic.saved_bytes = readback.saved_bytes;
+      diagnostic.saved_sha256 = readback.saved_sha256;
+      if (readback.error) diagnostic.readback_error = readback.error;
+    }
+    if (diagnostic.write !== 'WRITTEN' || diagnostic.readback !== 'MATCH') {
+      blockers.push('DIAGNOSTIC_PERSISTENCE:FAILED');
+    }
+
+    const output = result(blockers);
+    output.metadata_persistence = diagnostic;
+    output.ready_for_bind = blockers.length === 0;
+    return output;
+  }
+
+  async function captureAndPersist(options) {
+    let capture = null;
+    let captureError = null;
+    try {
+      const app = await cua.getApp('jp.naver.line.mac');
+      capture = await app.getAXStateAndScreenshot({
+        disableDiffing: true,
+        emit: false,
+      });
+    } catch (error) {
+      captureError = describeError(error);
+    }
+    return persistObservation(Object.assign({}, options, { capture, captureError }));
+  }
+
+  return {
+    captureAndPersist,
+    copyExactUint8Array,
+    describeError,
+    persistObservation,
+    readbackExact,
+    sha256,
+    writeExclusive,
+  };
 })();
 ```
+<!-- cua-evidence-tools:end -->
+
+```js
+const OBSERVATION = await evidenceTools.captureAndPersist({
+  taskDir: '/ABS/TASK_PRIVATE_DIR',
+  observationDir: '/ABS/OBSERVATION_DIR',
+  observationId: 'UNIQUE_OBSERVATION_ID',
+});
+nodeRepl.write(JSON.stringify(OBSERVATION, null, 2));
+if (!OBSERVATION.ready_for_bind) {
+  throw new Error('CUA_RAW_OBSERVATION_INCOMPLETE: ' + OBSERVATION.blockers.join(', '));
+}
+```
+
+`stages` 會分別留下 `CAPTURE`、`CAPTURE_SHAPE`、`AX`、`SCREENSHOT_TYPE`、`SCREENSHOT_LENGTH` 與各 asset 的 `*_PERSISTENCE`；`assets` 另記實際路徑、長度、SHA-256、寫入與讀回，`metadata_persistence` 則記 diagnostic 的寫入與讀回。只有 AX 與非空截圖都存在、兩者都以 `wx` 寫入並逐 bytes 讀回 MATCH，且 diagnostic 也寫入／讀回 MATCH，runtime 輸出的 `ready_for_bind` 才會是 `true`。AX 合格但截圖型別錯、空值或寫入失敗時，合格 AX 仍會保存；反向情況亦同。這些部分原件可用於唯讀診斷，但 blocker 未消除前不得 bind。
+
+`CUA_RAW_OBSERVATION_INCOMPLETE` 是本地保存 gate，不是 CUA 沒有回傳或不支援該 API；依 `blockers`、`stages` 與部分 asset 判斷是缺值、型別、權限、碰撞或讀回問題。沒有新 bytes 時不要重作 GUI 輸入或猜測補值；若回傳 `regions` 等未實測形狀，保留可保存的部分與 `UNSUPPORTED_REGIONS`，交回精確範圍決策。
 
 這段只保存 CUA 回傳的 bytes，不代表畫面真實、列表身分已確認或 GUI 權限成立。statement 另記實際 app／window、API、範圍與時間來源；未知值照實填 `UNKNOWN`。以剛保存的路徑作 `--asset ax` 與 `--asset screenshot` 執行既有 `evidence-pack`，再把 CLI 回傳的 bundle path 傳給 `bind --observation`／`--handoff`。兩個命題只有在同一原件確實支持且 context 相同時才共用 bundle；否則各自封裝適用原件，不複製或擴張原件能證明的範圍。
 
