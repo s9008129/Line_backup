@@ -1,0 +1,87 @@
+{
+  "baseline": "40a7b09e9900eddab2df9bfd81aad9ec25b89c1f",
+  "event_baseline": "02db924fd89ff79067cd4958729a3ac6b8157437",
+  "read_scope": "tracked public sources only; no raw incident evidence or real ledgers read",
+  "sources": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 16293,
+      "sha256": "951d88cb6baed66e1feb2301822efa2b45bab198eaba9a94d99dbe1b15fd3e00"
+    },
+    {
+      "path": "docs/plans/20261112-notes-download-control/問題提報單.md",
+      "bytes": 13377,
+      "sha256": "e7bfec3d64b6b8f265b8d5a88ace5cc1dc5574185c13cc69b34528607fe80850"
+    },
+    {
+      "path": ".agents/skills/line-notes-agent-cua/SKILL.md",
+      "bytes": 18409,
+      "sha256": "6ec7361e5cb2c932df11951484555348d760ed30e1c35d23e58a6dbedd44cf32"
+    },
+    {
+      "path": ".agents/skills/line-notes-agent-cua/references/gui-inventory.md",
+      "bytes": 19341,
+      "sha256": "05e7763eb3c30571dfe2a07950577324fff3e731c6edb90c8de33b0c80289731"
+    },
+    {
+      "path": ".agents/skills/line-notes-agent-cua/references/download-and-ledger.md",
+      "bytes": 45922,
+      "sha256": "1b1d5890f49d1327929a2ac64993c86e3d714857d3d8eb460fdbcf5dbdd5e814"
+    },
+    {
+      "path": ".agents/skills/line-notes-agent-cua/references/evidence-decision-cases.md",
+      "bytes": 14104,
+      "sha256": "b1ecb2e92afd5601aa3070b6b8a9e513e71cf8ed35d092b430af2f837c261171"
+    },
+    {
+      "path": ".agents/skills/line-notes-agent-cua/references/evidence-template.md",
+      "bytes": 18535,
+      "sha256": "04e64a88e0aceb897b864757bf4a95aa70e168f0f7e6eb63662b8a0b5c8db974"
+    },
+    {
+      "path": "docs/LINE相簿備份_使用手冊.md",
+      "bytes": 47601,
+      "sha256": "2839bd4c9e3a3febf44fd6cbb136d332b3aea9163bd3a27ff6ecf909c2f9625e"
+    },
+    {
+      "path": "src/line_backup_batch/notes.py",
+      "bytes": 374311,
+      "sha256": "75bf2f7663fbd21106ea61da3c50da66262f962a9a36fe0a3b021a89909654aa"
+    },
+    {
+      "path": "src/line_backup_batch/notes_capture.py",
+      "bytes": 13707,
+      "sha256": "c7cfeec43797f56f8cc2bd27d49b9a67436c49449a58d96c1c37f87f9896b5e6"
+    },
+    {
+      "path": "tests/test_notes_records.py",
+      "bytes": 83277,
+      "sha256": "7264f74f68ca9ca8c5e4c6df688ee3bb72abc7c13049e45da0bbda20b3a495e5"
+    },
+    {
+      "path": "tests/test_notes_regressions.py",
+      "bytes": 149318,
+      "sha256": "49ccfa61ec391dba7f1c24c0759eb6a9d8f213d4a9568d20a52883201f42def7"
+    },
+    {
+      "path": "tests/test_notes_capture.py",
+      "bytes": 18433,
+      "sha256": "9f446be5e1f3e43a5e7184b0ec8b301784d560d10ccee480d4ad5b506690406c"
+    },
+    {
+      "path": "/Users/hsiaojohnny/.codex/prompts/v4.9.0/01_plan_prompt.md",
+      "bytes": 4162,
+      "sha256": "bcdf692251700d61b8f6215a854e6597fb28282529b8f95d75fae16ad9e6d814"
+    },
+    {
+      "path": "/Users/hsiaojohnny/.codex/policies/v4.9.0/workflow-routing.md",
+      "bytes": 4574,
+      "sha256": "9e2e02ad9a5e82436049b91b2ab8b55863fd3953d61ea9b0c9be8f325f0084dd"
+    },
+    {
+      "path": "/Users/hsiaojohnny/.codex/policies/v4.9.0/subagent-model-policy.md",
+      "bytes": 4108,
+      "sha256": "70f64afe8b9cb25a8636a7901d4757d1c2c94ec92c86e98d5e1d2c74419ca8fc"
+    }
+  ]
+}
