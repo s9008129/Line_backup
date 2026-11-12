@@ -1,0 +1,155 @@
+{
+  "baseline": "e8586aa42f9a3600936adf4b58577eef696e5e99",
+  "event_product_baseline": "02db924fd89ff79067cd4958729a3ac6b8157437",
+  "kind": "read-only incident diagnosis; metadata only; raw images and labels are not included",
+  "public_sources": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "951d88cb6baed66e1feb2301822efa2b45bab198eaba9a94d99dbe1b15fd3e00"
+    },
+    {
+      "path": ".agents/skills/line-notes-agent-cua/SKILL.md",
+      "sha256": "6ec7361e5cb2c932df11951484555348d760ed30e1c35d23e58a6dbedd44cf32"
+    },
+    {
+      "path": ".agents/skills/line-notes-agent-cua/references/gui-inventory.md",
+      "sha256": "05e7763eb3c30571dfe2a07950577324fff3e731c6edb90c8de33b0c80289731"
+    },
+    {
+      "path": ".agents/skills/line-notes-agent-cua/references/download-and-ledger.md",
+      "sha256": "1b1d5890f49d1327929a2ac64993c86e3d714857d3d8eb460fdbcf5dbdd5e814"
+    },
+    {
+      "path": "docs/plans/20261112-notes-download-control/問題提報單.md",
+      "sha256": "e7bfec3d64b6b8f265b8d5a88ace5cc1dc5574185c13cc69b34528607fe80850"
+    },
+    {
+      "path": "docs/plans/20261112-notes-download-control/analysis.md",
+      "sha256": "be2b0cc595e577f88089f826d9ddb0861052ed31da18607876fe6c91c822eda9"
+    },
+    {
+      "path": "docs/plans/20261112-notes-download-control/plan.md",
+      "sha256": "fba0ca1fa9b4618b29ce424cde251405220eba0e4f092a8ad81421098d6fd437"
+    },
+    {
+      "path": "docs/plans/20261112-notes-download-control/handoff.md",
+      "sha256": "168d96c216f2b7352e5f2730218798cf5d0d73aab92095a2478dda7bbb702b46"
+    },
+    {
+      "path": "src/line_backup_batch/notes.py",
+      "sha256": "75bf2f7663fbd21106ea61da3c50da66262f962a9a36fe0a3b021a89909654aa"
+    }
+  ],
+  "selected_private_source_metadata": [
+    {
+      "path": ".local/line-backup/tasks/daily-notes-20261112-3972c6285a/commands/media-C0/notes-capture-b8d737f4e66d46569ea81cde66d7fb6b/stdout.bin",
+      "sha256": "3950f8c6fd2f6df906179c307f7b17625523e940dbc98880064cef91c47fd63d",
+      "bytes": 3475
+    },
+    {
+      "path": ".local/line-backup/tasks/daily-notes-20261112-3972c6285a/commands/summary-final/notes-capture-da143c057cb040c083a335c0313a77f6/stdout.bin",
+      "sha256": "456ff7393b09e5efe936a46df33d2eb6aa7443dd090dd19d7f8ae09dcee565a4",
+      "bytes": 12846
+    },
+    {
+      "path": ".local/line-backup/tasks/daily-notes-20261112-3972c6285a/inventory/source-card-ledger.md",
+      "sha256": "70ec0032e3b643e0e40274fadeecde545a51f2e0ee5f47111c3558004c11d4ea",
+      "bytes": 3871
+    },
+    {
+      "path": ".local/line-backup/tasks/daily-notes-20261112-3972c6285a/observations/photo-open-after.ax.txt",
+      "sha256": "f420756be32767f9e1d45bb92f021be41918500d7c9e66a4238513f20e732b64",
+      "bytes": 637
+    },
+    {
+      "path": ".local/line-backup/tasks/daily-notes-20261112-3972c6285a/observations/photo-open-after.screenshot.bin",
+      "sha256": "a681cc70bb559706b7b8729547d45ea2fbfa9fe64c75621af293761c7ec3cc61",
+      "bytes": 188516
+    },
+    {
+      "path": ".local/line-backup/tasks/daily-notes-20261112-3972c6285a/observations/photo-open-before.ax.txt",
+      "sha256": "88cc970dd73264a9a05cecef3669cfb2610b39d997b6a4806f8c1ccb26534b41",
+      "bytes": 353
+    },
+    {
+      "path": ".local/line-backup/tasks/daily-notes-20261112-3972c6285a/observations/photo-open.input.json",
+      "sha256": "df8a3aacae6b9e3298bb1ed9e457eb3c44c53a99fcefea489195c5e1a4aa6b42",
+      "bytes": 317
+    },
+    {
+      "path": ".local/line-backup/tasks/daily-notes-20261112-3972c6285a/observations/viewer-02.ax.txt",
+      "sha256": "bb08deffea5482eaefe2c3591ebcb6d08901ab1c0546d88d6806619c751dec89",
+      "bytes": 585
+    },
+    {
+      "path": ".local/line-backup/tasks/daily-notes-20261112-3972c6285a/observations/viewer-02.input.json",
+      "sha256": "95a85b476d5114d4fbe6c33effa9cd7a3f8d3947dfb7f350df363f8b689ad1f7",
+      "bytes": 238
+    },
+    {
+      "path": ".local/line-backup/tasks/daily-notes-20261112-3972c6285a/observations/viewer-02.screenshot.bin",
+      "sha256": "f2c25645be124aae6e8161d91cae953a22f9fe5a552487148725a5c272c433ef",
+      "bytes": 160180
+    },
+    {
+      "path": ".local/line-backup/tasks/daily-notes-20261112-3972c6285a/observations/viewer-03.ax.txt",
+      "sha256": "98ed931fc06b8e303016611d170eb35e24f53e4aabc2aa7fa57afaa30409bd57",
+      "bytes": 585
+    },
+    {
+      "path": ".local/line-backup/tasks/daily-notes-20261112-3972c6285a/observations/viewer-03.input.json",
+      "sha256": "73d0843062848ebf01110332dbd298750b14a326f6c3e51050b3073b96e6ce1f",
+      "bytes": 237
+    },
+    {
+      "path": ".local/line-backup/tasks/daily-notes-20261112-3972c6285a/observations/viewer-03.screenshot.bin",
+      "sha256": "1d21975bdb5a85d462c3a9529a6148aaf16f6c182c2d2e6c79d84c2868699b62",
+      "bytes": 219772
+    },
+    {
+      "path": ".local/line-backup/tasks/daily-notes-20261112-3972c6285a/observations/viewer-04.ax.txt",
+      "sha256": "eb07d941fc18faa828681bc486afcc89b4452bde1f995f96e6690dfb24d41ee6",
+      "bytes": 585
+    },
+    {
+      "path": ".local/line-backup/tasks/daily-notes-20261112-3972c6285a/observations/viewer-04.input.json",
+      "sha256": "a5f376586cf6ad0e224979e96929676660e3f567d84dc02fe7c5f2e6c63d340a",
+      "bytes": 238
+    },
+    {
+      "path": ".local/line-backup/tasks/daily-notes-20261112-3972c6285a/observations/viewer-04.screenshot.bin",
+      "sha256": "ec0eb67f8b621fe3f4f6e044d4c4bf01f57f4689b32ba5097cdf341880f5f8ab",
+      "bytes": 243049
+    },
+    {
+      "path": ".local/line-backup/tasks/daily-notes-20261112-3972c6285a/observations/viewer-05.ax.txt",
+      "sha256": "5ea81140ba0f553820a9b4f68c9a28182b938e0500195161fa2b3ac794e60988",
+      "bytes": 586
+    },
+    {
+      "path": ".local/line-backup/tasks/daily-notes-20261112-3972c6285a/observations/viewer-05.input.json",
+      "sha256": "c922d06bc1eae044ddd2381fa365f9795333b68db7507e374ecfb7f1e64532d0",
+      "bytes": 237
+    },
+    {
+      "path": ".local/line-backup/tasks/daily-notes-20261112-3972c6285a/observations/viewer-05.screenshot.bin",
+      "sha256": "e4097a14439936e25793d45ed27114a7533750475ef0be782d42e7f1d0f6745f",
+      "bytes": 141748
+    }
+  ],
+  "web_sources": [
+    {
+      "url": "https://help.line.me/line/?contentId=20000246&lang=zh-Hant",
+      "title": "聊天室記事本的使用方法",
+      "retrieved": "2026-11-12",
+      "scope": "Windows/Mac Notes; no applicable Notes viewer save steps found in the opened article"
+    },
+    {
+      "url": "https://help.line.me/line?contentId=20000248",
+      "title": "Creating/editing albums and sharing album photos and videos",
+      "retrieved": "2026-11-12",
+      "scope": "Albums; not a Notes viewer method"
+    }
+  ],
+  "raw_integrity_limit": "SHA-256 verifies byte identity against saved incident evidence, not semantic truth or live GUI state."
+}
