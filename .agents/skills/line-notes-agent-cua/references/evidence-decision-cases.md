@@ -34,25 +34,20 @@
 - **前提：** attempt A 已有 `UNKNOWN`；下一項 B 尚未建立 intent。
 - **觀察（假設）：** A 初次等待後又出現 chooser、進度或檔案，可能屬於 A，但尚未完成歸屬核對。
 - **可支持命題：** 晚到證據只能先回到 A；出現時間本身不能指定所有權，也不能證明下載完成。
-- **允許動作：** 暫停 B；以 A 的原事件、原 viewer、原目的地 reconcile。若正面完成證據成立才可 `DOWNLOAD_FINISHED` 並 verify；否則維持 `UNKNOWN`。
-- **禁止推論：** 晚到結果算成 B；重設 A；看到檔案就直接 verify；為 B 建 intent 或重送。
-- **缺少證據：** attempt／viewer／目的地歸屬、終結訊號、穩定檔集；若檔案存在，還缺 hash、解碼與 completion。
+- **允許動作：** 暫停 B；以 A 的原事件、原 viewer、原目的地 reconcile。若正面完成證據成立才可 `DOWNLOAD_FINISHED` 並 `download-check`；否則維持 `UNKNOWN`。
+- **禁止推論：** 晚到結果算成 B；重設 A；看到檔案就直接 `download-check`；為 B 建 intent 或重送。
+- **缺少證據：** attempt／viewer／目的地歸屬、終結訊號、穩定檔集；若檔案存在，還缺基本檔案檢查與 completion。
 
-## C5 播放結束不是下載完成
+## C5 播放不是操作步驟或取證來源
 
-- **前提：** 影片 attempt 已存在。
-- **觀察（假設）：** viewer 播放到結尾或顯示「重播」，但沒有可歸屬下載終結訊號或穩定結果檔。
-- **可支持命題：** 只支持播放狀態；不代表已下載，也不能推論媒體種類。
-- **允許動作：** 將播放觀察與下載狀態分開；回到原 attempt 查可歸屬終結證據。尚無 outcome 時先以 `outcome` 記 `UNKNOWN`；已有 `outcome=UNKNOWN` 且有新證據才可 reconcile；若既有 outcome 已是 `DOWNLOAD_FINISHED` 則只接續驗證；其他終態不得重寫。單憑播放狀態不足以 verify。
-- **禁止推論：** 播放結束等於下載完成；影片必須出現照片 toast；可跳過 ffmpeg 完整解碼或 completion。
-- **缺少證據：** 下載終結訊號、原目的地與檔案歸屬、穩定檔集、ffmpeg／ffprobe 驗證、completion 讀回。
+日常 Agent 不播放／暫停、拖時間、調倍速或檢視媒體內容，也不為證明來源種類操作 viewer；不可點內容切換播放控制。只可移入游標或使用明確工具列控制顯示下載工具列。若歷史資料中已有播放觀察，不將它用作下載完成或來源種類證據。
 
 ## C6 無 outcome 的 crash window
 
 - **前提：** `intent` 已保存並讀回，可能已輸入；程序在第一筆 outcome 前 crash 或重啟。
 - **觀察（假設）：** ledger 有 intent、沒有 outcome；重啟後沒有可歸屬 chooser／進度／檔案，暫存目錄可能為空。
 - **可支持命題：** 只支持存在 crash window 與可能已派送；缺少資料不是空帳，也不是未派送證明。
-- **允許動作：** 找回原 attempt；用 `outcome` 記第一筆真實結果，證據不足就記 `UNKNOWN`；有後續新證據才可 reconcile。停止新派送、verify 與下一項。
+- **允許動作：** 找回原 attempt；用 `outcome` 記第一筆真實結果，證據不足就記 `UNKNOWN`；有後續新證據才可 reconcile。停止新派送、檔案檢查與下一項。
 - **禁止推論：** 沒有 outcome 就是未送出；空目錄等於 `NOT_SENT`；先呼叫 reconcile；建立新空白 attempt 或重建 ledger。
 - **缺少證據：** 是否真正送出、原 viewer／chooser／進度、原目的地檔案、可歸屬終結或停止證據。
 
@@ -67,10 +62,10 @@
 
 ## C8 完成證據：充分與不足
 
-- **前提：** 同一 attempt 已有 outcome，準備判斷能否 verify 與計完成。
-- **觀察（假設對照）：** 充分的下載終結候選是可歸屬原 attempt／viewer／原目的地的正面終結訊號，加上原目的地的穩定結果檔；充分的完成證據再加入檔案數、非空、SHA-256、逐檔解碼、發布與 completion 讀回全部成立。不足組合是只有 chooser、API 成功、播放結束、照片 toast 單獨一項、空目錄、部分檔案、名稱／hash 相同，或 completion 未讀回。照片的「下載完畢」提示可作可能的終結觀察之一；影片不要求同一 toast，但必須有自己的可歸屬正面終結證據。
-- **可支持命題：** 下載終結候選支持 `DOWNLOAD_FINISHED` 與進入 verify；只有完整檔案驗證及 completion 讀回支持 `COMPLETED`。不足觀察只支持進一步查證或 `UNKNOWN`。
-- **允許動作：** 已有 `outcome=UNKNOWN` 且下載終結候選成立時，以 `reconcile` 追加新證據；若既有 outcome 已是 `DOWNLOAD_FINISHED`，直接驗證。只有最終為 `DOWNLOAD_FINISHED` 才可 verify，再讀回 completion。尚未有 outcome 的 crash window 依 C6 處理，不把本案例當成第一筆 outcome 的替代。不足時停在上一個已證明層次，不重下補帳。
+- **前提：** 同一 attempt 已有 outcome，準備判斷能否執行日常 `download-check` 與計完成。
+- **觀察（假設對照）：** 充分的下載終結候選是可歸屬原 attempt／viewer／原目的地的正面終結訊號，加上原目的地的穩定結果檔；充分的日常完成證據再加入 magic MIME／suffix 分類、非空穩定檔案、SHA-256、防覆寫、身分核對、發布與 completion 讀回全部成立。不足組合是只有 chooser、API 成功、播放結束、照片 toast 單獨一項、空目錄、部分檔案、名稱／hash 相同，或 completion 未讀回。照片的「下載完畢」提示可作可能的終結觀察之一；影片不要求同一 toast，但必須有自己的可歸屬正面終結證據。
+- **可支持命題：** 下載終結候選支持 `DOWNLOAD_FINISHED` 與進入日常 `download-check`；只有基本檔案檢查及 completion 讀回支持 `DOWNLOAD_ONLY`。不足觀察只支持進一步查證或 `UNKNOWN`。
+- **允許動作：** 已有 `outcome=UNKNOWN` 且下載終結候選成立時，以 `reconcile` 追加新證據；若既有 outcome 已是 `DOWNLOAD_FINISHED`，直接 `download-check`。只有最終為 `DOWNLOAD_FINISHED` 才可執行基本檢查，再讀回 completion。尚未有 outcome 的 crash window 依 C6 處理，不把本案例當成第一筆 outcome 的替代。不足時停在上一個已證明層次，不重下補帳。
 - **禁止推論：** 終結訊號單獨就是 completion；chooser／播放結束／照片 toast 是所有媒體的必要條件；本機驗證等於服務端原始位元或外部副本完整。
 - **缺少證據：** 充分組合仍缺真實 LINE 執行與當次工具輸出；本文件案例不能填補該缺項。
 
@@ -79,7 +74,7 @@
 - **前提：** 原 attempt 未確認下載完成，評估是否能終結為 `STOPPED`／`NOT_SENT` 或建立恢復 attempt。
 - **觀察（假設對照）：** 充分的觀察是有可歸屬原 attempt、足以正面排除原操作稍後繼續的明確停止／未派送 receipt，且原任務授權涵蓋恢復；不足的觀察只有 timeout、API error、控制隱藏、空目錄、缺少 marker、舊計數為零、播放結束或 Owner 口頭聲明。
 - **可支持命題：** 充分 receipt 才可能支持終態；不足觀察只支持 `UNKNOWN`。本文件沒有取得任何真實充分 receipt。
-- **允許動作：** 充分、授權且帳本已持久化 `recovery_authorized=true` 時，保留原檔並依下載文件以 `intent --recovery-evidence` 建立另一個新空白恢復目錄；授權未持久化或證據不足時停止。不足時保留 `UNKNOWN`，不 verify、不建新 attempt、不重下、不派下一項。
+- **允許動作：** 充分、授權且帳本已持久化 `recovery_authorized=true` 時，保留原檔並依下載文件以 `intent --recovery-evidence` 建立另一個新空白恢復目錄；授權未持久化或證據不足時停止。不足時保留 `UNKNOWN`，不做檔案檢查、不建新 attempt、不重下、不派下一項。
 - **禁止推論：** 假設 receipt 已被本次工具取得；缺 marker 等於停止；新目錄／新 Session 可解鎖；可用相簿控制替代記事本流程。
 - **缺少證據：** 真實平台是否能提供足以排除副作用的停止證據仍 `UNKNOWN`；未提供能力不得由案例補齊。
 

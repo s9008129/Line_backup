@@ -1,13 +1,16 @@
 # 驗證、狀態與恢復
 
-本文件定義記事本照片／影片下載後的驗證標準、六類業務狀態、本機可用性及恢復決策。完整卡片覆蓋是全列表派送前置；普通 intent 的細盤資格只看目標貼文及媒體。驗證只證明指定檔案的指定性質；不證明檔案與 LINE 服務端原始位元完全相同，也不代替 GUI 授權、真人觀察或獨立驗收。
+本文件中 ImageIO／ffmpeg／ffprobe、完整解碼、來源媒體種類取證與 PHOTO／VIDEO 對帳的細節只供既有帳本與舊 `verify` 相容，不是日常下載步驟或完成條件。日常流程依 [下載與 notes CLI](download-and-ledger.md) 使用 `download-check`，完成 assurance 為 `DOWNLOAD_ONLY`：只檢查 magic MIME 與 suffix 分類、非空穩定檔案、SHA-256、防覆寫及身分一致性；不解碼，也不證明來源原件或內容完整。Agent 不播放／暫停、拖時間、調倍速或為種類取證；不點媒體內容切換播放控制。完整卡片覆蓋仍是全列表派送前置；普通 intent 的細盤資格只看目標貼文及媒體。未知種類用 `identity.kind=UNCLASSIFIED`，不改 key 來重認或避開歷史。
+
+以下以 ImageIO／ffmpeg 為主題的舊程序只在 legacy 相容情境適用；不得將其視為日常流程必做項。
 
 ## 四個證據層次
 
 | 層次 | 能證明什麼 | 不能證明什麼 |
 |---|---|---|
 | notes CLI 簿記 | 事件、attempt、completion、summary 的輸入與投影一致；拒絕與重送限制依實作成立 | 畫面真實、下載派送成功、檔案可解碼或 LINE E2E |
-| ImageIO／ffmpeg 解碼 | 指定本地檔案在指定工具與版本下通過完整解碼／驗證 | 等於服務端原始位元、畫面涵蓋完整或使用者已驗收 |
+| `download-check`（日常） | 指定下載結果通過 magic MIME／suffix 分類、非空穩定與 SHA-256／身分檢查 | 來源原件、內容可完整解碼或使用者已驗收 |
+| ImageIO／ffmpeg 解碼（legacy） | 舊 `verify` 流程指定本地檔案在指定工具與版本下通過完整解碼 | 日常必要條件、等於服務端原始位元或使用者已驗收 |
 | 真人 `OBSERVED` | 某人於當次畫面看見的現象 | 工具 PASS、檔案完整、獨立 acceptance |
 | 真實 LINE E2E | 當次正式任務、有效前景、完整操作與證據涵蓋的實機結果 | 不得由合成 fixture、文件或相簿案例推廣到所有版本／環境 |
 
@@ -24,17 +27,19 @@
 | input API 的原始成功、錯誤或逾時回傳 | 工具回傳了該結果 | 未有排除副作用保證時不推 `NOT_SENT`；不得因 error／timeout 再點一次，結果不明記 `UNKNOWN` |
 | 可歸屬同一 viewer／attempt 的 chooser | App 有階段性回應，可能延遲出現 | 核對精確來源與目的地；chooser 不是下載結果，出處不明時不確認 |
 | 只有 timeout、畫面未變、空目錄或缺少 marker | 當下尚無足夠結果證據 | 尚無 outcome 時先以 `outcome` 記 `UNKNOWN`；已有 `outcome=UNKNOWN` 則保留。沒有新資訊就停止相同查證，不重送、不建新 attempt，也不派送下一項 |
-| 可歸屬的正面下載終結訊號，加上原目的地的穩定結果檔 | 支持進入檔案驗證的候選結果 | 不同媒體不要求同一種 UI 訊號；但單一弱訊號不足以判完成，仍不能證明內容完整或 completion |
-| 指定檔案的完整驗證，加上 completion 書寫與讀回 | 指定項目／目的地的完成條件成立 | 才可計 `COMPLETED`；不證明服務端原始位元相同、外部副本完整或整份列表完成 |
+| 可歸屬的正面下載終結訊號，加上原目的地的穩定結果檔 | 支持進入日常 `download-check` 的候選結果 | 不同媒體不要求同一種 UI 訊號；單一弱訊號不足以判完成 |
+| `download-check` 的基本檢查，加上 completion 書寫與讀回 | 指定項目／目的地達到 `DOWNLOAD_ONLY` 完成條件 | 不證明來源原件、完整解碼、外部副本或整份列表完成 |
 | 可歸屬且足以排除原操作稍後繼續的明確停止／未派送證據 | 可能安全終結原 attempt | 只有此類正面證據才可進 `STOPPED`／`NOT_SENT`；目前是否能取得此證據仍 `UNKNOWN`，不憑推測建立 |
 
 ### 可接受的完成與停止證據
 
-- **下載結果。** 需要同時能歸屬原 attempt／viewer／原目的地，並具備當次正面終結觀察與穩定結果檔；照片的「下載完畢」提示只是可能的終結觀察之一，不是影片的必要條件。提示的截圖可見與 AX 文字必須分開記錄，當次瞬態時間／範圍不可得就記 `UNKNOWN`；不得為取得提示重新下載，提示本身也不取代同 attempt 終結、穩定檔、verify 與 completion。影片仍須有當次可歸屬的正面終結證據，不能因照片案例或播放結束而自行補規則。
-- **檔案與 completion。** `DOWNLOAD_FINISHED` 只允許進入驗證；還要通過穩定檔集、預期數、非空、SHA-256、逐檔內容解碼、發布及 completion 讀回，才可計 `COMPLETED`。任何一層缺失都停在對應層次，不重下補帳。
+- **下載結果。** 需要同時能歸屬原 attempt／viewer／原目的地，並具備當次正面終結觀察與穩定結果檔；提示本身不取代同 attempt 終結、穩定檔、`download-check` 與 completion。不得播放以取得提示或種類證據。
+- **檔案與 completion（日常）。** `DOWNLOAD_FINISHED` 只允許進入 `download-check`；magic MIME／suffix 分類、非空穩定檔案、SHA-256、防覆寫、身分核對與 completion 讀回成立後，記 `assurance=DOWNLOAD_ONLY`。完整解碼不屬日常條件。
 - **停止／未派送。** 必須有可歸屬、能排除原操作稍後繼續的正面證據；`timeout`、API error、控制不見、空目錄、缺少 marker、舊計數為零與播放結束都不足。假設案例中的此類 receipt 不得寫成已取得；沒有證據就保留 `UNKNOWN` 並停止新派送。
 
 ## 證據稽核、頁面更正與類型更正
+
+本節最後兩項媒體種類更正命令是 legacy 相容資料工具；日常流程不要求來源種類取證或 PHOTO／VIDEO 對帳。未知種類使用 `identity.kind=UNCLASSIFIED`，不建立新 key 迴避既有歷史。
 
 `evidence-audit` 是獨立於一般 `summary` 的唯讀引用稽核。它先要求 event 結構／sequence／hash chain 可讀，再逐引用檢查外層 bundle、context 與子資產；結構性引用不可信時直接停止，不產生可誤用的 row。引用漂移時仍列明錯誤並以 exit 4 結束，`business_projection_omitted=true`，不得把完成數、貼文狀態或 audit 局部結果當成下一步依據。legacy opaque 可為 `LEGACY_OPAQUE`／`REFERENCE_CHECK_NOT_AVAILABLE`：這表示未做位元核對，不是損壞，也不是已升級驗證。
 
@@ -132,7 +137,7 @@ ffmpeg 完整解碼仍不能保證偵測所有靜默損壞，也不代表與服�
 
 `LOCAL_MISSING`／`LOCAL_CHANGED` 都不是六類業務狀態，也不得自行解除 `UNKNOWN`、活動下載或未完成命名交易；只有精確 restart 批次可在已確認 scope 內以新版本重建 `LOCAL_CHANGED`。照片區可被 Owner 搬走或整個刪除；帳本、證據與 completion 必須留在照片區外。
 
-`memory`／`summary` 的 `local_counts` 固定包含四類：`VERIFIED_PRESENT`、`LOCAL_MISSING`、`LOCAL_CHANGED`、`NOT_APPLICABLE`。回報本機可用性時應完整列示；只有 `LOCAL_MISSING`、`LOCAL_CHANGED` 是本機異常說明，四者都不是六類業務狀態。
+`memory`／`summary` 的 `local_counts` 固定包含四類：`VERIFIED_PRESENT`、`LOCAL_MISSING`、`LOCAL_CHANGED`、`NOT_APPLICABLE`。`VERIFIED_PRESENT` 僅表示本機檔案符合保存紀錄；對 `assurance=DOWNLOAD_ONLY` 不代表完整解碼或來源內容已驗證。回報本機可用性時應完整列示；只有 `LOCAL_MISSING`、`LOCAL_CHANGED` 是本機異常說明，四者都不是六類業務狀態。
 
 ## 恢復決策
 
@@ -141,11 +146,11 @@ ffmpeg 完整解碼仍不能保證偵測所有靜默損壞，也不代表與服�
 | `COMPLETED` 且檔案完整 | 跳過並讀回 completion；不重下 |
 | `COMPLETED` 但整篇目錄缺席 | 保留完成，標 `LOCAL_MISSING`；不重下，不聲稱外部副本已驗證 |
 | 完成目錄存在但部分缺檔／非屬合格環境附屬項的額外檔／漂移／symlink | 標 `LOCAL_CHANGED`，保護原件，scope 外停止新派送；只有 fresh restart preview 精確列出且 Owner 明示確認該批，才保留原檔並在新版本目錄重建 |
-| 已下載完成、尚未 verify | 先核對檔案與來源種類；若種類證據仍支持 intent 的凍結種類，直接驗證並保存 completion；若另有充分證據證明 intent 種類分類錯誤，先追加精確 attempt 的 `media-kind-reconcile` 再 verify。兩者都不重下 |
+| 已下載完成、尚未基本檢查（包含 legacy `VERIFY_REQUIRED`） | 執行 `download-check`。若 magic MIME 明確為 `text/plain`、`text/html`、`application/pdf` 或 `application/zip`，追加 `line-notes-download-exclusion/v1`，將該 attempt 記為 `EXCLUDED` 並保留 staging；不寫 completion，也不宣稱來源本身不是媒體。未知 MIME、`application/octet-stream` 或 MIME／suffix 不相符時保持 pending 並拒絕完成，不猜種類、不改 key、不重下。保留的 `VERIFY_REQUIRED` 是相容標記，不啟動舊 `verify` 或來源種類取證 |
 | 命名／發布 journal 中斷 | `resume` 同一交易；不重送下載 |
 | `STOPPED`／`NOT_SENT` 且未完成、原授權涵蓋恢復、帳本已持久化 `recovery_authorized=true` 且有充分停止證據 | 保留原檔，依 [下載與 notes CLI](download-and-ledger.md) 以 `intent --recovery-evidence` 建立另一個新空白恢復目錄及新 attempt；授權未持久化或證據不足時停止，已完成項跳過 |
-| 已有 `outcome=UNKNOWN` 或 intent 尚無 outcome | 先以原事件、目的地與當次畫面／檔案查證；已有 outcome 才 `reconcile`，尚無 outcome 先保存第一筆真實結果。未收斂前不 verify、不重送、不建新 attempt、不派下一項；沒有新資訊就停止相同查證。只有 fresh restart preview 精確列出該媒體、Owner 明示確認該批，且 confirm 後完成新的完整 recovery scan，才可 `intent --restart-id`；舊 UNKNOWN／無 outcome 保留，不偽造 STOPPED |
-| `restart preview` 回報 `RESTART_REQUIRED`／`OPEN_BATCH` | Agent 出示精確列表、受影響貼文／媒體、已完成 sibling、舊版位置、新 `versions/gNNNNNNNN/`、額外空間及缺項／保留項；Owner 明示同意該 scope 才可 `restart confirm`。confirm 後以 `scan start --recovery` 完成新的完整 recovery scan，才逐項 `intent --restart-id`。同一已確認 scope 完成前再次中斷可從 `OPEN_BATCH` 找回，只對未完成或結果不確定的項目另建 attempt；scope／身分／目的地／版本策略改變要重新預覽與確認 |
+| 已有 `outcome=UNKNOWN` 或 intent 尚無 outcome | 先以原事件、目的地與當次畫面／檔案查證；已有 outcome 才 `reconcile`，尚無 outcome 先保存第一筆真實結果。未收斂前不得執行 `download-check` 或 legacy `verify`，也不得重送、建新 attempt 或派下一項；沒有新資訊就停止相同查證。只有 fresh restart preview 精確列出該媒體、Owner 明示確認該批，且 confirm 後完成新的完整 recovery scan，才可 `intent --restart-id`；舊 UNKNOWN／無 outcome 保留，不偽造 STOPPED |
+| `restart preview` 回報 `RESTART_REQUIRED`／`OPEN_BATCH` | Agent 出示精確列表、受影響貼文／媒體、已完成 sibling、舊版位置、新 `versions/gNNNNNNNN/`、額外空間及缺項／保留項；Owner 明示同意該 scope 才可 `restart confirm`。confirm 後以 `scan start --recovery` 完成新的完整 recovery scan，才逐項 `intent --restart-id`。日常 `restart resume --download-only` 對 candidate 作基本檢查；若 scope 中候選明確為非媒體，回報 `RESTART_SCOPE_NON_MEDIA` 並停止，不自動更改已確認 scope。同一已確認 scope 完成前再次中斷可從 `OPEN_BATCH` 找回，只對未完成或結果不確定的項目另建 attempt；scope／身分／目的地／版本策略改變要重新預覽與確認 |
 | 普通 `created`／`destination` 列表只有歷史 device 值改變 | 沿原日常流程核對列表／貼文／媒體、path／inode／授權邊界及 ledger 狀態；不單獨拒絕、不呼叫 reattest。UNKNOWN、pending、已完成媒體或實際身分疑義仍照各自規則停止 |
 | 有效 binding 已是 `list-directory-reattest`，path／inode 相同但 device 改變 | 執行唯讀 `reattest preview`。只在 `CONFIRMATION_REQUIRED`、完整 witness 與精確 scope 均可解釋，且 Owner 另行明示同意該 preview 後，才 `reattest confirm`。成功後完成新的 recovery scan，才接續原批次。每帳本最多一次；再次漂移或任何拒絕都停止，不換目的地或重送 |
 | 單項來源已明確到期，最新 attempt 為 `STOPPED` | 以精確 attempt context 的 v2 evidence 追加 `source-unavailable`；該項列 `source_availability=EXPIRED`、`resume` 行動為 `SOURCE_UNAVAILABLE`，不建立新 intent、不排除、不計完成。不要推論其他項或把標記當成服務端已回收證明 |
@@ -153,23 +158,24 @@ ffmpeg 完整解碼仍不能保證偵測所有靜默損壞，也不代表與服�
 | 缺帳本、索引毀損或多個列表候選 | 保留原件與來源，停止相關寫入；不以空帳、重掃或改名解鎖 |
 | 純文字貼文 | 記貼文層 `NO_MEDIA`，不做下載 attempt |
 
-恢復只涵蓋原任務授權內未完成的項目，不重跑已完成清單，也不擴及另一個列表。新 attempt 的目的地必須是新的空白暫存／恢復目錄；原暫存、部分下載、舊 completion 與 evidence 全留。`STOPPED`／`NOT_SENT` 的 v2 recovery 與精確 restart 批次是兩條不同路徑：前者使用 `intent --recovery-evidence`，需要已持久化 `recovery_authorized=true` 與充分停止證據；後者需要 fresh preview、Owner 對精確 scope 的明示同意、`restart confirm`，以及 confirm 後新的完整 `scan start --recovery`。一般日常恢復授權、沉默、逾時或「繼續」都不是批次同意，`recovery_authorized` 也不能代替它。同一已確認批次涵蓋完成前再次中斷；scope、身分、目的地或版本策略改變須重新確認。即使有批次同意，也不宣稱舊 UNKNOWN 已停止；只有全部 candidate 驗證通過並 activation 後，新版本才成為目前結果。若原 Prompt 沒有涵蓋恢復、結果仍 UNKNOWN、帳本未持久化恢復授權或工具無法安全調和，停止並提出最小具體問題；不直接修改 ledger 取得授權。
+恢復只涵蓋原任務授權內未完成的項目，不重跑已完成清單，也不擴及另一個列表。新 attempt 的目的地必須是新的空白暫存／恢復目錄；原暫存、部分下載、舊 completion 與 evidence 全留。`STOPPED`／`NOT_SENT` 的 v2 recovery 與精確 restart 批次是兩條不同路徑：前者使用 `intent --recovery-evidence`，需要已持久化 `recovery_authorized=true` 與充分停止證據；後者需要 fresh preview、Owner 對精確 scope 的明示同意、`restart confirm`，以及 confirm 後新的完整 `scan start --recovery`。一般日常恢復授權、沉默、逾時或「繼續」都不是批次同意，`recovery_authorized` 也不能代替它。同一已確認批次涵蓋完成前再次中斷；scope、身分、目的地或版本策略改變須重新確認。即使有批次同意，也不宣稱舊 UNKNOWN 已停止；只有全部 candidate 通過 `restart resume --download-only` 基本檢查並 activation 後，新版本才成為目前結果。若原 Prompt 沒有涵蓋恢復、結果仍 UNKNOWN、帳本未持久化恢復授權或工具無法安全調和，停止並提出最小具體問題；不直接修改 ledger 取得授權。
 
 ## 合成測試與真實 GUI 的證據界限
 
 notes 功能至少需以合成 fixture 覆蓋以下驗證，實際執行結果要保存命令、exit code、版本與輸出摘要。本文件不是測試報告；沒有當次實際命令與輸出證據時，這些項目一律 `NOT_RUN`，不得預填 PASS：
 
-- 兩照片一影片端到端：初始化 → 盤點 → intent → outcome → verify → completion → 新 Session 查詢跳過。
+- 日常基本檢查：初始化 → 盤點 → intent → outcome → `download-check` → completion → 新 Session 查詢跳過；明確非媒體 MIME 追加 exclusion，不寫 completion；未知／不一致 MIME 保持 pending 並拒絕。
 - 重送拒絕、記事本當次下載控制（若 UI 顯示 Save All，須證明是本記事本自己的控制）單次限制、UNKNOWN `reconcile`、命名中斷 `resume`。
 - 跨列表隔離、缺帳本、索引毀損與不開空帳。
 - 完成後整個貼文目錄刪除仍不解鎖；部分缺檔、hash／身分漂移、非屬合格環境附屬項的額外檔與 symlink 保護。
 - 來源重排、新增媒體、刪除媒體、編輯貼文與 `NO_MEDIA`。
-- 有聲影片、無聲影片、截斷檔、解碼失敗、只有 attached picture／沒有有效影像、長影片 stall／等待。
-- 舊 clean 與新 policy 非空 ffmpeg decode 診斷重開、legacy 非空拒絕、未知 policy／矛盾 stderr／偽造 coverage 拒絕；ffprobe stderr 仍嚴格。
-- 照片完整解碼、非空檔、穩定前後 hash、非預期 stderr 與工具版本／binary hash。
+- Legacy verifier 回歸（非日常步驟）：有聲影片、無聲影片、截斷檔、解碼失敗、只有 attached picture／沒有有效影像、長影片 stall／等待。
+- Legacy verifier 回歸（非日常步驟）：舊 clean 與新 policy 非空 ffmpeg decode 診斷重開、legacy 非空拒絕、未知 policy／矛盾 stderr／偽造 coverage 拒絕；ffprobe stderr 仍嚴格。
+- Legacy verifier 回歸（非日常步驟）：照片完整解碼、非空檔、穩定前後 hash、非預期 stderr 與工具版本／binary hash。
 - v2 evidence 父／子漂移、legacy 唯讀、page correction 與非目標 scope 拒絕；audit 完整性失敗 exit 4 且不投影業務狀態。
 - 更正後 media key／數量／來源順序不變、v2 intent 使用 effective kind、合法 v1 相容與偽造 v1 拒絕。
-- 下載完成後、verify 前的精確 attempt 種類 reconciliation 成功；無 outcome、非最新 attempt、額外檔、symlink、來源漂移、錯誤 suffix、重複與 terminal work 均拒絕，且重載後不能偽造舊 suffix 已相容的 reconciliation。
+- Legacy 嚴格 verifier 的歷史種類 reconciliation（僅舊相容資料）；日常不得依賴此步驟。
+- 明確非媒體 MIME exclusion 的 schema／attempt 綁定、未知 MIME 與 suffix 不相符拒絕、restart scope 內非媒體拒絕且不改 scope。
 - 單項 `SOURCE_EXPIRED` 維持欠件、禁止 recovery／intent，且未授權時不改完成／排除計數。
 - 新 scan 的完整卡片覆蓋 gate、未決 attempt／pending naming blocker，以及 resume scan binding mismatch 零檔案 mutation；普通 intent 僅要求目標貼文媒體細盤完整。
 

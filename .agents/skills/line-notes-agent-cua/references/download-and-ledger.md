@@ -7,7 +7,7 @@
 ## CLI 共同契約
 
 - Agent 從 `page`／`post`／`media` 結果取得 `post_key`、`media_key`；Owner 不填 UUID、key 或內部 JSON。`lists` 的 `--collection` 只定位 collection，`init` 用 collection 建新帳，`evidence-pack` 只建立 bundle，`list-key` 只做 identity 純計算；`memory`、`summary` 及其他持久帳本命令使用 `--records-root`，其中 `destination` 另要求 `--photo-root`。`init` 也要求 `--photo-root`。`backup/記事本/` 是 Agent 層預設，不是 CLI 全域預設。
-- `memory`／`summary` 只回摘要投影：列表身分、`scan_coverage`、貼文／媒體列、`status_counts`、`local_counts`、`unresolved_attempts`、`evidence_corrections`、`dispatch_blockers` 與 `all_known_media_complete`；`memory()` 與 `summary()` 是同一投影。`unresolved_attempts` 只列尚未完成／排除／受保護的最新 attempt，不提供完整 attempt 歷史、staging 目的地或 completion manifest。`attempt_id`／`destination` 以該次 `intent` JSON 及追加事件為準，completion 以 `verify` JSON 及 `completion` 事件為準；目前沒有完整的 attempts／completions 查詢子命令。跨 Session 可先以 `memory` 定位 `records_root` 與 blockers，再唯讀核對該帳本 `events/*.json`，不得從 `photo_root` 或目錄名猜交易。
+- `memory`／`summary` 只回摘要投影：列表身分、`scan_coverage`、貼文／媒體列、`status_counts`、`local_counts`、`unresolved_attempts`、`evidence_corrections`、`dispatch_blockers` 與 `all_known_media_complete`；`memory()` 與 `summary()` 是同一投影。`unresolved_attempts` 只列尚未完成／排除／受保護的最新 attempt，不提供完整 attempt 歷史、staging 目的地或 completion manifest。`attempt_id`／`destination` 以該次 `intent` JSON 及追加事件為準，日常 completion 以 `download-check` JSON 及 `completion` 事件為準；目前沒有完整的 attempts／completions 查詢子命令。跨 Session 可先以 `memory` 定位 `records_root` 與 blockers，再唯讀核對該帳本 `events/*.json`，不得從 `photo_root` 或目錄名猜交易。
 - observation、handoff、下載、chooser、更正與恢復等證據參數（`--binding-evidence`、`--history-scope-evidence`、`--observation`、`--handoff`、`--evidence`、`--recovery-evidence`、`--replacement`）必須是先以 `evidence-pack` 封裝、再由 CLI 回傳的 `line-notes-evidence/v2` bundle 路徑；不可用手寫 JSON、自由文字、目錄或範例內容冒充。bundle 的 statement 可依 [證據範本](evidence-template.md) 撰寫；畫面／AX／input receipt 等原件以 `--asset ROLE PATH` 加入。`source_path` 只記錄匯入來源，重開時核對帳本內保存的子 blob，不要求原件仍在。
 - `evidence-pack` 的 statement、每個 asset 與 `--output-dir` 必須使用確認 repo 根目錄後取得的絕對路徑。statement／asset 是專案內 canonical regular file，不是 symlink，且只允許單一 hard link；output 是私有 tasks 下尚不存在的子目錄，其 canonical 父目錄要先存在。Agent 只準備父目錄，不預建輸出子目錄、不自動 resolve 穿過 symlink、不覆寫。固定五欄 context 由 Agent 從 CLI 輸出帶入，適用 ID 不得填 `UNKNOWN` 或另一個主體。成功後把回傳的絕對 `bundle_path` 傳給事件參數。Owner 不需填 JSON、UUID、key 或 hash；bundle 只核對 bytes／context，不證明畫面真實、控制命中或下載結果。
 - 若要以 wrapper 保存一次 child 的 request、stdout／stderr、exit／signal 與程式身分，使用既有 `notes_capture --output-root ABS_PRIVATE_TASK_DIR -- <notes argv>`；`--output-root` 必須是已存在、專案私有的絕對路徑。capture receipt 不是 CUA／GUI 原始回傳，也不證明輸入。wrapper 保存失敗就停止，不為補輸出重跑 child；拒絕與成功各自保存新 receipt。
@@ -40,14 +40,15 @@
 | `intent` | 在派送前保存 attempt、新空白暫存目錄及禁止重送 | 必須先持久保存並讀回；寫入後按「可能已派送」對待。`--restart-id` 只限已確認批次 |
 | `outcome` | 記第一個實際下載結果 | `UNKNOWN` 不可任意改成 `NOT_SENT`／`STOPPED`；逾時不等於未派送 |
 | `reconcile` | 以新觀察、原事件與目的地調和未知結果 | 只追加證據，不改寫原 UNKNOWN；未收斂不得 verify 或新派送 |
-| `verify` | 穩定檔案、hash、解碼、發布及保存 completion | 只接受已證明 `DOWNLOAD_FINISHED` 的 attempt；不重下補帳 |
+| `download-check` | 檢查本次下載檔案的 magic MIME 與副檔名分類、非空／穩定、SHA-256，並完成防覆寫與身分核對 | 日常命令；不做 ImageIO／ffmpeg 解碼，不證明來源原件或內容完整 |
+| `line-notes-download-exclusion/v1` | `download-check` 對明確非媒體的完成下載 attempt 追加 exclusion | 僅限明確 MIME `text/plain`、`text/html`、`application/pdf`、`application/zip`；保留 staging、不寫 completion、不宣稱來源原件不是媒體 |
+| `verify` | 舊流程的嚴格檔案解碼、發布及 completion | 僅 legacy 相容；不作日常命令 |
 | `resume` | 接續中斷的命名／發布交易 | 只用唯一可核對的同一交易；不重送下載、不手動改名 |
-| `restart` | `preview`／`confirm`／`resume` 一個確認取代批次 | preview 唯讀；confirm 需精確 scope、證據與 Owner 同意；resume 只驗證 candidate／activation，不按 GUI、不下載 |
+| `restart` | `preview`／`confirm`／`resume` 一個確認取代批次 | preview 唯讀；confirm 需精確 scope、證據與 Owner 同意；日常 `resume --download-only` 做 candidate 基本檢查與 activation，不按 GUI、不下載；舊嚴格預設相容保留 |
 | `reattest` | `preview`／`confirm` 一次已轉接 list binding 的 device-only 重新見證 | 僅限既有 OPEN_BATCH 與完整 witness；confirm 需本次精確 Owner 同意；不解除 UNKNOWN／LOCAL_CHANGED，也不授權 GUI。普通 `created`／`destination` 列表只有歷史 device 差異時直接沿日常流程；不新增 reattest |
 | `summary` | 投影本次盤點與六類狀態、缺項及完成數 | `all_known_media_complete=true` 只代表摘要投影一致，不是畫面／檔案獨立驗收，也不是真實 LINE E2E |
 | `evidence-correct` | 針對已精確核對的 page 追加 replacement evidence 更正 | 只修 page 引用；不改 page 成員／順序／頂底／scan 覆蓋，也不把更正當成原證據或完成證明 |
-| `media-kind-correct` | 在任何 attempt 前更正已盤點媒體的種類 | 只限最新完整 scan、尚無 intent／verification／completion／排除／保護的項目；不改 media key、貼文、數量或來源順序 |
-| `media-kind-reconcile` | 在 `DOWNLOAD_FINISHED` 後、`verify` 前，對既有 attempt 追加觀察到的種類 | 只限最新 attempt、精確 scan binding、唯一穩定 staging 檔及足以證明原分類錯誤的證據；不重下、不改 intent／outcome；不是只憑 `.jpg` 等副檔名改種類 |
+| `media-kind-correct`／`media-kind-reconcile` | 舊帳本種類修正的相容入口 | legacy only；日常流程不要求種類更正或來源種類證據 |
 | `source-unavailable` | 記錄單一媒體來源已明確到期 | 只限最新 attempt 為 `STOPPED`；不是完成、排除、重試授權或服務端已回收證明 |
 | `destination` | 為新批次追加目的地綁定 | 保留舊完成路徑；不得解鎖 UNKNOWN／pending／LOCAL_CHANGED |
 | `exclude` | 以觀察證據把已盤點媒體標為排除 | 只能處理已觀察項；不得覆蓋 UNKNOWN／活動 attempt，也不得成為跳過未盤點項的藉口 |
@@ -88,15 +89,16 @@ outcome      --records-root RECORDS_ROOT --session-id SESSION_ID
 reconcile    --records-root RECORDS_ROOT --session-id SESSION_ID
              --attempt-id ID --result {STOPPED,NOT_SENT,DOWNLOAD_FINISHED,UNKNOWN}
              --evidence FILE
+download-check --records-root RECORDS_ROOT --session-id SESSION_ID --attempt-id ID
 verify       --records-root RECORDS_ROOT --session-id SESSION_ID --attempt-id ID
              [photo: --decoder FILE --decoder-sha256 SHA256]
-             [--stall-seconds SECONDS]
+             [--stall-seconds SECONDS]  # legacy compatibility only
 resume       --records-root RECORDS_ROOT
 restart preview --records-root RECORDS_ROOT
 restart confirm --records-root RECORDS_ROOT --session-id SESSION_ID
              --preview @PREVIEW_JSON --evidence BUNDLE
-restart resume --records-root RECORDS_ROOT --session-id SESSION_ID
-             [--decoder FILE --decoder-sha256 SHA256] [--stall-seconds SECONDS]
+restart resume --records-root RECORDS_ROOT --session-id SESSION_ID --download-only
+             # daily basic-check path; legacy strict default remains compatible
 reattest preview --records-root RECORDS_ROOT --session-id SESSION_ID
 reattest confirm --records-root RECORDS_ROOT --session-id SESSION_ID
              --preview @PREVIEW_JSON --evidence BUNDLE
@@ -106,11 +108,7 @@ evidence-correct --records-root RECORDS_ROOT --session-id SESSION_ID
              --page-sequence N --page-sha256 SHA256
              --original-evidence-sha256 SHA256 --replacement BUNDLE
              --reason TEXT [--previous-correction-ref JSON]
-media-kind-correct --records-root RECORDS_ROOT --session-id SESSION_ID
-             --media-key KEY --inventory-sequence N [--inventory-sha256 SHA256]
-             --to-kind {PHOTO,VIDEO} --evidence BUNDLE
-media-kind-reconcile --records-root RECORDS_ROOT --session-id SESSION_ID
-             --attempt-id ID --to-kind {PHOTO,VIDEO} --evidence BUNDLE
+media-kind-correct / media-kind-reconcile # legacy compatibility only
 source-unavailable --records-root RECORDS_ROOT --session-id SESSION_ID
              --media-key KEY --attempt-id ID --evidence BUNDLE
 destination  --records-root RECORDS_ROOT --photo-root PHOTO_ROOT
@@ -123,7 +121,9 @@ protect      --records-root RECORDS_ROOT --media-key KEY
 
 `--items` 是當次可下載、仍存在的媒體，依相對來源順序排列；`--missing` 只接受先前已存在的 media key，格式為 `{media_key, source_order, reason}`。`source_order` 是當次整體 slot 的 0-based 位置，writer 會讓 present items 填入其餘 slot；不得用猜測的序號建立新身分。
 
-`scan start` 禁止 `--scan-id`；`scan finish` 必須有 `--scan-id`。照片 `verify` 必須成對提供 `--decoder` 與 `--decoder-sha256`；影片 `verify` 不傳這兩個照片參數。`post` 的 `--no-media` 與非零 `--media-count` 衝突。
+`scan start` 禁止 `--scan-id`；`scan finish` 必須有 `--scan-id`。日常 `download-check` 不需 decoder；舊 `verify` 的照片 decoder 參數仍按舊介面成對提供、影片不傳照片參數。`download-check` 只有在 magic MIME 明確為 `text/plain`、`text/html`、`application/pdf` 或 `application/zip` 時才追加 `line-notes-download-exclusion/v1` 並保留 staging；不寫 completion，也不推論來源原件的類別。未知 MIME、`application/octet-stream` 或 MIME／suffix 不相符時維持 pending 並拒絕完成。`post` 的 `--no-media` 與非零 `--media-count` 衝突。未知種類使用 `identity.kind=UNCLASSIFIED`；既有媒體沿用原 key／identity，不為取得種類或避開歷史另建 key。
+
+`summary`／`resume` 保留的 legacy `VERIFY_REQUIRED` 標記在日常表示尚待 `download-check`；不得因此啟動舊 `verify` 或來源種類取證。
 
 `list-key` 成功 JSON 只增加 `identity`、`list_key` 與既有 `dispatch_authorized=false`，不建立或查詢帳本。`visual_key`／`context_id` 僅以 strip 後非空作檢查，實值的前後空白與 Unicode 原樣保留；context 未提供才是省略，空字串／全空白拒絕。signals 未提供與 JSON `null` 都視為省略，`{}` 是實際值；JSON 物件 key 次序／排版不改 key，字串內容與陣列次序保留。沿用 4096 字元字串、256 KiB identity、strict JSON（拒絕 duplicate key／NaN）限制。缺參數或 JSON 語法錯 exit 2、identity 業務拒絕 exit 4、未預期例外 exit 70；沒有 `--collection`／`--records-root`／照片／evidence 參數，也不參與帳本 lock／retry。
 
@@ -137,7 +137,7 @@ protect      --records-root RECORDS_ROOT --media-key KEY
 2. **精確確認。** Agent 以白話列出列表、受影響貼文／媒體、已完成 sibling、舊版位置、新 `versions/gNNNNNNNN/` 目錄、額外空間估算、來源缺項與 `EXCLUDED`／`PROTECTED_HISTORY` 保留項。Owner 明示同意後，以同一次 session 執行 `restart confirm`；preview 建議存成私有 JSON，使用 `--preview @PREVIEW_JSON` 傳入。confirmation evidence 必須是 v2 bundle，context 為 `list_key` 加 preview 的 `scope.scan_id`。CLI 在鎖內重算 expected tip 與 scope digest；preview 後的任何漂移以 `RESTART_EXPECTED_TIP_CHANGED`／`RESTART_PREVIEW_CHANGED` 拒絕，不建立確認。
 3. **確認後重新盤點。** confirm 成功後必須以 `scan start --recovery` 完成一次新的完整 recovery scan；若目前仍有尚未結束的 scan，先以新 Session 明確 `scan interrupt`，不能假設 `bind` 或 `restart confirm` 會替舊 scan 收尾。不可拿 confirm 前的 page rows、cursor 或舊 scan 直接建立新 attempt。未做此 scan 時 `intent --restart-id` 回 `POST_CONFIRMATION_RECOVERY_SCAN_REQUIRED`。新 scan 只證明目前 scope／來源身分，不改寫舊 attempt 的 scan binding。
 4. **逐項新 attempt。** 對 scope 內每個合格媒體執行 `intent --records-root ... --session-id ... --media-key ... --restart-id RESTART_ID`。每次仍建立新的空白 staging，當次下載控制與 chooser 最終確認各最多一次；不得使用舊 raw 路徑、舊 chooser、舊座標或舊 attempt 再按一次。沒有 outcome 時先記第一筆結果；結果未知記 `UNKNOWN`，不可偽造 `STOPPED`。
-5. **候選與 activation。** `verify` 只在同一 attempt 為 `DOWNLOAD_FINISHED` 後，將 staging 檔案獨立 copy 到新 generation 目錄，形成不同 inode 的 candidate；不是 rename 或 hard link 成目前結果。candidate 需通過 regular file、nlink、symlink、parent、inode／size／mtime／ctime／SHA-256、非屬合格環境附屬項的額外檔及解碼檢查。全部 scope candidate 成立後，才執行一次 `restart resume` 追加單筆 activation。`restart resume` 只做檔案／candidate／activation，不按 GUI、不下載、不重送。
+5. **候選與 activation。** 日常以 `restart resume --download-only` 對 restart candidates 執行與 `download-check` 相同的基本檔案檢查及不可覆寫發布，不做完整解碼；舊嚴格預設保留供相容舊批次。candidate 仍須通過 regular file、nlink、symlink、parent、inode／size／mtime／ctime／SHA-256、身分及非屬合格環境附屬項的額外檔檢查。scope 內若 candidate 明確是上述非媒體 MIME，回報 `RESTART_SCOPE_NON_MEDIA` 並停止，不自動改寫已確認 scope。所有 scope candidate 成立後才完成該次 `restart resume --download-only` activation。`restart resume` 只做檔案／candidate／activation，不按 GUI、不下載、不重送。
 6. **再次中斷。** 同一個已確認 scope 在完成前再次中斷時，可用 `RESTART_REQUIRED`／`OPEN_BATCH` 找回原批次；已驗證 candidate 與原歷史保留，只對未完成或結果不確定的項目建立新的 v3 attempt。scope、媒體身分、舊版本、目的地或版本策略改變，必須重新 preview 與取得新的 Owner 明示同意。確認不涵蓋另一個列表、其他貼文或無限次重送。
 
 scope 內舊 `UNKNOWN`、無 outcome 或 pending 可被新 attempt 取代，但這不證明舊操作已停止；舊事件、舊 raw、舊 completion 與 UNKNOWN 全部保留。`LOCAL_CHANGED` 只在精確 scope 內以新版本目錄重建，舊目錄不搬動、不覆寫、不自動清理。`LOCAL_MISSING` 不觸發重下；scope 外 `LOCAL_CHANGED`、`EXCLUDED`、`PROTECTED_HISTORY` 與來源 missing／expired 仍保留欠件，不得宣稱整份列表完成。`dispatch_authorized=false` 不是 GUI grant；preview／confirm／resume 的成功都只證明簿記與指定狀態，不證明真實 LINE 派送或 E2E。
@@ -217,7 +217,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
 
 ## 掃描覆蓋與綁定 gate
 
-`summary` 的 `scan_coverage`、`dispatch_blockers`、`unresolved_attempts` 與 `scan_binding_match` 是唯讀事實投影，不是下載許可。新 Session 先以 `summary` 找舊 attempt，核對當次入口／前景並成功 `bind` 後，才使用要求 Session 的交易命令；不能因為尚無綁定就沿用舊 Session ID。`has_outcome=false` 時依原 attempt 的真實證據先用 `outcome` 保存第一筆結果，證據不足可記 `UNKNOWN`，不得先 `reconcile`；已有 `outcome=UNKNOWN` 才以新證據 `reconcile`；`DOWNLOAD_FINISHED` 先 `verify`，pending naming 先 `resume`。無新證據就保留原狀，不補造結果或重送；在這些狀態未處理前不得開始普通新 scan。只有完成精確 `restart confirm` 後，才可用 `scan start --recovery` 建立新的完整 recovery scan，再逐項 `intent --restart-id`；這不是用新 scan 掩蓋舊問題，也不改寫舊 attempt 的 scan binding。`bind` 若因未完成 scan、身分或證據等條件拒絕，停止並保留原狀，不重建空帳或以新 scan 掩蓋。
+`summary` 的 `scan_coverage`、`dispatch_blockers`、`unresolved_attempts` 與 `scan_binding_match` 是唯讀事實投影，不是下載許可。新 Session 先以 `summary` 找舊 attempt，核對當次入口／前景並成功 `bind` 後，才使用要求 Session 的交易命令；不能因為尚無綁定就沿用舊 Session ID。`has_outcome=false` 時依原 attempt 的真實證據先用 `outcome` 保存第一筆結果，證據不足可記 `UNKNOWN`，不得先 `reconcile`；已有 `outcome=UNKNOWN` 才以新證據 `reconcile`；`DOWNLOAD_FINISHED` 先 `download-check`，pending naming 先 `resume`。無新證據就保留原狀，不補造結果或重送；在這些狀態未處理前不得開始普通新 scan。只有完成精確 `restart confirm` 後，才可用 `scan start --recovery` 建立新的完整 recovery scan，再逐項 `intent --restart-id`；這不是用新 scan 掩蓋舊問題，也不改寫舊 attempt 的 scan binding。`bind` 若因未完成 scan、身分或證據等條件拒絕，停止並保留原狀，不重建空帳或以新 scan 掩蓋。
 
 普通 `scan start` 會拒絕待命名交易、尚有未解 attempt 或仍 open 的 scan；已結束的上一個 scan 即使部分貼文媒體 detail 未完成，也可重新觀察並開始新 scan。新 scan 仍須完成頂底／重疊與完整卡片覆蓋。`scan start --recovery` 只在 STOPPED／NOT_SENT 恢復或已確認 restart 批次的路徑使用，仍受 bind、Session、完整掃描與各自 gate 限制，不是通用解鎖。已完成項與正面 `STOPPED`／`NOT_SENT` 不會被重下；後者仍需原恢復授權與充分證據才可另建 attempt。普通 `intent` 要求最新完整 scan 的卡片覆蓋，以及目標貼文 detail、媒體數量／順序與目標 media 身分完整；`dispatch_blockers` 中 `POST_DETAIL_PENDING`、`STALE_POST_DETAIL` 等局部貼文資訊不會自動阻止其他合格目標。其他貼文待細盤不阻止此目標。列表覆蓋／身分不明、未決 attempt、活動下載、UNKNOWN 或 pending naming 等全局阻塞仍須停止新派送。摘要仍如實列出待盤貼文，`all_known_media_complete` 在全列表媒體細盤未完成時保持 false。純文字貼文以 `NO_MEDIA` 表示，不可當成缺少媒體。
 
@@ -234,7 +234,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
    沒有相符既有帳本本身不代表帳本為空；只有完整查閱並核對全部歷史候選、未見缺損或歧義，且具備第 3 步所述完整、無歧義的新列表證據時，才走既有新列表 `init` 流程。當次來源無法唯一對應歷史候選且也不符合新列表條件，或發現輸出不完整／不可解析、索引／歷史異常時，停止相關寫入與新派送並回報具體缺口。
 
    只有確需刷新已選帳本摘要時，才以其原值 `records_root` 序列 capture 一次 `summary`；不為同一 lock domain 平行查 `memory`，也不沿用 hint 中的舊 Session ID 作當次 `bind`。
-2. 使用已取得的摘要核對列表、貼文／媒體狀態、缺項、`unresolved_attempts`、`dispatch_blockers`、scan binding 與本機可用性；需要 staging 目的地或 completion 細節時，依上節回到 `intent`／`verify` 結果及追加事件。索引缺失、帳本損壞、證據鏈異常，或仍有多個可能對應當次列表的歷史候選而無法消除歧義時，停止相關動作，不建立新空帳。
+2. 使用已取得的摘要核對列表、貼文／媒體狀態、缺項、`unresolved_attempts`、`dispatch_blockers`、scan binding 與本機可用性；需要 staging 目的地或 completion 細節時，依上節回到 `intent`／`download-check` 結果及追加事件。索引缺失、帳本損壞、證據鏈異常，或仍有多個可能對應當次列表的歷史候選而無法消除歧義時，停止相關動作，不建立新空帳。
 3. 新列表只有在入口、列表身分與歷史均確認，且沒有缺損／歧義時才建立。Agent 固定同一組 `visual_key`、適用 `context_id` 與 signals 輸入，以 `list-key` 取得 key；若同一完整觀察涵蓋 init 所需的 binding 與 history 命題，且 context 相同，可共用一份 v2 bundle；命題或 context 不同才分開建立。再以完全相同的 identity 參數執行 `init`，最後讀回相同 `list_key`。鏈如下；`CONTEXT_ID` 不適用時整項省略，不是空字串或 `UNKNOWN`，SIGNALS 未使用時同樣省略：
 
    ```sh
@@ -274,8 +274,8 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
 4. **下載控制至多一次。** 只使用記事本當次畫面與工具文件提供的控制，不沿用相簿的 `⋯ → 儲存全部`、錄影座標或舊 Session 位置。每個 attempt 的實際下載控制呼叫上限是一；失敗、逾時、呼叫成功但結果不明也都算一次，必須分別保存工具原始回傳與獨立觀察。呼叫後讀回 `line-notes-cua-input/v1` receipt，核對其中實際 target 與步驟 3 已讀回的候選點；target 不符或無法核對時，不得追認為正確定位，也不得改寫成 `NOT_SENT`，仍依本 attempt 的實際終結證據分流。選單開啟、滑鼠移動或 chooser 路徑輸入不得重置這個計數；已派送但結果不明時，不得重開或再點下載控制查證。每次 attempt 仍使用自己的新空白暫存目錄；來源檔名、相同 basename、隱藏副檔名或檔案出現順序都不能證明同一媒體，也不因此建立全域改名器或跨 attempt 去重。
 5. **chooser 觀察與至多一次確認。** 下載控制呼叫與 chooser 最終確認是兩個獨立計數。chooser 可能延遲出現；只有視窗／process、來源 viewer 與 attempt 能唯一歸屬時，才輸入此 attempt 的新空白暫存絕對路徑並讀回。Go to Folder 的預填值只證明 PathTextField 內容，不是 panel current directory，也不是 intent staging；三者要分開觀察。只有 PathTextField、where／current directory 與本 attempt 的 intent destination 能一致指向該 intent 已建立、讀回且仍空白的原目的地，且來源貼文可歸屬時，才可確認至多一次。出處不明、三者任一 `UNKNOWN`／不符或確認結果未知時不得確認，也不得用第二次確認、猜 Return 或重派恢復。出現 chooser 只證明 App 有階段性回應，不是下載完成。
 6. **記錄第一筆 outcome。** 先確認該 attempt 是否已有 outcome 事件，不從 `memory` 顯示的 `UNKNOWN` 猜測。沒有 outcome 時只執行一次 `outcome`，依第一筆真實結果記錄；若只有逾時、畫面未變、進度未終止、chooser／檔案的歸屬不足或其他不確定訊號，就記 `UNKNOWN`，不得改寫成 `NOT_SENT`／`STOPPED`，也不得先呼叫 `reconcile`。已有 `outcome=UNKNOWN` 時，才可以在取得新證據後使用 `reconcile`；不得再做第二次 `outcome`。
-7. **未收斂即停止。** 結果未達可進入驗證的正面終結前，不得 `verify`、建立新 intent、重下或派送下一項；晚到結果只能先歸回原 attempt 並調和，不能算成下一項。相同查證連續兩次沒有新資訊就停止，不重置次數或換入口繞過。只有可歸屬且足以排除原操作稍後繼續的明確停止／未派送證據，才可能進 `STOPPED`／`NOT_SENT`；目前是否能取得此證據仍 `UNKNOWN`。
-8. **驗證與完成。** 只有具備可歸屬的下載終結結果及穩定結果檔，才可記 `DOWNLOAD_FINISHED` 並執行 `verify`。`verify` 先保存命名／發布交易，再核對穩定檔集、預期數、非空、SHA-256、逐檔內容解碼及前後身分；成功才追加不可覆寫 completion 並讀回。驗證或紀錄寫入失敗時保留原檔，不重新下載補帳。
+7. **未收斂即停止。** 結果未達可進入基本檢查的正面終結前，不得 `download-check`、legacy `verify`、建立新 intent、重下或派送下一項；晚到結果只能先歸回原 attempt 並調和，不能算成下一項。相同查證連續兩次沒有新資訊就停止，不重置次數或換入口繞過。只有可歸屬且足以排除原操作稍後繼續的明確停止／未派送證據，才可能進 `STOPPED`／`NOT_SENT`；目前是否能取得此證據仍 `UNKNOWN`。
+8. **日常基本檢查與完成。** 只有具備可歸屬的下載終結結果及穩定結果檔，才可記 `DOWNLOAD_FINISHED` 並執行 `download-check`。明確的 `text/plain`、`text/html`、`application/pdf`、`application/zip` MIME 追加 `line-notes-download-exclusion/v1` 並保留 staging，不寫 completion，也不宣稱來源原件不是媒體；未知 MIME、`application/octet-stream` 或 MIME／suffix 不相符時保持 pending 並拒絕。其他檔案只有通過 MIME／suffix 分類、非空穩定、SHA-256、防覆寫與身分核對後，才追加 `DOWNLOAD_ONLY` completion 並讀回。任何檢查或紀錄失敗時保留原檔，不重新下載補帳。完整解碼僅屬 legacy `verify` 相容流程。
 9. **命名中斷。** 只要來源、暫名、目標及 journal 可唯一核對，執行 `resume` 接續同一交易；`resume` 不得觸發下載。目標已存在、非屬合格環境附屬項的額外檔、symlink、hash／mtime／ctime 漂移或來源與目標歧義時，保護原檔並停止，不用手動改名解鎖。
 
 每個 GUI 控制／chooser 操作當下保存定位觀察與工具原始回傳；原件不可事後重建。intent 仍須先保存並讀回。需要寫入有 evidence 參數的事件前，才依 [證據範本](evidence-template.md) 整理 statement，將同一 attempt、同一 context 適用的原件一併封裝並傳入 CLI 回傳的 `bundle_path`；若新事件需要新的事實或 context，另建 bundle。`intent` 沒有一般 evidence 參數，其預檢與讀回證據留在私有任務區，不能冒充 CLI 欄位。同一 attempt 可多次 reconcile；每次完成後都要追加該次 sequence／event SHA-256 與結果引用，保留全部歷史，不以最後一筆覆寫。bundle 只證明指定 bytes 與 context 一致，不解析 statement 的語意真假；缺少必要值時寫 `UNKNOWN`，不可由檔名、猜測或另一個來源補值。
@@ -286,10 +286,10 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
 |---|---|
 | `COMPLETED` 且本地完整，或整篇目錄已 `LOCAL_MISSING` | 保留完成並跳過；`LOCAL_MISSING` 回報本機不可用，不重下、不證明外部副本 |
 | 完成目錄仍存在但缺檔、非屬合格環境附屬項的額外檔、hash／身分漂移或 symlink | `LOCAL_CHANGED`：保護原件。scope 外停止新派送；只有 `restart preview` 精確列出且 Owner 確認該 scope 時，才可在新 generation 重建，不重下補帳或覆寫舊目錄 |
-| 已 `DOWNLOAD_FINISHED`、尚未 completion | 驗證現有暫存／目標並完成或 `resume`，不重下 |
+| 已 `DOWNLOAD_FINISHED`、尚未 completion | 日常執行 `download-check`；若命名交易 pending 則 `resume`，不重下 |
 | 命名／發布交易中斷 | `resume` 同一交易；不得重送下載 |
-| 已有 `outcome=UNKNOWN` | 先 `reconcile`；沒有新資訊就停止相同查證。未收斂前不得一般 verify、建新 attempt、重下或派下一項；只有精確 restart preview 與 Owner 明示確認該 scope 後，才可用 `intent --restart-id` 建立新 generation attempt。舊 UNKNOWN 保留，不宣稱已停止 |
-| `restart preview` 回報 `RESTART_REQUIRED`／`OPEN_BATCH` | Agent 出示精確 scope 並取得 Owner 明示同意後 `restart confirm`；confirm 後必做新的完整 recovery scan，才可逐項 `intent --restart-id`。每項下載仍最多一次；全部 candidate 通過後才 `restart resume` activation。scope／身分／目的地改變要重新確認 |
+| 已有 `outcome=UNKNOWN` | 先 `reconcile`；沒有新資訊就停止相同查證。未收斂前不得 `download-check`、legacy `verify`、建新 attempt、重下或派下一項；只有精確 restart preview 與 Owner 明示確認該 scope 後，才可用 `intent --restart-id` 建立新 generation attempt。舊 UNKNOWN 保留，不宣稱已停止 |
+| `restart preview` 回報 `RESTART_REQUIRED`／`OPEN_BATCH` | Agent 出示精確 scope 並取得 Owner 明示同意後 `restart confirm`；confirm 後必做新的完整 recovery scan，才可逐項 `intent --restart-id`。每項下載仍最多一次；日常用 `restart resume --download-only` 檢查 candidate。scope 內有明確非媒體就回報 `RESTART_SCOPE_NON_MEDIA` 並停止，不自動改 scope。scope／身分／目的地改變要重新確認 |
 | `source_availability=EXPIRED` | 該項保留原欠件並停止 recovery／intent；`resume` 只列 `SOURCE_UNAVAILABLE`，不自動排除、不計完成、不宣稱服務端已回收 |
 | `scan_binding_match=false` 或 `SCAN_BINDING_REVIEW_REQUIRED` | 不改舊 intent.scan_id、不隱藏、不自動新 scan／新 attempt；保留原事件與目的地，交人工審查 |
 | 明確 `STOPPED` 或 `NOT_SENT`、原檔保留、帳本已有持久化 `recovery_authorized=true`，且有充分停止證據 | 保存並讀回證據，以 `intent --recovery-evidence` 綁定前次 attempt，由 CLI 建立另一個新空白恢復目錄；已完成項跳過。授權未持久化、證據不足或前項不是終止狀態時停止，不手動建目錄或改 ledger |

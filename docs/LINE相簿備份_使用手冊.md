@@ -488,13 +488,13 @@ NOTES_BACKUP_ROOT 留空時使用目前專案根目錄的 backup/記事本/；
 必要歷史與進度自行從永久紀錄取得，不額外要求我交接開發文件。
 
 【盤點、下載與恢復】
-依 Skill 自行查舊進度、處理未決交易、完整盤點所有卡片後，逐篇細盤並下載合格媒體、驗證及保存完成紀錄；全列表卡片覆蓋完成後，不要求其他貼文的媒體細盤先全部完成。目標貼文及其媒體仍須完整核對；`POST_DETAIL_PENDING`／`STALE_POST_DETAIL` 等單篇待盤資訊不阻止其他合格篇，但未決 attempt、UNKNOWN、活動下載、pending naming 或列表覆蓋／身分不明等全局阻塞仍停止派送。摘要須保留其他待盤貼文，不能宣稱全列表完成。
+依 Skill 自行查舊進度、處理未決交易、完整盤點所有卡片後，逐篇細盤並下載合格媒體，以基本檔案檢查保存完成紀錄；全列表卡片覆蓋完成後，不要求其他貼文的媒體細盤先全部完成。目標貼文及其媒體仍須完整核對；`POST_DETAIL_PENDING`／`STALE_POST_DETAIL` 等單篇待盤資訊不阻止其他合格篇，但未決 attempt、UNKNOWN、活動下載、pending naming 或列表覆蓋／身分不明等全局阻塞仍停止派送。摘要須保留其他待盤貼文，不能宣稱全列表完成。
 不需要在盤點後等我另說「開始下載」，也不需要逐篇重新下令。
 先從永久紀錄核對未決 attempt、blockers 與覆蓋，不可用新 scan 掩蓋舊問題。
 核對入口並綁定當次有效前景後，才依 Skill 處理舊交易；不沿用舊 Session ID。
 尚無 outcome 的 attempt，依真實證據先保存第一筆 outcome；
 已有 outcome=UNKNOWN，才以新證據 reconcile；未收斂不重送、不建新 intent。
-只有確認 DOWNLOAD_FINISHED 才 verify，命名交易中斷用 resume，不重下。
+只有確認 DOWNLOAD_FINISHED 才執行日常 `download-check`，命名交易中斷用 resume，不重下；舊 `verify` 僅供 legacy 相容。若 `summary`／`resume` 保留 legacy `VERIFY_REQUIRED` 標記，日常按待 `download-check` 處理，不啟動舊 `verify` 或來源種類取證。
 
 依 GUI reference 核對最新 AX 中的索引與目標角色，以卡片邊界判斷列表位移；
 不拿媒體預覽變化、工具成功回傳或單一捲軸值證明已到底。
@@ -508,7 +508,7 @@ NOTES_BACKUP_ROOT 留空時使用目前專案根目錄的 backup/記事本/；
 依 Skill 與帳本已持久保存的恢復授權建立新的空白恢復 attempt；
 真正新建帳本時保存本次恢復授權，既有帳本未授權時不手動補寫。
 已完成項跳過，
-待驗證項先驗證，命名交易中斷接續原交易而不重下。
+待檢查項以日常 `download-check` 接續，命名交易中斷接續原交易而不重下。
 來源到期依 Skill 保留欠件，不重送、不推論其他項也到期。
 普通 `created`／`destination` 列表只有歷史 device 值改變時，沿日常流程核對
 列表／貼文／媒體、path／inode 與授權目的地，不必另外確認或執行 reattest。
@@ -526,17 +526,19 @@ confirm 後完成完整 recovery scan；每個帳本最多一次，再次漂移�
 同一已確認批次涵蓋完成前再次中斷；scope、身分、目的地或版本策略改變要重新確認。
 confirm 成功後先以 scan start --recovery 完成新的完整 recovery scan，
 才逐項 intent --restart-id；每項仍只派送一次，
-全部 candidate 驗證通過後才一次 activation。
+日常以 `restart resume --download-only` 執行 candidate 基本檢查；scope 內若出現明確非媒體，回報 `RESTART_SCOPE_NON_MEDIA` 並停止，不自動改 scope。全部 candidate 通過後才一次 activation。
 舊 confirmation、candidate、activation、completion 與 UNKNOWN 歷史全部保留；
 新 attempt 使用新的空白 staging，不沿用舊 chooser、路徑或座標。
-遇到舊 page 證據或 media 類型疑義時，先做唯讀稽核並回報；
-未經另一次精確資料授權，不套用證據或類型更正。
+遇到舊 page 證據疑義時，先做唯讀稽核並回報；
+真正新媒體種類不明時可用 `identity.kind=UNCLASSIFIED`；既有媒體沿用原 identity 與 key，不因種類未明改 key。
 已完成的事實不因新 Session、重排、圖片搬走或新目的地而改寫。
 純文字貼文依 Skill 記 NO_MEDIA，最後另列篇數，不當成下載完成。
 貼文重排、編輯或新增時保留舊完成，只補可唯一識別的新媒體；
 局部歧義保護該篇並繼續其他已核對項，列表身分或覆蓋不明則停止整份。
 
 【邊界與資料保護】
+Agent 只下載，不播放／暫停、拖時間、調倍速、檢視內容或為種類取證；不點媒體內容切換播放控制。可移入游標或使用明確工具列控制顯示下載工具列。
+日常使用 `download-check --records-root ... --session-id ... --attempt-id ...` 檢查 magic MIME／suffix 分類、非空穩定 SHA-256、防覆寫及身分一致性。明確為 `text/plain`、`text/html`、`application/pdf`、`application/zip` 時記 `EXCLUDED`、保留 staging、不寫 completion，也不宣稱來源原件不是媒體；未知 MIME、`application/octet-stream` 或 MIME／suffix 不符時保持 pending 並拒絕完成。其他通過項的 assurance 為 `DOWNLOAD_ONLY`，不作 ImageIO／ffmpeg 完整解碼，也不證明來源原件或內容完整。舊 `verify` 僅供 legacy 相容。若 `summary`／`resume` 保留 legacy `VERIFY_REQUIRED` 標記，日常按待 `download-check` 處理，不啟動舊 `verify` 或來源種類取證。
 只使用記事本 Skill 支援的下載入口；不得把相簿的
 「⋯ → 儲存全部」、相簿選單、按鈕、chooser 或座標當成記事本 fallback。
 不得發訊息、刪除、分享、覆寫照片或影片、改寫既有完成／UNKNOWN 事實、
@@ -559,10 +561,10 @@ UNKNOWN、活動下載及未完成命名交易不因照片缺席、新目錄或�
 
 【交付】
 依 Skill 回報入口核對、完整盤點、逐篇／逐媒體結果及最終對帳。
-列出貼文總數、NO_MEDIA 篇數、六類媒體狀態、已驗證照片與影片數、
+列出貼文總數、NO_MEDIA 篇數、六類媒體狀態、通過基本檢查的照片與影片數、
 本機不可用或內容異常項，以及尚待處理的缺項。
 有未解項就明列，不宣稱整份列表全部完成。
-分開說明 GUI 觀察、notes CLI 簿記、照片／影片解碼與 completion 讀回；
+分開說明 GUI 觀察、notes CLI 簿記、`DOWNLOAD_ONLY` 基本檢查與 completion 讀回；
 未實際執行的真實 E2E、跨 Session、混合附件 chooser 或恢復標 NOT_RUN。
 ```
 

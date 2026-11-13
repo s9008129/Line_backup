@@ -2,7 +2,7 @@
 
 > **這是技術背景與操作規則，不是日常啟動入口。** 第一次使用請先讀[白話使用手冊](LINE相簿備份_使用手冊.md)。
 
-> **一句話：** 這是一份給 AI Agent 的獨立工作手冊，讓它在 macOS 上盤點你已打開的 LINE 記事本列表，只下載貼文內的照片與影片，逐項驗證並保存可跨 Session 查詢的永久紀錄；中斷接續仍以當次紀錄與已驗證範圍為限。
+> **一句話：** 這是一份給 AI Agent 的獨立工作手冊，讓它在 macOS 上盤點你已打開的 LINE 記事本列表，只下載貼文內的照片與影片，以基本檔案檢查確認下載結果並保存可跨 Session 查詢的永久紀錄；中斷接續仍以當次紀錄與已驗證範圍為限。
 
 ## 1. 先認識這個 Skill
 
@@ -28,8 +28,8 @@
 2. 一次只處理一個貼文／媒體 attempt，不平行派送下載。
 3. 每個 attempt 先保存並讀回 intent、新空白目的地與禁止重送紀錄。
 4. 記事本自己的下載控制與 chooser 最終確認各最多一次。
-5. 照片用 ImageIO 完整解碼；影片用固定成對的 ffmpeg／ffprobe 檢查並完整解碼。
-6. 只有明確完成且檔案驗證通過，才保存 completion；舊完成事實不能被新 Session 覆寫。
+5. 日常以 `download-check` 檢查 magic MIME 與副檔名分類、非空穩定檔案、SHA-256、防覆寫及身分一致性；不做 ImageIO／ffmpeg 完整解碼。
+6. 只有下載結果通過上述基本檢查才保存 completion，assurance 為 `DOWNLOAD_ONLY`；不證明來源原件或內容完整。舊完成事實不能被新 Session 覆寫。
 7. 中斷、未知結果或本機檔案異常時，保留原檔與證據，不以重下或改紀錄解鎖。
 
 它追求的是**可解釋、可恢復、資料不被重複派送的工作流程**，不是「看到圖片就全部按下去」。
@@ -38,8 +38,8 @@
 
 ### 會備份
 
-- 貼文內的照片：目前嚴格驗證只接受 `.jpg`／`.jpeg`／`.png`。HEIC／HEIF、WebP、TIFF、GIF 等格式可能被盤點並保留原檔，但目前不能算完成；Agent 會明確回報「尚未驗證」，不會把可看見的縮圖當成通過。
-- 貼文內的影片：本流程支援的影片容器，且必須有有效影像串流並能完整解碼。
+- 貼文內的照片：下載後依 magic MIME 與副檔名分類，並檢查非空、穩定性與 SHA-256。
+- 貼文內的影片：依下載檔案 magic MIME 與副檔名分類；不要求檢查影像串流或完整解碼。
 - 純文字貼文的「目前沒有照片或影片」事實：只有在 Skill 的盤點證據足以確認時，才記在貼文層 `NO_MEDIA`，不做下載 attempt。若貼文只有 PDF／Word 等非備份附件，Agent 必須另外說明附件不在範圍，不能把整篇描述成純文字。
 
 ### 不會備份
@@ -78,7 +78,7 @@
 | `notes.py` | 保存列表、貼文、媒體、intent、outcome、completion 與恢復狀態；不操作 LINE。 |
 | `notes_evidence.py` | 建立不可覆寫的證據 bundle，核對證據 bytes、hash 與 context。 |
 | `notes_capture.py` | 包裝一次 notes CLI child 呼叫，以暫存檔、fsync、獨占連結與讀回方式保存 stdout、stderr、退出碼與 signal；不保存也不證明 GUI 輸入。 |
-| `media_verify.py` | 驗證照片與影片，核對工具版本、解碼結果與檔案一致性。 |
+| `download-check` | 日常檢查下載結果的 MIME／suffix 分類、穩定性、SHA-256、防覆寫與身分。 |
 
 你不需要手填 UUID、`list_key`、內部 JSON、貼文序號或 attempt id。Agent 會從當次畫面與工具輸出自行整理，並保存真實依據。
 
@@ -102,7 +102,7 @@ Agent 以當次 AX 與畫面觀察確認入口、列表、貼文、媒體 viewer
 - `intent`：在下載前保存 attempt、新空白暫存目錄與禁止重送狀態。
 - `outcome`：保存第一個可觀察到的下載結果。
 - `reconcile`：在已有 `outcome=UNKNOWN` 時，追加新證據來釐清。
-- `verify`：只對具備明確下載終結結果的 attempt 做檔案驗證與發布。
+- `download-check`：日常對具備明確下載終結結果的 attempt 做基本檔案檢查與發布。舊 `verify` 僅供 legacy 相容。若 `summary`／`resume` 保留 legacy `VERIFY_REQUIRED` 標記，日常按待 `download-check` 處理，不啟動舊 `verify` 或來源種類取證。
 - `resume`：接續中斷的命名／發布交易，不會重新下載。
 - `restart`、`reattest`：處理精確範圍的受控重建與 list directory 裝置轉接。
 - `summary`：投影目前狀態；它不是 GUI 或 E2E 的替代品。
@@ -117,13 +117,13 @@ Agent 以當次 AX 與畫面觀察確認入口、列表、貼文、媒體 viewer
 - 發布使用暫名到正式名稱的受控交易；中斷時用 `resume` 接續同一交易。
 - 本機帳本有鎖定與一致性檢查；這能降低競態與部分寫入風險，但不是 OS sandbox、網路隔離或「點擊恰好一次」的硬體保證。
 
-### 照片驗證
+### 日常下載檢查
 
-照片沿用 macOS ImageIO 完整像素解碼。驗證會核對穩定檔集、預期數、非空、逐檔 SHA-256、解碼結果與發布後的 completion 讀回。嚴格照片驗證只接受 `.jpg`／`.jpeg`／`.png`，檔案大小必須小於 512 MiB；等於 512 MiB 也會被拒絕。副檔名、縮圖存在或檔案大小本身都不是完整驗證。
+`download-check --records-root ... --session-id ... --attempt-id ...` 依檔案 magic MIME 與 suffix 分類，檢查非空穩定 SHA-256、防覆寫及身分一致性。明確為 `text/plain`、`text/html`、`application/pdf`、`application/zip` 時追加 exclusion、保留 staging、不寫 completion，也不宣稱來源原件不是媒體；未知 MIME、`application/octet-stream` 或 MIME／suffix 不符時保持 pending 並拒絕完成。其他通過項的 assurance 為 `DOWNLOAD_ONLY`；不執行 ImageIO／ffmpeg 完整解碼，不證明來源原件或內容完整。舊 `verify` 僅供既有嚴格帳本相容，不是日常入口。若 `summary`／`resume` 保留 legacy `VERIFY_REQUIRED` 標記，日常按待 `download-check` 處理，不啟動舊 `verify` 或來源種類取證。
 
-### 影片驗證
+### 操作邊界
 
-影片固定使用成對的 Homebrew `/opt/homebrew/bin/ffmpeg` 與 `/opt/homebrew/bin/ffprobe`，目前設計 pin 在 **7.1.1**，並在每次使用前後核對 binary SHA-256。程式目前的預期值分別是 `7697b094…2569` 與 `fd670257…72ad`；實際使用時仍以當次工具輸出與程式檢查為準。這兩個工具不能混用不同版本或不同 PATH 的替代品。Agent 會檢查有效影像串流、容器／格式、完整解碼與必要診斷輸出；只看到一張 attached picture、黑畫面、`00:00` 或播放控制出現，都不足以證明影片有效。
+Agent 只下載，不播放／暫停、拖時間、調倍速、檢視內容或為種類取證；不可點媒體內容切換播放控制。可移入游標或使用明確工具列控制顯示下載工具列。真正新媒體種類未知時可標 `identity.kind=UNCLASSIFIED`；既有媒體沿用原 identity 與 key，不因種類未明改 key。
 
 ### 證據 bundle 與 capture
 
@@ -163,9 +163,9 @@ scan start → 從頂端到底端頁面盤點 → page 雙向對帳 → scan fin
         ↓
 每個合格媒體：intent → 新空白 staging → 下載控制一次 → chooser 確認一次
         ↓
-第一筆 outcome → UNKNOWN 先 reconcile → 只有 DOWNLOAD_FINISHED 才 verify
+第一筆 outcome → UNKNOWN 先 reconcile → 只有 DOWNLOAD_FINISHED 才 download-check
         ↓
-驗證檔案、發布、completion 讀回 → 下一項 → 最終 summary 與畫面交叉對帳
+基本檢查、發布、completion 讀回 → 下一項 → 最終 summary 與畫面交叉對帳
 ```
 
 ### 步驟 1：找回前次任務
@@ -182,7 +182,7 @@ Agent 從頂端到底端，以有序重疊與來源逐卡紀錄避免漏篇。`p
 
 ### 步驟 4：逐篇辨識貼文與媒體
 
-每篇貼文要交叉核對卡片位置、日期、相鄰貼文、縮圖、更多指示與 viewer。純文字貼文記 `NO_MEDIA`；照片與影片才建立媒體身分。viewer 尚未載入穩定時，不先定位下載控制，也不以黑底、disabled slider 或 `00:00` 猜媒體種類。
+每篇貼文要交叉核對卡片位置、日期、相鄰貼文、媒體排列與 viewer 脈絡。純文字貼文記 `NO_MEDIA`；真正新媒體種類未知時可用 `identity.kind=UNCLASSIFIED`；既有媒體沿用原 identity 與 key，不因種類未明改 key。Agent 不播放／暫停、拖時間、調倍速、檢視內容或為種類取證；可移入游標或使用明確工具列控制顯示下載工具列，不點媒體內容切換播放控制。
 
 ### 步驟 5：一次只做一個 attempt
 
@@ -198,13 +198,13 @@ chooser 可能延遲出現。只有視窗／process、來源 viewer 與 attempt 
 
 先查該 attempt 是否已有 outcome，不要從 `memory` 顯示的 `UNKNOWN` 猜測。沒有 outcome 時只記錄一次第一筆真實結果，且第一筆結果不能任意改寫；若只有逾時、畫面沒變、進度未結束或歸屬不足，就記 `UNKNOWN`。
 
-只有已經有 `outcome=UNKNOWN`，且取得新證據時，才使用 `reconcile`。`reconcile` 不是重送，也不是把未知硬改成成功。只有最終結果是 `DOWNLOAD_FINISHED`，才可進入 `verify`；未收斂前不得 verify、建立新 intent、重下或派下一項。
+只有已經有 `outcome=UNKNOWN`，且取得新證據時，才使用 `reconcile`。`reconcile` 不是重送，也不是把未知硬改成成功。只有最終結果是 `DOWNLOAD_FINISHED`，才可進入日常 `download-check`；未收斂前不得 download-check、建立新 intent、重下或派下一項。舊 `verify` 與種類更正命令僅供 legacy 相容，不屬日常步驟。
 
-若已經 `DOWNLOAD_FINISHED`、尚未 verify，而且當次 GUI、viewer 與檔案證據足以證明 intent 凍結的媒體種類分類錯誤，可以用 `media-kind-reconcile` 對這個精確 attempt 追加下載後的種類觀察，再讓 `verify` 使用該觀察種類。這不是只看到 `.jpg` 就自動把影片改成照片，也不是重下、改名、restart 或改寫原 intent／outcome；如果證據仍可能只是影片預覽影格，保留欠件並停止。
+
 
 ### 步驟 8：發布、completion 與下一項
 
-`verify` 會先保存命名／發布交易，再核對穩定檔集、預期數、非空、SHA-256、逐檔解碼與前後身分；成功後才追加不可覆寫的 completion 並讀回。命名交易中斷時用 `resume` 接續；`resume` 不會觸發下載。完成後重新觀察原貼文／列表，再定位下一個合格項。
+`download-check --records-root ... --session-id ... --attempt-id ...` 會核對 magic MIME 與 suffix 分類、非空穩定檔案、SHA-256、防覆寫及身分一致性；通過後保存 completion，assurance 為 `DOWNLOAD_ONLY`。命名交易中斷時用 `resume` 接續；`resume` 不會觸發下載。完成後重新觀察原貼文／列表，再定位下一個合格項。
 
 ### 步驟 9：最終對帳
 
@@ -217,9 +217,9 @@ chooser 可能延遲出現。只有視窗／process、來源 viewer 與 attempt 
 | `intent` | 下載前的交易預告。 | 寫入後就按「可能已派送」對待；不是 GUI 授權。 |
 | `outcome` | 第一個觀察到的下載結果。 | 同一 attempt 不任意改寫；不確定就記 `UNKNOWN`。 |
 | `reconcile` | 用新證據釐清既有 UNKNOWN。 | 只處理已存在的 UNKNOWN，不是重送。 |
-| `media-kind-reconcile` | 下載完成後、verify 前，補記精確 attempt 的實際種類。 | 不改 intent／outcome，不重下；必須有充分且可稽核的種類證據。 |
-| `DOWNLOAD_FINISHED` | 有可歸屬的下載終結結果。 | 只代表可以進入 verify，還不代表檔案完成。 |
-| `verify` | 驗證檔案、發布並保存 completion。 | 只接受 `DOWNLOAD_FINISHED`。 |
+| `download-check` | 下載完成後檢查檔案並保存 completion。 | 基本檢查；不作完整解碼或來源種類證明。 |
+| `DOWNLOAD_FINISHED` | 有可歸屬的下載終結結果。 | 只代表可以進入 `download-check`，還不代表檔案完成。 |
+| `verify` | 舊流程嚴格驗證。 | 僅 legacy 相容，不是日常命令。 |
 | `resume` | 接續中斷的命名／發布交易。 | 不會重新下載。 |
 | `UNKNOWN` | 可能已送出，但無法確認成功或失敗。 | 不重送、不建新 attempt、不換入口解鎖。 |
 
@@ -258,7 +258,7 @@ chooser 可能延遲出現。只有視窗／process、來源 viewer 與 attempt 
 
 `restart preview` 會區分 `RESTART_REQUIRED`（需要新的精確確認）、`OPEN_BATCH`（已有未完成批次）與 `NO_RESTART_REQUIRED`（不需要建立批次）。只有新的待確認批次才需要你對精確 scope 明示同意；已完成項只作 scope 脈絡列出，不代表會重新下載。
 
-只有你對這份精確 scope 明示同意後，才執行 `restart confirm`；一般「繼續」、沉默、逾時或原本的日常 Prompt 都不算批次同意。confirm 後必須完成新的完整 `scan start --recovery`，才能逐項 `intent --restart-id`。舊 confirmation、candidate、activation、completion 與 UNKNOWN 歷史全部保留，新 attempt 使用新的空白 staging。`restart verify` 會把候選檔複製到新的版本目錄，不是用改名或 hard link 假裝完成；全部候選通過後才做 activation，activation 不會按 GUI、下載或重送。
+只有你對這份精確 scope 明示同意後，才執行 `restart confirm`；一般「繼續」、沉默、逾時或原本的日常 Prompt 都不算批次同意。confirm 後必須完成新的完整 `scan start --recovery`，才能逐項 `intent --restart-id`。舊 confirmation、candidate、activation、completion 與 UNKNOWN 歷史全部保留，新 attempt 使用新的空白 staging。`restart verify` 會把候選檔複製到新的版本目錄，不是用改名或 hard link 假裝完成；日常以 `restart resume --download-only` 執行候選基本檢查；scope 內若出現明確非媒體，回報 `RESTART_SCOPE_NON_MEDIA` 並停止，不自動改 scope。全部候選通過後才做 activation，activation 不會按 GUI、下載或重送。
 
 這不是無限重送：scope、身分、目的地或版本策略改變就要重新預覽與確認。`LOCAL_MISSING`、scope 外的異常、`EXCLUDED` 與 `PROTECTED_HISTORY` 不會因批次同意而解除。
 
@@ -298,7 +298,7 @@ chooser 可能延遲出現。只有視窗／process、來源 viewer 與 attempt 
 
 1. **GUI 觀察**：Agent 當次看到什麼、操作什麼；真人觀察應標 `OBSERVED`。
 2. **notes CLI 簿記**：事件與 summary 投影一致，不代表 LINE UI 已完成。
-3. **檔案／解碼驗證**：ImageIO／ffmpeg 只證明指定本機檔案在該次範圍內可讀、可解碼、未漂移。
+3. **日常檔案檢查**：`download-check` 只證明指定本機下載結果通過 magic MIME／suffix、非空穩定、SHA-256、防覆寫及身分檢查；ImageIO／ffmpeg 完整解碼只適用舊 `verify` 相容流程。
 4. **真實 E2E**：只覆蓋當次環境、版本、Session 與情境，不能外推到所有使用者。
 
 目前已知：個別照片與小型照片列表有完成紀錄；但完整列表 GUI E2E、影片、混合照片／影片附件、即時 chooser、跨 Session 接續與恢復仍維持 `NOT_RUN`。合成 fixture 測試 PASS 只證明實作在該測試矩陣下的簿記與檔案行為，不能補成真實 LINE GUI PASS。
@@ -329,7 +329,7 @@ Agent 遇到工具拒絕、身分歧義、證據漂移、寫入衝突或不明�
 - `UNKNOWN`、活動下載或未完成命名交易尚未收斂。
 - chooser 無法唯一歸屬，或目的地不是本 attempt 的新空白目錄。
 - 本機目錄有缺檔、非屬合格環境附屬項的額外檔、hash／身分漂移或 symlink。
-- 影片工具版本、binary hash、影像串流或完整解碼不符。
+- legacy strict verifier 的影片工具版本、binary hash、影像串流或完整解碼不符。
 - 工具退出碼為 70，或出現 `INTERNAL_ERROR`／`UNEXPECTED_EXCEPTION`。
 - Agent 想使用相簿的 `儲存全部`、舊座標、第二個 chooser 或其他列表的歷史來繞過阻塞。
 

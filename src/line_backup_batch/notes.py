@@ -21,7 +21,7 @@ import sys
 import time
 import uuid
 
-from . import media_verify, notes_evidence
+from . import media_verify, notes_evidence, download_check as basic_check
 from .daily import (DailyError, create_json, digest, encoded, read_file,
                     safe_component, strict_json, sync_dir)
 from .notes_evidence import NotesEvidenceError
@@ -39,6 +39,11 @@ MEMORY_SCHEMA = 'line-notes-memory/v1'
 PHOTO = 'PHOTO'
 VIDEO = 'VIDEO'
 MEDIA_KINDS = (PHOTO, VIDEO)
+UNCLASSIFIED = 'UNCLASSIFIED'
+SOURCE_KINDS = MEDIA_KINDS + (UNCLASSIFIED,)
+BASIC_VERIFICATION_SCHEMA = 'line-notes-verification/v2'
+BASIC_RESTART_PLAN_SCHEMA = 'line-notes-restart-copy-plan/v2'
+BASIC_RESTART_CANDIDATE_SCHEMA = 'line-notes-restart-candidate/v2'
 MEDIA_KIND_RECONCILE_SCHEMA = 'line-notes-media-kind-reconcile/v1'
 STATUSES = ('COMPLETED', 'EXCLUDED', 'PENDING', 'PREVIOUSLY_INCOMPLETE',
             'UNKNOWN', 'PROTECTED_HISTORY')
@@ -181,7 +186,7 @@ def post_identity(*, visual_key, signals=None):
 
 
 def media_identity(*, kind, visual_key, signals=None):
-    need(kind in MEDIA_KINDS, 'INVALID_MEDIA_KIND')
+    need(kind in SOURCE_KINDS, 'INVALID_MEDIA_KIND')
     need(isinstance(visual_key, str) and bool(visual_key.strip()) and
          len(visual_key) <= 4096, 'MEDIA_VISUAL_KEY_REQUIRED')
     identity = {'kind': kind, 'visual_key': visual_key}
@@ -217,7 +222,7 @@ def _check_identity_shape(identity, scope):
         allowed.add('context_id')
     if scope == 'MEDIA':
         allowed.add('kind')
-        need(identity.get('kind') in MEDIA_KINDS, 'INVALID_MEDIA_IDENTITY')
+        need(identity.get('kind') in SOURCE_KINDS, 'INVALID_MEDIA_IDENTITY')
     need(set(identity) <= allowed and
          {'visual_key'} <= set(identity), 'INVALID_%s_IDENTITY' % scope)
     need(isinstance(identity['visual_key'], str) and
@@ -1024,7 +1029,7 @@ class NotesRecords:
                 need(media_key(self.list_data['list_key'], post['post_key'],
                                row['identity']) == row['media_key'] and
                      row['media_key'] not in seen_media and
-                     row['effective_kind'] in MEDIA_KINDS and
+                     row['effective_kind'] in SOURCE_KINDS and
                      _is_nonnegative_int(row['source_order']) and
                      row['source_order'] not in media_orders and
                      row['local_files'] in (LOCAL_VERIFIED, LOCAL_MISSING,
@@ -1574,7 +1579,8 @@ class NotesRecords:
             need(isinstance(data, dict) and
                  ((data.get('schema') == 'line-notes-intent/v1' and
                    common <= set(data) and set(data) <= common | {'scan_id'}) or
-                  (data.get('schema') == 'line-notes-intent/v2' and
+                  (data.get('schema') in ('line-notes-intent/v2',
+                                          'line-notes-intent/v4') and
                    set(data) == v2_fields) or
                   (data.get('schema') == 'line-notes-intent/v3' and
                    set(data) == v3_fields)), 'INVALID_INTENT_EVENT')
@@ -1602,8 +1608,10 @@ class NotesRecords:
                 need(not earlier_corrections,
                      'V1_INTENT_AFTER_KIND_CORRECTION')
             else:
-                need(data['effective_kind'] in MEDIA_KINDS,
+                need(data['effective_kind'] in SOURCE_KINDS,
                      'INVALID_INTENT_EVENT')
+                if data['schema'] == 'line-notes-intent/v2':
+                    need(data['effective_kind'] in MEDIA_KINDS, 'INVALID_INTENT_EVENT')
                 if data['kind_correction_ref'] is not None:
                     _check_event_ref(data['kind_correction_ref'],
                                      'INVALID_INTENT_EVENT')
@@ -1645,7 +1653,8 @@ class NotesRecords:
                                 'post_key', 'kind', 'source', 'manifest',
                                 'manifest_sha256', 'verification',
                                 'verified_at'), 'INVALID_VERIFICATION_EVENT')
-            need(data['schema'] == 'line-notes-verification/v1' and
+            need(data['schema'] in ('line-notes-verification/v1',
+                                     BASIC_VERIFICATION_SCHEMA) and
                  isinstance(data['attempt_id'], str) and
                  bool(data['attempt_id']) and
                  _is_hex(data['media_key']) and
@@ -1664,6 +1673,9 @@ class NotesRecords:
             self._validate_source_row(data['source'],
                                       'INVALID_VERIFICATION_SOURCE')
             _json_value(data['verification'], 'INVALID_VERIFICATION_RESULT')
+            need((data['schema'] == BASIC_VERIFICATION_SCHEMA) ==
+                 (data['verification'].get('verifier') == 'FILE_SIGNATURE'),
+                 'VERIFICATION_ASSURANCE_SCHEMA_CHANGED')
             _validate_verification_payload(
                 data['kind'], data['source'], data['verification'],
                 allow_injected=self._allow_injected_verification)
@@ -1712,7 +1724,8 @@ class NotesRecords:
                                 'number', 'extension',
                                 'target_directory_existed', 'created_at'),
                          'INVALID_RESTART_COPY_PLAN')
-            need(data['schema'] == RESTART_COPY_PLAN_SCHEMA and
+            need(data['schema'] in (RESTART_COPY_PLAN_SCHEMA,
+                                     BASIC_RESTART_PLAN_SCHEMA) and
                  isinstance(data['plan_id'], str) and
                  re.fullmatch(r'[0-9a-f]{32}', data['plan_id']) is not None and
                  _is_hex(data['restart_id']) and
@@ -1740,7 +1753,8 @@ class NotesRecords:
                                 'manifest', 'manifest_sha256',
                                 'verification', 'verified_at'),
                          'INVALID_RESTART_CANDIDATE')
-            need(data['schema'] == RESTART_CANDIDATE_SCHEMA and
+            need(data['schema'] in (RESTART_CANDIDATE_SCHEMA,
+                                     BASIC_RESTART_CANDIDATE_SCHEMA) and
                  _is_hex(data['restart_id']) and
                  type(data['generation']) is int and data['generation'] >= 1 and
                  isinstance(data['attempt_id'], str) and bool(data['attempt_id']) and
@@ -1761,6 +1775,9 @@ class NotesRecords:
             self._validate_source_row(data['candidate'],
                                       'INVALID_RESTART_CANDIDATE')
             _json_value(data['verification'], 'INVALID_VERIFICATION_RESULT')
+            need((data['schema'] == BASIC_RESTART_CANDIDATE_SCHEMA) ==
+                 (data['verification'].get('verifier') == 'FILE_SIGNATURE'),
+                 'VERIFICATION_ASSURANCE_SCHEMA_CHANGED')
             _validate_verification_payload(
                 data['kind'], data['candidate'], data['verification'],
                 allow_injected=self._allow_injected_verification)
@@ -1834,7 +1851,8 @@ class NotesRecords:
                                 'target_file', 'target_directory', 'naming',
                                 'source_manifest', 'verification'),
                          'INVALID_COMPLETION_EVENT')
-            need(data['schema'] == 'line-notes-completion/v1' and
+            need(data['schema'] in ('line-notes-completion/v1',
+                                     'line-notes-completion/v2') and
                  isinstance(data['target_file'], dict) and
                  isinstance(data['target_directory'], dict) and
                  isinstance(data['naming'], dict), 'INVALID_COMPLETION_EVENT')
@@ -1948,6 +1966,26 @@ class NotesRecords:
                                   attempt_id=data['attempt_id'],
                                   scan_id=data['scan_id']),
                 require_v2=True, require_scan_context=True)
+        elif kind == 'download-exclusion':
+            _check_exact(data, ('schema', 'attempt_id', 'media_key', 'post_key',
+                                'intent_ref', 'result_ref', 'source', 'signature',
+                                'reason', 'session_id'), 'INVALID_DOWNLOAD_EXCLUSION')
+            need(data['schema'] == 'line-notes-download-exclusion/v1' and
+                 data['reason'] == 'DOWNLOADED_NON_MEDIA' and
+                 isinstance(data['attempt_id'], str) and bool(data['attempt_id']) and
+                 _is_hex(data['media_key']) and _is_hex(data['post_key']) and
+                 isinstance(data['session_id'], str) and bool(data['session_id']),
+                 'INVALID_DOWNLOAD_EXCLUSION')
+            _check_event_ref(data['intent_ref'], 'INVALID_DOWNLOAD_EXCLUSION')
+            _check_event_ref(data['result_ref'], 'INVALID_DOWNLOAD_EXCLUSION')
+            self._validate_source_row(data['source'], 'INVALID_DOWNLOAD_EXCLUSION')
+            try:
+                basic_check.validate(data['signature'], data['source']['name'])
+            except basic_check.DownloadCheckError as exc:
+                raise NotesError(str(exc)) from exc
+            need(data['signature']['kind'] == 'NON_MEDIA' and
+                 Path(data['source']['path']).name == data['source']['name'],
+                 'INVALID_DOWNLOAD_EXCLUSION')
         elif kind == 'source-unavailable':
             _check_exact(data, ('schema', 'media_key', 'post_key',
                                 'attempt_id', 'reason', 'evidence',
@@ -2132,7 +2170,7 @@ class NotesRecords:
                 if (earlier['kind'] in terminal_attempt_kinds and
                         earlier_data.get('attempt_id') == attempt_id):
                     raise NotesError('MEDIA_KIND_RECONCILE_AFTER_TERMINAL_WORK')
-                if (earlier['kind'] in ('exclusion', 'protection') and
+                if (earlier['kind'] in ('exclusion', 'protection', 'download-exclusion') and
                         earlier_data.get('media_key') == media_key_value):
                     raise NotesError('MEDIA_KIND_RECONCILE_AFTER_TERMINAL_WORK')
             by_attempt[attempt_id] = event
@@ -2311,7 +2349,7 @@ class NotesRecords:
         self._source_unavailable_projection()
         for event in self.events:
             if event['kind'] != 'intent' or event['data']['schema'] not in (
-                    'line-notes-intent/v2', 'line-notes-intent/v3'):
+                    'line-notes-intent/v2', 'line-notes-intent/v3', 'line-notes-intent/v4'):
                 continue
             data = event['data']
             corrections = [
@@ -2387,13 +2425,15 @@ class NotesRecords:
             reconciliation = kind_reconciliations['by_attempt'].get(
                 data['attempt_id'])
             expected_kind = self._attempt_kind(attempt)
-            if reconciliation is not None:
+            if (reconciliation is not None and
+                    data['schema'] != BASIC_VERIFICATION_SCHEMA):
                 need(reconciliation['sequence'] < event['sequence'],
                      'VERIFICATION_KIND_RECONCILE_ORDER_CHANGED')
                 expected_kind = reconciliation['data']['to_kind']
                 need(data['source'] == reconciliation['data']['source'],
                      'VERIFICATION_SOURCE_CHANGED')
-            need(data['kind'] == expected_kind,
+            need(data['schema'] == BASIC_VERIFICATION_SCHEMA or
+                 data['kind'] == expected_kind,
                  'VERIFICATION_ATTEMPT_CHANGED')
             need(self._attempt_result(data['attempt_id'], prefix_attempts) ==
                  'DOWNLOAD_FINISHED',
@@ -2531,27 +2571,60 @@ class NotesRecords:
                  'COMPLETION_NAMING_CHANGED')
             verification = verifications.get(data['attempt_id'])
             need(verification is not None and
-                 data['verification'] == verification['data']['verification'],
+                 data['verification'] == verification['data']['verification'] and
+                 (data['schema'] == 'line-notes-completion/v2') ==
+                 (verification['data']['schema'] == BASIC_VERIFICATION_SCHEMA),
                  'COMPLETION_VERIFICATION_CHANGED')
             need(prefix_attempts['latest_by_media'].get(data['media_key']) ==
                  data['attempt_id'], 'COMPLETION_NOT_LATEST_ATTEMPT')
             need((data['transaction_id'], 'SOURCE_REMOVED') in progress,
                  'COMPLETION_WITHOUT_SOURCE_REMOVED')
 
+        for event in self.events:
+            if event['kind'] != 'download-exclusion':
+                continue
+            data = event['data']
+            prefix = self.events[:event['sequence'] - 1]
+            projection = self._attempt_projection(prefix)
+            attempt = projection['attempts'].get(data['attempt_id'])
+            need(attempt is not None and
+                 attempt['schema'] != 'line-notes-intent/v3' and
+                 attempt['media_key'] == data['media_key'] and
+                 attempt['post_key'] == data['post_key'] and
+                 projection['latest_by_media'].get(data['media_key']) ==
+                 data['attempt_id'], 'DOWNLOAD_EXCLUSION_ATTEMPT_CHANGED')
+            need(data['intent_ref'] == _event_ref(
+                     prefix[projection['order'][data['attempt_id']] - 1]) and
+                 self._attempt_result(data['attempt_id'], projection) ==
+                 'DOWNLOAD_FINISHED' and
+                 data['result_ref'] == _event_ref(_attempt_result_event(
+                     data['attempt_id'], projection)),
+                 'DOWNLOAD_EXCLUSION_RESULT_CHANGED')
+            bindings = [e for e in prefix if e['kind'] == 'binding']
+            need(bindings and bindings[-1]['data']['session_id'] ==
+                 data['session_id'], 'FRESH_FOREGROUND_BINDING_REQUIRED')
+            need(Path(data['source']['path']).parent ==
+                 Path(attempt['destination']), 'DOWNLOAD_EXCLUSION_SOURCE_CHANGED')
+            need(not any(e['kind'] in ('verification', 'publish-plan', 'completion',
+                                      'exclusion', 'protection', 'download-exclusion')
+                         and e['data'].get('media_key') == data['media_key']
+                         for e in prefix), 'DOWNLOAD_EXCLUSION_AFTER_TERMINAL_WORK')
+
         exclusive = {}
         protected = set()
         for event in self.events:
-            if event['kind'] not in ('exclusion', 'protection'):
+            if event['kind'] not in ('exclusion', 'protection', 'download-exclusion'):
                 continue
             key = event['data']['media_key']
             need(key in media and key not in completions,
                  'TERMINAL_MEDIA_WITHOUT_MEDIA')
             attempt_id = attempts['latest_by_media'].get(key)
             if attempt_id is not None:
-                need(self._attempt_result(attempt_id, attempts) in
-                     ('STOPPED', 'NOT_SENT'),
+                allowed = (('DOWNLOAD_FINISHED',) if event['kind'] ==
+                           'download-exclusion' else ('STOPPED', 'NOT_SENT'))
+                need(self._attempt_result(attempt_id, attempts) in allowed,
                      'TERMINAL_MEDIA_WITH_ACTIVE_ATTEMPT')
-            if event['kind'] == 'exclusion':
+            if event['kind'] in ('exclusion', 'download-exclusion'):
                 need(key not in exclusive and key not in protected,
                      'MEDIA_ALREADY_TERMINALLY_CLASSIFIED')
                 exclusive[key] = event
@@ -3688,6 +3761,8 @@ class NotesRecords:
             post_rows.append(event)
             present = {row['media_key'] for row in data['items']}
             for row in data['items']:
+                _guard_unclassified_rekey(media, data['post_key'],
+                                          row['media_key'], row['identity'])
                 current = media.setdefault(row['media_key'], {})
                 current.update(identity=row['identity'],
                                post_key=data['post_key'],
@@ -3743,6 +3818,7 @@ class NotesRecords:
                 identity = row['identity']
                 key = media_key(self.list_data['list_key'],
                                 post_key_value, identity)
+                _guard_unclassified_rekey(prior, post_key_value, key, identity)
                 need(key not in present, 'DUPLICATE_MEDIA_IN_POST')
                 present.add(key)
                 normalized.append(dict(media_key=key, identity=identity))
@@ -3835,7 +3911,7 @@ class NotesRecords:
     def _attempt_kind(intent_data):
         return (intent_data.get('effective_kind')
                 if intent_data['schema'] in ('line-notes-intent/v2',
-                                             'line-notes-intent/v3')
+                                             'line-notes-intent/v3', 'line-notes-intent/v4')
                 else intent_data['identity']['kind'])
 
     def _verification_kind_for_attempt(self, attempt_id, projection=None):
@@ -4028,6 +4104,9 @@ class NotesRecords:
                      Path(intent_data['destination']),
                      'RESTART_COPY_SOURCE_CHANGED')
                 kind_value = self._attempt_kind(intent_data)
+                if data['schema'] == BASIC_RESTART_PLAN_SCHEMA:
+                    kind_value = (PHOTO if data['extension'].lower() in
+                                  PHOTO_SUFFIXES else VIDEO)
                 match = re.fullmatch(r'media_([0-9]+)(\.[^./]+)',
                                      data['target_name'])
                 need(match is not None and
@@ -4078,7 +4157,10 @@ class NotesRecords:
                 intent_data = prefix_attempts['attempts'].get(
                     data['attempt_id'])
                 need(intent_data is not None and
-                     data['kind'] == self._attempt_kind(intent_data),
+                     (data['schema'] == BASIC_RESTART_CANDIDATE_SCHEMA or
+                      data['kind'] == self._attempt_kind(intent_data)) and
+                     (data['schema'] == BASIC_RESTART_CANDIDATE_SCHEMA) ==
+                     (plan_data['schema'] == BASIC_RESTART_PLAN_SCHEMA),
                      'RESTART_CANDIDATE_KIND_CHANGED')
                 extension = plan_data['extension'].lower()
                 extension_kind = (
@@ -4256,7 +4338,7 @@ class NotesRecords:
     def _exclusion_projection(self):
         result = {}
         for event in self.events:
-            if event['kind'] == 'exclusion':
+            if event['kind'] in ('exclusion', 'download-exclusion'):
                 need(event['data']['media_key'] not in result,
                      'DUPLICATE_EXCLUSION')
                 result[event['data']['media_key']] = event
@@ -4980,7 +5062,8 @@ class NotesRecords:
                 if recovery_evidence is not None else None)
             effective_kind, kind_correction_ref = self._effective_media_kind(
                 media_key_value, target['identity']['kind'])
-            data = dict(schema='line-notes-intent/v2',
+            data = dict(schema=('line-notes-intent/v4' if effective_kind == UNCLASSIFIED
+                                else 'line-notes-intent/v2'),
                         media_key=media_key_value,
                         post_key=target['post_key'],
                         identity=target['identity'],
@@ -5394,6 +5477,17 @@ class NotesRecords:
                 status=status, local_files=local,
                 source_availability=('EXPIRED' if key in unavailable
                                      else 'UNKNOWN'))
+            completion = self._completion_projection()[0].get(key)
+            check_payload = (completion['data']['verification']
+                             if completion is not None else None)
+            if key in active:
+                check_payload = active[key]['candidate']['data']['verification']
+            current['assurance'] = (check_payload.get('assurance',
+                                      'INJECTED' if check_payload.get('verifier') ==
+                                      'INJECTED' else 'FULL_DECODE')
+                                    if check_payload is not None else None)
+            current['downloaded_kind'] = (check_payload.get('kind')
+                                         if check_payload is not None else None)
             if key in active:
                 version = active[key]
                 current.update(
@@ -6038,7 +6132,9 @@ class NotesRecords:
                       extension=plan['extension'],
                       list_directory=plan['list_directory'],
                       target_directory=plan['target_directory'])
-        data = dict(schema='line-notes-completion/v1',
+        data = dict(schema=('line-notes-completion/v2'
+                            if verification['schema'] == BASIC_VERIFICATION_SCHEMA
+                            else 'line-notes-completion/v1'),
                     attempt_id=plan['attempt_id'],
                     media_key=plan['media_key'],
                     post_key=plan['post_key'],
@@ -6192,7 +6288,7 @@ class NotesRecords:
         return target_directory
 
     def _append_restart_copy_plan(self, *, confirmation_event, intent_data,
-                                  source):
+                                  source, download_only=False):
         confirmation = confirmation_event['data']
         scope = self._restart_scope_media(confirmation)
         entry = scope.get(intent_data['media_key'])
@@ -6204,11 +6300,16 @@ class NotesRecords:
         number = self._next_restart_media_number(target_directory)
         width = max(3, len(str(number)))
         suffix = Path(source['name']).suffix
-        _validate_media_suffix(self._attempt_kind(intent_data), source['name'])
+        if download_only:
+            need(suffix.lower() in PHOTO_SUFFIXES | VIDEO_SUFFIXES,
+                 'UNSUPPORTED_MEDIA_EXTENSION')
+        else:
+            _validate_media_suffix(self._attempt_kind(intent_data), source['name'])
         target_name = 'media_%0*d%s' % (width, number, suffix)
         target_path = target_directory / target_name
         need(_entry(target_path) is None, 'TARGET_ALREADY_EXISTS')
-        data = dict(schema=RESTART_COPY_PLAN_SCHEMA,
+        data = dict(schema=(BASIC_RESTART_PLAN_SCHEMA if download_only
+                            else RESTART_COPY_PLAN_SCHEMA),
                     plan_id=uuid.uuid4().hex,
                     restart_id=intent_data['restart_id'],
                     generation=intent_data['generation'],
@@ -6242,7 +6343,8 @@ class NotesRecords:
                                decoder_sha256=None, verifier=None,
                                stability_interval=DEFAULT_STABILITY_INTERVAL,
                                progress_callback=None,
-                               stall_seconds=DEFAULT_STALL_SECONDS):
+                               stall_seconds=DEFAULT_STALL_SECONDS,
+                               download_only=False):
         need(verifier is None or self._allow_injected_verification,
              'INJECTED_VERIFICATION_NOT_ALLOWED')
         self._require_session(session_id)
@@ -6265,6 +6367,8 @@ class NotesRecords:
         existing = restart['candidates_by_restart'].get(
             restart_id, {}).get(media_key_value)
         if existing is not None:
+            need(download_only or existing['data']['schema'] !=
+                 BASIC_RESTART_CANDIDATE_SCHEMA, 'DOWNLOAD_CHECK_REQUIRED')
             need(existing['data']['restart_id'] == restart_id,
                  'RESTART_CANDIDATE_ATTEMPT_CHANGED')
             if (existing['data']['attempt_id'] == attempt_id and
@@ -6284,12 +6388,15 @@ class NotesRecords:
         stable = _stable_media_inventory(
             staging, expected=1, interval=stability_interval)
         source = stable[0]
-        kind = self._attempt_kind(intent_data)
+        kind = (_basic_file_check(source)['kind'] if download_only
+                else self._attempt_kind(intent_data))
+        need(kind != 'NON_MEDIA', 'RESTART_SCOPE_NON_MEDIA')
         _validate_media_suffix(kind, source['name'])
         plans = [
             event for event in restart['plans'].values()
             if event['data']['attempt_id'] == attempt_id and
             event['data']['media_key'] == media_key_value and
+            (event['data']['schema'] == BASIC_RESTART_PLAN_SCHEMA) == download_only and
             event['data']['plan_id'] not in restart['candidates_by_plan']]
         plans.sort(key=lambda event: event['sequence'])
         plan_event = plans[-1] if plans else None
@@ -6304,7 +6411,9 @@ class NotesRecords:
         if target_path is None:
             plan_event, target_path = self._append_restart_copy_plan(
                 confirmation_event=confirmation, intent_data=intent_data,
-                source=source)
+                source=source, download_only=download_only)
+        need((plan_event['data']['schema'] == BASIC_RESTART_PLAN_SCHEMA) ==
+             download_only, 'RESTART_CHECK_POLICY_CHANGED')
         target_directory = self._ensure_restart_version_directory(
             plan_event['data'])
         need(target_path.parent == target_directory,
@@ -6319,16 +6428,18 @@ class NotesRecords:
         need(candidate['size'] == source['size'] and
              candidate['sha256'] == source['sha256'],
              'ISOLATED_COPY_MISMATCH')
-        verification = _verify_media(
+        verification = (_basic_file_check(candidate) if download_only
+                        else _verify_media(
             kind=kind, path=target_path, row=candidate,
             identity=intent_data['identity'], records=self.records,
             decoder=decoder, decoder_sha256=decoder_sha256,
             verifier=verifier, progress_callback=progress_callback,
             stall_seconds=stall_seconds,
-            stability_interval=stability_interval)
+            stability_interval=stability_interval))
         after = _inventory_row(target_path)
         need(after == candidate, 'RESTART_CANDIDATE_CHANGED')
-        data = dict(schema=RESTART_CANDIDATE_SCHEMA,
+        data = dict(schema=(BASIC_RESTART_CANDIDATE_SCHEMA if download_only
+                            else RESTART_CANDIDATE_SCHEMA),
                     restart_id=restart_id,
                     generation=intent_data['generation'],
                     plan_ref=_event_ref(plan_event),
@@ -6399,7 +6510,8 @@ class NotesRecords:
                        decoder_sha256=None, verifier=None,
                        stability_interval=DEFAULT_STABILITY_INTERVAL,
                        progress_callback=None,
-                       stall_seconds=DEFAULT_STALL_SECONDS):
+                       stall_seconds=DEFAULT_STALL_SECONDS,
+                       download_only=False):
         with self.locked():
             self._require_session(session_id)
             restart = self._restart_projection()
@@ -6420,6 +6532,9 @@ class NotesRecords:
             for key in sorted(scope):
                 candidate = restart['candidates_by_restart'].get(
                     restart_id, {}).get(key)
+                if candidate is not None:
+                    need(download_only or candidate['data']['schema'] !=
+                         BASIC_RESTART_CANDIDATE_SCHEMA, 'DOWNLOAD_CHECK_REQUIRED')
                 if (candidate is not None and
                         self._candidate_file_availability(
                             candidate['data']['candidate']) == LOCAL_VERIFIED):
@@ -6438,7 +6553,7 @@ class NotesRecords:
                         verifier=verifier,
                         stability_interval=stability_interval,
                         progress_callback=progress_callback,
-                        stall_seconds=stall_seconds)
+                        stall_seconds=stall_seconds, download_only=download_only)
             restart = self._restart_projection()
             candidates = restart['candidates_by_restart'].get(
                 restart_id, {})
@@ -6460,10 +6575,38 @@ class NotesRecords:
                         external_copy_verified=False,
                         real_line_e2e='NOT_TESTED')
 
+    def _append_download_exclusion(self, session_id, attempt_id,
+                                   projection, source, signature):
+        need(not self._pending_publish_plans(), 'PENDING_NAMING_TRANSACTION')
+        need(self._restart_open_confirmation() is None, 'RESTART_BATCH_OPEN')
+        attempt = projection['attempts'][attempt_id]
+        need(attempt['schema'] != 'line-notes-intent/v3',
+             'RESTART_SCOPE_NON_MEDIA')
+        key = attempt['media_key']
+        need(key not in self._exclusion_projection() and
+             key not in self._protection_projection(),
+             'MEDIA_ALREADY_TERMINALLY_CLASSIFIED')
+        data = dict(schema='line-notes-download-exclusion/v1',
+                    attempt_id=attempt_id, media_key=key,
+                    post_key=attempt['post_key'],
+                    intent_ref=_event_ref(self._event_by_sequence(
+                        projection['order'][attempt_id])),
+                    result_ref=_event_ref(_attempt_result_event(attempt_id, projection)),
+                    source=source, signature=signature,
+                    reason='DOWNLOADED_NON_MEDIA', session_id=session_id)
+        self.append('download-exclusion', data)
+        return dict(self.events[-1], dispatch_authorized=False)
+
+    def download_check(self, *, session_id, attempt_id,
+                       stability_interval=DEFAULT_STABILITY_INTERVAL):
+        return self.verify(session_id=session_id, attempt_id=attempt_id,
+                           stability_interval=stability_interval, download_only=True)
+
     def verify(self, *, session_id, attempt_id, decoder=None,
                decoder_sha256=None, verifier=None,
                stability_interval=DEFAULT_STABILITY_INTERVAL,
-               progress_callback=None, stall_seconds=DEFAULT_STALL_SECONDS):
+               progress_callback=None, stall_seconds=DEFAULT_STALL_SECONDS,
+               download_only=False):
         need(verifier is None or self._allow_injected_verification,
              'INJECTED_VERIFICATION_NOT_ALLOWED')
         with self.locked():
@@ -6477,7 +6620,7 @@ class NotesRecords:
                     verifier=verifier,
                     stability_interval=stability_interval,
                     progress_callback=progress_callback,
-                    stall_seconds=stall_seconds)
+                    stall_seconds=stall_seconds, download_only=download_only)
             need(not self._restart_superseded_attempt(
                      attempt_id, projection), 'RESTART_SUPERSEDED_ATTEMPT')
             self._require_attempt_scan_binding(
@@ -6492,6 +6635,10 @@ class NotesRecords:
                      if event['data']['attempt_id'] == attempt_id]
             need(len(plans) <= 1, 'DUPLICATE_PUBLISH_PLAN')
             if plans:
+                prior_check = self._event_by_sequence(
+                    plans[0]['data']['verification_sequence'])
+                need(download_only or prior_check['data']['schema'] !=
+                     BASIC_VERIFICATION_SCHEMA, 'DOWNLOAD_CHECK_REQUIRED')
                 return self._execute_publish(plans[0])
             intent_data = projection['attempts'][attempt_id]
             staging = self._validate_staging(intent_data)
@@ -6502,22 +6649,36 @@ class NotesRecords:
                 source = stable[0]
                 kind, reconciliation = self._verification_kind_for_attempt(
                     attempt_id, projection)
+                if download_only:
+                    reconciliation = None
+                    basic_result = _basic_file_check(source)
+                    kind = basic_result['kind']
+                    if kind == 'NON_MEDIA':
+                        need(_inventory_once(staging) == stable,
+                             'CONTENT_CHANGED_AFTER_DOWNLOAD_CHECK')
+                        return self._append_download_exclusion(
+                            session_id, attempt_id, projection, source,
+                            basic_result['signature'])
                 if reconciliation is not None:
                     need(source == reconciliation['data']['source'],
                          'MEDIA_KIND_RECONCILE_SOURCE_CHANGED')
+                need(download_only or kind != UNCLASSIFIED,
+                     'DOWNLOAD_CHECK_REQUIRED')
                 _validate_media_suffix(kind, source['name'])
-                verification = _verify_media(
+                verification = (basic_result if download_only
+                                else _verify_media(
                     kind=kind, path=Path(source['path']),
                     row=source, identity=intent_data['identity'],
                     records=self.records, decoder=decoder,
                     decoder_sha256=decoder_sha256, verifier=verifier,
                     progress_callback=progress_callback,
                     stall_seconds=stall_seconds,
-                    stability_interval=stability_interval)
+                    stability_interval=stability_interval))
                 after = _inventory_once(staging)
                 need(after == stable, 'CONTENT_CHANGED_AFTER_VERIFICATION')
                 verification_data = dict(
-                    schema='line-notes-verification/v1',
+                    schema=(BASIC_VERIFICATION_SCHEMA if download_only
+                            else 'line-notes-verification/v1'),
                     attempt_id=attempt_id,
                     media_key=media_key_value,
                     post_key=intent_data['post_key'],
@@ -6530,6 +6691,8 @@ class NotesRecords:
                 self.append('verification', verification_data)
                 verification_event = self.events[-1]
             else:
+                need(download_only or verification_event['data']['schema'] !=
+                     BASIC_VERIFICATION_SCHEMA, 'DOWNLOAD_CHECK_REQUIRED')
                 stable = _stable_media_inventory(
                     staging, expected=1, interval=stability_interval)
                 need(stable[0] == verification_event['data']['manifest'][0],
@@ -6710,11 +6873,71 @@ def _validate_video_decode_stream(row, probe_stream, *, allow_nonempty_stderr):
          'INVALID_VIDEO_PROBE_EVIDENCE')
 
 
+def _attempt_result_event(attempt_id, projection):
+    reconciles = projection['reconciles'].get(attempt_id, [])
+    return reconciles[-1] if reconciles else projection['outcomes'][attempt_id]
+
+
+def _guard_unclassified_rekey(media, post_key_value, key, identity):
+    """Never turn a kind uncertainty into a second key for existing history."""
+    comparable = {k: v for k, v in identity.items() if k != 'kind'}
+    for old_key, old in media.items():
+        if old_key == key or old.get('post_key') != post_key_value:
+            continue
+        old_identity = old['identity']
+        if UNCLASSIFIED not in (identity['kind'], old_identity['kind']):
+            continue
+        need({k: v for k, v in old_identity.items() if k != 'kind'} != comparable,
+             'EXISTING_MEDIA_KEY_REQUIRED')
+
+
+def _basic_file_check(source):
+    try:
+        signature = basic_check.classify(Path(source['path']))
+    except basic_check.DownloadCheckError as exc:
+        raise NotesError(str(exc)) from exc
+    need(_inventory_row(Path(source['path'])) == source,
+         'CONTENT_CHANGED_AFTER_DOWNLOAD_CHECK')
+    return dict(verifier='FILE_SIGNATURE', assurance='DOWNLOAD_ONLY',
+                verdict='PASS', kind=signature['kind'],
+                source_sha256=source['sha256'], source=_public_media_source(source),
+                signature=signature, content_verified=False,
+                dispatch_authorized=False, sensor_verified=False,
+                real_line_e2e='NOT_TESTED')
+
+
+def _validate_basic_file_check(kind, source, verification):
+    code = 'INVALID_DOWNLOAD_CHECK_EVIDENCE'
+    _check_exact(verification, ('verifier', 'assurance', 'verdict', 'kind',
+                               'source_sha256', 'source', 'signature',
+                               'content_verified', 'dispatch_authorized',
+                               'sensor_verified', 'real_line_e2e'), code)
+    need(verification['verifier'] == 'FILE_SIGNATURE' and
+         verification['assurance'] == 'DOWNLOAD_ONLY' and
+         verification['verdict'] == 'PASS' and
+         verification['kind'] == kind and kind in MEDIA_KINDS and
+         verification['source_sha256'] == source['sha256'] and
+         verification['source'] == _public_media_source(source) and
+         verification['content_verified'] is False and
+         verification['dispatch_authorized'] is False and
+         verification['sensor_verified'] is False and
+         verification['real_line_e2e'] == 'NOT_TESTED' and
+         Path(source['path']).name == source['name'], code)
+    try:
+        signature = basic_check.validate(verification['signature'], source['name'])
+    except basic_check.DownloadCheckError as exc:
+        raise NotesError(str(exc)) from exc
+    need(signature['kind'] == kind, code)
+
+
 def _validate_verification_payload(kind, source, verification, *,
                                    allow_injected=False):
     need(isinstance(verification, dict) and bool(verification),
          'INVALID_VERIFICATION_EVIDENCE')
     verifier = verification.get('verifier')
+    if verifier == 'FILE_SIGNATURE':
+        _validate_basic_file_check(kind, source, verification)
+        return
     if verifier == 'INJECTED':
         need(allow_injected, 'INJECTED_VERIFICATION_NOT_ALLOWED')
         result = verification.get('result')
@@ -7264,6 +7487,8 @@ def _build_notes_parser():
                          help='JSON preview object or @JSON-file for confirm')
     restart.add_argument('--evidence',
                          help='Owner confirmation evidence for confirm')
+    restart.add_argument('--download-only', action='store_true',
+                         help='Use basic file checks on resume, without full decoding')
     restart.add_argument('--decoder', help='Photo ImageIO decoder executable')
     restart.add_argument('--decoder-sha256', help='Expected decoder SHA-256')
     restart.add_argument('--stall-seconds', type=float,
@@ -7301,6 +7526,11 @@ def _build_notes_parser():
     reconcile.add_argument('--result', required=True, type=str.upper,
                            choices=OUTCOMES)
     reconcile.add_argument('--evidence', required=True)
+
+    check = sub.add_parser('download-check', help='Check and save a finished download without playback or full decoding')
+    add_records(check, 'Basic file checks only; assurance DOWNLOAD_ONLY')
+    check.add_argument('--session-id', required=True)
+    check.add_argument('--attempt-id', required=True)
 
     verify = sub.add_parser('verify', help='Verify a DOWNLOAD_FINISHED attempt and publish')
     add_records(verify, 'Verify a DOWNLOAD_FINISHED attempt and publish')
@@ -7430,8 +7660,8 @@ def main(argv=None):
                 recovery_authorized=args.recovery_authorized)
         elif args.command in ('memory', 'bind', 'scan', 'page', 'post',
                               'media', 'intent', 'outcome', 'reconcile',
-                              'verify', 'resume', 'summary', 'evidence-audit',
-                              'evidence-correct', 'media-kind-correct',
+                              'download-check', 'verify', 'resume', 'summary', 'evidence-audit',
+                              'evidence-correct', 'media-kind-correct', 'media-kind-reconcile',
                               'source-unavailable', 'destination', 'exclude',
                               'protect', 'restart', 'reattest'):
             records = NotesRecords(args.records_root)
@@ -7508,6 +7738,9 @@ def main(argv=None):
                 result = records.reconcile(
                     session_id=args.session_id, attempt_id=args.attempt_id,
                     result=args.result, evidence=args.evidence)
+            elif args.command == 'download-check':
+                result = records.download_check(
+                    session_id=args.session_id, attempt_id=args.attempt_id)
             elif args.command == 'verify':
                 if bool(args.decoder) != bool(args.decoder_sha256):
                     parser.error('--decoder and --decoder-sha256 must be provided together')
@@ -7571,6 +7804,10 @@ def main(argv=None):
                     media_key_value=args.media_key,
                     reason=args.reason, evidence=args.evidence)
             elif args.command == 'restart':
+                if args.download_only and args.action != 'resume':
+                    parser.error('--download-only is only accepted for restart resume')
+                if args.download_only and (args.decoder or args.decoder_sha256):
+                    parser.error('--download-only does not accept decoder options')
                 if args.action == 'preview':
                     if any(value is not None for value in (
                             args.session_id, args.preview, args.evidence,
@@ -7603,7 +7840,7 @@ def main(argv=None):
                         session_id=args.session_id, decoder=args.decoder,
                         decoder_sha256=args.decoder_sha256,
                         progress_callback=_cli_progress,
-                        stall_seconds=stall_seconds)
+                        stall_seconds=stall_seconds, download_only=args.download_only)
             elif args.command == 'reattest':
                 if args.action == 'preview':
                     result = records.reattest_preview(

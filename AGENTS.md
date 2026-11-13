@@ -29,7 +29,7 @@
 - 已驗證完成的整本照片目錄缺席時保留完成與禁止重下，另報本機不可用，不要求外接硬碟在線或歸檔登記；不能據此聲稱外部副本已驗證。目錄仍存在但缺部分檔案、內容或身分漂移、symlink 等異常時保護原件並停止新派送。UNKNOWN、活動下載及未完成命名交易不因照片缺席而解鎖。新一批目的地透過追加綁定，不改舊完成路徑；不要求 Owner 手填 UUID 或 JSON。
 - 已完成、已人工備份、已排除與受保護歷史不重下。完整盤點成立且無身分歧義時，僅個別舊證據不足的歷史受保護項可跳過，繼續其他已核對合格項；不把它計入完成或排除，也不稱整份列表全部完成。活動下載、未解派送與未完成命名交易不可跳過另送。日期／張數相同不能跨列表合併；舊格式或缺證據保持 `PROTECTED_HISTORY`，不升格為完成。人工備份是來源註記，不是第七類：工具以完整證據認定完成才計已完成，僅人工聲明或證據不足計受保護歷史；不覆蓋既有 UNKNOWN／pending，亦不默認排除，依 inventory 的六類歸類規則。合成 fixture 不是真實歷史。
 - 一次一本。每次派送前保存並讀回 intent、新空白目的地及禁止重送紀錄；每個相簿 attempt 的 Save All 最多一次。結果未知先查證，不能用新目錄、零計數、重置 ledger 或改寫 UNKNOWN 解鎖。
-- 記事本一次一項，身分固定為列表→貼文→媒體；先完成全列表卡片覆蓋，再要求目標貼文的細盤完整；其他貼文待盤不阻止合格目標，且摘要仍須標示全列表未完成。中文名稱、日期、總數、序號或單一 hash 都不能單獨認領歷史。每個媒體 attempt 先保存並讀回 intent、新空白目的地及禁止重送紀錄；記事本當次下載控制最多派送一次，若 UI 顯示 Save All，須先證明它是本記事本自己的控制，不沿用相簿入口。有 `outcome` 才能驗證，未知先 `reconcile`，未收斂不得 verify、建新 intent 或重送。純文字貼文記貼文層 `NO_MEDIA`，不是第七類下載完成。完成後整篇目錄缺席記 `LOCAL_MISSING` 並保留完成；目錄仍存在但有缺檔、額外檔、hash／身分漂移或 symlink 記 `LOCAL_CHANGED` 並停止新派送。UNKNOWN、活動下載及未完成命名交易不因照片缺席解鎖。唯一例外是精確確認取代批次：`restart preview` 回報 `RESTART_REQUIRED`／`OPEN_BATCH`，且 Owner 明示確認該 scope、generation、新舊路徑與額外空間後，scope 內舊 UNKNOWN、無 outcome 或 pending 才可建立新的 v3 attempt；`LOCAL_CHANGED` 僅可在該 scope 內保留原檔並複製到新版本目錄重建。確認後必須有新的完整 recovery scan，才可逐項 `intent --restart-id`。此例外不表示舊 UNKNOWN 已停止、不改寫舊歷史、不自動清理，也不是無限重送；scope、身分、目的地或版本策略改變須重新確認。`LOCAL_MISSING`、scope 外異常、`EXCLUDED` 與 `PROTECTED_HISTORY` 仍不解除。
+- 記事本一次一項，身分固定為列表→貼文→媒體；先完成全列表卡片覆蓋，再要求目標貼文的細盤完整；其他貼文待盤不阻止合格目標，且摘要仍須標示全列表未完成。中文名稱、日期、總數、序號或單一 hash 都不能單獨認領歷史；未知來源種類用 `identity.kind=UNCLASSIFIED`，既有媒體沿用原 key／identity，不另建 key 避開歷史。每個媒體 attempt 先保存並讀回 intent、新空白目的地及禁止重送紀錄；記事本當次下載控制最多派送一次，若 UI 顯示 Save All，須先證明它是本記事本自己的控制，不沿用相簿入口。Agent 不播放／暫停、拖時間、調倍速、檢視內容或為種類取證；不點媒體內容切換播放控制，可移入游標或使用明確工具列控制顯示下載工具列。有 `outcome` 才能檢查，未知先 `reconcile`，未收斂不得 `download-check`、verify、建新 intent 或重送。日常 `download-check --records-root ... --session-id ... --attempt-id ...` 檢查 magic MIME 與 suffix 分類、非空穩定檔案、SHA-256、防覆寫及身分一致性。MIME 明確為 `text/plain`、`text/html`、`application/pdf`、`application/zip` 時追加 `line-notes-download-exclusion/v1`、標 `EXCLUDED`、保留 staging 且不寫 completion；不代表來源原件不是媒體。未知 MIME、`application/octet-stream` 或 MIME／suffix 不相符時保持 pending 並拒絕完成。其他通過項的 assurance 為 `DOWNLOAD_ONLY`，不作 ImageIO／ffmpeg 完整解碼，也不證明來源原件或內容完整。舊 `verify` 僅供 legacy 相容；`summary`／`resume` 保留的 legacy `VERIFY_REQUIRED` 日常按待 `download-check` 解讀，不啟動舊 `verify` 或來源種類取證。純文字貼文記貼文層 `NO_MEDIA`，不是第七類下載完成。完成後整篇目錄缺席記 `LOCAL_MISSING` 並保留完成；目錄仍存在但有缺檔、額外檔、hash／身分漂移或 symlink 記 `LOCAL_CHANGED` 並停止新派送。UNKNOWN、活動下載及未完成命名交易不因照片缺席解鎖。restart scope 中候選為明確非媒體時拒絕 `RESTART_SCOPE_NON_MEDIA` 並停止，不自動改已確認 scope。唯一例外是精確確認取代批次：`restart preview` 回報 `RESTART_REQUIRED`／`OPEN_BATCH`，且 Owner 明示確認該 scope、generation、新舊路徑與額外空間後，scope 內舊 UNKNOWN、無 outcome 或 pending 才可建立新的 v3 attempt；`LOCAL_CHANGED` 僅可在該 scope 內保留原檔並複製到新版本目錄重建。確認後必須有新的完整 recovery scan，才可逐項 `intent --restart-id`。此例外不表示舊 UNKNOWN 已停止、不改寫舊歷史、不自動清理，也不是無限重送；scope、身分、目的地或版本策略改變須重新確認。`LOCAL_MISSING`、scope 外異常、`EXCLUDED` 與 `PROTECTED_HISTORY` 仍不解除。
 - 初始任務已授權確認中斷後的相簿級恢復時，保留原檔，在另一個新空白目錄恢復；完成的跳過，未知的不重送。LINE 原生只補缺檔仍未實證。
 - 不發訊息、刪除、分享、覆寫照片、變更舊完成事實或擴及其他列表。這些副作用不包含在一般備份、審查或整理授權內。
 
@@ -37,9 +37,9 @@
 
 檢查應對應具體保護物件與可說明的風險。記事本普通列表容器的歷史 device-only 差異，不單獨阻擋已核對授權路徑的備份；受管理檔案或交易的身分／完整性異常、UNKNOWN、活動下載、未完成命名、跨列表或授權歧義仍依原規則停止。Agent 不略過工具拒絕或改寫歷史；規則需調整時以有界修改及相稱驗證處理。
 
-保留 `src/line_backup_batch/daily.py`、`image_decode.swift`、離線 OCR 與日常測試。記事本新功能使用獨立的 `src/line_backup_batch/notes.py` 與媒體驗證器，不得改變相簿既有公共介面、事件格式或資料語意。小工具負責記錄、去重與檔案一致性；Agent 負責理解任務、辨識畫面與選擇操作。缺 locator／AX 標籤不是增加控制器的理由。
+保留 `src/line_backup_batch/daily.py`、`image_decode.swift`、離線 OCR 與相簿日常測試。記事本使用獨立的 `src/line_backup_batch/notes.py`；日常 `download-check` 做基本檔案檢查，舊嚴格 verifier 僅為 legacy 相容，不改變相簿介面、事件格式或資料語意。小工具負責記錄、去重與檔案一致性；Agent 負責理解任務、辨識畫面與選擇操作。缺 locator／AX 標籤不是增加控制器的理由。
 
-下載後核對預期數、穩定清單、非空檔、逐檔 SHA-256 與 ImageIO 完整像素解碼，保存完成並讀回。解碼成功本身不證明與服務端原始位元完全相同。完成紀錄損壞或仍在本機的照片異動時保留來源並停止，不重下補帳；整本目錄缺席依上述永久記憶規則處理。
+相簿仍依既有規則核對下載後的數量、穩定清單、非空檔、SHA-256 與 ImageIO 完整像素解碼。記事本日常則以 `download-check` 做 magic MIME／suffix 分類、非空穩定檔案、SHA-256、防覆寫及身分核對；不做 ImageIO／ffmpeg 完整解碼，完成 assurance 為 `DOWNLOAD_ONLY`。完成紀錄損壞或仍在本機的檔案異動時保留來源並停止，不重下補帳；整篇目錄缺席依上述永久記憶規則處理。
 
 日常工具不簽發 GUI 權限、不觀察 LINE，也不證明提交畫面真實。相簿摘要的 `sensor_verified=false` 與 `real_line_e2e=NOT_TESTED`、記事本摘要的 `external_copy_verified=false` 與 `real_line_e2e=NOT_TESTED`、簿記 PASS、實際 GUI、檔案驗證、正式 state 與獨立驗收須分開報告。人眼觀察是 OBSERVED，不能冒充工具 PASS 或豁免。
 
@@ -51,7 +51,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes --help
 PYTHONPATH=src /usr/bin/python3 -B -m unittest discover -s tests -p 'test_notes*.py'
 ```
 
-僅選本程序相符的現有 Swift SDK，不修改系統工具鏈。記事本照片沿用 ImageIO 完整像素解碼；影片固定使用成對的 Homebrew `ffmpeg`／`ffprobe`，檢查有效影像串流及完整解碼，不混用 PATH 中版本不同的工具。離線測試不能代替真實相簿備份、記事本 GUI、即時 popup、混合附件 chooser 或跨 Session 恢復驗收；這些未實測項目維持 `NOT_RUN`。
+僅選本程序相符的現有 Swift SDK，不修改系統工具鏈。記事本日常不要求 ImageIO／ffmpeg 完整解碼或來源媒體種類取證；重啟恢復使用 `restart resume --download-only` 對候選執行基本檢查，舊嚴格預設保留相容。相簿仍沿用其 ImageIO 規則。離線測試不能代替真實相簿備份、記事本 GUI、即時 popup、混合附件 chooser 或跨 Session 恢復驗收；這些未實測項目維持 `NOT_RUN`。
 
 ## 修改、風險與證據
 
