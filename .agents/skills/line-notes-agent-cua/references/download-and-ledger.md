@@ -47,6 +47,7 @@
 | `summary` | 投影本次盤點與六類狀態、缺項及完成數 | `all_known_media_complete=true` 只代表摘要投影一致，不是畫面／檔案獨立驗收，也不是真實 LINE E2E |
 | `evidence-correct` | 針對已精確核對的 page 追加 replacement evidence 更正 | 只修 page 引用；不改 page 成員／順序／頂底／scan 覆蓋，也不把更正當成原證據或完成證明 |
 | `media-kind-correct` | 在任何 attempt 前更正已盤點媒體的種類 | 只限最新完整 scan、尚無 intent／verification／completion／排除／保護的項目；不改 media key、貼文、數量或來源順序 |
+| `media-kind-reconcile` | 在 `DOWNLOAD_FINISHED` 後、`verify` 前，對既有 attempt 追加觀察到的種類 | 只限最新 attempt、精確 scan binding、唯一穩定 staging 檔及足以證明原分類錯誤的證據；不重下、不改 intent／outcome；不是只憑 `.jpg` 等副檔名改種類 |
 | `source-unavailable` | 記錄單一媒體來源已明確到期 | 只限最新 attempt 為 `STOPPED`；不是完成、排除、重試授權或服務端已回收證明 |
 | `destination` | 為新批次追加目的地綁定 | 保留舊完成路徑；不得解鎖 UNKNOWN／pending／LOCAL_CHANGED |
 | `exclude` | 以觀察證據把已盤點媒體標為排除 | 只能處理已觀察項；不得覆蓋 UNKNOWN／活動 attempt，也不得成為跳過未盤點項的藉口 |
@@ -108,6 +109,8 @@ evidence-correct --records-root RECORDS_ROOT --session-id SESSION_ID
 media-kind-correct --records-root RECORDS_ROOT --session-id SESSION_ID
              --media-key KEY --inventory-sequence N [--inventory-sha256 SHA256]
              --to-kind {PHOTO,VIDEO} --evidence BUNDLE
+media-kind-reconcile --records-root RECORDS_ROOT --session-id SESSION_ID
+             --attempt-id ID --to-kind {PHOTO,VIDEO} --evidence BUNDLE
 source-unavailable --records-root RECORDS_ROOT --session-id SESSION_ID
              --media-key KEY --attempt-id ID --evidence BUNDLE
 destination  --records-root RECORDS_ROOT --photo-root PHOTO_ROOT
@@ -207,6 +210,8 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
 `evidence-correct` 只用於已確認的 page 證據錯引。Agent 從目前帳本事件取得 page 的 sequence／SHA-256、原 evidence SHA-256 及替換 bundle；替換 bundle 的 scan context 必須對應 target page 當時的 scan，不是現在最新 scan。若 page 以外仍有 evidence 損壞，拒絕 `EVIDENCE_REPAIR_SCOPE_MISMATCH`；重複更正須帶前一筆 correction 的 sequence／SHA-256，不得分叉。成功只追加 correction，不修改 page 成員、順序、top/bottom、scan 覆蓋、media key 或已完成事實；真實帳本仍須 D2 的精確資料預覽與授權。
 
 `media-kind-correct` 只處理最新完整 scan 中、尚無任何 intent／verification／completion／exclusion／protection 的已盤點媒體。來源 inventory 必須是最新且 context 相符；更正只新增 `media-kind-correction`，原 media key、貼文、數量、次序與 inventory 保留。`summary` 會同時顯示原始 `kind`、`effective_kind` 與 correction ref；新 `intent` 使用 `line-notes-intent/v2` 凍結 effective kind，後續 `verify` 選擇對應照片／影片驗證器。合法舊 v1 intent 保持可讀，但任何更正後才偽造的 v1 intent 會 fail closed；不手改 schema 或 events。
+
+`media-kind-reconcile` 是下載後、驗證前的精確 attempt 補救路徑，不是新的下載或 restart。只有在 outcome 已為 `DOWNLOAD_FINISHED`、尚未有 verification／completion／publish plan／restart candidate、沒有 pending naming／open restart／本機變更，且 staging 恰有一個穩定 regular file 時才可追加 `media-kind-reconcile`。`from_kind` 必須等於該 intent 凍結的 effective kind；`to_kind` 必須與目前檔案 suffix 相容，而舊種類的 suffix 不相容；事件保存 intent／outcome ref 與檔案 inventory。它只新增觀察，不修改 intent、outcome、media key、post key、來源順序或舊事件。`verify` 對該 attempt 使用 reconciliation 的 `to_kind`，但 summary 保留 `effective_kind`，另列 `verification_kind` 與 reconciliation ref；因此不能把手改 JSON、改名或重下說成已完成。真實帳本必須先有能證明原分類其實錯誤的來源證據；單憑下載後看到 JPEG、縮圖或檔名不得自動改種類，影片只存到預覽影格時仍可能不是真正的 PHOTO。
 
 `source-unavailable` 只在單一來源已明確到期、最新 attempt 為 `STOPPED`，且沒有完成／排除／保護／待命名交易時可用。成功只代表該項來源不可用：摘要顯示 `source_availability=EXPIRED`，`resume` 對該項列 `SOURCE_UNAVAILABLE`，不得再 `intent`；六類狀態與 `current_incomplete` 不改，也不能批次推論同列表其他項到期或自動排除。
 

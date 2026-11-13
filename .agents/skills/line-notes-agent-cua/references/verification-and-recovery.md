@@ -42,6 +42,10 @@
 
 `media-kind-correct` 只適用最新完整 scan 中已盤點、且從未有 intent／verification／completion／exclusion／protection 的媒體。更正 append `media-kind-correction`，保留原 media key、貼文、數量、來源順序與原 inventory；投影另列 `kind`、`effective_kind`、`kind_correction_ref`。新 intent 使用 v2 並凍結更正後種類，照片與影片分別走嚴格驗證器。合法舊 v1 intent 仍可讀取，但更正後才出現、聲稱舊種類的 v1 intent 會被拒絕；不手改 schema、event 或 key。真實資料須先確認 19 項等精確清單均無 attempt，再依 D2 預覽授權套用，不得批次猜測。
 
+`media-kind-reconcile` 補的是「已有 intent 且下載完成，但 intent 凍結的種類與實際可安全辨識的檔案種類不同」這個缺口；它不是 `media-kind-correct` 的事後版本，也不是重下或 restart 的替代品。只有 outcome 為 `DOWNLOAD_FINISHED`、該 attempt 尚無 verification／completion／publish plan／restart candidate，沒有 pending naming、open restart、本機異常，且 staging 恰有一個穩定 regular file 時才可追加。事件以 intent ref、outcome ref、scan id、from_kind、to_kind、完整 source inventory 與 v2 evidence 固定命題；`verify` 只對該 attempt 使用 `to_kind`。summary 必須同時顯示原 `effective_kind`、`verification_kind` 與 reconcile ref，不能把 reconciliation 偽裝成原始種類已改變。
+
+套用前必須有來源層面的充分證據，例如同一 viewer 的可見靜態內容、工具列、縮圖列與前後 observations 能一致排除影片；下載後只看到 JPEG、ImageIO PASS、檔名 `.jpg`、單張 ffprobe `image2` 或某個畫面，單獨都不足以證明來源是照片。若影片可能只被存成目前預覽影格，保留欠件並停止，不能寫成 PHOTO `COMPLETED`。工具的重載期檢查會拒絕舊種類 suffix 已相容、重複事件、非最新 attempt、缺少 `DOWNLOAD_FINISHED`、來源漂移、額外檔、symlink、terminal work 或 restart 的 `v3` intent；不要以手改 JSON、改名、重下或 restart 繞過。
+
 ## 照片驗證
 
 每張照片至少要有：
@@ -137,7 +141,7 @@ ffmpeg 完整解碼仍不能保證偵測所有靜默損壞，也不代表與服�
 | `COMPLETED` 且檔案完整 | 跳過並讀回 completion；不重下 |
 | `COMPLETED` 但整篇目錄缺席 | 保留完成，標 `LOCAL_MISSING`；不重下，不聲稱外部副本已驗證 |
 | 完成目錄存在但部分缺檔／非屬合格環境附屬項的額外檔／漂移／symlink | 標 `LOCAL_CHANGED`，保護原件，scope 外停止新派送；只有 fresh restart preview 精確列出且 Owner 明示確認該批，才保留原檔並在新版本目錄重建 |
-| 已下載完成、尚未 verify | 驗證現有檔案並保存 completion；不重下 |
+| 已下載完成、尚未 verify | 先核對檔案與來源種類；若種類證據仍支持 intent 的凍結種類，直接驗證並保存 completion；若另有充分證據證明 intent 種類分類錯誤，先追加精確 attempt 的 `media-kind-reconcile` 再 verify。兩者都不重下 |
 | 命名／發布 journal 中斷 | `resume` 同一交易；不重送下載 |
 | `STOPPED`／`NOT_SENT` 且未完成、原授權涵蓋恢復、帳本已持久化 `recovery_authorized=true` 且有充分停止證據 | 保留原檔，依 [下載與 notes CLI](download-and-ledger.md) 以 `intent --recovery-evidence` 建立另一個新空白恢復目錄及新 attempt；授權未持久化或證據不足時停止，已完成項跳過 |
 | 已有 `outcome=UNKNOWN` 或 intent 尚無 outcome | 先以原事件、目的地與當次畫面／檔案查證；已有 outcome 才 `reconcile`，尚無 outcome 先保存第一筆真實結果。未收斂前不 verify、不重送、不建新 attempt、不派下一項；沒有新資訊就停止相同查證。只有 fresh restart preview 精確列出該媒體、Owner 明示確認該批，且 confirm 後完成新的完整 recovery scan，才可 `intent --restart-id`；舊 UNKNOWN／無 outcome 保留，不偽造 STOPPED |
@@ -165,6 +169,7 @@ notes 功能至少需以合成 fixture 覆蓋以下驗證，實際執行結果�
 - 照片完整解碼、非空檔、穩定前後 hash、非預期 stderr 與工具版本／binary hash。
 - v2 evidence 父／子漂移、legacy 唯讀、page correction 與非目標 scope 拒絕；audit 完整性失敗 exit 4 且不投影業務狀態。
 - 更正後 media key／數量／來源順序不變、v2 intent 使用 effective kind、合法 v1 相容與偽造 v1 拒絕。
+- 下載完成後、verify 前的精確 attempt 種類 reconciliation 成功；無 outcome、非最新 attempt、額外檔、symlink、來源漂移、錯誤 suffix、重複與 terminal work 均拒絕，且重載後不能偽造舊 suffix 已相容的 reconciliation。
 - 單項 `SOURCE_EXPIRED` 維持欠件、禁止 recovery／intent，且未授權時不改完成／排除計數。
 - 新 scan 的完整卡片覆蓋 gate、未決 attempt／pending naming blocker，以及 resume scan binding mismatch 零檔案 mutation；普通 intent 僅要求目標貼文媒體細盤完整。
 

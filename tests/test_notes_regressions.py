@@ -2972,6 +2972,310 @@ class NotesRegressionTests(unittest.TestCase):
         self.assertEqual(raised.exception.args[0], 'MEDIA_KIND_AFTER_ATTEMPT')
         self.assertEqual(self.event_bytes(ledger2.records), before2)
 
+    def test_post_download_kind_reconcile_preserves_attempt_and_verifies_once(self):
+        ledger = self.new_ledger('kind-reconcile-after-download')
+        identity = notes.media_identity(
+            kind=VIDEO, visual_key='kind-reconcile-after-download-media')
+        _post, post_key_value = self.observe_post(
+            ledger, 'kind-reconcile-after-download-post', [identity])
+        media_key_value = notes.media_key(
+            ledger.summary['list_key'], post_key_value, identity)
+        attempt = ledger.records.intent(
+            session_id=ledger.session, media_key_value=media_key_value)
+        staging = Path(attempt['destination'])
+        downloaded = staging / 'observed-image.jpg'
+        downloaded.write_bytes(b'synthetic image bytes that remain one file\n')
+        ledger.records.outcome(
+            session_id=ledger.session, attempt_id=attempt['attempt_id'],
+            outcome='DOWNLOAD_FINISHED',
+            evidence=ledger.evidence_for_attempt(attempt))
+
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.verify(
+                session_id=ledger.session, attempt_id=attempt['attempt_id'],
+                stability_interval=0)
+        self.assertEqual(raised.exception.args[0],
+                         'UNSUPPORTED_MEDIA_EXTENSION')
+
+        before_bytes = self.event_bytes(ledger.records)
+        all_before = self.read_events(ledger.records)
+        before_intent = next(event for event in all_before
+                             if event['kind'] == 'intent')
+        before_outcome = next(event for event in all_before
+                              if event['kind'] == 'outcome')
+        reconciliation = ledger.records.media_kind_reconcile(
+            session_id=ledger.session,
+            attempt_id=attempt['attempt_id'],
+            to_kind=PHOTO,
+            evidence=ledger.evidence_for_attempt(attempt),
+            stability_interval=0)
+        self.assertEqual(reconciliation['schema'],
+                         notes.MEDIA_KIND_RECONCILE_SCHEMA)
+        self.assertEqual(reconciliation['attempt_id'], attempt['attempt_id'])
+        self.assertEqual(reconciliation['media_key'], media_key_value)
+        self.assertEqual(reconciliation['post_key'], post_key_value)
+        self.assertEqual(reconciliation['from_kind'], VIDEO)
+        self.assertEqual(reconciliation['to_kind'], PHOTO)
+        self.assertEqual(reconciliation['source']['name'], downloaded.name)
+        self.assertFalse(reconciliation['dispatch_authorized'])
+
+        summary = ledger.records.summary()
+        row = next(item for item in summary['media']
+                   if item['media_key'] == media_key_value)
+        self.assertEqual(row['effective_kind'], VIDEO)
+        self.assertEqual(row['verification_kind'], PHOTO)
+        self.assertEqual(row['verification_kind_reconcile_ref']['sequence'],
+                         reconciliation['reconcile_ref']['sequence'])
+        self.assertEqual(len(summary['media_kind_reconciliations']), 1)
+        self.assertIn('VERIFY_REQUIRED', summary['dispatch_blockers'])
+
+        reopened = self.reopen(ledger)
+        with self.strict_dispatch(self.strict_pass) as calls:
+            completion = reopened.verify(
+                session_id=ledger.session, attempt_id=attempt['attempt_id'],
+                stability_interval=0)
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(calls[0][0], downloaded)
+        self.assertEqual(calls[0][1], PHOTO)
+        self.assertEqual(completion['kind'], 'completion')
+        self.assertEqual(completion['data']['verification']['kind'], PHOTO)
+
+        events = self.read_events(reopened)
+        intents = [event for event in events if event['kind'] == 'intent']
+        outcomes = [event for event in events if event['kind'] == 'outcome']
+        verifications = [event for event in events
+                         if event['kind'] == 'verification']
+        self.assertEqual(len(intents), 1)
+        self.assertEqual(len(outcomes), 1)
+        self.assertEqual(len(verifications), 1)
+        self.assertEqual(intents[0], before_intent)
+        self.assertEqual(outcomes[0], before_outcome)
+        self.assertEqual(verifications[0]['data']['kind'], PHOTO)
+        after_bytes = self.event_bytes(reopened)
+        for name, raw in before_bytes.items():
+            self.assertEqual(after_bytes[name], raw)
+        final = reopened.summary()
+        self.assertEqual(final['status_counts']['COMPLETED'], 1)
+        self.assertEqual(final['local_counts']['VERIFIED_PRESENT'], 1)
+        self.assertEqual(final['dispatch_blockers'], [])
+
+    def test_forged_kind_reconcile_rejects_frozen_kind_compatible_suffix(self):
+        with mock.patch.object(
+                notes, 'PHOTO_SUFFIXES',
+                notes.PHOTO_SUFFIXES | frozenset(('.mp4',))):
+            ledger = self.new_ledger('kind-reconcile-forged-overlap')
+            identity = notes.media_identity(
+                kind=PHOTO, visual_key='kind-reconcile-forged-overlap-media')
+            _post, post_key_value = self.observe_post(
+                ledger, 'kind-reconcile-forged-overlap-post', [identity])
+            attempt = ledger.records.intent(
+                session_id=ledger.session,
+                media_key_value=notes.media_key(
+                    ledger.summary['list_key'], post_key_value, identity))
+            downloaded = Path(attempt['destination']) / 'ambiguous.mp4'
+            downloaded.write_bytes(b'synthetic ambiguous media\n')
+            ledger.records.outcome(
+                session_id=ledger.session, attempt_id=attempt['attempt_id'],
+                outcome='DOWNLOAD_FINISHED',
+                evidence=ledger.evidence_for_attempt(attempt))
+
+            events = self.read_events(ledger.records)
+            intent_event = next(
+                event for event in events
+                if event['kind'] == 'intent' and
+                event['data']['attempt_id'] == attempt['attempt_id'])
+            outcome_event = next(
+                event for event in events
+                if event['kind'] == 'outcome' and
+                event['data']['attempt_id'] == attempt['attempt_id'])
+            ledger.records.append('media-kind-reconcile', dict(
+                schema=notes.MEDIA_KIND_RECONCILE_SCHEMA,
+                attempt_id=attempt['attempt_id'],
+                media_key=attempt['media_key'],
+                post_key=attempt['post_key'],
+                scan_id=attempt['scan_id'],
+                intent_ref=notes._event_ref(intent_event),
+                outcome_ref=notes._event_ref(outcome_event),
+                from_kind=PHOTO,
+                to_kind=VIDEO,
+                source=notes._inventory_row(downloaded),
+                evidence=ledger.stored_evidence_for_attempt(attempt),
+                session_id=ledger.session))
+            with self.assertRaises(NotesError) as raised:
+                self.reopen(ledger).summary()
+            self.assertEqual(raised.exception.args[0],
+                             'MEDIA_KIND_RECONCILE_UNNECESSARY')
+
+    def test_post_download_kind_reconcile_rejects_unsafe_states(self):
+        ledger = self.new_ledger('kind-reconcile-reject-no-outcome')
+        identity = notes.media_identity(
+            kind=VIDEO, visual_key='kind-reconcile-reject-no-outcome-media')
+        _post, post_key_value = self.observe_post(
+            ledger, 'kind-reconcile-reject-no-outcome-post', [identity])
+        media_key_value = notes.media_key(
+            ledger.summary['list_key'], post_key_value, identity)
+        attempt = ledger.records.intent(
+            session_id=ledger.session, media_key_value=media_key_value)
+        staging = Path(attempt['destination'])
+        (staging / 'observed-image.jpg').write_bytes(b'synthetic image\n')
+        before = self.event_bytes(ledger.records)
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.media_kind_reconcile(
+                session_id=ledger.session, attempt_id=attempt['attempt_id'],
+                to_kind=PHOTO,
+                evidence=ledger.evidence_for_attempt(attempt),
+                stability_interval=0)
+        self.assertEqual(
+            raised.exception.args[0],
+            'MEDIA_KIND_RECONCILE_REQUIRES_DOWNLOAD_FINISHED')
+        self.assertEqual(self.event_bytes(ledger.records), before)
+        ledger.records.outcome(
+            session_id=ledger.session, attempt_id=attempt['attempt_id'],
+            outcome='STOPPED', evidence=ledger.evidence_for_attempt(attempt))
+        before = self.event_bytes(ledger.records)
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.media_kind_reconcile(
+                session_id=ledger.session, attempt_id=attempt['attempt_id'],
+                to_kind=PHOTO,
+                evidence=ledger.evidence_for_attempt(attempt),
+                stability_interval=0)
+        self.assertEqual(
+            raised.exception.args[0],
+            'MEDIA_KIND_RECONCILE_REQUIRES_DOWNLOAD_FINISHED')
+        self.assertEqual(self.event_bytes(ledger.records), before)
+
+        duplicate = self.new_ledger('kind-reconcile-reject-duplicate')
+        duplicate_identity = notes.media_identity(
+            kind=VIDEO, visual_key='kind-reconcile-reject-duplicate-media')
+        _post2, post_key2 = self.observe_post(
+            duplicate, 'kind-reconcile-reject-duplicate-post',
+            [duplicate_identity])
+        key2 = notes.media_key(
+            duplicate.summary['list_key'], post_key2, duplicate_identity)
+        attempt2 = duplicate.records.intent(
+            session_id=duplicate.session, media_key_value=key2)
+        staged2 = Path(attempt2['destination']) / 'observed-image.jpg'
+        staged2.write_bytes(b'synthetic duplicate image\n')
+        duplicate.records.outcome(
+            session_id=duplicate.session, attempt_id=attempt2['attempt_id'],
+            outcome='DOWNLOAD_FINISHED',
+            evidence=duplicate.evidence_for_attempt(attempt2))
+        duplicate.records.media_kind_reconcile(
+            session_id=duplicate.session, attempt_id=attempt2['attempt_id'],
+            to_kind=PHOTO,
+            evidence=duplicate.evidence_for_attempt(attempt2),
+            stability_interval=0)
+        before = self.event_bytes(duplicate.records)
+        with self.assertRaises(NotesError) as raised:
+            duplicate.records.media_kind_reconcile(
+                session_id=duplicate.session, attempt_id=attempt2['attempt_id'],
+                to_kind=PHOTO,
+                evidence=duplicate.evidence_for_attempt(attempt2),
+                stability_interval=0)
+        self.assertEqual(raised.exception.args[0],
+                         'DUPLICATE_MEDIA_KIND_RECONCILE')
+        self.assertEqual(self.event_bytes(duplicate.records), before)
+
+        staged2.unlink()
+        (Path(attempt2['destination']) / 'changed.jpg').write_bytes(
+            b'changed after reconciliation\n')
+        with self.assertRaises(NotesError) as raised:
+            duplicate.records.verify(
+                session_id=duplicate.session,
+                attempt_id=attempt2['attempt_id'],
+                stability_interval=0)
+        self.assertEqual(raised.exception.args[0],
+                         'MEDIA_KIND_RECONCILE_SOURCE_CHANGED')
+
+        wrong_suffix = self.new_ledger('kind-reconcile-reject-suffix')
+        suffix_identity = notes.media_identity(
+            kind=VIDEO, visual_key='kind-reconcile-reject-suffix-media')
+        _post3, post_key3 = self.observe_post(
+            wrong_suffix, 'kind-reconcile-reject-suffix-post', [suffix_identity])
+        key3 = notes.media_key(
+            wrong_suffix.summary['list_key'], post_key3, suffix_identity)
+        attempt3 = wrong_suffix.records.intent(
+            session_id=wrong_suffix.session, media_key_value=key3)
+        (Path(attempt3['destination']) / 'observed-video.mp4').write_bytes(
+            b'synthetic video-shaped file\n')
+        wrong_suffix.records.outcome(
+            session_id=wrong_suffix.session, attempt_id=attempt3['attempt_id'],
+            outcome='DOWNLOAD_FINISHED',
+            evidence=wrong_suffix.evidence_for_attempt(attempt3))
+        with self.assertRaises(NotesError) as raised:
+            wrong_suffix.records.media_kind_reconcile(
+                session_id=wrong_suffix.session,
+                attempt_id=attempt3['attempt_id'], to_kind=PHOTO,
+                evidence=wrong_suffix.evidence_for_attempt(attempt3),
+                stability_interval=0)
+        self.assertEqual(raised.exception.args[0],
+                         'UNSUPPORTED_MEDIA_EXTENSION')
+
+    def test_post_download_kind_reconcile_requires_latest_attempt_and_one_file(self):
+        ledger = self.new_ledger('kind-reconcile-latest-and-staging')
+        identity = notes.media_identity(
+            kind=VIDEO, visual_key='kind-reconcile-latest-and-staging-media')
+        _post, post_key_value = self.observe_post(
+            ledger, 'kind-reconcile-latest-and-staging-post', [identity])
+        media_key_value = notes.media_key(
+            ledger.summary['list_key'], post_key_value, identity)
+        first = ledger.records.intent(
+            session_id=ledger.session, media_key_value=media_key_value)
+        ledger.records.outcome(
+            session_id=ledger.session, attempt_id=first['attempt_id'],
+            outcome='STOPPED', evidence=ledger.evidence_for_attempt(first))
+        second = ledger.records.intent(
+            session_id=ledger.session, media_key_value=media_key_value,
+            recovery_evidence=ledger.evidence_for_attempt(first))
+        self.assertNotEqual(first['attempt_id'], second['attempt_id'])
+        before = self.event_bytes(ledger.records)
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.media_kind_reconcile(
+                session_id=ledger.session, attempt_id=first['attempt_id'],
+                to_kind=PHOTO, evidence=ledger.evidence_for_attempt(first),
+                stability_interval=0)
+        self.assertEqual(raised.exception.args[0],
+                         'ONLY_LATEST_ATTEMPT_CAN_CHANGE')
+        self.assertEqual(self.event_bytes(ledger.records), before)
+
+        staging = Path(second['destination'])
+        (staging / 'observed-image.jpg').write_bytes(b'one image file\n')
+        (staging / 'extra.txt').write_bytes(b'not an allowed media result\n')
+        ledger.records.outcome(
+            session_id=ledger.session, attempt_id=second['attempt_id'],
+            outcome='DOWNLOAD_FINISHED',
+            evidence=ledger.evidence_for_attempt(second))
+        before = self.event_bytes(ledger.records)
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.media_kind_reconcile(
+                session_id=ledger.session, attempt_id=second['attempt_id'],
+                to_kind=PHOTO, evidence=ledger.evidence_for_attempt(second),
+                stability_interval=0)
+        self.assertEqual(raised.exception.args[0],
+                         'DOWNLOAD_COUNT_MISMATCH')
+        self.assertEqual(self.event_bytes(ledger.records), before)
+
+        (staging / 'extra.txt').unlink()
+        (staging / 'observed-image.jpg').unlink()
+        os.symlink('/dev/null', str(staging / 'linked.jpg'))
+        with self.assertRaises(NotesError) as raised:
+            ledger.records.media_kind_reconcile(
+                session_id=ledger.session, attempt_id=second['attempt_id'],
+                to_kind=PHOTO, evidence=ledger.evidence_for_attempt(second),
+                stability_interval=0)
+        self.assertEqual(raised.exception.args[0],
+                         'UNEXPECTED_DOWNLOAD_ENTRY')
+        self.assertEqual(self.event_bytes(ledger.records), before)
+
+    def test_notes_cli_exposes_post_download_kind_reconcile(self):
+        result = subprocess.run(
+            [sys.executable, '-B', '-m', 'line_backup_batch.notes', '--help'],
+            cwd=str(ROOT), env=dict(os.environ, PYTHONPATH=str(ROOT / 'src')),
+            check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('media-kind-reconcile', result.stdout)
+
     def test_v1_intent_compatibility_and_forged_post_correction_order(self):
         ledger = self.new_ledger('kind-v1-intent-valid')
         identity = notes.media_identity(

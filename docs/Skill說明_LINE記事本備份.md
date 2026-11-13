@@ -200,6 +200,8 @@ chooser 可能延遲出現。只有視窗／process、來源 viewer 與 attempt 
 
 只有已經有 `outcome=UNKNOWN`，且取得新證據時，才使用 `reconcile`。`reconcile` 不是重送，也不是把未知硬改成成功。只有最終結果是 `DOWNLOAD_FINISHED`，才可進入 `verify`；未收斂前不得 verify、建立新 intent、重下或派下一項。
 
+若已經 `DOWNLOAD_FINISHED`、尚未 verify，而且當次 GUI、viewer 與檔案證據足以證明 intent 凍結的媒體種類分類錯誤，可以用 `media-kind-reconcile` 對這個精確 attempt 追加下載後的種類觀察，再讓 `verify` 使用該觀察種類。這不是只看到 `.jpg` 就自動把影片改成照片，也不是重下、改名、restart 或改寫原 intent／outcome；如果證據仍可能只是影片預覽影格，保留欠件並停止。
+
 ### 步驟 8：發布、completion 與下一項
 
 `verify` 會先保存命名／發布交易，再核對穩定檔集、預期數、非空、SHA-256、逐檔解碼與前後身分；成功後才追加不可覆寫的 completion 並讀回。命名交易中斷時用 `resume` 接續；`resume` 不會觸發下載。完成後重新觀察原貼文／列表，再定位下一個合格項。
@@ -215,6 +217,7 @@ chooser 可能延遲出現。只有視窗／process、來源 viewer 與 attempt 
 | `intent` | 下載前的交易預告。 | 寫入後就按「可能已派送」對待；不是 GUI 授權。 |
 | `outcome` | 第一個觀察到的下載結果。 | 同一 attempt 不任意改寫；不確定就記 `UNKNOWN`。 |
 | `reconcile` | 用新證據釐清既有 UNKNOWN。 | 只處理已存在的 UNKNOWN，不是重送。 |
+| `media-kind-reconcile` | 下載完成後、verify 前，補記精確 attempt 的實際種類。 | 不改 intent／outcome，不重下；必須有充分且可稽核的種類證據。 |
 | `DOWNLOAD_FINISHED` | 有可歸屬的下載終結結果。 | 只代表可以進入 verify，還不代表檔案完成。 |
 | `verify` | 驗證檔案、發布並保存 completion。 | 只接受 `DOWNLOAD_FINISHED`。 |
 | `resume` | 接續中斷的命名／發布交易。 | 不會重新下載。 |

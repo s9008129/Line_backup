@@ -39,6 +39,7 @@ MEMORY_SCHEMA = 'line-notes-memory/v1'
 PHOTO = 'PHOTO'
 VIDEO = 'VIDEO'
 MEDIA_KINDS = (PHOTO, VIDEO)
+MEDIA_KIND_RECONCILE_SCHEMA = 'line-notes-media-kind-reconcile/v1'
 STATUSES = ('COMPLETED', 'EXCLUDED', 'PENDING', 'PREVIOUSLY_INCOMPLETE',
             'UNKNOWN', 'PROTECTED_HISTORY')
 OUTCOMES = ('STOPPED', 'NOT_SENT', 'DOWNLOAD_FINISHED', 'UNKNOWN')
@@ -1916,6 +1917,37 @@ class NotesRecords:
                                   media_key=data['media_key'],
                                   scan_id=data['scan_id']),
                 require_v2=True, require_scan_context=True)
+        elif kind == 'media-kind-reconcile':
+            _check_exact(data, ('schema', 'attempt_id', 'media_key',
+                                'post_key', 'scan_id', 'intent_ref',
+                                'outcome_ref', 'from_kind', 'to_kind',
+                                'source', 'evidence', 'session_id'),
+                         'INVALID_MEDIA_KIND_RECONCILE')
+            need(data['schema'] == MEDIA_KIND_RECONCILE_SCHEMA and
+                 isinstance(data['attempt_id'], str) and
+                 bool(data['attempt_id']) and
+                 _is_hex(data['media_key']) and _is_hex(data['post_key']) and
+                 isinstance(data['scan_id'], str) and
+                 bool(data['scan_id'].strip()) and
+                 data['from_kind'] in MEDIA_KINDS and
+                 data['to_kind'] in MEDIA_KINDS and
+                 data['from_kind'] != data['to_kind'] and
+                 isinstance(data['session_id'], str) and
+                 bool(data['session_id']), 'INVALID_MEDIA_KIND_RECONCILE')
+            _check_event_ref(data['intent_ref'],
+                             'INVALID_MEDIA_KIND_RECONCILE')
+            _check_event_ref(data['outcome_ref'],
+                             'INVALID_MEDIA_KIND_RECONCILE')
+            self._validate_source_row(data['source'],
+                                      'INVALID_MEDIA_KIND_RECONCILE_SOURCE')
+            self._event_evidence(
+                event, 'evidence', data['evidence'],
+                _evidence_context(list_key=self.list_data['list_key'],
+                                  post_key=data['post_key'],
+                                  media_key=data['media_key'],
+                                  attempt_id=data['attempt_id'],
+                                  scan_id=data['scan_id']),
+                require_v2=True, require_scan_context=True)
         elif kind == 'source-unavailable':
             _check_exact(data, ('schema', 'media_key', 'post_key',
                                 'attempt_id', 'reason', 'evidence',
@@ -2050,6 +2082,63 @@ class NotesRecords:
             latest[key] = event
         return by_media, latest
 
+    def _media_kind_reconcile_projection(self, events=None):
+        """Validate post-download kind reconciliations without rewriting history."""
+        source_events = list(self.events if events is None else events)
+        by_attempt = {}
+        by_media = {}
+        terminal_attempt_kinds = {
+            'verification', 'publish-plan', 'completion',
+            'restart-copy-plan', 'restart-candidate'}
+        for event in source_events:
+            if event['kind'] != 'media-kind-reconcile':
+                continue
+            data = event['data']
+            attempt_id = data['attempt_id']
+            media_key_value = data['media_key']
+            need(attempt_id not in by_attempt,
+                 'DUPLICATE_MEDIA_KIND_RECONCILE')
+            prefix = source_events[:event['sequence'] - 1]
+            attempts = self._attempt_projection(prefix)
+            intent_data = attempts['attempts'].get(attempt_id)
+            need(intent_data is not None,
+                 'MEDIA_KIND_RECONCILE_WITHOUT_INTENT')
+            need(intent_data['schema'] != 'line-notes-intent/v3',
+                 'RESTART_INTENT_KIND_RECONCILE_NOT_ALLOWED')
+            need(intent_data['media_key'] == media_key_value and
+                 intent_data['post_key'] == data['post_key'] and
+                 attempts['latest_by_media'].get(media_key_value) ==
+                 attempt_id, 'MEDIA_KIND_RECONCILE_ATTEMPT_CHANGED')
+            intent_event = prefix[attempts['order'][attempt_id] - 1]
+            need(data['intent_ref'] == _event_ref(intent_event),
+                 'MEDIA_KIND_RECONCILE_INTENT_CHANGED')
+            outcome_event = attempts['outcomes'].get(attempt_id)
+            need(outcome_event is not None and
+                 outcome_event['data']['outcome'] == 'DOWNLOAD_FINISHED' and
+                 data['outcome_ref'] == _event_ref(outcome_event),
+                 'MEDIA_KIND_RECONCILE_REQUIRES_DOWNLOAD_FINISHED')
+            need(data['scan_id'] == intent_data.get('scan_id'),
+                 'MEDIA_KIND_RECONCILE_SCAN_CHANGED')
+            need(data['from_kind'] == self._attempt_kind(intent_data),
+                 'MEDIA_KIND_RECONCILE_FROM_KIND_CHANGED')
+            source = data['source']
+            need(Path(source['path']).parent ==
+                 Path(intent_data['destination']),
+                 'MEDIA_KIND_RECONCILE_SOURCE_CHANGED')
+            _validate_reconciled_kind_suffix(
+                data['from_kind'], data['to_kind'], source['name'])
+            for earlier in prefix:
+                earlier_data = earlier['data']
+                if (earlier['kind'] in terminal_attempt_kinds and
+                        earlier_data.get('attempt_id') == attempt_id):
+                    raise NotesError('MEDIA_KIND_RECONCILE_AFTER_TERMINAL_WORK')
+                if (earlier['kind'] in ('exclusion', 'protection') and
+                        earlier_data.get('media_key') == media_key_value):
+                    raise NotesError('MEDIA_KIND_RECONCILE_AFTER_TERMINAL_WORK')
+            by_attempt[attempt_id] = event
+            by_media[media_key_value] = event
+        return dict(by_attempt=by_attempt, by_media=by_media)
+
     def _source_unavailable_projection(self):
         result = {}
         for event in self.events:
@@ -2080,6 +2169,7 @@ class NotesRecords:
     def _validate_event_graph(self):
         """Reject internally inconsistent event graphs before projecting them."""
         self._validate_reattest_projection()
+        kind_reconciliations = self._media_kind_reconcile_projection()
         latest, scans = self._open_scan()
         for scan_id, scan in scans.items():
             if scan['complete'] is None:
@@ -2292,8 +2382,18 @@ class NotesRecords:
                  'DUPLICATE_OR_ORPHAN_VERIFICATION')
             attempt = prefix_attempts['attempts'][data['attempt_id']]
             need(data['media_key'] == attempt['media_key'] and
-                 data['post_key'] == attempt['post_key'] and
-                 data['kind'] == self._attempt_kind(attempt),
+                 data['post_key'] == attempt['post_key'],
+                 'VERIFICATION_ATTEMPT_CHANGED')
+            reconciliation = kind_reconciliations['by_attempt'].get(
+                data['attempt_id'])
+            expected_kind = self._attempt_kind(attempt)
+            if reconciliation is not None:
+                need(reconciliation['sequence'] < event['sequence'],
+                     'VERIFICATION_KIND_RECONCILE_ORDER_CHANGED')
+                expected_kind = reconciliation['data']['to_kind']
+                need(data['source'] == reconciliation['data']['source'],
+                     'VERIFICATION_SOURCE_CHANGED')
+            need(data['kind'] == expected_kind,
                  'VERIFICATION_ATTEMPT_CHANGED')
             need(self._attempt_result(data['attempt_id'], prefix_attempts) ==
                  'DOWNLOAD_FINISHED',
@@ -3738,6 +3838,15 @@ class NotesRecords:
                                              'line-notes-intent/v3')
                 else intent_data['identity']['kind'])
 
+    def _verification_kind_for_attempt(self, attempt_id, projection=None):
+        projection = projection or self._attempt_projection()
+        need(attempt_id in projection['attempts'], 'UNKNOWN_ATTEMPT_ID')
+        reconciled = self._media_kind_reconcile_projection()[
+            'by_attempt'].get(attempt_id)
+        if reconciled is not None:
+            return reconciled['data']['to_kind'], reconciled
+        return self._attempt_kind(projection['attempts'][attempt_id]), None
+
     def _restart_projection(self, events=None):
         """Validate restart events and project the latest activated versions."""
         source_events = list(self.events if events is None else events)
@@ -5139,6 +5248,83 @@ class NotesRecords:
             self.append('media-kind-correction', correction)
             return dict(correction, correction_ref=_event_ref(self.events[-1]))
 
+    def media_kind_reconcile(self, *, session_id, attempt_id, to_kind,
+                             evidence,
+                             stability_interval=DEFAULT_STABILITY_INTERVAL):
+        """Record the observed kind of an exact completed download attempt.
+
+        This is deliberately narrower than a new intent or a restart. It does
+        not dispatch, rewrite the frozen intent/outcome, or permit a second
+        download. The stable staging file must exist and its suffix must match
+        the corrected kind; verify remains responsible for decoding it.
+        """
+        with self.locked():
+            self._require_session(session_id)
+            projection, media_key_value = self._require_latest_attempt(
+                attempt_id)
+            intent_data = projection['attempts'][attempt_id]
+            need(intent_data['schema'] != 'line-notes-intent/v3',
+                 'RESTART_INTENT_KIND_RECONCILE_NOT_ALLOWED')
+            reconciliations = self._media_kind_reconcile_projection()
+            need(attempt_id not in reconciliations['by_attempt'],
+                 'DUPLICATE_MEDIA_KIND_RECONCILE')
+            self._require_attempt_scan_binding(intent_data)
+            outcome_event = projection['outcomes'].get(attempt_id)
+            need(outcome_event is not None and
+                 outcome_event['data']['outcome'] == 'DOWNLOAD_FINISHED',
+                 'MEDIA_KIND_RECONCILE_REQUIRES_DOWNLOAD_FINISHED')
+            need(media_key_value not in self._completion_projection()[0] and
+                 media_key_value not in self._exclusion_projection() and
+                 media_key_value not in self._protection_projection(),
+                 'MEDIA_KIND_RECONCILE_AFTER_TERMINAL_WORK')
+            need(self._verification_for_attempt(attempt_id) is None,
+                 'MEDIA_KIND_RECONCILE_AFTER_VERIFICATION')
+            need(not self._pending_publish_plans(),
+                 'PENDING_NAMING_TRANSACTION')
+            need(self._restart_open_confirmation() is None,
+                 'RESTART_BATCH_OPEN')
+            for event in self.events:
+                if (event['kind'] in ('publish-plan', 'restart-copy-plan',
+                                      'restart-candidate') and
+                        event['data'].get('attempt_id') == attempt_id):
+                    raise NotesError('MEDIA_KIND_RECONCILE_AFTER_TERMINAL_WORK')
+            self._assert_no_local_changed()
+            from_kind = self._attempt_kind(intent_data)
+            need(to_kind in MEDIA_KINDS and to_kind != from_kind,
+                 'INVALID_MEDIA_KIND_RECONCILE')
+            staging = self._validate_staging(intent_data)
+            stable = _stable_media_inventory(
+                staging, expected=1, interval=stability_interval)
+            source = stable[0]
+            _validate_reconciled_kind_suffix(
+                from_kind, to_kind, source['name'])
+            after = _inventory_once(staging)
+            need(after == stable,
+                 'CONTENT_CHANGED_AFTER_MEDIA_KIND_RECONCILE')
+            context = _evidence_context(
+                list_key=self.list_data['list_key'],
+                post_key=intent_data['post_key'],
+                media_key=media_key_value,
+                attempt_id=attempt_id,
+                scan_id=intent_data['scan_id'])
+            data = dict(
+                schema=MEDIA_KIND_RECONCILE_SCHEMA,
+                attempt_id=attempt_id,
+                media_key=media_key_value,
+                post_key=intent_data['post_key'],
+                scan_id=intent_data['scan_id'],
+                intent_ref=_event_ref(self._event_by_sequence(
+                    projection['order'][attempt_id])),
+                outcome_ref=_event_ref(outcome_event),
+                from_kind=from_kind,
+                to_kind=to_kind,
+                source=source,
+                evidence=_preserve_evidence(self.records, evidence, context),
+                session_id=session_id)
+            self.append('media-kind-reconcile', data)
+            return dict(data, reconcile_ref=_event_ref(self.events[-1]),
+                        dispatch_authorized=False)
+
     def source_unavailable(self, *, session_id, media_key_value,
                            attempt_id, evidence):
         with self.locked():
@@ -5176,17 +5362,32 @@ class NotesRecords:
         availability = self._effective_local_availability()
         active = self._active_media_versions()
         unavailable = self._source_unavailable_projection()
+        reconciliations = self._media_kind_reconcile_projection()['by_attempt']
+        attempts = self._attempt_projection()
         rows = []
         for key, row in media.items():
             status = statuses[key]
             local = availability.get(key, LOCAL_NOT_APPLICABLE)
             effective_kind, correction_ref = self._effective_media_kind(
                 key, row['identity']['kind'])
+            latest_attempt = attempts['latest_by_media'].get(key)
+            reconciliation = (
+                reconciliations.get(latest_attempt)
+                if latest_attempt is not None else None)
+            verification_kind = (
+                reconciliation['data']['to_kind']
+                if reconciliation is not None else effective_kind)
+            verification_kind_reconcile_ref = (
+                _event_ref(reconciliation)
+                if reconciliation is not None else None)
             current = dict(
                 media_key=key, post_key=row['post_key'],
                 identity=row['identity'], kind=row['identity']['kind'],
                 effective_kind=effective_kind,
                 kind_correction_ref=correction_ref,
+                verification_kind=verification_kind,
+                verification_kind_reconcile_ref=(
+                    verification_kind_reconcile_ref),
                 source_order=row['source_order'],
                 missing=bool(row.get('missing')),
                 missing_reason=row.get('missing_reason'),
@@ -5424,6 +5625,12 @@ class NotesRecords:
                                 event_sha256=_event_sha256(event))
                            for events in corrections.values()
                            for event in events]
+        kind_reconciliations = self._media_kind_reconcile_projection()
+        kind_reconciliation_rows = [
+            dict(event['data'], sequence=event['sequence'],
+                 event_sha256=_event_sha256(event))
+            for event in sorted(kind_reconciliations['by_attempt'].values(),
+                                key=lambda item: item['sequence'])]
         return dict(schema=MEMORY_SCHEMA,
                     local_list_id=self.records.name,
                     records_root=str(self.records),
@@ -5444,6 +5651,7 @@ class NotesRecords:
                     restart_batch_open=open_restart_progress is not None,
                     open_restart=open_restart_progress,
                     evidence_corrections=correction_rows,
+                    media_kind_reconciliations=kind_reconciliation_rows,
                     dispatch_blockers=blockers,
                     all_known_media_complete=all_media_complete,
                     external_copy_verified=False,
@@ -6292,7 +6500,11 @@ class NotesRecords:
                 stable = _stable_media_inventory(
                     staging, expected=1, interval=stability_interval)
                 source = stable[0]
-                kind = self._attempt_kind(intent_data)
+                kind, reconciliation = self._verification_kind_for_attempt(
+                    attempt_id, projection)
+                if reconciliation is not None:
+                    need(source == reconciliation['data']['source'],
+                         'MEDIA_KIND_RECONCILE_SOURCE_CHANGED')
                 _validate_media_suffix(kind, source['name'])
                 verification = _verify_media(
                     kind=kind, path=Path(source['path']),
@@ -6654,6 +6866,18 @@ def _validate_media_suffix(kind, name):
     need(bool(suffix) and suffix.lower() in allowed,
          'UNSUPPORTED_MEDIA_EXTENSION')
     return suffix
+
+
+def _validate_reconciled_kind_suffix(from_kind, to_kind, name):
+    """Require the new kind's suffix and exclude the frozen kind's suffix."""
+    _validate_media_suffix(to_kind, name)
+    try:
+        _validate_media_suffix(from_kind, name)
+    except NotesError as exc:
+        need(exc.args and exc.args[0] == 'UNSUPPORTED_MEDIA_EXTENSION',
+             'INVALID_MEDIA_KIND_RECONCILE')
+    else:
+        raise NotesError('MEDIA_KIND_RECONCILE_UNNECESSARY')
 
 
 def _inventory_row(path):
@@ -7124,6 +7348,17 @@ def _build_notes_parser():
                                     choices=MEDIA_KINDS)
     media_kind_correct.add_argument('--evidence', required=True)
 
+    media_kind_reconcile = sub.add_parser(
+        'media-kind-reconcile',
+        help='Reconcile the observed kind after a finished download, before verify')
+    add_records(media_kind_reconcile,
+                'Reconcile one finished attempt kind without redownloading')
+    media_kind_reconcile.add_argument('--session-id', required=True)
+    media_kind_reconcile.add_argument('--attempt-id', required=True)
+    media_kind_reconcile.add_argument(
+        '--to-kind', required=True, type=str.upper, choices=MEDIA_KINDS)
+    media_kind_reconcile.add_argument('--evidence', required=True)
+
     source_unavailable = sub.add_parser(
         'source-unavailable', help='Record an explicitly expired media source')
     add_records(source_unavailable, 'Record one expired media source')
@@ -7308,6 +7543,12 @@ def main(argv=None):
                     media_key_value=args.media_key,
                     inventory_sequence=args.inventory_sequence,
                     inventory_sha256=args.inventory_sha256,
+                    to_kind=args.to_kind,
+                    evidence=args.evidence)
+            elif args.command == 'media-kind-reconcile':
+                result = records.media_kind_reconcile(
+                    session_id=args.session_id,
+                    attempt_id=args.attempt_id,
                     to_kind=args.to_kind,
                     evidence=args.evidence)
             elif args.command == 'source-unavailable':
