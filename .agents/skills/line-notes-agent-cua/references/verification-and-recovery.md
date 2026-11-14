@@ -154,7 +154,7 @@ ffmpeg 完整解碼仍不能保證偵測所有靜默損壞，也不代表與服�
 | 普通 `created`／`destination` 列表只有歷史 device 值改變 | 沿原日常流程核對列表／貼文／媒體、path／inode／授權邊界及 ledger 狀態；不單獨拒絕、不呼叫 reattest。UNKNOWN、pending、已完成媒體或實際身分疑義仍照各自規則停止 |
 | 有效 binding 已是 `list-directory-reattest`，path／inode 相同但 device 改變 | 執行唯讀 `reattest preview`。只在 `CONFIRMATION_REQUIRED`、完整 witness 與精確 scope 均可解釋，且 Owner 另行明示同意該 preview 後，才 `reattest confirm`。成功後完成新的 recovery scan，才接續原批次。每帳本最多一次；再次漂移或任何拒絕都停止，不換目的地或重送 |
 | 單項來源已明確到期，最新 attempt 為 `STOPPED` | 以精確 attempt context 的 v2 evidence 追加 `source-unavailable`；該項列 `source_availability=EXPIRED`、`resume` 行動為 `SOURCE_UNAVAILABLE`，不建立新 intent、不排除、不計完成。不要推論其他項或把標記當成服務端已回收證明 |
-| `scan_binding_match=false`／`SCAN_BINDING_REVIEW_REQUIRED` | 保留舊 scan、intent 與目的地；不改綁定、不自動新 scan、不另建 attempt。收集最小證據交人工審查 |
+| `scan_binding_match=false` | 先讀 `resume`：已下載且原始證據有效者回 `VERIFY_REQUIRED`，用原 attempt 執行 `download-check`；BASIC 命名交易接續原發布。若回 `SCAN_BINDING_REVIEW_REQUIRED` 才交人工審查；不改原 scan／identity、不重下 |
 | 缺帳本、索引毀損或多個列表候選 | 保留原件與來源，停止相關寫入；不以空帳、重掃或改名解鎖 |
 | 純文字貼文 | 記貼文層 `NO_MEDIA`，不做下載 attempt |
 
@@ -197,3 +197,5 @@ notes 功能至少需以合成 fixture 覆蓋以下驗證，實際執行結果�
 ```
 
 `dispatch_authorized=false` 不得寫成 GUI 已授權或 E2E 已通過；文件、合成測試與相簿既有經驗都不能替記事本實機結果背書。
+
+已確認 restart 的 scope 外舊下載、blocking_attempts 與原交易收斂，依 [下載與 notes CLI](download-and-ledger.md#已確認-restart-的-scope-外舊下載)。

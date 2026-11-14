@@ -221,7 +221,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
 
 普通 `scan start` 會拒絕待命名交易、尚有未解 attempt 或仍 open 的 scan；已結束的上一個 scan 即使部分貼文媒體 detail 未完成，也可重新觀察並開始新 scan。新 scan 仍須完成頂底／重疊與完整卡片覆蓋。`scan start --recovery` 只在 STOPPED／NOT_SENT 恢復或已確認 restart 批次的路徑使用，仍受 bind、Session、完整掃描與各自 gate 限制，不是通用解鎖。已完成項與正面 `STOPPED`／`NOT_SENT` 不會被重下；後者仍需原恢復授權與充分證據才可另建 attempt。普通 `intent` 要求最新完整 scan 的卡片覆蓋，以及目標貼文 detail、媒體數量／順序與目標 media 身分完整；`dispatch_blockers` 中 `POST_DETAIL_PENDING`、`STALE_POST_DETAIL` 等局部貼文資訊不會自動阻止其他合格目標。其他貼文待細盤不阻止此目標。列表覆蓋／身分不明、未決 attempt、活動下載、UNKNOWN 或 pending naming 等全局阻塞仍須停止新派送。摘要仍如實列出待盤貼文，`all_known_media_complete` 在全列表媒體細盤未完成時保持 false。純文字貼文以 `NO_MEDIA` 表示，不可當成缺少媒體。
 
-若舊 attempt 的 `scan_binding_match=false` 或 `resume` 回 `SCAN_BINDING_REVIEW_REQUIRED`，不得改綁定、重寫舊 intent、開新 scan 覆蓋、隱藏該項或自動另建 attempt；只保留原資料、收集最小證據並交人工審查。
+`scan_binding_match` 只表示是否符合最新 scan，不等於原下載無效。已 `DOWNLOAD_FINISHED` 的舊 attempt 先讀 `resume`：`VERIFY_REQUIRED` 以原 attempt 執行 `download-check`；已有 BASIC 命名交易則由 `resume` 接續。CLI 核對 intent 當時的歷史 scan／post／media，不要求改綁最新 scan；原證據無法核對或已被 restart 取代時仍拒絕。`SCAN_BINDING_REVIEW_REQUIRED` 才保留資料、收集最小證據並交人工審查。不得改綁定、重寫舊 intent、開新 scan 覆蓋或另建 attempt 解鎖。
 
 `--decoder`／`--decoder-sha256` 由呼叫端提供；CLI 只核對呼叫端提供的 SHA-256，並確認執行前後是同一個 binary、沒有內容漂移，不能證明該 binary 來自 repo 的 `src/line_backup_batch/image_decode.swift`。實作者仍須自行核對建置來源、路徑與版本；來源無法確認時停止，不得以 caller 提供的 hash 相符代替 provenance。
 
@@ -291,7 +291,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
 | 已有 `outcome=UNKNOWN` | 先 `reconcile`；沒有新資訊就停止相同查證。未收斂前不得 `download-check`、legacy `verify`、建新 attempt、重下或派下一項；只有精確 restart preview 與 Owner 明示確認該 scope 後，才可用 `intent --restart-id` 建立新 generation attempt。舊 UNKNOWN 保留，不宣稱已停止 |
 | `restart preview` 回報 `RESTART_REQUIRED`／`OPEN_BATCH` | Agent 出示精確 scope 並取得 Owner 明示同意後 `restart confirm`；confirm 後必做新的完整 recovery scan，才可逐項 `intent --restart-id`。每項下載仍最多一次；日常用 `restart resume --download-only` 檢查 candidate。scope 內有明確非媒體就回報 `RESTART_SCOPE_NON_MEDIA` 並停止，不自動改 scope。scope／身分／目的地改變要重新確認 |
 | `source_availability=EXPIRED` | 該項保留原欠件並停止 recovery／intent；`resume` 只列 `SOURCE_UNAVAILABLE`，不自動排除、不計完成、不宣稱服務端已回收 |
-| `scan_binding_match=false` 或 `SCAN_BINDING_REVIEW_REQUIRED` | 不改舊 intent.scan_id、不隱藏、不自動新 scan／新 attempt；保留原事件與目的地，交人工審查 |
+| `scan_binding_match=false` | 先讀 `resume`：已下載且原始證據有效者回 `VERIFY_REQUIRED`，用原 attempt 執行 `download-check`；BASIC 命名交易接續原發布。若回 `SCAN_BINDING_REVIEW_REQUIRED` 才交人工審查；不改原 scan／identity、不重下 |
 | 明確 `STOPPED` 或 `NOT_SENT`、原檔保留、帳本已有持久化 `recovery_authorized=true`，且有充分停止證據 | 保存並讀回證據，以 `intent --recovery-evidence` 綁定前次 attempt，由 CLI 建立另一個新空白恢復目錄；已完成項跳過。授權未持久化、證據不足或前項不是終止狀態時停止，不手動建目錄或改 ledger |
 | `PREVIOUSLY_INCOMPLETE` | 依原授權走上述恢復判斷，不當普通待下載直接派送 |
 | `PROTECTED_HISTORY` | 保留來源與缺項；只有完整盤點、無列表級歧義且不是活動／UNKNOWN／pending 時才可跳過該項，不計完成或排除 |
@@ -318,3 +318,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
 `summary` 的 `all_known_media_complete=true` 只表示呼叫者提供的已知貼文／媒體簿記與覆蓋資料一致，不代表 GUI、個別檔案或真實 LINE E2E PASS。只有 `scan_coverage=COMPLETE`、貼文細節覆蓋完整、六類狀態沒有未解阻塞且 `dispatch_blockers=[]`，才會有此值；個別 `PROTECTED_HISTORY` 或 `LOCAL_MISSING` 仍須明列，不能稱整份列表在本機全部可用或全部備份成功。
 
 本機可用性另以 `local_counts` 四類回報：`VERIFIED_PRESENT`、`LOCAL_MISSING`、`LOCAL_CHANGED`、`NOT_APPLICABLE`；不得只列前兩類，也不得把它們混成六類業務狀態。
+
+### 已確認 restart 的 scope 外舊下載
+
+`restart preview` 的 `open_batch.blocking_attempts` 列出 scope 外未決交易，須先按原 outcome 收斂；`DOWNLOAD_FINISHED` 不等於 completion。原交易可用 `download-check` 完成，或依明確非媒體 MIME 追加 exclusion 並保留 staging。scope 內既有交易不沿用這條路徑，仍走已確認 restart；不擴 scope 或改 digest。scope 內已確認的 `LOCAL_CHANGED` 保留原件，不妨礙 scope 外獨立交易收斂；scope 外異常仍停止。新的 restart intent 要求 confirm 後完整卡片覆蓋與 scope 細盤一致，不要求 scope 外所有貼文細盤；全列表待盤狀態仍如實回報。

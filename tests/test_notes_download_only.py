@@ -31,7 +31,8 @@ class DownloadOnlyTests(unittest.TestCase):
                 name='image.png', content=None):
         ledger = self.helper.new_ledger(label)
         identity = notes.media_identity(kind=kind, visual_key=label + '-media')
-        _, post_key = self.helper.observe_post(ledger, label + '-post', [identity])
+        _, post_key = self.helper.observe_post(
+            ledger, label + '-post', [identity])
         key = notes.media_key(ledger.summary['list_key'], post_key, identity)
         attempt = ledger.records.intent(
             session_id=ledger.session, media_key_value=key)
@@ -48,6 +49,46 @@ class DownloadOnlyTests(unittest.TestCase):
         return ledger.records.download_check(
             session_id=ledger.session, attempt_id=attempt['attempt_id'],
             stability_interval=0)
+
+    def recovery_scan(self, ledger, post_identity, attempt, *, detail):
+        """Start a new session and complete a recovery card scan.
+
+        The optional detail step re-observes the post and its media in the new
+        scan. The no-detail form models a fully covered card list whose post
+        contents have not yet been opened.
+        """
+        records = self.helper.reopen(ledger)
+        session = ledger.session + '-recovery'
+        list_key = ledger.summary['list_key']
+        records.bind(
+            session_id=session,
+            observation=ledger.evidence(list_key=list_key),
+            handoff=ledger.evidence(list_key=list_key))
+        scan = records.scan(
+            session_id=session, action='START', recovery=True,
+            evidence=ledger.evidence(list_key=list_key))
+        scan_evidence = ledger.evidence(list_key=list_key,
+                                        scan_id=scan['scan_id'])
+        records.page(
+            session_id=session, scan_id=scan['scan_id'], page_index=0,
+            posts=[dict(identity=post_identity, date_summary='synthetic')],
+            top_reached=True, bottom_reached=True, overlap_keys=[],
+            evidence=scan_evidence)
+        records.scan(session_id=session, action='FINISH',
+                     scan_id=scan['scan_id'], evidence=scan_evidence)
+        if detail:
+            post_key = notes.post_key(list_key, post_identity)
+            post_evidence = ledger.evidence(
+                list_key=list_key, post_key=post_key, scan_id=scan['scan_id'])
+            records.record_post(
+                session_id=session, post_key_value=post_key,
+                date_summary='synthetic', media_count=1, text_sha256=None,
+                evidence=post_evidence)
+            records.record_media(
+                session_id=session, post_key_value=post_key,
+                items=[dict(identity=attempt['identity'])], missing=[],
+                evidence=post_evidence)
+        return records, session, scan
 
     def assert_download_completion(self, completion, kind):
         self.assertEqual(completion['kind'], 'completion')
@@ -121,6 +162,93 @@ class DownloadOnlyTests(unittest.TestCase):
                     self.check(ledger, attempt)
                 self.assertEqual(self.helper.event_bytes(ledger.records), before)
                 self.assertTrue(path.is_file())
+
+    def test_finished_v2_attempt_download_check_survives_recovery_scan(self):
+        for detail in (False, True):
+            with self.subTest(detail=detail):
+                label = 'cross-scan-download-check-' + str(detail)
+                ledger, attempt, _ = self.attempt(
+                    label, kind=notes.VIDEO, content=media_fixtures.png())
+                post_identity = notes.post_identity(visual_key=label + '-post')
+                original_events = self.helper.event_bytes(ledger.records)
+                records, session, _scan = self.recovery_scan(
+                    ledger, post_identity, attempt, detail=detail)
+                after_scan = self.helper.event_bytes(records)
+                for name, raw in original_events.items():
+                    self.assertEqual(after_scan[name], raw)
+
+                completion = records.download_check(
+                    session_id=session, attempt_id=attempt['attempt_id'],
+                    stability_interval=0)
+                self.assert_download_completion(completion, notes.PHOTO)
+                after_check = self.helper.event_bytes(records)
+                for name, raw in original_events.items():
+                    self.assertEqual(after_check[name], raw)
+                events = self.helper.read_events(records)
+                self.assertEqual(sum(row['kind'] == 'intent' for row in events), 1)
+                self.assertEqual(sum(row['kind'] == 'completion' for row in events), 1)
+                summary = self.helper.reopen(ledger).summary()
+                media = next(row for row in summary['media']
+                             if row['media_key'] == attempt['media_key'])
+                self.assertEqual(media['downloaded_kind'], notes.PHOTO)
+                self.assertEqual(media['assurance'], 'DOWNLOAD_ONLY')
+
+    def test_unknown_or_missing_outcome_still_rejects_download_check_after_scan(self):
+        for index, outcome in enumerate((None, 'UNKNOWN')):
+            with self.subTest(outcome=outcome):
+                ledger, attempt, path = self.attempt(
+                    'cross-scan-undecided-' + str(index), outcome=outcome,
+                    content=media_fixtures.png())
+                post_identity = notes.post_identity(
+                    visual_key='cross-scan-undecided-' + str(index) + '-post')
+                records, session, _scan = self.recovery_scan(
+                    ledger, post_identity, attempt, detail=True)
+                before = self.helper.event_bytes(records)
+                with self.assertRaises(notes.NotesError):
+                    records.download_check(
+                        session_id=session, attempt_id=attempt['attempt_id'],
+                        stability_interval=0)
+                self.assertEqual(self.helper.event_bytes(records), before)
+                self.assertTrue(path.is_file())
+
+    def test_pending_basic_publish_resumes_after_recovery_scan_and_rebind(self):
+        ledger, attempt, _ = self.attempt(
+            'cross-scan-basic-publish', kind=notes.VIDEO,
+            content=media_fixtures.png())
+        with mock.patch.object(
+                notes.NotesRecords, '_execute_publish',
+                side_effect=OSError('synthetic publish interruption')):
+            with self.assertRaisesRegex(OSError, 'synthetic publish interruption'):
+                self.check(ledger, attempt)
+
+        pending = self.helper.reopen(ledger)
+        events_before_recovery = self.helper.read_events(pending)
+        self.assertEqual(sum(row['kind'] == 'verification' and
+                             row['data']['schema'] == notes.BASIC_VERIFICATION_SCHEMA
+                             for row in events_before_recovery), 1)
+        self.assertEqual(sum(row['kind'] == 'publish-plan'
+                             for row in events_before_recovery), 1)
+        post_identity = notes.post_identity(
+            visual_key='cross-scan-basic-publish-post')
+        records, _session, _scan = self.recovery_scan(
+            ledger, post_identity, attempt, detail=True)
+        resumed = records.resume()
+        self.assertEqual(resumed['action'], 'PUBLISH_RESUMED')
+        self.assertEqual(resumed['completion']['verification']['assurance'],
+                         'DOWNLOAD_ONLY')
+        events = self.helper.read_events(records)
+        self.assertEqual(sum(row['kind'] == 'intent' for row in events), 1)
+        self.assertEqual(sum(row['kind'] == 'publish-plan' for row in events), 1)
+        self.assertEqual(sum(row['kind'] == 'completion' for row in events), 1)
+        self.assertEqual(sum(row['kind'] == 'verification' and
+                             row['data']['schema'] == notes.BASIC_VERIFICATION_SCHEMA
+                             for row in events), 1)
+        summary = self.helper.reopen(ledger).summary()
+        self.assertEqual(summary['status_counts']['COMPLETED'], 1)
+        media = next(row for row in summary['media']
+                     if row['media_key'] == attempt['media_key'])
+        self.assertEqual(media['downloaded_kind'], notes.PHOTO)
+        self.assertEqual(media['assurance'], 'DOWNLOAD_ONLY')
 
     def test_empty_and_unknown_octet_stream_do_not_publish(self):
         for index, content in enumerate((b'', bytes(range(256)) * 4)):

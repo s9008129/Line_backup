@@ -4383,6 +4383,7 @@ class NotesRecords:
         projection = self._attempt_projection()
         resolved = set(self._completion_projection()[0])
         resolved |= set(self._active_media_versions())
+        resolved |= set(self._exclusion_projection())
         for media_key_value, attempt_id in projection['latest_by_media'].items():
             if media_key_value in resolved:
                 continue
@@ -4796,6 +4797,7 @@ class NotesRecords:
                                  candidate_ref=(_event_ref(candidates[key])
                                                 if key in candidates else None),
                                  action=action))
+        scope_media = self._restart_scope_media(confirmation)
         return dict(restart_id=restart_id,
                     generation=confirmation['generation'],
                     confirmation_ref=_event_ref(confirmation_event),
@@ -4803,7 +4805,11 @@ class NotesRecords:
                     activated=activated,
                     activation_ref=(_event_ref(restart['activations'][restart_id])
                                     if activated else None),
-                    media=rows)
+                    media=rows,
+                    blocking_attempts=[
+                        row for row in self._unresolved_attempts()
+                        if row['media_key'] not in scope_media and
+                        row['last_result'] not in ('STOPPED', 'NOT_SENT')])
 
     def restart_preview(self):
         with self.locked():
@@ -4946,6 +4952,7 @@ class NotesRecords:
                          'RESTART_ATTEMPT_ALREADY_OPEN_OR_FINISHED')
             resolved = set(self._completion_projection()[0])
             resolved |= set(self._active_media_versions())
+            resolved |= set(self._exclusion_projection())
             for other_key, attempt_id in attempts['latest_by_media'].items():
                 if other_key in scope_media:
                     continue
@@ -4954,7 +4961,7 @@ class NotesRecords:
                 result = self._attempt_result(attempt_id, attempts)
                 need(result in ('STOPPED', 'NOT_SENT'),
                      'ANOTHER_MEDIA_ATTEMPT_UNRESOLVED')
-            self._assert_dispatch_coverage()
+            self._validate_restart_scope_current(confirmation)
             staging = _new_unique_directory(list_directory,
                                              '.line-notes-incoming-')
             need(not [
@@ -5039,6 +5046,7 @@ class NotesRecords:
                      'NO_PRIOR_ATTEMPT_TO_RECOVER')
             resolved = set(self._completion_projection()[0])
             resolved |= set(self._active_media_versions())
+            resolved |= set(self._exclusion_projection())
             for other_key, attempt_id in attempts['latest_by_media'].items():
                 if other_key == media_key_value:
                     continue
@@ -6017,7 +6025,6 @@ class NotesRecords:
         attempts = self._attempt_projection()
         intent_data = attempts['attempts'].get(plan['attempt_id'])
         need(intent_data is not None, 'PUBLISH_ATTEMPT_CHANGED')
-        self._require_attempt_scan_binding(intent_data)
         verification_event = self._event_by_sequence(
             plan['verification_sequence'])
         need(verification_event is not None and
@@ -6026,6 +6033,10 @@ class NotesRecords:
              digest(encoded(verification_event)) == plan['verification_sha256'],
              'VERIFICATION_EVENT_CHANGED')
         verification = verification_event['data']
+        if verification['schema'] == BASIC_VERIFICATION_SCHEMA:
+            self._require_download_settlement(intent_data)
+        else:
+            self._require_attempt_scan_binding(intent_data)
         source = plan['source']
         need(verification['manifest'] == [source] and
              verification['source'] == source,
@@ -6177,27 +6188,58 @@ class NotesRecords:
         return False
 
     def _validate_attempt_origin_scan(self, intent_data):
+        """Validate provenance at dispatch time, unaffected by later inventory."""
         scan_id = intent_data.get('scan_id')
         need(isinstance(scan_id, str) and bool(scan_id),
              'INTENT_SCAN_BINDING_REQUIRED')
-        _latest, scans = self._open_scan()
+        attempts = self._attempt_projection()
+        sequence = attempts['order'].get(intent_data['attempt_id'])
+        need(sequence is not None and
+             self.events[sequence - 1]['data'] == intent_data,
+             'ATTEMPT_SCAN_BINDING_CHANGED')
+        prefix = self.events[:sequence - 1]
+        latest, scans = self._open_scan(prefix)
         scan = scans.get(scan_id)
-        need(scan is not None and scan['complete'] is not None,
+        need(latest == scan_id and scan is not None and
+             scan['complete'] is not None,
              'ATTEMPT_SCAN_BINDING_CHANGED')
-        posts = {row['post_key']: row
-                 for row in scan['complete']['data']['posts']}
-        need(intent_data['post_key'] in posts,
-             'ATTEMPT_SCAN_BINDING_CHANGED')
-        detail = self._post_detail_for_scan(
-            intent_data['post_key'], scan_id)
-        need(detail is not None and detail.get('scan_id') == scan_id,
-             'ATTEMPT_SCAN_BINDING_CHANGED')
-        media, _ = self._media_projection()
+        posts = {row['post_key'] for row in scan['complete']['data']['posts']}
+        details = [e['data'] for e in prefix if e['kind'] == 'post' and
+                   e['data']['post_key'] == intent_data['post_key'] and
+                   e['data'].get('scan_id') == scan_id]
+        media, snapshots = self._media_projection(prefix)
         target = media.get(intent_data['media_key'])
-        need(target is not None and
+        inventories = snapshots.get(intent_data['post_key'], [])
+        need(intent_data['post_key'] in posts and details and inventories,
+             'ATTEMPT_SCAN_BINDING_CHANGED')
+        detail, inventory = details[-1], inventories[-1]['data']
+        need(not detail['no_media'] and inventory.get('scan_id') == scan_id and
+             len(inventory['items']) + len(inventory['missing']) ==
+             detail['media_count'] and
+             target is not None and not target.get('missing') and
              target.get('post_key') == intent_data['post_key'] and
+             target.get('identity') == intent_data['identity'] and
              target.get('scan_id') == scan_id,
              'ATTEMPT_SCAN_BINDING_CHANGED')
+
+    def _require_download_settlement(self, intent_data):
+        """Permit checking an existing download; never authorizes dispatch."""
+        attempts, key = self._require_latest_attempt(intent_data['attempt_id'])
+        need(self._attempt_result(intent_data['attempt_id'], attempts) ==
+             'DOWNLOAD_FINISHED', 'KNOWN_DOWNLOAD_FINISH_REQUIRED')
+        need(not self._restart_superseded_attempt(
+            intent_data['attempt_id'], attempts), 'RESTART_SUPERSEDED_ATTEMPT')
+        need(key not in self._exclusion_projection() and
+             key not in self._protection_projection(),
+             'MEDIA_ALREADY_TERMINALLY_CLASSIFIED')
+        self._validate_attempt_origin_scan(intent_data)
+        confirmation = self._restart_open_confirmation()
+        scope = (self._restart_scope_media(confirmation['data'])
+                 if confirmation else {})
+        need(confirmation is None or intent_data['post_key'] not in
+             {post['post_key'] for post in confirmation['data']['scope']['posts']},
+             'RESTART_SUPERSEDED_ATTEMPT')
+        self._assert_no_local_changed(allowing=scope)
 
     def _validate_restart_scope_current(self, confirmation):
         latest, scans = self._open_scan()
@@ -6578,8 +6620,8 @@ class NotesRecords:
     def _append_download_exclusion(self, session_id, attempt_id,
                                    projection, source, signature):
         need(not self._pending_publish_plans(), 'PENDING_NAMING_TRANSACTION')
-        need(self._restart_open_confirmation() is None, 'RESTART_BATCH_OPEN')
         attempt = projection['attempts'][attempt_id]
+        self._require_download_settlement(attempt)
         need(attempt['schema'] != 'line-notes-intent/v3',
              'RESTART_SCOPE_NON_MEDIA')
         key = attempt['media_key']
@@ -6623,14 +6665,17 @@ class NotesRecords:
                     stall_seconds=stall_seconds, download_only=download_only)
             need(not self._restart_superseded_attempt(
                      attempt_id, projection), 'RESTART_SUPERSEDED_ATTEMPT')
-            self._require_attempt_scan_binding(
-                projection['attempts'][attempt_id])
+            if download_only:
+                self._require_download_settlement(projection['attempts'][attempt_id])
+            else:
+                self._require_attempt_scan_binding(projection['attempts'][attempt_id])
             need(media_key_value not in self._completion_projection()[0],
                  'COMPLETION_IMMUTABLE')
             result = self._attempt_result(attempt_id, projection)
             need(result == 'DOWNLOAD_FINISHED',
                  'KNOWN_DOWNLOAD_FINISH_REQUIRED')
-            self._assert_no_local_changed()
+            if not download_only:
+                self._assert_no_local_changed()
             plans = [event for event in self._pending_publish_plans()
                      if event['data']['attempt_id'] == attempt_id]
             need(len(plans) <= 1, 'DUPLICATE_PUBLISH_PLAN')
@@ -6705,7 +6750,11 @@ class NotesRecords:
         with self.locked():
             plans = self._pending_publish_plans()
             need(len(plans) <= 1, 'AMBIGUOUS_PENDING_NAMING')
-            self._assert_no_local_changed()
+            if not plans:
+                confirmation = self._restart_open_confirmation()
+                scope = (self._restart_scope_media(confirmation['data'])
+                         if confirmation else {})
+                self._assert_no_local_changed(allowing=scope)
             if plans:
                 attempt_id = plans[0]['data']['attempt_id']
                 attempts = self._attempt_projection()
@@ -6713,9 +6762,15 @@ class NotesRecords:
                          attempt_id, attempts), 'RESTART_SUPERSEDED_ATTEMPT')
                 intent_data = attempts['attempts'].get(attempt_id)
                 need(intent_data is not None, 'PUBLISH_ATTEMPT_CHANGED')
-                self._require_attempt_scan_binding(
-                    intent_data, code='SCAN_BINDING_REVIEW_REQUIRED',
-                    missing_code='SCAN_BINDING_REVIEW_REQUIRED')
+                verification = self._event_by_sequence(
+                    plans[0]['data']['verification_sequence'])
+                if verification['data']['schema'] == BASIC_VERIFICATION_SCHEMA:
+                    self._require_download_settlement(intent_data)
+                else:
+                    self._assert_no_local_changed()
+                    self._require_attempt_scan_binding(
+                        intent_data, code='SCAN_BINDING_REVIEW_REQUIRED',
+                        missing_code='SCAN_BINDING_REVIEW_REQUIRED')
                 completion = self._execute_publish(plans[0])
                 return dict(action='PUBLISH_RESUMED',
                             completion=completion['data'],
@@ -6724,11 +6779,18 @@ class NotesRecords:
             unavailable = self._source_unavailable_projection()
             actions = []
             for media_key_value, attempt_id in projection['latest_by_media'].items():
-                if media_key_value in self._completion_projection()[0]:
+                if (media_key_value in self._completion_projection()[0] or
+                        media_key_value in self._exclusion_projection()):
                     continue
                 intent_data = projection['attempts'][attempt_id]
                 if media_key_value in unavailable:
                     action = 'SOURCE_UNAVAILABLE'
+                elif self._attempt_result(attempt_id, projection) == 'DOWNLOAD_FINISHED':
+                    try:
+                        self._require_download_settlement(intent_data)
+                        action = 'VERIFY_REQUIRED'
+                    except NotesError:
+                        action = 'SCAN_BINDING_REVIEW_REQUIRED'
                 elif not self._attempt_scan_binding_matches(intent_data):
                     action = 'SCAN_BINDING_REVIEW_REQUIRED'
                 else:

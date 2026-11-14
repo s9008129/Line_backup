@@ -28,7 +28,7 @@ Owner 先人工開啟指定的 LINE 記事本列表，指定目的地（未指�
 Agent 的任務是完成整份列表，而不是等 Owner 逐步操作：
 
 1. 自動查全部記事本帳本、目前任務與相符的永久記憶，先讀 `summary` 的 `unresolved_attempts`、`dispatch_blockers` 與掃描覆蓋。
-2. 核對列表；證明是新列表且沒有缺損歷史或候選歧義時自動初始化，既有列表則綁定原帳本。每個新 Session 在 `bind` 前，依[證據範本](references/evidence-template.md#cua-觀察原件落地)把同次 CUA 回傳的完整 AX 與截圖 bytes 寫入專案私有 task directory，讀回核對後才封裝 observation／handoff bundle；無法取得或保存原件就停在 `bind` 前，不手寫或補造。新掃描前先處理舊 attempt；掃描綁定不符時只做唯讀查證並停止待人工審查。
+2. 核對列表；證明是新列表且沒有缺損歷史或候選歧義時自動初始化，既有列表則綁定原帳本。每個新 Session 在 `bind` 前，依[證據範本](references/evidence-template.md#cua-觀察原件落地)把同次 CUA 回傳的完整 AX 與截圖 bytes 寫入專案私有 task directory，讀回核對後才封裝 observation／handoff bundle；無法取得或保存原件就停在 `bind` 前，不手寫或補造。新掃描前先處理舊 attempt。已 `DOWNLOAD_FINISHED` 的原交易若只因新 scan 而 `scan_binding_match=false`，依 `resume` 分流：`VERIFY_REQUIRED` 使用原 attempt 的 `download-check`，`SCAN_BINDING_REVIEW_REQUIRED` 才保留資料交人工審查；不改綁定或重下。
 3. 先建立完整來源卡片台帳，從頂端到底端盤點貼文並完成頁面雙向對帳；之後逐篇細盤媒體並處理合格項，不要求其他貼文的媒體細盤先全部完成。
 4. 依紀錄跳過已處理項，對每個合格項只送出一次下載派送，並在結果後做基本檔案檢查、發布及讀回 completion。
 5. 遇到已授權的中斷恢復時，保留原檔並自動接續或建立新的空白恢復 attempt；UNKNOWN、活動下載及未完成命名交易先查證，不以重下解鎖。

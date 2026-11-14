@@ -2042,6 +2042,217 @@ class NotesRestartTests(unittest.TestCase):
         self.assertTrue(self.records.summary()['restart_batch_open'])
         self.assertTrue(healthy_path.read_bytes().endswith(b'outside-drift'))
 
+    def test_finished_nonmedia_outside_open_restart_can_settle(self):
+        identities = [notes.media_identity(kind=PHOTO, visual_key='outside-html-' + x)
+                      for x in ('a', 'b')]
+        posts = [dict(name=x, identity=notes.post_identity(visual_key='html-post-' + x),
+                      date='2026-11-14', media=[identity])
+                 for x, identity in zip(('a', 'b'), identities)]
+        observed = self.scan_posts(self.records, posts)
+        keys = [self.media_key(observed[x][0], identity)
+                for x, identity in zip(('a', 'b'), identities)]
+        _, completion = self.download(self.records, keys[0], 'a.png', png())
+        attempt = self.records.intent(session_id=self.session, media_key_value=keys[1])
+        path = self.finish_restart_attempt(
+            self.records, attempt, 'b.html', b'<html>downloaded attachment</html>')
+        original = Path(completion['data']['destination']) / completion['data']['target_file']['name']
+        original.write_bytes(original.read_bytes() + b'drift')
+        preview = self.records.restart_preview()
+        self.confirm_restart(self.records, preview)
+        self.scan_after_confirm(self.records, posts)
+        blockers = self.records.restart_preview()['open_batch']['blocking_attempts']
+        self.assertEqual([row['attempt_id'] for row in blockers], [attempt['attempt_id']])
+        before = self.event_files()
+        exclusion = self.records.download_check(
+            session_id=self.session, attempt_id=attempt['attempt_id'], stability_interval=0)
+        self.assertEqual(exclusion['kind'], 'download-exclusion')
+        self.assertTrue(path.is_file())
+        for name, raw in before.items():
+            self.assertEqual(self.event_files()[name], raw)
+        self.assertEqual(self.records.restart_preview()['open_batch']['blocking_attempts'], [])
+        self.assertNotIn(attempt['attempt_id'],
+                         [row['attempt_id'] for row in self.records.resume()['pending']])
+        restarted = self.records.intent(session_id=self.session, media_key_value=keys[0],
+                                        restart_id=preview['restart_id'])
+        self.assertEqual(restarted['schema'], 'line-notes-intent/v3')
+
+    def test_restart_intent_ignores_other_pending_post_details(self):
+        affected = notes.media_identity(
+            kind=PHOTO, visual_key='restart-c08-affected')
+        prior_video = notes.media_identity(
+            kind=VIDEO, visual_key='restart-c08-video-to-photo')
+        excluded_media = notes.media_identity(
+            kind=PHOTO, visual_key='restart-c08-html-exclusion')
+        pending_media = notes.media_identity(
+            kind=PHOTO, visual_key='restart-c08-pending-card')
+        post_a_identity = notes.post_identity(visual_key='restart-c08-a')
+        post_b_identity = notes.post_identity(visual_key='restart-c08-b')
+        post_c_identity = notes.post_identity(visual_key='restart-c08-c')
+        post_d_identity = notes.post_identity(visual_key='restart-c08-d')
+        observed = self.scan_posts(
+            self.records,
+            [dict(name='a', identity=post_a_identity, date='2026-11-10',
+                  media=[affected]),
+             dict(name='b', identity=post_b_identity, date='2026-11-11',
+                  media=[prior_video]),
+             dict(name='c', identity=post_c_identity, date='2026-11-12',
+                  media=[excluded_media]),
+             dict(name='d', identity=post_d_identity, date='2026-11-13',
+                  media=[pending_media])])
+        post_a, _ = observed['a']
+        post_b, _ = observed['b']
+        post_c, _ = observed['c']
+        post_d, _ = observed['d']
+        affected_key = self.media_key(post_a, affected)
+        prior_video_key = self.media_key(post_b, prior_video)
+        excluded_key = self.media_key(post_c, excluded_media)
+        pending_key = self.media_key(post_d, pending_media)
+
+        # A first had an ordinary, injected-verifier completion. Its bytes
+        # remain in place after the local drift that requires a scoped restart.
+        _old_a, completion_a = self.download(
+            self.records, affected_key, 'a-original.png', png((61, 62, 63)))
+        a_path = (Path(completion_a['data']['destination']) /
+                  completion_a['data']['target_file']['name'])
+
+        # An explicit non-media download outside A becomes terminal EXCLUDED
+        # while its original HTML staging file is retained.
+        html_attempt = self.records.intent(
+            session_id=self.session, media_key_value=excluded_key)
+        html_payload = b'<html><body>synthetic attachment</body></html>\n'
+        html_path = Path(html_attempt['destination']) / 'attachment.html'
+        html_path.write_bytes(html_payload)
+        self.records.outcome(
+            session_id=self.session, attempt_id=html_attempt['attempt_id'],
+            outcome='DOWNLOAD_FINISHED',
+            evidence=self.attempt_evidence(self.records, html_attempt))
+        exclusion = self.records.download_check(
+            session_id=self.session, attempt_id=html_attempt['attempt_id'],
+            stability_interval=0)
+        self.assertEqual(exclusion['kind'], 'download-exclusion')
+        self.assertEqual(html_path.read_bytes(), html_payload)
+        self.assertEqual(
+            {row['media_key']: row['status']
+             for row in self.records.summary()['media']}[excluded_key],
+            'EXCLUDED')
+        resumed = self.records.resume()
+        self.assertNotIn(excluded_key,
+                         {row['media_key'] for row in resumed['pending']})
+
+        # B is an already-dispatched VIDEO intent whose finished payload has
+        # a real PNG signature. The later basic check must classify the file
+        # as PHOTO without creating a replacement intent or reconciling kind.
+        attempt_b = self.records.intent(
+            session_id=self.session, media_key_value=prior_video_key)
+        payload_b = png((71, 72, 73))
+        (Path(attempt_b['destination']) / 'downloaded.png').write_bytes(
+            payload_b)
+        self.records.outcome(
+            session_id=self.session, attempt_id=attempt_b['attempt_id'],
+            outcome='DOWNLOAD_FINISHED',
+            evidence=self.attempt_evidence(self.records, attempt_b))
+
+        a_path.write_bytes(a_path.read_bytes() + b'synthetic-local-drift')
+        self.assertEqual(
+            {row['media_key']: row['local_files']
+             for row in self.records.summary()['media']}[affected_key],
+            notes.LOCAL_CHANGED)
+
+        preview = self.records.restart_preview()
+        self.assertEqual(preview['status'], 'RESTART_REQUIRED')
+        self.assertEqual(
+            {row['media_key'] for post in preview['scope']['posts']
+             for row in post['media']}, {affected_key})
+        self.confirm_restart(self.records, preview)
+
+        # The new scan covers every card. Only A gets a complete post/media
+        # detail; B and two other visible cards deliberately remain pending.
+        recovery_session = self.session
+        scan = self.records.scan(
+            session_id=recovery_session, action='START',
+            evidence=self.make_evidence(
+                list_key=self.records.list_data['list_key']), recovery=True)
+        scan_posts = [
+            dict(identity=post_a_identity, date_summary='2026-11-10'),
+            dict(identity=post_b_identity, date_summary='2026-11-11'),
+            dict(identity=post_c_identity, date_summary='2026-11-12'),
+            dict(identity=post_d_identity, date_summary='2026-11-13'),
+        ]
+        scan_evidence = self.make_evidence(
+            list_key=self.records.list_data['list_key'],
+            scan_id=scan['scan_id'])
+        self.records.page(
+            session_id=recovery_session, scan_id=scan['scan_id'],
+            page_index=0, posts=scan_posts, top_reached=True,
+            bottom_reached=True, overlap_keys=[], evidence=scan_evidence)
+        self.records.scan(
+            session_id=recovery_session, action='FINISH',
+            scan_id=scan['scan_id'], evidence=scan_evidence)
+        self.records.record_post(
+            session_id=recovery_session, post_key_value=post_a,
+            date_summary='2026-11-10', media_count=1, text_sha256=None,
+            evidence=self.make_evidence(
+                list_key=self.records.list_data['list_key'],
+                post_key=post_a, scan_id=scan['scan_id']))
+        self.records.record_media(
+            session_id=recovery_session, post_key_value=post_a,
+            items=[dict(identity=affected)], missing=[],
+            evidence=self.make_evidence(
+                list_key=self.records.list_data['list_key'],
+                post_key=post_a, scan_id=scan['scan_id']))
+
+        before_check = self.event_files()
+        completion_b = self.records.download_check(
+            session_id=self.session, attempt_id=attempt_b['attempt_id'],
+            stability_interval=0)
+        self.assertEqual(completion_b['kind'], 'completion')
+        self.assertEqual(completion_b['data']['verification']['kind'], PHOTO)
+        self.assertEqual(
+            completion_b['data']['verification']['assurance'], 'DOWNLOAD_ONLY')
+        self.assertEqual(
+            (Path(completion_b['data']['destination']) /
+             completion_b['data']['target_file']['name']).read_bytes(),
+            payload_b)
+        after_check = self.event_files()
+        for name, raw in before_check.items():
+            self.assertEqual(after_check[name], raw)
+        events = self.read_events(self.records)
+        self.assertEqual(
+            sum(event['kind'] == 'intent' and
+                event['data'].get('media_key') == prior_video_key
+                for event in events), 1)
+        self.assertFalse(any(
+            event['kind'] == 'media-kind-reconcile' and
+            event['data'].get('attempt_id') == attempt_b['attempt_id']
+            for event in events))
+
+        # A's scoped restart intent remains eligible although other cards
+        # have not been opened for their media details.
+        attempt_a_restart = self.records.intent(
+            session_id=self.session, media_key_value=affected_key,
+            restart_id=preview['restart_id'])
+        self.assertEqual(attempt_a_restart['media_key'], affected_key)
+        self.assertEqual(attempt_a_restart['restart_id'], preview['restart_id'])
+        self.assertIn('POST_DETAIL_PENDING',
+                      self.records.summary()['dispatch_blockers'])
+        self.assertTrue(self.records.summary()['restart_batch_open'])
+        self.assertNotEqual(pending_key, affected_key)
+
+    def test_restart_scope_rejects_nonmedia_download(self):
+        context = self.one_media_restart_context(
+            'restart-c09-scope-nonmedia')
+        attempt = self.restart_download(
+            self.records, context['key'], 'wrong.html',
+            b'<html>synthetic non-media</html>',
+            context['preview']['restart_id'])
+        before = self.event_files()
+        with self.assertRaisesRegex(NotesError, 'RESTART_SCOPE_NON_MEDIA'):
+            self.records.download_check(
+                session_id=self.session, attempt_id=attempt['attempt_id'],
+                stability_interval=0)
+        self.assertEqual(self.event_files(), before)
+        self.assertTrue((Path(attempt['destination']) / 'wrong.html').is_file())
+
     def test_confirmed_pending_publish_is_suppressed_not_republished(self):
         photo = notes.media_identity(
             kind=PHOTO, visual_key='restart-c06-photo')
