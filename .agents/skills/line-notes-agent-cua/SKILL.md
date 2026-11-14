@@ -42,6 +42,14 @@ Agent 的任務是完成整份列表，而不是等 Owner 逐步操作：
 
 下載控制等派送前條件須在 `intent` 前成立；`bind`／`scan` 等前序步驟仍各自遵守原有 gate。派送條件未成立就停在該 gate 前。一般「繼續」不解除未明示取消的限制；接受版本只處理版本差異，不解除資料異常、UNKNOWN、活動下載或未完成命名交易。日常授權更新不取代正式角色的當次人工交接，Planner／Reviewer 不因引用歷史下載授權而轉為下載角色。詳見[啟動與帳本對帳](references/download-and-ledger.md#啟動與帳本對帳)。
 
+## Viewer 返回與中斷恢復
+
+viewer 進入前保存來源錨點與預期返回角色；進入後依唯一本文[返回契約與有限恢復](references/gui-inventory.md#返回契約與有限恢復)核對控制歸屬，再開始下載交易。每次只返回一層並重新觀察；`ENTRY_LOST` 與 `INPUT_UNAVAILABLE` 分開記錄且可同時成立。通道失效後，只做工具文件支持的唯讀 app／window 列舉與 handle reacquire；沒有新證據不重試。無法恢復時，只請 Owner 把同一指定列表帶回前景。
+
+同一有效前景內重取 CUA handle 不重跑 notes `bind` 或更換帳本 Session。真正前景中斷後，Owner 重新交接就建立新的 notes Session ID。新 bind 不會 interrupt 舊 open scan：先收斂舊交易，再明確 interrupt 舊 scan，之後以普通完整掃描接續；不得以 scan 解鎖 UNKNOWN，亦不自行使用 restart／recovery scan 繞過普通阻塞。
+
+每次導覽／輸入的原件保存方式依[單次輸入證據範本](references/evidence-template.md#單次-cua-輸入保存-helper)；input receipt 不是 OS event trace。狀態案例見[證據判定案例](references/evidence-decision-cases.md#d1-viewer-返回契約在進入後核對)。
+
 ## 永久記憶與路徑邊界
 
 - 永久紀錄預設在 `notes-backup-records/`，依 `local_list_id` 分帳本；`index.json` 只登錄位置，追加式 `events` 才是事實來源。
@@ -107,8 +115,8 @@ page 前的來源卡片台帳、部分／高卡片、雙向對帳及 finish 前�
 
 ## 參考文件
 
-- [GUI 導覽與盤點](references/gui-inventory.md)：入口、三層身分、已展開卡片／縮圖／viewer 交叉、B1 目標與下載控制就緒、AX／capture 來源分界、工具列觀察、popup、時鐘、座標映射、控制與輸入規則。
+- [GUI 導覽與盤點](references/gui-inventory.md)：入口、三層身分、卡片盤點與對帳、viewer 返回契約、入口遺失與輸入失效的有限恢復、視覺控制映射、popup、座標與輸入規則。
 - [下載與 notes CLI](references/download-and-ledger.md)：目前子命令與參數、`list-key` 建帳前 bootstrap、絕對證據路徑、`lists`→`summary` 查詢、capture、intent 前後核對、下載／chooser 各最多一次、outcome／reconcile 分流、更正與命名恢復。
 - [驗證與恢復](references/verification-and-recovery.md)：證據稽核／更正、完成／停止證據組合、AX／截圖提示分離、檔名歸屬、類型更正、來源到期、基本檔案檢查與歷史解碼相容、六類狀態與本機可用性。
-- [證據範本](references/evidence-template.md)：供 `evidence-pack` statement 使用的私有紀錄欄位、AX scope、chooser 三層目的地與唯一檔名規則；不是可直接傳給 `--evidence` 的自由文字 schema。
+- [證據範本](references/evidence-template.md)：供 `evidence-pack` statement 使用的私有紀錄欄位、原件保存 helper、單次輸入 request／raw／diagnostic 落地與 chooser 目的地核對；不是可直接傳給 `--evidence` 的自由文字 schema。
 - [證據判定案例](references/evidence-decision-cases.md)：控制隱藏、API error、chooser 延遲／預填路徑、晚到結果、未授權的播放取證、crash window 與充分／不足證據的假設案例。

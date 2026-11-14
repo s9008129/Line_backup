@@ -306,6 +306,289 @@ const evidenceTools = await (async () => {
     return output;
   }
 
+  function inputErrorSnapshot(error) {
+    const objectLike = error !== null &&
+      (typeof error === 'object' || typeof error === 'function');
+    const value = objectLike ? error : { value: error };
+    const ownFields = Object.create(null);
+    let fieldsComplete = true;
+    let ownNames = [];
+    try {
+      ownNames = Object.getOwnPropertyNames(value);
+    } catch (captureError) {
+      fieldsComplete = false;
+    }
+    for (const key of ownNames) {
+      try {
+        const descriptor = Object.getOwnPropertyDescriptor(value, key);
+        if (descriptor && Object.prototype.hasOwnProperty.call(descriptor, 'value')) {
+          ownFields[key] = descriptor.value;
+        } else {
+          fieldsComplete = false;
+          ownFields[key] = '[ACCESSOR_NOT_CAPTURED]';
+        }
+      } catch (captureError) {
+        fieldsComplete = false;
+        ownFields[key] = '[FIELD_CAPTURE_FAILED]';
+      }
+    }
+    let name = 'UNKNOWN';
+    let message;
+    let code = null;
+    try {
+      if (typeof value.name === 'string') name = value.name;
+      if (typeof value.message === 'string') message = value.message;
+      else message = String(error);
+      if (value.code !== undefined) code = value.code;
+    } catch (captureError) {
+      fieldsComplete = false;
+      message = '[ERROR_MESSAGE_READ_FAILED]';
+    }
+    return { name, message, code, own_fields: ownFields,
+             fields_complete: fieldsComplete };
+  }
+
+  function inputErrorSummary(snapshot) {
+    const code = snapshot.code;
+    return {
+      name: snapshot.name,
+      message: snapshot.message,
+      code: code === null || ['string', 'number', 'boolean'].includes(typeof code)
+        ? code : '[NON_SCALAR_CODE]',
+      own_field_names: Object.keys(snapshot.own_fields || {}),
+      fields_complete: snapshot.fields_complete,
+    };
+  }
+
+  function jsonSerializationGap(value, ancestors = new Set(), location = '$') {
+    const kind = typeof value;
+    if (value === null || kind === 'string' || kind === 'boolean') return null;
+    if (kind === 'number') return Number.isFinite(value) ? null : location + ':NON_FINITE_NUMBER';
+    if (kind === 'undefined' || kind === 'function' || kind === 'symbol' || kind === 'bigint') {
+      return location + ':UNSUPPORTED_' + kind.toUpperCase();
+    }
+    if (kind !== 'object') return location + ':UNSUPPORTED_VALUE';
+    if (ancestors.has(value)) return location + ':CIRCULAR_REFERENCE';
+    const array = Array.isArray(value);
+    const prototype = Object.getPrototypeOf(value);
+    if (!array && prototype !== Object.prototype && prototype !== null) {
+      return location + ':NON_PLAIN_OBJECT';
+    }
+    ancestors.add(value);
+    try {
+      for (const key of Reflect.ownKeys(value)) {
+        if (typeof key === 'symbol') return location + ':SYMBOL_KEY';
+        if (array && key === 'length') continue;
+        const descriptor = Object.getOwnPropertyDescriptor(value, key);
+        if (!descriptor || !descriptor.enumerable) return location + '.' + key + ':NON_ENUMERABLE';
+        if (!Object.prototype.hasOwnProperty.call(descriptor, 'value')) {
+          return location + '.' + key + ':ACCESSOR_PROPERTY';
+        }
+        const gap = jsonSerializationGap(descriptor.value, ancestors, location + '.' + key);
+        if (gap) return gap;
+      }
+      if (array) {
+        for (let index = 0; index < value.length; index += 1) {
+          if (!Object.prototype.hasOwnProperty.call(value, index)) {
+            return location + '[' + index + ']:SPARSE_ARRAY_SLOT';
+          }
+        }
+      }
+      return null;
+    } finally {
+      ancestors.delete(value);
+    }
+  }
+
+  async function persistSingleInput(options) {
+    const validId = typeof options.operationId === 'string' &&
+      /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(options.operationId);
+    const output = {
+      schema: 'line-notes-single-input/v1',
+      operation_id: options.operationId || 'UNKNOWN',
+      status: 'NOT_INVOKED',
+      request: { status: 'NOT_RUN' },
+      raw_return: { status: 'NOT_RUN', complete: false },
+      diagnostic: { status: 'NOT_RUN', complete: false },
+      files: {},
+      receipt_is_os_event_trace: false,
+    };
+    if (!validId || typeof options.invoke !== 'function') {
+      output.status = 'INVALID_HELPER_ARGUMENTS';
+      output.blockers = [!validId ? 'INVALID_OPERATION_ID' : 'INVOKE_FUNCTION_REQUIRED'];
+      return output;
+    }
+
+    const paths = await validatePrivatePaths(options.taskDir, options.inputDir);
+    if (!paths.ok) {
+      output.status = 'PRIVATE_PATHS_INVALID';
+      output.blockers = [paths.error && paths.error.code || 'PRIVATE_PATHS_INVALID'];
+      return output;
+    }
+    const base = path.join(paths.observation_dir, options.operationId + '.input');
+    output.files = {
+      request: base + '.request.json',
+      raw_return: base + '.raw.json',
+      diagnostic: base + '.diagnostic.json',
+    };
+
+    let requestBytes;
+    try {
+      const requestEnvelope = {
+        schema: output.schema,
+        operation_id: options.operationId,
+        request: options.request,
+      };
+      const requestGap = jsonSerializationGap(requestEnvelope);
+      if (requestGap) throw new TypeError('REQUEST_NOT_JSON_COMPLETE:' + requestGap);
+      const requestText = JSON.stringify(requestEnvelope);
+      if (typeof requestText !== 'string') throw new TypeError('REQUEST_NOT_JSON_SERIALIZABLE');
+      requestBytes = Buffer.from(requestText + '\n', 'utf8');
+    } catch (error) {
+      output.status = 'REQUEST_SERIALIZATION_FAILED';
+      output.request = { status: 'SERIALIZATION_FAILED', error: inputErrorSnapshot(error) };
+      output.blockers = ['REQUEST_SERIALIZATION_FAILED'];
+      await persistInputDiagnostic(output, options);
+      return output;
+    }
+
+    output.request = {
+      status: 'PREPARED',
+      bytes: requestBytes.length,
+      sha256: sha256(requestBytes),
+      write: 'NOT_RUN',
+      readback: 'NOT_RUN',
+    };
+    const requestWrite = await writeExclusive(output.files.request, requestBytes);
+    output.request.write = requestWrite.status;
+    if (requestWrite.error) output.request.write_error = inputErrorSnapshot(requestWrite.error);
+    if (requestWrite.status !== 'WRITTEN') {
+      output.status = 'REQUEST_PERSIST_FAILED';
+      output.blockers = ['REQUEST_PERSIST_FAILED'];
+      await persistInputDiagnostic(output, options);
+      return output;
+    }
+
+    const requestReadback = await (options.readbackExact || readbackExact)(
+      output.files.request, requestBytes);
+    output.request.readback = requestReadback.status;
+    output.request.saved_bytes = requestReadback.saved_bytes;
+    output.request.saved_sha256 = requestReadback.saved_sha256;
+    if (requestReadback.error) output.request.readback_error = inputErrorSnapshot(requestReadback.error);
+    if (requestReadback.status !== 'MATCH') {
+      output.status = 'REQUEST_READBACK_FAILED';
+      output.blockers = ['REQUEST_READBACK_FAILED'];
+      await persistInputDiagnostic(output, options);
+      return output;
+    }
+
+    let returned;
+    let rawEnvelope;
+    output.status = 'INVOKED';
+    try {
+      returned = await options.invoke(options.request);
+      output.raw_return.kind = 'RETURN';
+      rawEnvelope = { kind: 'RETURN', value: returned };
+    } catch (error) {
+      const snapshot = inputErrorSnapshot(error);
+      output.raw_return.kind = 'ERROR';
+      output.raw_return.error_summary = inputErrorSummary(snapshot);
+      rawEnvelope = { kind: 'ERROR', error: snapshot };
+    }
+
+    let rawBytes;
+    try {
+      const rawGap = jsonSerializationGap(rawEnvelope);
+      if (rawGap) throw new TypeError('RAW_NOT_JSON_COMPLETE:' + rawGap);
+      const rawText = JSON.stringify(rawEnvelope);
+      if (typeof rawText !== 'string') throw new TypeError('RETURN_NOT_JSON_SERIALIZABLE');
+      rawBytes = Buffer.from(rawText + '\n', 'utf8');
+    } catch (error) {
+      output.status = 'RAW_SERIALIZATION_FAILED';
+      output.raw_return.status = 'SERIALIZATION_FAILED';
+      output.raw_return.complete = false;
+      output.raw_return.gap = '原始回傳含循環或不可 JSON 序列化欄位；未保存為完整 raw。';
+      output.raw_return.serialization_error = inputErrorSummary(inputErrorSnapshot(error));
+      output.blockers = ['RAW_SERIALIZATION_FAILED'];
+      await persistInputDiagnostic(output, options);
+      return output;
+    }
+
+    output.raw_return.bytes = rawBytes.length;
+    output.raw_return.sha256 = sha256(rawBytes);
+    output.raw_return.write = 'NOT_RUN';
+    output.raw_return.readback = 'NOT_RUN';
+    const rawWrite = await writeExclusive(output.files.raw_return, rawBytes);
+    output.raw_return.write = rawWrite.status;
+    if (rawWrite.error) output.raw_return.write_error = inputErrorSnapshot(rawWrite.error);
+    if (rawWrite.status === 'WRITTEN') {
+      const rawReadback = await (options.readbackExact || readbackExact)(
+        output.files.raw_return, rawBytes);
+      output.raw_return.readback = rawReadback.status;
+      output.raw_return.saved_bytes = rawReadback.saved_bytes;
+      output.raw_return.saved_sha256 = rawReadback.saved_sha256;
+      if (rawReadback.error) output.raw_return.readback_error = inputErrorSnapshot(rawReadback.error);
+      output.raw_return.status = rawReadback.status;
+      output.raw_return.complete = rawReadback.status === 'MATCH' &&
+        (output.raw_return.kind !== 'ERROR' ||
+         output.raw_return.error_summary.fields_complete);
+      if (!output.raw_return.complete) {
+        output.raw_return.gap = '原始回傳寫入／讀回不完整；不得視為完整 raw。';
+      }
+    } else {
+      output.raw_return.status = 'WRITE_FAILED';
+      output.raw_return.complete = false;
+    }
+    if (!output.raw_return.complete) output.blockers = ['RAW_RETURN_INCOMPLETE'];
+    await persistInputDiagnostic(output, options);
+    return output;
+  }
+
+  async function persistInputDiagnostic(output, options) {
+    if (!output.files.diagnostic) return;
+    const diagnostic = {
+      schema: 'line-notes-single-input-diagnostic/v1',
+      operation_id: output.operation_id,
+      request: output.request,
+      raw_return: output.raw_return,
+      status: output.status,
+      blockers: output.blockers || [],
+      receipt_is_os_event_trace: false,
+    };
+    let bytes;
+    try {
+      bytes = Buffer.from(JSON.stringify(diagnostic, null, 2) + '\n', 'utf8');
+    } catch (error) {
+      output.diagnostic = { status: 'SERIALIZATION_FAILED', complete: false,
+                            error: inputErrorSnapshot(error) };
+      output.blockers = [...(output.blockers || []), 'DIAGNOSTIC_PERSISTENCE_INCOMPLETE'];
+      return;
+    }
+    const written = await writeExclusive(output.files.diagnostic, bytes);
+    output.diagnostic = {
+      status: written.status,
+      complete: false,
+      bytes: bytes.length,
+      sha256: sha256(bytes),
+      readback: 'NOT_RUN',
+    };
+    if (written.error) output.diagnostic.write_error = inputErrorSnapshot(written.error);
+    if (written.status !== 'WRITTEN') {
+      output.blockers = [...(output.blockers || []), 'DIAGNOSTIC_PERSISTENCE_INCOMPLETE'];
+      return;
+    }
+    const readback = await (options.readbackExact || readbackExact)(
+      output.files.diagnostic, bytes);
+    output.diagnostic.readback = readback.status;
+    output.diagnostic.saved_bytes = readback.saved_bytes;
+    output.diagnostic.saved_sha256 = readback.saved_sha256;
+    output.diagnostic.complete = readback.status === 'MATCH';
+    if (readback.error) output.diagnostic.readback_error = inputErrorSnapshot(readback.error);
+    if (!output.diagnostic.complete) {
+      output.blockers = [...(output.blockers || []), 'DIAGNOSTIC_PERSISTENCE_INCOMPLETE'];
+    }
+  }
+
   async function captureAndPersist(options) {
     let capture = null;
     let captureError = null;
@@ -326,6 +609,7 @@ const evidenceTools = await (async () => {
     copyExactUint8Array,
     describeError,
     persistObservation,
+    persistSingleInput,
     readbackExact,
     sha256,
     writeExclusive,
@@ -347,6 +631,27 @@ if (!OBSERVATION.ready_for_bind) {
 ```
 
 `stages` 會分別留下 `CAPTURE`、`CAPTURE_SHAPE`、`AX`、`SCREENSHOT_TYPE`、`SCREENSHOT_LENGTH` 與各 asset 的 `*_PERSISTENCE`；`assets` 另記實際路徑、長度、SHA-256、寫入與讀回，`metadata_persistence` 則記 diagnostic 的寫入與讀回。只有 AX 與非空截圖都存在、兩者都以 `wx` 寫入並逐 bytes 讀回 MATCH，且 diagnostic 也寫入／讀回 MATCH，runtime 輸出的 `ready_for_bind` 才會是 `true`。AX 合格但截圖型別錯、空值或寫入失敗時，合格 AX 仍會保存；反向情況亦同。這些部分原件可用於唯讀診斷，但 blocker 未消除前不得 bind。
+
+### 單次 CUA 輸入保存 helper
+
+只有輸入參數與目標已由當次觀察核對後，才呼叫此 helper。呼叫端提供精確 request 與一個已選定的單次呼叫函式；helper 不尋找控制、不選動作、不導覽、不重試，也不因錯誤再呼叫。
+
+```js
+const inputReceipt = await evidenceTools.persistSingleInput({
+  taskDir: '/ABS/TASK_PRIVATE_DIR',
+  inputDir: '/ABS/EXISTING_PRIVATE_INPUT_DIR',
+  operationId: 'UNIQUE_OPERATION_ID',
+  request: verifiedInputArguments,
+  invoke: async (request) => alreadySelectedSingleCall(request),
+});
+nodeRepl.write(JSON.stringify(inputReceipt, null, 2));
+```
+
+helper 先把 request 以 `wx` 寫入私有目錄，再以既有 hash／readback helper 逐 bytes 核對。只有讀回 `MATCH` 才呼叫一次 `invoke`。結果或錯誤另存 raw 檔；diagnostic 摘要是另一檔。三者都不覆寫。request 寫入／讀回失敗時不呼叫。
+
+錯誤 raw 保存完整 `message`、原型可讀的 `name`、原型可讀的 `code` 原型別，以及自有欄位（含 non-enumerable 欄位）。不使用 `instanceof Error` 判斷跨 realm 錯誤。循環值、accessor、`undefined`、函式、Symbol、BigInt、非有限數字或非純資料物件若無法無損 JSON 保存，raw 標為不完整；diagnostic 只存可序列化的錯誤摘要與缺口。若 diagnostic 自己也無法落地，回傳明確 `complete=false`，不宣稱 raw 完整。
+
+把 raw 檔與 diagnostic 檔分別加入 evidence bundle 的 `input_receipt` 與適用的 `observation` asset，並記各自路徑、bytes、SHA-256、寫入及讀回狀態。input receipt 只記錄保存的呼叫參數與 CUA 回傳；它不是 OS event trace，也不證明事件命中或 App 接受。
 
 `CUA_RAW_OBSERVATION_INCOMPLETE` 是本地保存 gate，不是 CUA 沒有回傳或不支援該 API；依 `blockers`、`stages` 與部分 asset 判斷是缺值、型別、權限、碰撞或讀回問題。沒有新 bytes 時不要重作 GUI 輸入或猜測補值；若回傳 `regions` 等未實測形狀，保留可保存的部分與 `UNSUPPORTED_REGIONS`，交回精確範圍決策。
 

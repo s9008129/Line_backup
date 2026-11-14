@@ -104,3 +104,48 @@
 - **允許動作：** 依同批 `restart_id` 接續；先確認目前是否有完整 recovery scan，缺失或中斷時依規則重新中斷／盤點。只對未完成項以新 viewer／chooser／空白 staging 建立新 attempt，逐項最多一次派送；全部 candidate 通過後才一次 activation。若 scope、身分、目的地或版本策略改變，停止並重新 preview、取得新的 Owner 明示同意。
 - **禁止推論：** 已確認一次就可無限重送或擴及其他項；再次中斷自動代表舊 UNKNOWN 已停止；取消舊 chooser 等於舊操作終止；晚到檔案屬新 attempt；可重用舊路徑、舊座標或把舊 history 改寫成新版本。
 - **缺少證據：** 真實 GUI 的晚到輸入／chooser、舊寫入停止證據、新 viewer 與 staging 的連續歸屬，以及跨 Session 的實際恢復結果仍 `NOT_RUN`；文件案例不能補成 E2E PASS。
+
+## D1 Viewer 返回契約在進入後核對
+
+- **前提：** 目標貼文／媒體已核對，尚未建立下載 intent，Agent 準備開啟 viewer。
+- **觀察（假設）：** 貼文詳細頁來源 observation 與貼文錨點已保存；viewer 尚未進入，因此尚無 viewer 返回控制。
+- **可支持命題：** 可用來源錨點與預期返回角色核對稍後返回。進入前看不到返回控制是正常資訊缺口，不代表禁止進入。
+- **允許動作：** 依有效前景及當次映射開啟目標 viewer；進入後先觀察控制所屬 app／window、角色、焦點與歸屬。確認可返回預期角色後才建立下載 intent。
+- **禁止推論：** 進入前不存在返回按鈕；單獨標為「關閉」的按鈕必定回到來源貼文；舊 viewer 座標可重用。
+- **缺少證據：** viewer 內返回控制的歸屬與作用須由進入後的新 observation 判斷；本案例不是實機結果。
+
+## D2 返回後頁面偏離預期
+
+- **前提：** 已從 viewer 送出一次有證據的返回輸入。
+- **觀察（假設）：** 新 observation 顯示畫面仍是 viewer、已變成聊天，或無法連回來源貼文錨點。
+- **可支持命題：** 返回未得到預期的 `POST_DETAIL`；若列表連續性也消失，記 `ENTRY_LOST`。
+- **允許動作：** 停止原返回方法，保存前後 observation 與輸入 receipt；分開記錄頁面角色、前景、觀察及輸入能力。
+- **禁止推論：** 再按一次 Escape／Command-W、改猜關閉鍵或沿用舊座標可安全退一層。
+- **缺少證據：** 真實返回控制命中、後續 GUI 行為與 LINE E2E 均 `NOT_RUN`。
+
+## D3 AX 沒有 Notes 控制但視覺可見
+
+- **前提：** 指定記事本入口遺失；前景與輸入通道仍可用，來源仍能證明是同一指定列表所屬聊天。
+- **觀察（假設）：** 完整 AX 未列 Notes 控制，但當次截圖可辨識候選控制及其視窗區域。
+- **可支持命題：** 僅在當次視覺歸屬、控制作用區、座標空間及映射都充分，且候選點位於已核對控制區內時，才支持一次導覽輸入。
+- **允許動作：** 保存 screenshot／window 綁定、控制區域、候選 target 與映射；最多用該當次可靠 Notes 控制一次，之後重新觀察。
+- **禁止推論：** 看見圖示就代表 AX target 存在、OS hit-test 會命中、列表身分已恢復；不得搜尋其他聊天室。
+- **缺少證據：** 視覺控制的實際作用及輸入結果須當次觀察；本案例不證明跨版本支援。
+
+## D4 輸入失效但唯讀觀察可用
+
+- **前提：** CUA 輸入回傳錯誤，AX／截圖仍可讀。
+- **觀察（假設）：** 工具原始錯誤含 `noWindowsAvailable`；app／window 綁定或輸入能力尚未恢復。
+- **可支持命題：** 只證明這次輸入回傳錯誤；`ENTRY_LOST` 與 `INPUT_UNAVAILABLE` 可同時成立。底層原因仍為 `UNKNOWN`。
+- **允許動作：** 依當次工具文件唯讀列舉 app／window 並重新取得 handle；每步後重新觀察。只有新證據顯示通道恢復才考慮一次有證據輸入。
+- **禁止推論：** 換 API、全螢幕切換、測試按鍵、重複 reset 或同一錯誤重試能恢復通道。
+- **缺少證據：** 真實 `noWindowsAvailable` 根因與可恢復條件仍 `UNKNOWN`。
+
+## D5 同前景 reacquire 與新 Session 交接
+
+- **前提：** 重新取得 CUA app／window handle，或 Owner 將中斷的指定列表重新帶回前景。
+- **觀察（假設）：** 前者仍是同一有效前景；後者是新的正式前景交接，可能仍在相同對話。
+- **可支持命題：** 同一有效前景內的平台 reacquire 沿用 notes Session，不重跑 `bind`。真正中斷後重新交接須使用新 notes Session ID。
+- **允許動作：** 新 Session 保存新 observation、核對列表，先處理舊交易，再顯式 interrupt 舊 open scan，之後以普通完整 scan 接續。
+- **禁止推論：** `bind` 會替舊 scan interrupt；新 scan 可解鎖 UNKNOWN；一般入口恢復可使用 restart／recovery scan；帳本內既有完成或待盤狀態可改寫。本匿名事故案例的兩項 ACTIVE 與 49 篇 `DETAIL_PENDING` 是案例事實，不是所有列表的固定數值。
+- **缺少證據：** 跨 Session 真實恢復及完整 51 篇 E2E 仍 `NOT_RUN`。

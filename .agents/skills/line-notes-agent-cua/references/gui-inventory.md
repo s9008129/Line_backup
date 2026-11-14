@@ -121,6 +121,51 @@
 - 任何下載控制、chooser 與「確認」都是獨立輸入；不要用反覆點選、猜 Return 或重開選單查證。下載派送限制與 notes CLI 交易見 [下載與 notes CLI](download-and-ledger.md)。
 - 同一根因最多三次有證據嘗試，連續兩次沒有新資訊就停止相同方法。更換觀察來源可以帶來新資訊，但不得改下載入口、跨列表或繞過工具拒絕。
 
+## 返回契約與有限恢復
+
+本節是 viewer 返回與入口恢復的唯一決策本文。Skill 只保留摘要與連結。
+
+### 進入 viewer 前先保存錨點
+
+開啟 viewer 前，保存當次 observation、列表／貼文身分、來源卡片或媒體縮圖區域、目前頁面角色，以及預期返回角色。通常從貼文詳細頁開啟 viewer，預期返回同一貼文詳細頁。錨點供返回後核對，不是可重用座標或點擊指令。
+
+不要求進入 viewer 前已看見返回控制。進入 viewer 後，先觀察 app／window、頁面角色、焦點及控制歸屬。確認返回控制確屬目前 viewer、能回到預期角色且定位有效後，才建立下載 intent 或開始下載交易。單獨的「關閉按鈕」標籤不足以證明控制歸屬或作用。
+
+### 返回一次並重新觀察
+
+輸入前保存 viewer observation、控制所屬視窗／區域、AX role 與父層，或視覺控制區域、焦點、座標空間及當次映射。實際 target 必須與映射後的候選點一致。這些證據只能支持一次輸入的定位依據，不證明 OS hit-test 或 LINE 已接受。
+
+只送出一次已證明的返回輸入，隨即唯讀觀察。核對頁面角色、列表／貼文身分與來源錨點；符合預期返回角色及連續性才標記 `RETURNED`。每次只返回一層，確認後才選下一步。
+
+若頁面未變、變成聊天或無法核對來源連續性，標記 `ENTRY_LOST`，停止原方法。不得連按 Escape、Command-W、關閉或取消；不得換猜測鍵、舊座標或相簿入口。
+
+### 分開記錄頁面、前景與能力
+
+| 欄位 | 值 | 證據 |
+|---|---|---|
+| `page_role` | `LIST`、`POST_DETAIL`、`VIEWER`、`CHAT`、`UNKNOWN` | 當次 AX／畫面支持的角色 |
+| `foreground` | `VALID`、`INTERRUPTED`、`UNKNOWN` | app／window 綁定、交接及連續性 |
+| `observe_capability` | `AVAILABLE`、`UNAVAILABLE`、`UNKNOWN` | AX／截圖的當次可用性與範圍 |
+| `input_capability` | `AVAILABLE`、`UNAVAILABLE`、`UNKNOWN` | 工具文件支持的輸入能力與原始回傳 |
+
+`ENTRY_LOST` 表示頁面角色或指定列表連續性失去；`INPUT_UNAVAILABLE` 表示輸入通道不可用。兩者可同時成立，分開記錄。`noWindowsAvailable` 只記實際錯誤欄位；底層原因維持 `UNKNOWN`。
+
+### 有界恢復階梯
+
+1. 若觀察能力可用，保存當次 AX／截圖、app／window 綁定與錯誤原件；先不輸入。
+2. 若前景有效、來源仍可證明是同一指定列表所屬聊天、輸入通道可用，且 Notes 控制在當次可唯一辨識與定位，可用該控制導覽一次。AX 缺失時，必須有足夠的視覺歸屬、控制區域與座標映射；不得搜尋或選擇其他聊天室。
+3. 若輸入通道失效，只使用當次工具文件支援的唯讀 app／window 列舉與 handle 重新取得。這是 CUA reacquire；不等同 notes `bind`，也不證明輸入能力已恢復。
+4. 每一步後重新觀察 app／window、前景、頁面角色、觀察及輸入能力。只有新證據顯示輸入能力恢復，才可考慮下一步；重新映射後才可定位控制。
+5. 沒有新證據不重試。同根因最多三次有證據嘗試；連續兩次沒有新資訊即停止。不得用換 API、全螢幕切換、測試按鍵、舊座標或反覆 reset 繞過失效通道。
+6. 無法恢復時進入 `HANDOFF_REQUIRED`，停止 GUI 輸入，只請 Owner 把同一指定記事本列表帶回前景並交接。
+
+### 重新交接與帳本 Session
+
+同一有效前景內重新取得 CUA app／window handle，沿用目前 notes 帳本 Session，不重跑 `bind`。前景中斷後由 Owner 重新交接，必須建立新的 notes 帳本 Session ID，即使仍是同一對話或 app；取得新 observation 並重新核對列表身分。
+
+新 `bind` 不會自動中斷舊 open scan。新 Session 先唯讀查歷史並核對當次新前景與列表，成功 `bind` 後才收斂舊 attempt 與命名交易；若仍有 open scan，再明確 `scan interrupt`，然後以普通 `scan start` 重新完成卡片覆蓋。不得以 restart 或 recovery scan 繞過普通入口阻塞，也不得用新 scan 解鎖 UNKNOWN。保留帳本中實際的完成、ACTIVE 與待細盤分類；待盤貼文不得改成 `NO_MEDIA` 或宣稱完成。
+
+
 ## 觀察與命題分界
 
 GUI 觀察只保存當次真正取得的來源，不用事後推測補齊。每次與下載控制、chooser 或檔案歸屬有關的觀察，都要依 [證據範本](evidence-template.md) 記下來源、範圍與未知值：
