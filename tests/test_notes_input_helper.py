@@ -258,6 +258,44 @@ return {calls, receipt, saved: await fsTest.readFile(rawFile, 'utf8')};
         self.assertFalse(result['receipt']['raw_return']['complete'])
         self.assertIn('RAW_RETURN_INCOMPLETE', result['receipt']['blockers'])
 
+    def test_symbol_keyed_error_field_is_reported_as_incomplete_without_losing_other_fields(self):
+        result, _ = self.run_helper(r'''
+let calls = 0;
+const error = Object.create(null);
+Object.defineProperty(error, 'name', {value: 'ForeignError', enumerable: false});
+Object.defineProperty(error, 'message', {value: 'symbol-error', enumerable: false});
+Object.defineProperty(error, 'code', {value: 17, enumerable: false});
+Object.defineProperty(error, 'request_id', {value: 'keep-this-field', enumerable: false});
+const symbolKey = Symbol('private-trace-key');
+Object.defineProperty(error, symbolKey, {
+  value: 'do-not-invent-a-string-key', enumerable: false,
+});
+const receipt = await evidenceTools.persistSingleInput({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  inputDir: process.env.INPUT_TEST_DIR,
+  operationId: 'symbol-keyed-error',
+  request: {api: 'read'},
+  invoke: async () => { calls += 1; throw error; },
+});
+const raw = JSON.parse(await fsTest.readFile(receipt.files.raw_return, 'utf8'));
+const diagnostic = JSON.parse(await fsTest.readFile(receipt.files.diagnostic, 'utf8'));
+return {calls, receipt, raw, diagnostic};
+''')
+        snapshot = result['raw']['error']
+        summary = result['diagnostic']['raw_return']['error_summary']
+        self.assertEqual(result['calls'], 1)
+        self.assertEqual(snapshot['code'], 17)
+        self.assertEqual(snapshot['message'], 'symbol-error')
+        self.assertEqual(snapshot['own_fields']['request_id'], 'keep-this-field')
+        self.assertFalse(snapshot['fields_complete'])
+        self.assertEqual(snapshot['field_gaps'], ['SYMBOL_KEYED_OWN_FIELDS_UNCAPTURED:1'])
+        self.assertFalse(result['receipt']['raw_return']['complete'])
+        self.assertIn('RAW_RETURN_INCOMPLETE', result['receipt']['blockers'])
+        self.assertFalse(summary['fields_complete'])
+        self.assertEqual(summary['field_gaps'], ['SYMBOL_KEYED_OWN_FIELDS_UNCAPTURED:1'])
+        self.assertEqual(summary['code'], 17)
+        self.assertNotIn('Symbol(private-trace-key)', snapshot['own_fields'])
+
 
 if __name__ == '__main__':
     unittest.main()

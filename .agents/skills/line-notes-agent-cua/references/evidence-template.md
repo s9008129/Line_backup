@@ -313,10 +313,22 @@ const evidenceTools = await (async () => {
     const ownFields = Object.create(null);
     let fieldsComplete = true;
     let ownNames = [];
+    const fieldGaps = [];
     try {
       ownNames = Object.getOwnPropertyNames(value);
     } catch (captureError) {
       fieldsComplete = false;
+      fieldGaps.push('STRING_OWN_KEYS_CAPTURE_FAILED');
+    }
+    try {
+      const ownSymbols = Object.getOwnPropertySymbols(value);
+      if (ownSymbols.length > 0) {
+        fieldsComplete = false;
+        fieldGaps.push('SYMBOL_KEYED_OWN_FIELDS_UNCAPTURED:' + ownSymbols.length);
+      }
+    } catch (captureError) {
+      fieldsComplete = false;
+      fieldGaps.push('SYMBOL_OWN_KEYS_CAPTURE_FAILED');
     }
     for (const key of ownNames) {
       try {
@@ -345,7 +357,7 @@ const evidenceTools = await (async () => {
       message = '[ERROR_MESSAGE_READ_FAILED]';
     }
     return { name, message, code, own_fields: ownFields,
-             fields_complete: fieldsComplete };
+             fields_complete: fieldsComplete, field_gaps: fieldGaps };
   }
 
   function inputErrorSummary(snapshot) {
@@ -357,6 +369,7 @@ const evidenceTools = await (async () => {
         ? code : '[NON_SCALAR_CODE]',
       own_field_names: Object.keys(snapshot.own_fields || {}),
       fields_complete: snapshot.fields_complete,
+      field_gaps: snapshot.field_gaps || [],
     };
   }
 
@@ -649,7 +662,7 @@ nodeRepl.write(JSON.stringify(inputReceipt, null, 2));
 
 helper 先把 request 以 `wx` 寫入私有目錄，再以既有 hash／readback helper 逐 bytes 核對。只有讀回 `MATCH` 才呼叫一次 `invoke`。結果或錯誤另存 raw 檔；diagnostic 摘要是另一檔。三者都不覆寫。request 寫入／讀回失敗時不呼叫。
 
-錯誤 raw 保存完整 `message`、原型可讀的 `name`、原型可讀的 `code` 原型別，以及自有欄位（含 non-enumerable 欄位）。不使用 `instanceof Error` 判斷跨 realm 錯誤。循環值、accessor、`undefined`、函式、Symbol、BigInt、非有限數字或非純資料物件若無法無損 JSON 保存，raw 標為不完整；diagnostic 只存可序列化的錯誤摘要與缺口。若 diagnostic 自己也無法落地，回傳明確 `complete=false`，不宣稱 raw 完整。
+錯誤 raw 保存完整 `message`、原型可讀的 `name`、原型可讀的 `code` 原型別，以及可忠實序列化的字串自有欄位（含 non-enumerable 欄位）。不使用 `instanceof Error` 判斷跨 realm 錯誤。若偵測到 Symbol 自有欄位，不把 Symbol key 或值轉成替代字串；保留其他可讀欄位與數值 `code`，並以 `field_gaps` 明列未捕獲數及標示 fields/raw 不完整。循環值、accessor、`undefined`、函式、Symbol、BigInt、非有限數字或非純資料物件若無法無損 JSON 保存，raw 標為不完整；diagnostic 只存可序列化的錯誤摘要與缺口。若 diagnostic 自己也無法落地，回傳明確 `complete=false`，不宣稱 raw 完整。
 
 把 raw 檔與 diagnostic 檔分別加入 evidence bundle 的 `input_receipt` 與適用的 `observation` asset，並記各自路徑、bytes、SHA-256、寫入及讀回狀態。input receipt 只記錄保存的呼叫參數與 CUA 回傳；它不是 OS event trace，也不證明事件命中或 App 接受。
 
