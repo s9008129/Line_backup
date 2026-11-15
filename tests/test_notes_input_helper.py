@@ -297,5 +297,279 @@ return {calls, receipt, raw, diagnostic};
         self.assertNotIn('Symbol(private-trace-key)', snapshot['own_fields'])
 
 
+GROUNDED_SETUP = r'''
+const fsNative = await import('node:fs');
+const sourcePath = process.env.INPUT_TEST_ROOT + '/grounded-source.bin';
+const sourceBytes = Buffer.from('grounded source observation\n', 'utf8');
+fsNative.writeFileSync(sourcePath, sourceBytes);
+const sourceRef = {
+  path: sourcePath,
+  bytes: sourceBytes.length,
+  sha256: evidenceTools.sha256(sourceBytes),
+};
+function makeGroundedRequest() {
+  return {
+    input_phase: 'DOWNLOAD_CONTROL',
+    attempt_id: 'attempt-grounded',
+    app_window_binding: {
+      app_bundle_id: 'jp.naver.line.mac',
+      window_id: 'window-grounded',
+    },
+    mapping_status: 'MATCH',
+    observation_order: 'PRE_INPUT',
+    grounding_conclusion: 'PASS_TO_INPUT',
+    candidate_point_relation: 'INSIDE',
+    coordinate_space_match: 'MATCH',
+    control_region_coord_space: 'SCREEN_POINTS',
+    target_coord_space: 'SCREEN_POINTS',
+    source_observation: {...sourceRef},
+    source_observation_ref: {...sourceRef},
+    mapping_evidence_ref: {...sourceRef},
+    control_region: [10, 20, 110, 120],
+    candidate_point: [60, 70],
+    prepared_target: [60, 70],
+  };
+}
+function makeGroundedOptions(operationId, click) {
+  return {
+    taskDir: process.env.INPUT_TEST_ROOT,
+    inputDir: process.env.INPUT_TEST_DIR,
+    operationId,
+    request: makeGroundedRequest(),
+    source_observation_bytes: new Uint8Array(sourceBytes),
+    app: {click},
+  };
+}
+async function readJson(file) {
+  return JSON.parse(await fsTest.readFile(file, 'utf8'));
+}
+'''
+
+
+class NotesGroundedDownloadHelperTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tools_source = documented_tools_source()
+        TASKS.mkdir(parents=True, exist_ok=True)
+
+    def run_helper(self, body):
+        with tempfile.TemporaryDirectory(prefix='.notes-input-helper-', dir=TASKS) as temp:
+            root = Path(temp).resolve()
+            output_dir = root / 'observations'
+            output_dir.mkdir()
+            script = self.tools_source + '\n' + r'''
+const fsTest = await import('node:fs/promises');
+const result = await (async () => {
+''' + body + r'''
+})();
+console.log(JSON.stringify(result));
+'''
+            env = dict(os.environ, INPUT_TEST_ROOT=str(root),
+                       INPUT_TEST_DIR=str(output_dir))
+            completed = subprocess.run(
+                ['node', '--input-type=module', '-e', script],
+                cwd=ROOT, env=env, text=True, capture_output=True, check=False)
+            self.assertEqual(completed.returncode, 0,
+                             msg='node exit=%s\nstdout:\n%s\nstderr:\n%s' %
+                             (completed.returncode, completed.stdout,
+                              completed.stderr))
+            return json.loads(completed.stdout), output_dir
+
+    def test_grounded_request_validation_stops_before_click(self):
+        result, _ = self.run_helper(GROUNDED_SETUP + r'''
+const cases = [
+  ['missing-field', request => { delete request.mapping_status; },
+   'DOWNLOAD_CONTROL_GROUNDING_INVALID', 'DOWNLOAD_CONTROL_MAPPING_UNKNOWN'],
+  ['outside-region', request => {
+    request.candidate_point = [0, 70];
+    request.prepared_target = [0, 70];
+  }, 'DOWNLOAD_CONTROL_GROUNDING_INVALID',
+   'DOWNLOAD_CONTROL_POINT_NOT_STRICT_INTERIOR'],
+  ['border', request => {
+    request.candidate_point = [10, 70];
+    request.prepared_target = [10, 70];
+  }, 'DOWNLOAD_CONTROL_GROUNDING_INVALID',
+   'DOWNLOAD_CONTROL_POINT_NOT_STRICT_INTERIOR'],
+  ['nonfinite-point', request => {
+    request.candidate_point = [NaN, 70];
+    request.prepared_target = [NaN, 70];
+  }, 'REQUEST_SERIALIZATION_FAILED', 'REQUEST_SERIALIZATION_FAILED'],
+  ['unknown-mapping', request => { request.mapping_status = 'UNKNOWN'; },
+   'DOWNLOAD_CONTROL_GROUNDING_INVALID', 'DOWNLOAD_CONTROL_MAPPING_UNKNOWN'],
+  ['post-input-order', request => { request.observation_order = 'POST_INPUT'; },
+   'DOWNLOAD_CONTROL_GROUNDING_INVALID',
+   'DOWNLOAD_CONTROL_OBSERVATION_ORDER_UNKNOWN'],
+  ['source-hash-mismatch', request => {
+    request.source_observation_ref.sha256 = '0'.repeat(64);
+  }, 'DOWNLOAD_CONTROL_GROUNDING_INVALID',
+   'DOWNLOAD_CONTROL_SOURCE_REF_MISMATCH'],
+  ['mapping-hash-mismatch', request => {
+    request.mapping_evidence_ref.sha256 = '1'.repeat(64);
+  }, 'MAPPING_EVIDENCE_READBACK_FAILED',
+   'MAPPING_EVIDENCE_READBACK_MISMATCH'],
+];
+const results = [];
+for (const [name, mutate, expectedStatus, expectedBlocker] of cases) {
+  let clicks = 0;
+  const options = makeGroundedOptions('validation-' + name, async () => {
+    clicks += 1;
+    return {ok: true};
+  });
+  mutate(options.request);
+  const receipt = await evidenceTools.persistGroundedDownloadClick(options);
+  results.push({name, clicks, expectedStatus, expectedBlocker, receipt});
+}
+return {results};
+''')
+        self.assertEqual(
+            [item['name'] for item in result['results']],
+            ['missing-field', 'outside-region', 'border', 'nonfinite-point',
+             'unknown-mapping', 'post-input-order', 'source-hash-mismatch',
+             'mapping-hash-mismatch'])
+        for item in result['results']:
+            with self.subTest(case=item['name']):
+                self.assertEqual(item['clicks'], 0)
+                self.assertEqual(item['receipt']['status'],
+                                 item['expectedStatus'])
+                self.assertIn(item['expectedBlocker'], item['receipt']['blockers'])
+                self.assertEqual(item['receipt']['dispatch_call_target'], 'NOT_SENT')
+                self.assertEqual(item['receipt']['native_dispatched_target'], 'UNKNOWN')
+
+    def test_grounded_source_readback_mismatch_stops_before_click(self):
+        result, _ = self.run_helper(GROUNDED_SETUP + r'''
+let clicks = 0;
+const options = makeGroundedOptions('source-readback-mismatch', async () => {
+  clicks += 1;
+  return {ok: true};
+});
+const pending = evidenceTools.persistGroundedDownloadClick(options);
+fsNative.writeFileSync(sourcePath, Buffer.from('tampered source observation\n', 'utf8'));
+const receipt = await pending;
+return {clicks, receipt};
+''')
+        self.assertEqual(result['clicks'], 0)
+        self.assertEqual(result['receipt']['status'],
+                         'SOURCE_OBSERVATION_READBACK_FAILED')
+        self.assertIn('SOURCE_OBSERVATION_READBACK_MISMATCH',
+                      result['receipt']['blockers'])
+        self.assertEqual(result['receipt']['dispatch_call_target'], 'NOT_SENT')
+        self.assertEqual(result['receipt']['native_dispatched_target'], 'UNKNOWN')
+
+    def test_grounded_request_snapshot_survives_nested_caller_mutation(self):
+        result, _ = self.run_helper(GROUNDED_SETUP + r'''
+const original = makeGroundedRequest();
+const expected = JSON.parse(JSON.stringify(original));
+const options = makeGroundedOptions('snapshot-request', async target => {
+  return {accepted: true, native_code: 0, target, optional: null};
+});
+options.request = original;
+const pending = evidenceTools.persistGroundedDownloadClick(options);
+options.request.control_region[0] = -1000;
+options.request.candidate_point[0] = -1;
+options.request.prepared_target[0] = -1;
+options.request.app_window_binding.window_id = 'mutated-window';
+options.request.source_observation.sha256 = '2'.repeat(64);
+const receipt = await pending;
+const saved = await readJson(receipt.files.request);
+const raw = await readJson(receipt.files.raw_return);
+return {expected, saved, raw, receipt};
+''')
+        self.assertEqual(result['receipt']['status'], 'INVOKED')
+        self.assertEqual(result['saved']['request'], result['expected'])
+        self.assertEqual(result['raw']['kind'], 'RETURN')
+        self.assertEqual(result['raw']['value']['target'], [60, 70])
+        self.assertEqual(result['raw']['value']['native_code'], 0)
+        self.assertIsNone(result['raw']['value']['optional'])
+        self.assertEqual(result['receipt']['dispatch_call_target'], [60, 70])
+        self.assertEqual(result['receipt']['native_dispatched_target'], 'UNKNOWN')
+        self.assertEqual(result['receipt']['receipt_target_match'], 'UNKNOWN')
+        self.assertFalse(result['receipt']['receipt_is_os_event_trace'])
+
+    def test_generic_download_control_rejects_and_boolean_flags_cannot_bypass(self):
+        result, _ = self.run_helper(r'''
+let calls = 0;
+const receipt = await evidenceTools.persistSingleInput({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  inputDir: process.env.INPUT_TEST_DIR,
+  operationId: 'generic-download-control',
+  request: {input_phase: 'DOWNLOAD_CONTROL', strict: true},
+  strict: true,
+  allowDownloadControl: true,
+  grounded: true,
+  invoke: async () => { calls += 1; return {ok: true}; },
+});
+return {calls, receipt};
+''')
+        self.assertEqual(result['calls'], 0)
+        self.assertEqual(result['receipt']['status'],
+                         'DOWNLOAD_CONTROL_REQUIRES_GROUNDED_HELPER')
+        self.assertEqual(result['receipt']['blockers'],
+                         ['DOWNLOAD_CONTROL_REQUIRES_GROUNDED_HELPER'])
+        self.assertEqual(result['receipt']['files'], {})
+
+    def test_grounded_wrapper_ignores_caller_invoke_and_readback_callbacks(self):
+        result, _ = self.run_helper(GROUNDED_SETUP + r'''
+let appClicks = 0;
+let callerInvokes = 0;
+let callerReadbacks = 0;
+const options = makeGroundedOptions('strict-callback-isolation', async target => {
+  appClicks += 1;
+  return {target};
+});
+options.invoke = async () => { callerInvokes += 1; return {forged: true}; };
+options.readbackExact = async () => {
+  callerReadbacks += 1;
+  return {status: 'MATCH', saved_bytes: 0, saved_sha256: '0'.repeat(64)};
+};
+const receipt = await evidenceTools.persistGroundedDownloadClick(options);
+return {appClicks, callerInvokes, callerReadbacks, receipt};
+''')
+        self.assertEqual(result['appClicks'], 1)
+        self.assertEqual(result['callerInvokes'], 0)
+        self.assertEqual(result['callerReadbacks'], 0)
+        self.assertEqual(result['receipt']['status'], 'INVOKED')
+        self.assertEqual(result['receipt']['request']['readback'], 'MATCH')
+        self.assertEqual(result['receipt']['dispatch_call_target'], [60, 70])
+
+    def test_grounded_throw_and_undefined_dispatch_once_with_native_separation(self):
+        result, _ = self.run_helper(GROUNDED_SETUP + r'''
+const nativeError = Object.create(null);
+Object.defineProperty(nativeError, 'name', {value: 'NativeError', enumerable: false});
+Object.defineProperty(nativeError, 'message', {value: 'native-failure', enumerable: false});
+Object.defineProperty(nativeError, 'code', {value: 77, enumerable: false});
+let throwClicks = 0;
+const throwReceipt = await evidenceTools.persistGroundedDownloadClick(
+  makeGroundedOptions('native-throw', async () => {
+    throwClicks += 1;
+    throw nativeError;
+  }));
+const throwRaw = await readJson(throwReceipt.files.raw_return);
+let undefinedClicks = 0;
+const undefinedReceipt = await evidenceTools.persistGroundedDownloadClick(
+  makeGroundedOptions('native-undefined', async () => {
+    undefinedClicks += 1;
+    return undefined;
+  }));
+const undefinedRaw = await readJson(undefinedReceipt.files.raw_return);
+return {throwClicks, throwReceipt, throwRaw, undefinedClicks,
+        undefinedReceipt, undefinedRaw};
+''')
+        self.assertEqual(result['throwClicks'], 1)
+        self.assertEqual(result['throwReceipt']['raw_return']['kind'], 'ERROR')
+        self.assertEqual(result['throwRaw']['error']['code'], 77)
+        self.assertIsInstance(result['throwRaw']['error']['code'], int)
+        self.assertEqual(result['throwRaw']['error']['message'], 'native-failure')
+        self.assertEqual(result['throwReceipt']['dispatch_call_target'], [60, 70])
+        self.assertEqual(result['throwReceipt']['native_dispatched_target'], 'UNKNOWN')
+        self.assertEqual(result['throwReceipt']['native_return_type'], 'ERROR')
+
+        self.assertEqual(result['undefinedClicks'], 1)
+        self.assertEqual(result['undefinedRaw']['kind'], 'NATIVE_RETURN_UNDEFINED')
+        self.assertEqual(result['undefinedRaw']['value_type'], 'undefined')
+        self.assertEqual(result['undefinedReceipt']['dispatch_call_target'], [60, 70])
+        self.assertEqual(result['undefinedReceipt']['native_dispatched_target'], 'UNKNOWN')
+        self.assertEqual(result['undefinedReceipt']['native_return_type'], 'UNDEFINED')
+
+
 if __name__ == '__main__':
     unittest.main()

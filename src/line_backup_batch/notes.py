@@ -4785,8 +4785,10 @@ class NotesRecords:
                     action = 'ACTIVE'
                 elif latest_attempt is None:
                     action = 'INTENT_REQUIRED'
-                elif result in (None, 'UNKNOWN'):
-                    action = 'RECONCILE_OR_NEW_INTENT'
+                elif result is None:
+                    action = 'OUTCOME_REQUIRED'
+                elif result == 'UNKNOWN':
+                    action = 'RECONCILE_REQUIRED'
                 elif result == 'DOWNLOAD_FINISHED':
                     action = 'COPY_AND_VERIFY_REQUIRED'
                 else:
@@ -4798,6 +4800,8 @@ class NotesRecords:
                                                 if key in candidates else None),
                                  action=action))
         scope_media = self._restart_scope_media(confirmation)
+        scope_unresolved = self._restart_scope_unresolved_attempts(
+            confirmation_event)
         return dict(restart_id=restart_id,
                     generation=confirmation['generation'],
                     confirmation_ref=_event_ref(confirmation_event),
@@ -4806,10 +4810,34 @@ class NotesRecords:
                     activation_ref=(_event_ref(restart['activations'][restart_id])
                                     if activated else None),
                     media=rows,
+                    scope_unresolved_attempts=scope_unresolved,
                     blocking_attempts=[
                         row for row in self._unresolved_attempts()
                         if row['media_key'] not in scope_media and
                         row['last_result'] not in ('STOPPED', 'NOT_SENT')])
+
+    def _restart_scope_unresolved_attempts(self, confirmation_event):
+        """Return every post-confirmation unresolved v3 attempt in this batch."""
+        restart_id = confirmation_event['data']['restart_id']
+        confirmation_sequence = confirmation_event['sequence']
+        attempts = self._attempt_projection()
+        rows = []
+        for attempt_id, data in attempts['attempts'].items():
+            sequence = attempts['order'][attempt_id]
+            if (sequence <= confirmation_sequence or
+                    data.get('schema') != 'line-notes-intent/v3' or
+                    data.get('restart_id') != restart_id):
+                continue
+            result = self._attempt_result(attempt_id, attempts)
+            if result in (None, 'UNKNOWN'):
+                event = self._event_by_sequence(sequence)
+                rows.append(dict(
+                    attempt_id=attempt_id,
+                    media_key=data['media_key'],
+                    result=result,
+                    has_outcome=attempt_id in attempts['outcomes'],
+                    attempt_ref=_event_ref(event)))
+        return sorted(rows, key=lambda row: row['attempt_ref']['sequence'])
 
     def restart_preview(self):
         with self.locked():
@@ -4900,6 +4928,8 @@ class NotesRecords:
             need(confirmation is not None, 'RESTART_CONFIRMATION_REQUIRED')
             need(restart_id not in self._restart_projection()['activations'],
                  'RESTART_ALREADY_ACTIVATED')
+            need(not self._restart_scope_unresolved_attempts(confirmation),
+                 'RESTART_SCOPE_ATTEMPT_UNRESOLVED')
             confirmation_data = confirmation['data']
             scope_media = {
                 row['media_key']: (post, row)
@@ -5629,6 +5659,12 @@ class NotesRecords:
         counts = {status: 0 for status in STATUSES}
         for row in scoped_media_rows:
             counts[row['status']] += 1
+        all_known_counts = {status: 0 for status in STATUSES}
+        for row in media_rows:
+            all_known_counts[row['status']] += 1
+        status_counts_scope = dict(
+            kind='CURRENT_SCAN' if current_scan_id is not None else 'ALL_KNOWN',
+            scan_id=current_scan_id)
         local_counts = {LOCAL_VERIFIED: 0, LOCAL_MISSING: 0,
                         LOCAL_CHANGED: 0, LOCAL_NOT_APPLICABLE: 0}
         for row in scoped_media_rows:
@@ -5677,6 +5713,8 @@ class NotesRecords:
             blockers.append('SCAN_' + scan_coverage)
         if open_restart_progress is not None:
             blockers.append('RESTART_BATCH_OPEN')
+            if open_restart_progress['scope_unresolved_attempts']:
+                blockers.append('RESTART_SCOPE_ATTEMPT_UNRESOLVED')
         if self._pending_publish_plans():
             blockers.append('PENDING_NAMING')
         if any(row['local_files'] == LOCAL_CHANGED
@@ -5747,6 +5785,8 @@ class NotesRecords:
                     posts=post_rows,
                     media=media_rows,
                     status_counts=counts,
+                    status_counts_scope=status_counts_scope,
+                    all_known_media_status_counts=all_known_counts,
                     local_counts=local_counts,
                     current_incomplete=current_incomplete,
                     unresolved_attempts=self._unresolved_attempts(),
@@ -6508,6 +6548,8 @@ class NotesRecords:
         restart_id = confirmation['data']['restart_id']
         need(restart_id not in restart['activations'],
              'RESTART_ALREADY_ACTIVATED')
+        need(not self._restart_scope_unresolved_attempts(confirmation),
+             'RESTART_SCOPE_ATTEMPT_UNRESOLVED')
         self._validate_restart_scope_current(confirmation)
         need(not self._pending_publish_plans(),
              'PENDING_NAMING_TRANSACTION')

@@ -374,6 +374,13 @@ class NotesRestartTests(unittest.TestCase):
         return {path.name: path.read_bytes()
                 for path in (records.records / 'events').iterdir()}
 
+    def directory_tree(self, records=None):
+        records = records or self.records
+        root = records.current_list_directory
+        return sorted(
+            (str(path.relative_to(root)), path.is_dir())
+            for path in root.rglob('*'))
+
     def read_events(self, records):
         return [json.loads(path.read_text(encoding='utf-8'))
                 for path in sorted((records.records / 'events').iterdir())]
@@ -489,80 +496,177 @@ class NotesRestartTests(unittest.TestCase):
                     events_after_first_activation=events_after_first_activation,
                     preview=preview, second_attempt=second_attempt)
 
-    def test_restart_unknown_and_no_outcome_attempts_can_be_superseded(self):
-        photo = notes.media_identity(
-            kind=PHOTO, visual_key='restart-c07-photo')
-        post_identity = notes.post_identity(visual_key='restart-c07-post')
-        observed = self.scan_posts(
-            self.records,
-            [dict(name='post', identity=post_identity, date='2026-11-03',
-                  media=[photo])])
-        post_key_value, _ = observed['post']
-        key = self.media_key(post_key_value, photo)
+    def test_restart_post_confirmation_unresolved_attempts_block_new_intents(self):
+        context = self.one_media_restart_context('restart-c07')
+        key = context['key']
+        preview = context['preview']
 
-        old = self.records.intent(
-            session_id=self.session, media_key_value=key)
-        old_raw = Path(old['destination']) / 'old.png'
-        old_raw.write_bytes(png((10, 20, 30)))
+        attempt = self.records.intent(
+            session_id=self.session, media_key_value=key,
+            restart_id=preview['restart_id'])
+        source = Path(attempt['destination']) / 'replacement.png'
+        source.write_bytes(png((40, 50, 60)))
+
+        summary = self.records.summary()
+        self.assertEqual(summary['status_counts_scope'], {
+            'kind': 'CURRENT_SCAN', 'scan_id': attempt['scan_id']})
+        self.assertEqual(
+            sum(summary['all_known_media_status_counts'].values()), 1)
+        progress = summary['open_restart']
+        progress_row = next(
+            row for row in progress['media'] if row['media_key'] == key)
+        self.assertEqual(progress_row['action'], 'OUTCOME_REQUIRED')
+        self.assertEqual(
+            [row['attempt_id'] for row in
+             progress['scope_unresolved_attempts']],
+            [attempt['attempt_id']])
+        self.assertFalse(
+            progress['scope_unresolved_attempts'][0]['has_outcome'])
+        self.assertIsNone(progress['scope_unresolved_attempts'][0]['result'])
+        self.assertIn(
+            'RESTART_SCOPE_ATTEMPT_UNRESOLVED', summary['dispatch_blockers'])
+
+        before_events = self.event_files()
+        before_tree = self.directory_tree()
+        with self.assertRaisesRegex(
+                NotesError, 'RESTART_SCOPE_ATTEMPT_UNRESOLVED'):
+            self.records.intent(
+                session_id=self.session, media_key_value=key,
+                restart_id=preview['restart_id'])
+        self.assertEqual(self.event_files(), before_events)
+        self.assertEqual(self.directory_tree(), before_tree)
+
         self.records.outcome(
-            session_id=self.session, attempt_id=old['attempt_id'],
+            session_id=self.session, attempt_id=attempt['attempt_id'],
             outcome='UNKNOWN',
-            evidence=self.attempt_evidence(self.records, old))
-        old_bytes = self.event_files()
+            evidence=self.attempt_evidence(self.records, attempt))
+        summary = self.records.summary()
+        progress = summary['open_restart']
+        progress_row = next(
+            row for row in progress['media'] if row['media_key'] == key)
+        self.assertEqual(progress_row['action'], 'RECONCILE_REQUIRED')
+        self.assertTrue(
+            progress['scope_unresolved_attempts'][0]['has_outcome'])
+        self.assertEqual(
+            progress['scope_unresolved_attempts'][0]['result'], 'UNKNOWN')
 
-        preview = self.records.restart_preview()
-        self.assertEqual(preview['status'], 'RESTART_REQUIRED')
-        self.confirm_restart(self.records, preview)
-        self.scan_after_confirm(
-            self.records,
-            [dict(name='post', identity=post_identity, date='2026-11-03',
-                  media=[photo])])
+        before_events = self.event_files()
+        before_tree = self.directory_tree()
+        with self.assertRaisesRegex(
+                NotesError, 'RESTART_SCOPE_ATTEMPT_UNRESOLVED'):
+            self.records.intent(
+                session_id=self.session, media_key_value=key,
+                restart_id=preview['restart_id'])
+        self.assertEqual(self.event_files(), before_events)
+        self.assertEqual(self.directory_tree(), before_tree)
 
+        self.records.reconcile(
+            session_id=self.session, attempt_id=attempt['attempt_id'],
+            result='DOWNLOAD_FINISHED',
+            evidence=self.attempt_evidence(self.records, attempt))
+        checked = self.records.download_check(
+            session_id=self.session, attempt_id=attempt['attempt_id'],
+            stability_interval=0)
+        self.assertEqual(checked['status'], 'CANDIDATE_VERIFIED')
+        self.assertEqual(
+            self.records.summary()['open_restart']
+            ['scope_unresolved_attempts'], [])
+
+    def test_restart_scope_unresolved_blocks_cross_media_with_old_completion(self):
+        context = self.two_video_restart_context('restart-old-completion')
+        first_key, second_key = context['keys']
+        preview = context['preview']
+        self.assertEqual(
+            context['completed_completion']['data']['media_key'], first_key)
+
+        attempt = self.records.intent(
+            session_id=self.session, media_key_value=first_key,
+            restart_id=preview['restart_id'])
+        summary = self.records.summary()
+        self.assertEqual(
+            [row['attempt_id'] for row in
+             summary['open_restart']['scope_unresolved_attempts']],
+            [attempt['attempt_id']])
+
+        before_events = self.event_files()
+        before_tree = self.directory_tree()
+        with self.assertRaisesRegex(
+                NotesError, 'RESTART_SCOPE_ATTEMPT_UNRESOLVED'):
+            self.records.intent(
+                session_id=self.session, media_key_value=second_key,
+                restart_id=preview['restart_id'])
+        self.assertEqual(self.event_files(), before_events)
+        self.assertEqual(self.directory_tree(), before_tree)
+
+        self.records.outcome(
+            session_id=self.session, attempt_id=attempt['attempt_id'],
+            outcome='UNKNOWN',
+            evidence=self.attempt_evidence(self.records, attempt))
+        summary = self.records.summary()
+        progress_row = next(
+            row for row in summary['open_restart']['media']
+            if row['media_key'] == first_key)
+        self.assertEqual(progress_row['action'], 'RECONCILE_REQUIRED')
+
+        before_events = self.event_files()
+        before_tree = self.directory_tree()
+        with self.assertRaisesRegex(
+                NotesError, 'RESTART_SCOPE_ATTEMPT_UNRESOLVED'):
+            self.records.intent(
+                session_id=self.session, media_key_value=second_key,
+                restart_id=preview['restart_id'])
+        self.assertEqual(self.event_files(), before_events)
+        self.assertEqual(self.directory_tree(), before_tree)
+
+    def test_legacy_superseded_unknown_replays_and_blocks_activation(self):
+        context = self.one_media_restart_context('restart-legacy-superseded')
+        key = context['key']
+        preview = context['preview']
         first = self.records.intent(
             session_id=self.session, media_key_value=key,
             restart_id=preview['restart_id'])
-        first_raw = Path(first['destination']) / 'first.png'
-        first_raw.write_bytes(png((40, 50, 60)))
-        first_intent_sequence = max(
-            event['sequence'] for event in self.records.events
-            if event['kind'] == 'intent' and
-            event['data']['attempt_id'] == first['attempt_id'])
-
-        second = self.records.intent(
-            session_id=self.session, media_key_value=key,
-            restart_id=preview['restart_id'])
-        self.assertNotEqual(first['attempt_id'], second['attempt_id'])
-        self.assertEqual(second['prior_attempt']['sequence'],
-                         first_intent_sequence)
-        self.assertEqual(
-            self.records.events[first['prior_attempt']['sequence'] - 1][
-                'data']['attempt_id'], old['attempt_id'])
-        self.assertEqual(first_raw.read_bytes(), png((40, 50, 60)))
-        self.assertEqual(old_raw.read_bytes(), png((10, 20, 30)))
-        for name, raw in old_bytes.items():
-            self.assertEqual(self.event_files()[name], raw)
-
+        (Path(first['destination']) / 'first.png').write_bytes(
+            png((70, 80, 90)))
         self.records.outcome(
-            session_id=self.session, attempt_id=second['attempt_id'],
+            session_id=self.session, attempt_id=first['attempt_id'],
             outcome='UNKNOWN',
-            evidence=self.attempt_evidence(self.records, second))
-        second_intent_sequence = max(
-            event['sequence'] for event in self.records.events
-            if event['kind'] == 'intent' and
-            event['data']['attempt_id'] == second['attempt_id'])
-        third = self.records.intent(
-            session_id=self.session, media_key_value=key,
-            restart_id=preview['restart_id'])
-        self.assertNotEqual(second['attempt_id'], third['attempt_id'])
-        self.assertEqual(third['prior_attempt']['sequence'],
-                         second_intent_sequence)
-        self.assertEqual(first_raw.read_bytes(), png((40, 50, 60)))
-        self.assertEqual(old_raw.read_bytes(), png((10, 20, 30)))
-        self.assertFalse(any(
-            event['kind'] == 'reconcile' and
-            event['data'].get('attempt_id') in (first['attempt_id'],
-                                                second['attempt_id'])
-            for event in self.records.events))
+            evidence=self.attempt_evidence(self.records, first))
+
+        with mock.patch.object(
+                self.records, '_restart_scope_unresolved_attempts',
+                return_value=[]):
+            legacy = self.records.intent(
+                session_id=self.session, media_key_value=key,
+                restart_id=preview['restart_id'])
+
+        reopened = self.reopen(self.records)
+        progress = reopened.summary()['open_restart']
+        self.assertEqual(
+            [row['attempt_id'] for row in progress['scope_unresolved_attempts']],
+            [first['attempt_id'], legacy['attempt_id']])
+        progress_row = next(
+            row for row in progress['media'] if row['media_key'] == key)
+        self.assertEqual(progress_row['action'], 'OUTCOME_REQUIRED')
+
+        (Path(legacy['destination']) / 'legacy.png').write_bytes(
+            png((91, 92, 93)))
+        reopened.outcome(
+            session_id=self.session, attempt_id=legacy['attempt_id'],
+            outcome='DOWNLOAD_FINISHED',
+            evidence=self.attempt_evidence(reopened, legacy))
+        checked = reopened.download_check(
+            session_id=self.session, attempt_id=legacy['attempt_id'],
+            stability_interval=0)
+        self.assertEqual(checked['status'], 'CANDIDATE_VERIFIED')
+        progress = reopened.summary()['open_restart']
+        self.assertEqual(
+            [row['attempt_id'] for row in progress['scope_unresolved_attempts']],
+            [first['attempt_id']])
+        with self.assertRaisesRegex(
+                NotesError, 'RESTART_SCOPE_ATTEMPT_UNRESOLVED'):
+            reopened.restart_resume(
+                session_id=self.session, download_only=True,
+                stability_interval=0)
 
     def test_restart_replay_rejects_v3_prior_attempt_drift(self):
         context = self.one_media_restart_context('restart-si-n01')
@@ -1040,7 +1144,7 @@ class NotesRestartTests(unittest.TestCase):
             row for row in progress['media']
             if row['media_key'] == context['key'])
         self.assertEqual(progress_row['attempt_id'], attempt['attempt_id'])
-        self.assertEqual(progress_row['action'], 'RECONCILE_OR_NEW_INTENT')
+        self.assertEqual(progress_row['action'], 'OUTCOME_REQUIRED')
         (Path(attempt['destination']) / 'reply-loss.png').write_bytes(
             png((71, 72, 73)))
 

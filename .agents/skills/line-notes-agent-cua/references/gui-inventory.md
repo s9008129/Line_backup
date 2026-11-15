@@ -97,6 +97,7 @@
 - 核對 viewer 屬於同一貼文及目標媒體，並找到可唯一歸屬的下載控制；不要把「目標身分」擴張成內容或來源種類驗證。
 - 載入 spinner、黑底、空白縮圖、disabled slider、`00:00` 或影片式控制均不要求追加種類取證。目標與下載控制可核對時可按既定流程下載；來源種類不明的新項使用 `UNCLASSIFIED`。
 - 只允許移入游標或明確工具列控制來顯示下載按鈕。禁止點內容區切換播放控制、按播放／暫停、拖時間軸、切倍速或為判斷種類反覆切 viewer。
+- 下載控制若以座標點擊，必須使用 [單次 CUA 輸入保存 helper](evidence-template.md#單次-cua-輸入保存-helper) 的 `persistGroundedDownloadClick`。Agent 仍自行判讀控制區域、控制歸屬、候選點、座標映射與下一步；helper 只驗證並保存 request，再以持久讀回的 target 呼叫 `app.click([x, y])`，不負責找控制、不提供 native hit-test／receipt。普通導覽、返回與 chooser 不經此 helper；helper 不可用、欄位缺失或讀回不符時停在輸入前，不得改用任意 invoke、手動 app.click 或舊點擊入口。
 - 目標或下載控制仍無法可靠定位時，記具體阻塞，不猜點、不重新下載。
 
 若貼文只有文字而沒有任何照片／影片，標記貼文層 `NO_MEDIA`，不做下載 attempt，也不計入六類媒體完成。若看不到完整媒體、viewer 總數與貼文數量矛盾、更多指示無法展開或返回後網格變動，保留該篇待確認；只有列表級覆蓋仍成立時，保護該篇並可繼續其他已核對篇。
@@ -104,9 +105,10 @@
 ### restart 確認後的來源重核
 
 - `restart confirm` 後不得沿用確認前的 page rows、cursor、舊 scan 或舊 viewer 當作新 attempt 的來源證據。必須從頂端到底端重新觀察同一個已確認列表，完成新的完整 recovery scan，才可逐項建立 restart intent。
+- 精確 `restart confirm` 前的既有 `UNKNOWN`，可在 confirm 後由 scope 的第一個新 v3 attempt 首次替代；confirm 後同批次任何新增 v3 attempt 尚無 outcome 或結果 `UNKNOWN`（含後來被 supersede 的舊版）時，停止新 intent 與 activation，先依既有命令查原 attempt；若現行 latest-only `reconcile` 無法處理已被 supersede 的舊版，保留證據、回報具體資料阻塞，不反覆呼叫或擴寫更正入口。`STOPPED`／`NOT_SENT` 依既有授權恢復；`DOWNLOAD_FINISHED` 用原 attempt 基本檢查，不能被這項 scope gate 誤擋。
 - 新 attempt 仍要當次列表→貼文→viewer→下載控制→chooser→精確 raw 目的地的連續證據；使用新的空白 staging、當次 viewer／chooser 與重新取得的定位。舊 handle、舊路徑、舊座標或舊 chooser 都不得重用。
 - 取消或關閉舊 chooser 只代表該次取消輸入；不證明先前的下載、寫入或晚到輸入已停止。舊 raw／舊版本可能仍有晚到 bytes，保留在原區並記錄，不合併到新 candidate，也不據此改寫新版本。
-- 再次中斷後從 `OPEN_BATCH` 找回同一批次時，已驗證 candidate 與歷史仍保留；只對未完成或結果不確定的項目建立新 attempt。scope、來源身分、目的地或版本策略改變時，停止並重新預覽、取得新的 Owner 明示同意。
+- 再次中斷後從 `OPEN_BATCH` 找回同一批次時，已驗證 candidate 與歷史仍保留；只對未完成或結果不確定的項目，依上述 scope gate 處理。scope、來源身分、目的地或版本策略改變時，停止並重新預覽、取得新的 Owner 明示同意。
 
 ## 導覽與輸入紀律
 

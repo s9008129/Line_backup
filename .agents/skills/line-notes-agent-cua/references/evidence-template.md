@@ -413,11 +413,90 @@ const evidenceTools = await (async () => {
     }
   }
 
+  function snapshotJsonValue(value) {
+    try {
+      const gap = jsonSerializationGap(value);
+      if (gap) {
+        return { ok: false, code: 'JSON_COMPLETENESS_REQUIRED', detail: gap };
+      }
+      const text = JSON.stringify(value);
+      if (typeof text !== 'string') {
+        return { ok: false, code: 'JSON_SERIALIZATION_FAILED' };
+      }
+      return { ok: true, value: JSON.parse(text) };
+    } catch (error) {
+      return {
+        ok: false,
+        code: 'JSON_SERIALIZATION_FAILED',
+        error: inputErrorSnapshot(error),
+      };
+    }
+  }
+
+  const groundedDispatchToken = Object.freeze({});
+
+  function syncGroundedDispatch(output, dispatchContext) {
+    if (!dispatchContext || dispatchContext.token !== groundedDispatchToken) {
+      return;
+    }
+    if (dispatchContext.dispatch) {
+      output.dispatch_call_target = dispatchContext.dispatch.call_target;
+      output.native_return_type = dispatchContext.dispatch.return_type;
+    }
+    output.native_dispatched_target = 'UNKNOWN';
+    output.receipt_target_match = 'UNKNOWN';
+    output.receipt_is_os_event_trace = false;
+    if (dispatchContext.sourceObservationReadback) {
+      output.source_observation_readback =
+        dispatchContext.sourceObservationReadback;
+    }
+    if (dispatchContext.mappingEvidenceReadback) {
+      output.mapping_evidence_readback =
+        dispatchContext.mappingEvidenceReadback;
+    }
+  }
+
   async function persistSingleInput(options) {
+    if (!options || typeof options !== 'object') {
+      return {
+        schema: 'line-notes-single-input/v1',
+        operation_id: 'UNKNOWN',
+        status: 'INVALID_HELPER_ARGUMENTS',
+        blockers: ['OPTIONS_REQUIRED'],
+        request: { status: 'NOT_RUN' },
+        raw_return: { status: 'NOT_RUN', complete: false },
+        diagnostic: { status: 'NOT_RUN', complete: false },
+        files: {},
+        receipt_is_os_event_trace: false,
+      };
+    }
+    if (options.request &&
+        (options.request.input_phase === 'DOWNLOAD_CONTROL' ||
+         options.request.phase === 'DOWNLOAD_CONTROL')) {
+      return {
+        schema: 'line-notes-single-input/v1',
+        operation_id: options.operationId || 'UNKNOWN',
+        status: 'DOWNLOAD_CONTROL_REQUIRES_GROUNDED_HELPER',
+        blockers: ['DOWNLOAD_CONTROL_REQUIRES_GROUNDED_HELPER'],
+        request: { status: 'NOT_RUN' },
+        raw_return: { status: 'NOT_RUN', complete: false },
+        diagnostic: { status: 'NOT_RUN', complete: false },
+        files: {},
+        receipt_is_os_event_trace: false,
+      };
+    }
+    return persistSingleInputInternal(options);
+  }
+
+  async function persistSingleInputInternal(options, dispatchContext = null) {
+    const grounded = Boolean(dispatchContext &&
+      dispatchContext.token === groundedDispatchToken);
     const validId = typeof options.operationId === 'string' &&
       /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(options.operationId);
     const output = {
-      schema: 'line-notes-single-input/v1',
+      schema: grounded
+        ? 'line-notes-grounded-download-click/v1'
+        : 'line-notes-single-input/v1',
       operation_id: options.operationId || 'UNKNOWN',
       status: 'NOT_INVOKED',
       request: { status: 'NOT_RUN' },
@@ -426,6 +505,14 @@ const evidenceTools = await (async () => {
       files: {},
       receipt_is_os_event_trace: false,
     };
+    if (grounded) {
+      output.source_observation_readback = { status: 'NOT_RUN' };
+      output.dispatch_call_target = 'NOT_SENT';
+      output.native_dispatched_target = 'UNKNOWN';
+      output.receipt_target_match = 'UNKNOWN';
+      output.native_return_type = 'NOT_APPLICABLE';
+    }
+    syncGroundedDispatch(output, dispatchContext);
     if (!validId || typeof options.invoke !== 'function') {
       output.status = 'INVALID_HELPER_ARGUMENTS';
       output.blockers = [!validId ? 'INVALID_OPERATION_ID' : 'INVOKE_FUNCTION_REQUIRED'];
@@ -461,7 +548,7 @@ const evidenceTools = await (async () => {
       output.status = 'REQUEST_SERIALIZATION_FAILED';
       output.request = { status: 'SERIALIZATION_FAILED', error: inputErrorSnapshot(error) };
       output.blockers = ['REQUEST_SERIALIZATION_FAILED'];
-      await persistInputDiagnostic(output, options);
+      await persistInputDiagnostic(output, options, dispatchContext);
       return output;
     }
 
@@ -478,7 +565,7 @@ const evidenceTools = await (async () => {
     if (requestWrite.status !== 'WRITTEN') {
       output.status = 'REQUEST_PERSIST_FAILED';
       output.blockers = ['REQUEST_PERSIST_FAILED'];
-      await persistInputDiagnostic(output, options);
+      await persistInputDiagnostic(output, options, dispatchContext);
       return output;
     }
 
@@ -491,7 +578,7 @@ const evidenceTools = await (async () => {
     if (requestReadback.status !== 'MATCH') {
       output.status = 'REQUEST_READBACK_FAILED';
       output.blockers = ['REQUEST_READBACK_FAILED'];
-      await persistInputDiagnostic(output, options);
+      await persistInputDiagnostic(output, options, dispatchContext);
       return output;
     }
 
@@ -499,9 +586,19 @@ const evidenceTools = await (async () => {
     let rawEnvelope;
     output.status = 'INVOKED';
     try {
-      returned = await options.invoke(options.request);
+      // Invoke from the bytes that were written and read back. Never pass the
+      // caller's mutable object across the persistence boundary.
+      const savedEnvelope = JSON.parse(requestBytes.toString('utf8'));
+      returned = await options.invoke(savedEnvelope.request);
       output.raw_return.kind = 'RETURN';
-      rawEnvelope = { kind: 'RETURN', value: returned };
+      if (returned === undefined && grounded) {
+        output.raw_return.kind = 'NATIVE_RETURN_UNDEFINED';
+        output.raw_return.value_type = 'undefined';
+        rawEnvelope = { kind: 'NATIVE_RETURN_UNDEFINED', value_type: 'undefined' };
+      } else {
+        output.raw_return.value_type = 'VALUE';
+        rawEnvelope = { kind: 'RETURN', value: returned };
+      }
     } catch (error) {
       const snapshot = inputErrorSnapshot(error);
       output.raw_return.kind = 'ERROR';
@@ -523,7 +620,7 @@ const evidenceTools = await (async () => {
       output.raw_return.gap = '原始回傳含循環或不可 JSON 序列化欄位；未保存為完整 raw。';
       output.raw_return.serialization_error = inputErrorSummary(inputErrorSnapshot(error));
       output.blockers = ['RAW_SERIALIZATION_FAILED'];
-      await persistInputDiagnostic(output, options);
+      await persistInputDiagnostic(output, options, dispatchContext);
       return output;
     }
 
@@ -553,12 +650,304 @@ const evidenceTools = await (async () => {
       output.raw_return.complete = false;
     }
     if (!output.raw_return.complete) output.blockers = ['RAW_RETURN_INCOMPLETE'];
-    await persistInputDiagnostic(output, options);
+    await persistInputDiagnostic(output, options, dispatchContext);
     return output;
   }
 
-  async function persistInputDiagnostic(output, options) {
+  function groundedDownloadOutput(operationId) {
+    return {
+      schema: 'line-notes-grounded-download-click/v1',
+      operation_id: typeof operationId === 'string' && operationId
+        ? operationId : 'UNKNOWN',
+      status: 'NOT_INVOKED',
+      blockers: [],
+      request: { status: 'NOT_RUN' },
+      raw_return: { status: 'NOT_RUN', complete: false },
+      diagnostic: { status: 'NOT_RUN', complete: false },
+      files: {},
+      source_observation_readback: { status: 'NOT_RUN' },
+      mapping_evidence_readback: { status: 'NOT_RUN' },
+      dispatch_call_target: 'NOT_SENT',
+      native_dispatched_target: 'UNKNOWN',
+      receipt_target_match: 'UNKNOWN',
+      receipt_is_os_event_trace: false,
+      native_return_type: 'NOT_APPLICABLE',
+    };
+  }
+
+  function isPlainObject(value) {
+    if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+      return false;
+    }
+    try {
+      const prototype = Object.getPrototypeOf(value);
+      return prototype === Object.prototype || prototype === null;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function isKnownString(value) {
+    return typeof value === 'string' && value.length > 0 && value !== 'UNKNOWN';
+  }
+
+  function isKnownIdentifier(value) {
+    return isKnownString(value) ||
+      (Number.isSafeInteger(value) && value >= 0);
+  }
+
+  function isFileRef(value) {
+    return isPlainObject(value) && isKnownString(value.path) &&
+      Number.isSafeInteger(value.bytes) && value.bytes > 0 &&
+      typeof value.sha256 === 'string' && /^[0-9a-f]{64}$/.test(value.sha256);
+  }
+
+  function sameFileRef(left, right) {
+    return isFileRef(left) && isFileRef(right) &&
+      left.path === right.path && left.bytes === right.bytes &&
+      left.sha256 === right.sha256;
+  }
+
+  function groundedRequestBlockers(request) {
+    const blockers = [];
+    const add = code => { if (!blockers.includes(code)) blockers.push(code); };
+    if (!isPlainObject(request)) return ['DOWNLOAD_CONTROL_REQUEST_INVALID'];
+    const point = request.candidate_point;
+    const target = request.prepared_target;
+    const region = request.control_region;
+    const finitePoint = value => Array.isArray(value) && value.length === 2 &&
+      value.every(Number.isFinite);
+    const validRegion = Array.isArray(region) && region.length === 4 &&
+      region.every(Number.isFinite) && region[2] > region[0] &&
+      region[3] > region[1];
+    const source = request.source_observation;
+    const window = request.app_window_binding;
+    if (request.input_phase !== 'DOWNLOAD_CONTROL') {
+      add('DOWNLOAD_CONTROL_PHASE_REQUIRED');
+    }
+    if (!isKnownString(request.attempt_id)) add('ATTEMPT_ID_REQUIRED');
+    if (!isPlainObject(window) ||
+        window.app_bundle_id !== 'jp.naver.line.mac' ||
+        !isKnownIdentifier(window.window_id)) {
+      add('APP_WINDOW_CONTEXT_REQUIRED');
+    }
+    if (request.mapping_status !== 'MATCH') add('DOWNLOAD_CONTROL_MAPPING_UNKNOWN');
+    if (request.observation_order !== 'PRE_INPUT') {
+      add('DOWNLOAD_CONTROL_OBSERVATION_ORDER_UNKNOWN');
+    }
+    if (request.grounding_conclusion !== 'PASS_TO_INPUT') {
+      add('DOWNLOAD_CONTROL_GROUNDING_NOT_PASS');
+    }
+    if (request.candidate_point_relation !== 'INSIDE') {
+      add('DOWNLOAD_CONTROL_POINT_RELATION_INVALID');
+    }
+    if (request.coordinate_space_match !== 'MATCH') {
+      add('DOWNLOAD_CONTROL_COORDINATE_SPACE_UNKNOWN');
+    }
+    if (!isKnownString(request.control_region_coord_space) ||
+        !isKnownString(request.target_coord_space) ||
+        request.control_region_coord_space !== request.target_coord_space) {
+      add('DOWNLOAD_CONTROL_TARGET_COORD_SPACE_INVALID');
+    }
+    if (!isFileRef(source) ||
+        !sameFileRef(source, request.source_observation_ref)) {
+      add('DOWNLOAD_CONTROL_SOURCE_REF_MISMATCH');
+    }
+    if (!isFileRef(request.mapping_evidence_ref)) {
+      add('DOWNLOAD_CONTROL_MAPPING_REF_INVALID');
+    }
+    if (!validRegion || !finitePoint(point) || !finitePoint(target)) {
+      add('DOWNLOAD_CONTROL_GEOMETRY_MISSING_OR_NONFINITE');
+    } else {
+      if (!(point[0] > region[0] && point[0] < region[2] &&
+            point[1] > region[1] && point[1] < region[3])) {
+        add('DOWNLOAD_CONTROL_POINT_NOT_STRICT_INTERIOR');
+      }
+      if (point[0] !== target[0] || point[1] !== target[1]) {
+        add('DOWNLOAD_CONTROL_PREPARED_TARGET_MISMATCH');
+      }
+    }
+    return blockers;
+  }
+
+  async function privateFileReadback(fileRef, taskDir, copied, role) {
+    const result = { status: 'NOT_RUN', role };
+    const prefix = role === 'MAPPING_EVIDENCE'
+      ? 'MAPPING_EVIDENCE' : 'SOURCE_OBSERVATION';
+    if (!isFileRef(fileRef)) {
+      result.status = 'FAILED';
+      result.blocker = prefix + '_REF_REQUIRED';
+      return result;
+    }
+    if (copied) {
+      if (!copied.ok) {
+        result.status = 'FAILED';
+        result.blocker = 'SOURCE_OBSERVATION_BYTES_REQUIRED';
+        return result;
+      }
+      result.expected_bytes = copied.bytes.length;
+      result.expected_sha256 = sha256(copied.bytes);
+      if (fileRef.bytes !== result.expected_bytes ||
+          fileRef.sha256 !== result.expected_sha256) {
+        result.status = 'MISMATCH';
+        result.blocker = prefix + '_REF_BYTES_MISMATCH';
+        return result;
+      }
+    } else {
+      result.expected_bytes = fileRef.bytes;
+      result.expected_sha256 = fileRef.sha256;
+    }
+    result.path = fileRef.path;
+    try {
+      if (!path.isAbsolute(fileRef.path)) throw new Error('ABSOLUTE_PATH_REQUIRED');
+      const taskReal = await fs.realpath(taskDir);
+      const real = await fs.realpath(fileRef.path);
+      if (path.resolve(fileRef.path) !== real) {
+        throw new Error('CANONICAL_SOURCE_REQUIRED');
+      }
+      if (real !== taskReal && !real.startsWith(taskReal + path.sep)) {
+        throw new Error('SOURCE_OUTSIDE_TASK');
+      }
+      const info = await fs.lstat(real);
+      if (!info.isFile() || info.isSymbolicLink() || info.nlink !== 1) {
+        throw new Error('REGULAR_SINGLE_LINK_SOURCE_REQUIRED');
+      }
+      const saved = await fs.readFile(real);
+      result.saved_bytes = saved.length;
+      result.saved_sha256 = sha256(saved);
+      result.status = saved.length === result.expected_bytes &&
+        result.saved_sha256 === result.expected_sha256 ? 'MATCH' : 'MISMATCH';
+      if (result.status !== 'MATCH') {
+        result.blocker = prefix + '_READBACK_MISMATCH';
+      }
+      return result;
+    } catch (error) {
+      result.status = 'FAILED';
+      result.blocker = prefix + '_READBACK_FAILED';
+      result.error = describeError(error);
+      return result;
+    }
+  }
+
+  async function persistGroundedDownloadClick(options) {
+    const output = groundedDownloadOutput(options && options.operationId);
+    const operationId = output.operation_id;
+    if (!options || typeof options !== 'object') {
+      output.status = 'INVALID_HELPER_ARGUMENTS';
+      output.blockers = ['OPTIONS_REQUIRED'];
+      return output;
+    }
+    if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(operationId)) {
+      output.status = 'INVALID_HELPER_ARGUMENTS';
+      output.blockers = ['INVALID_OPERATION_ID'];
+      return output;
+    }
+
+    // Snapshot the caller's request and source bytes before the first await.
+    // Later path and file reads must never observe mutations to these objects.
+    const requestSnapshot = snapshotJsonValue(options.request);
+    const sourceCopy = copyExactUint8Array(options.source_observation_bytes);
+    const app = options.app;
+    const click = app && typeof app.click === 'function'
+      ? app.click.bind(app) : null;
+    const requestBlockers = requestSnapshot.ok
+      ? groundedRequestBlockers(requestSnapshot.value) : [];
+    const paths = await validatePrivatePaths(options.taskDir, options.inputDir);
+    if (!paths.ok) {
+      output.status = 'PRIVATE_PATHS_INVALID';
+      output.blockers = [paths.error && paths.error.code || 'PRIVATE_PATHS_INVALID'];
+      return output;
+    }
+    output.files.diagnostic = path.join(
+      paths.observation_dir, operationId + '.input.diagnostic.json');
+    if (!requestSnapshot.ok) {
+      output.status = 'REQUEST_SERIALIZATION_FAILED';
+      output.request = {
+        status: 'SERIALIZATION_FAILED',
+        error: requestSnapshot.error || {
+          name: 'TypeError',
+          message: requestSnapshot.code + (requestSnapshot.detail
+            ? ':' + requestSnapshot.detail : ''),
+        },
+      };
+      output.blockers = ['REQUEST_SERIALIZATION_FAILED'];
+      await persistInputDiagnostic(output, {});
+      return output;
+    }
+    const request = requestSnapshot.value;
+    if (requestBlockers.length > 0) {
+      output.status = 'DOWNLOAD_CONTROL_GROUNDING_INVALID';
+      output.blockers = requestBlockers;
+      await persistInputDiagnostic(output, {});
+      return output;
+    }
+    if (!sourceCopy.ok) {
+      output.status = 'SOURCE_OBSERVATION_BYTES_REQUIRED';
+      output.blockers = ['SOURCE_OBSERVATION_BYTES_REQUIRED'];
+      await persistInputDiagnostic(output, {});
+      return output;
+    }
+    const sourceReadback = await privateFileReadback(
+      request.source_observation, paths.task_dir, sourceCopy,
+      'SOURCE_OBSERVATION');
+    output.source_observation_readback = sourceReadback;
+    if (sourceReadback.status !== 'MATCH') {
+      output.status = 'SOURCE_OBSERVATION_READBACK_FAILED';
+      output.blockers = [sourceReadback.blocker || 'SOURCE_OBSERVATION_READBACK_FAILED'];
+      await persistInputDiagnostic(output, {});
+      return output;
+    }
+    const mappingReadback = await privateFileReadback(
+      request.mapping_evidence_ref, paths.task_dir, null,
+      'MAPPING_EVIDENCE');
+    output.mapping_evidence_readback = mappingReadback;
+    if (mappingReadback.status !== 'MATCH') {
+      output.status = 'MAPPING_EVIDENCE_READBACK_FAILED';
+      output.blockers = [mappingReadback.blocker || 'MAPPING_EVIDENCE_READBACK_FAILED'];
+      await persistInputDiagnostic(output, {});
+      return output;
+    }
+    if (click === null) {
+      output.status = 'APP_CLICK_UNAVAILABLE';
+      output.blockers = ['APP_CLICK_UNAVAILABLE'];
+      await persistInputDiagnostic(output, {});
+      return output;
+    }
+
+    const dispatch = {
+      call_target: 'NOT_SENT',
+      return_type: 'NOT_APPLICABLE',
+    };
+    const result = await persistSingleInputInternal({
+      taskDir: paths.task_dir,
+      inputDir: paths.observation_dir,
+      operationId,
+      request,
+      invoke: async saved => {
+        const savedPoint = saved.prepared_target;
+        const target = [savedPoint[0], savedPoint[1]];
+        dispatch.call_target = target;
+        try {
+          const returned = await click(target);
+          dispatch.return_type = returned === undefined ? 'UNDEFINED' : 'VALUE';
+          return returned;
+        } catch (error) {
+          dispatch.return_type = 'ERROR';
+          throw error;
+        }
+      },
+    }, {
+      token: groundedDispatchToken,
+      dispatch,
+      sourceObservationReadback: sourceReadback,
+      mappingEvidenceReadback: mappingReadback,
+    });
+    return result;
+  }
+
+  async function persistInputDiagnostic(output, options, dispatchContext = null) {
     if (!output.files.diagnostic) return;
+    if (dispatchContext) syncGroundedDispatch(output, dispatchContext);
     const diagnostic = {
       schema: 'line-notes-single-input-diagnostic/v1',
       operation_id: output.operation_id,
@@ -568,6 +957,18 @@ const evidenceTools = await (async () => {
       blockers: output.blockers || [],
       receipt_is_os_event_trace: false,
     };
+    for (const key of [
+      'source_observation_readback',
+      'mapping_evidence_readback',
+      'dispatch_call_target',
+      'native_dispatched_target',
+      'receipt_target_match',
+      'native_return_type',
+    ]) {
+      if (Object.prototype.hasOwnProperty.call(output, key)) {
+        diagnostic[key] = output[key];
+      }
+    }
     let bytes;
     try {
       bytes = Buffer.from(JSON.stringify(diagnostic, null, 2) + '\n', 'utf8');
@@ -622,6 +1023,7 @@ const evidenceTools = await (async () => {
     copyExactUint8Array,
     describeError,
     persistObservation,
+    persistGroundedDownloadClick,
     persistSingleInput,
     readbackExact,
     sha256,
@@ -661,6 +1063,55 @@ nodeRepl.write(JSON.stringify(inputReceipt, null, 2));
 ```
 
 helper 先把 request 以 `wx` 寫入私有目錄，再以既有 hash／readback helper 逐 bytes 核對。只有讀回 `MATCH` 才呼叫一次 `invoke`。結果或錯誤另存 raw 檔；diagnostic 摘要是另一檔。三者都不覆寫。request 寫入／讀回失敗時不呼叫。
+
+`persistSingleInput` 是一般輸入 helper；若 request 的 `input_phase` 或 `phase` 是 `DOWNLOAD_CONTROL`，它會直接拒絕，要求改用下列下載控制 wrapper。wrapper 不尋找控制、不選 action、不導覽，也不接受外部 `invoke`／`readbackExact`；它只使用已保存 request 讀回後的 `prepared_target` 呼叫一次已傳入 app handle 的 `click`。
+
+下載控制 request 的最小合法形狀如下。以下路徑、bytes、hash、座標與 ID **全部是合成示意值，不是真實證據，也不得照抄**；每個值都必須由當次畫面觀察、實際私有檔讀回與 attempt context 產生。`source_observation_bytes` 必須是當次剛保存下來的原始 bytes；`source_observation` 與 `source_observation_ref` 必須是同一個 canonical 私有檔案 ref。`mapping_evidence_ref` 可以指向另一個 canonical 私有檔（例如當次 geometry／AX／statement 證據），helper 會讀回它的 bytes／SHA-256，不要求它與 screenshot 同檔。`window_id` 可為已知非 `UNKNOWN` 字串或非負整數。
+
+```js
+const sourceObservation = {
+  path: '/ABS/SYNTHETIC_TASK/source.bin',
+  bytes: 100,
+  sha256: '1111111111111111111111111111111111111111111111111111111111111111',
+};
+const mappingEvidence = {
+  path: '/ABS/SYNTHETIC_TASK/mapping-evidence.txt',
+  bytes: 50,
+  sha256: '2222222222222222222222222222222222222222222222222222222222222222',
+};
+const request = {
+  input_phase: 'DOWNLOAD_CONTROL',
+  attempt_id: 'SYNTHETIC_ATTEMPT_ID',
+  app_window_binding: {
+    app_bundle_id: 'jp.naver.line.mac',
+    window_id: 'SYNTHETIC_WINDOW_ID',
+  },
+  source_observation: sourceObservation,
+  source_observation_ref: sourceObservation,
+  mapping_evidence_ref: mappingEvidence,
+  mapping_status: 'MATCH',
+  observation_order: 'PRE_INPUT',
+  grounding_conclusion: 'PASS_TO_INPUT',
+  candidate_point_relation: 'INSIDE',
+  control_region: [10, 20, 50, 60],
+  control_region_coord_space: 'APP_BOUND_SCREENSHOT_POINTS',
+  target_coord_space: 'APP_BOUND_SCREENSHOT_POINTS',
+  coordinate_space_match: 'MATCH',
+  candidate_point: [30, 40],
+  prepared_target: [30, 40],
+};
+const receipt = await evidenceTools.persistGroundedDownloadClick({
+  taskDir: '/ABS/SYNTHETIC_TASK',
+  inputDir: '/ABS/SYNTHETIC_TASK/input',
+  operationId: 'SYNTHETIC_DOWNLOAD_CONTROL_ID',
+  request,
+  source_observation_bytes: sourceBytes,
+  app, // 真正 CUA app handle；不可傳 invoke 或 readbackExact。
+});
+nodeRepl.write(JSON.stringify(receipt, null, 2));
+```
+
+這個 wrapper 的 `dispatch_call_target` 是已保存 request 讀回後實際交給 `app.click` 的參數；`native_dispatched_target`、`receipt_target_match` 仍保持 `UNKNOWN`，且 `receipt_is_os_event_trace=false`。若 app 回傳原生 `undefined`，raw 只保存 typed `NATIVE_RETURN_UNDEFINED`，不是成功，也不是 `NOT_SENT`；若呼叫前 request／source／mapping 檢查失敗，則不得呼叫 click。
 
 錯誤 raw 保存完整 `message`、原型可讀的 `name`、原型可讀的 `code` 原型別，以及可忠實序列化的字串自有欄位（含 non-enumerable 欄位）。不使用 `instanceof Error` 判斷跨 realm 錯誤。若偵測到 Symbol 自有欄位，不把 Symbol key 或值轉成替代字串；保留其他可讀欄位與數值 `code`，並以 `field_gaps` 明列未捕獲數及標示 fields/raw 不完整。循環值、accessor、`undefined`、函式、Symbol、BigInt、非有限數字或非純資料物件若無法無損 JSON 保存，raw 標為不完整；diagnostic 只存可序列化的錯誤摘要與缺口。若 diagnostic 自己也無法落地，回傳明確 `complete=false`，不宣稱 raw 完整。
 
