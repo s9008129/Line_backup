@@ -11,3 +11,5 @@ Owner 指定高階診斷、Herdr Codex GPT-6-Luna／high 同角色協助，並�
 完整結論、嘗試歷史、精確命令／exit、hash、反證及停止條件見 [issue-analysis.md](issue-analysis.md)。原件留在私有 `.local/line-backup/tasks/notes-active-locator-review-20261115/`。本公開紀錄不包含帳本 ID、私人內容或原始畫面。
 
 狀態：`PRIMARY_OUTCOME_STATUS=ANALYSIS_COMPLETE`；`IMPLEMENTATION_STATUS=NOT_RUN`；`CORE_ACCEPTANCE_STATUS=NOT_RUN`；`REQUIRED_VERIFICATION_STATUS=PASS`（僅診斷與文件）；`INDEPENDENT_ACCEPTANCE_STATUS=NOT_RUN`；`TASK_CLOSURE_STATUS=BLOCKED`。不以診斷成功代替修復或日常備份完成。
+
+分析提交為 `c105002ad8cfde194e48d22dc9635fd9c521dd20`，commit body 四項已讀回核對，push 成功且遠端精確 HEAD 相符。Owner 隨後明示另開 GPT-6.1-sol／high Planner pane 並交付修復計畫任務；新增 [planner-start.md](planner-start.md) 作此次人工啟動的精確輸入與權限邊界。這次交辦只准規劃，不擴張到實作或真實資料。規劃輸出使用另一個專用目錄。
