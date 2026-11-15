@@ -50,6 +50,71 @@ class DownloadOnlyTests(unittest.TestCase):
             session_id=ledger.session, attempt_id=attempt['attempt_id'],
             stability_interval=0)
 
+    def prepare_basic_media(self, ledger, identity, post_key):
+        key = notes.media_key(ledger.summary['list_key'], post_key, identity)
+        attempt = ledger.records.intent(
+            session_id=ledger.session, media_key_value=key)
+        source = Path(attempt['destination']) / 'download.png'
+        source.write_bytes(media_fixtures.png())
+        ledger.records.outcome(
+            session_id=ledger.session, attempt_id=attempt['attempt_id'],
+            outcome='DOWNLOAD_FINISHED',
+            evidence=ledger.evidence_for_attempt(attempt))
+        return key, attempt
+
+    def complete_basic_media(self, ledger, identity, post_key):
+        key, attempt = self.prepare_basic_media(ledger, identity, post_key)
+        return key, attempt, self.check(ledger, attempt)
+
+    def pending_second_media(self, label):
+        """Build a synthetic completed sibling plus an interrupted BASIC plan."""
+        ledger = self.helper.new_ledger(label)
+        first_identity = notes.media_identity(
+            kind=notes.PHOTO, visual_key=label + '-first')
+        second_identity = notes.media_identity(
+            kind='UNCLASSIFIED', visual_key=label + '-second')
+        _, post_key = self.helper.observe_post(
+            ledger, label + '-post', [first_identity, second_identity])
+        first_key, _first_attempt, first_completion = \
+            self.complete_basic_media(
+                ledger, first_identity, post_key)
+
+        second_key = notes.media_key(
+            ledger.summary['list_key'], post_key, second_identity)
+        second_attempt = ledger.records.intent(
+            session_id=ledger.session, media_key_value=second_key)
+        source = Path(second_attempt['destination']) / 'second.png'
+        source.write_bytes(media_fixtures.png())
+        ledger.records.outcome(
+            session_id=ledger.session,
+            attempt_id=second_attempt['attempt_id'],
+            outcome='DOWNLOAD_FINISHED',
+            evidence=ledger.evidence_for_attempt(second_attempt))
+        with mock.patch.object(
+                notes.NotesRecords, '_execute_publish',
+                side_effect=OSError('synthetic publish interruption')):
+            with self.assertRaisesRegex(
+                    OSError, 'synthetic publish interruption'):
+                self.check(ledger, second_attempt)
+        plan = ledger.records._pending_publish_plans()[0]
+        target = Path(plan['data']['target_directory']) / plan['data']['target_name']
+        self.assertEqual(first_completion['kind'], 'completion')
+        self.assertEqual(first_completion['data']['media_key'], first_key)
+        return ledger, first_completion, second_attempt, source, target
+
+    @staticmethod
+    def local_file_identity(path):
+        info = Path(path).lstat()
+        raw = Path(path).read_bytes()
+        return (info.st_dev, info.st_ino, info.st_nlink, info.st_size,
+                info.st_mtime_ns, info.st_ctime_ns,
+                hashlib.sha256(raw).hexdigest())
+
+    def assert_first_completion_unchanged(self, completion, before):
+        target = Path(completion['data']['destination']) / \
+            completion['data']['target_file']['name']
+        self.assertEqual(self.local_file_identity(target), before)
+
     def recovery_scan(self, ledger, post_identity, attempt, *, detail):
         """Start a new session and complete a recovery card scan.
 
@@ -249,6 +314,190 @@ class DownloadOnlyTests(unittest.TestCase):
                      if row['media_key'] == attempt['media_key'])
         self.assertEqual(media['downloaded_kind'], notes.PHOTO)
         self.assertEqual(media['assurance'], 'DOWNLOAD_ONLY')
+
+    def test_download_check_publishes_second_unclassified_media_with_completed_sibling(self):
+        ledger = self.helper.new_ledger('completed-sibling-download-check')
+        first_identity = notes.media_identity(
+            kind=notes.PHOTO, visual_key='completed-sibling-first')
+        second_identity = notes.media_identity(
+            kind='UNCLASSIFIED', visual_key='completed-sibling-second')
+        _, post_key = self.helper.observe_post(
+            ledger, 'completed-sibling-post',
+            [first_identity, second_identity])
+        first_key, _first_attempt, first_completion = \
+            self.complete_basic_media(
+                ledger, first_identity, post_key)
+        first_target = Path(first_completion['data']['destination']) / \
+            first_completion['data']['target_file']['name']
+        first_before = self.local_file_identity(first_target)
+        second_key, second_attempt = self.prepare_basic_media(
+            ledger, second_identity, post_key)
+        before_counts = {
+            kind: sum(event['kind'] == kind for event in ledger.records.events)
+            for kind in ('intent', 'verification', 'publish-plan', 'completion')}
+        completion = self.check(ledger, second_attempt)
+
+        self.assert_download_completion(completion, notes.PHOTO)
+        self.assertEqual(completion['data']['media_key'], second_key)
+        self.assertEqual(completion['data']['post_key'], post_key)
+        self.assertEqual(second_attempt['identity']['kind'], 'UNCLASSIFIED')
+        after_counts = {
+            kind: sum(event['kind'] == kind for event in ledger.records.events)
+            for kind in before_counts}
+        self.assertEqual(after_counts, {
+            'intent': before_counts['intent'],
+            'verification': before_counts['verification'] + 1,
+            'publish-plan': before_counts['publish-plan'] + 1,
+            'completion': before_counts['completion'] + 1,
+        })
+        first_after = next(
+            event for event in ledger.records.events
+            if event['kind'] == 'completion' and
+            event['data']['media_key'] == first_key)
+        self.assertEqual(first_after, first_completion)
+        self.assert_first_completion_unchanged(first_completion, first_before)
+        self.assertEqual(self.local_file_identity(
+            Path(completion['data']['destination']) /
+            completion['data']['target_file']['name'])[2], 1)
+
+    def test_pending_publish_with_completed_sibling_resumes_all_link_states(self):
+        for state in ('plan-only', 'linked-two-paths', 'target-only'):
+            with self.subTest(state=state):
+                (ledger, first_completion, second_attempt, source,
+                 target) = self.pending_second_media('sibling-resume-' + state)
+                first_target = Path(first_completion['data']['destination']) / \
+                    first_completion['data']['target_file']['name']
+                first_before = self.local_file_identity(first_target)
+                if state != 'plan-only':
+                    os.link(source, target)
+                    self.assertEqual(source.stat().st_ino, target.stat().st_ino)
+                    self.assertEqual(source.stat().st_nlink, 2)
+                    if state == 'target-only':
+                        source.unlink()
+                        self.assertFalse(source.exists())
+                        self.assertEqual(target.stat().st_nlink, 1)
+
+                reopened = self.helper.reopen(ledger)
+                events_before_resume = self.helper.read_events(reopened)
+                before_counts = {
+                    kind: sum(event['kind'] == kind
+                              for event in events_before_resume)
+                    for kind in ('intent', 'verification', 'publish-plan',
+                                 'completion')}
+                first_event = next(
+                    event for event in events_before_resume
+                    if event['kind'] == 'completion' and
+                    event['data']['media_key'] == first_completion['data']['media_key'])
+
+                resumed = reopened.resume()
+
+                self.assertEqual(resumed['action'], 'PUBLISH_RESUMED')
+                self.assertEqual(resumed['completion']['attempt_id'],
+                                 second_attempt['attempt_id'])
+                after_counts = {
+                    kind: sum(event['kind'] == kind for event in reopened.events)
+                    for kind in before_counts}
+                self.assertEqual(after_counts, {
+                    'intent': before_counts['intent'],
+                    'verification': before_counts['verification'],
+                    'publish-plan': before_counts['publish-plan'],
+                    'completion': before_counts['completion'] + 1,
+                })
+                self.assertEqual(next(
+                    event for event in reopened.events
+                    if event['kind'] == 'completion' and
+                    event['data']['media_key'] == first_completion['data']['media_key']),
+                    first_event)
+                self.assert_first_completion_unchanged(
+                    first_completion, first_before)
+                self.assertEqual(target.stat().st_nlink, 1)
+                expected_sha = next(
+                    event['data']['source']['sha256']
+                    for event in reopened.events
+                    if event['kind'] == 'publish-plan' and
+                    event['data']['attempt_id'] == second_attempt['attempt_id'])
+                self.assertEqual(self.local_file_identity(target)[-1],
+                                 expected_sha)
+                summary = reopened.summary()
+                self.assertEqual(summary['local_counts']['VERIFIED_PRESENT'], 2)
+                self.assertEqual(reopened._pending_publish_plans(), [])
+                events_after_resume = self.helper.event_bytes(reopened)
+                repeated = reopened.resume()
+                self.assertEqual(repeated['action'], 'NO_NAMING_TRANSACTION')
+                self.assertEqual(self.helper.event_bytes(reopened),
+                                 events_after_resume)
+
+    def test_pending_publish_with_completed_sibling_still_rejects_invalid_targets(self):
+        for mutation in ('missing-completed', 'extra-file',
+                         'different-inode-same-bytes', 'symlink-target'):
+            with self.subTest(mutation=mutation):
+                (ledger, first_completion, second_attempt, source,
+                 target) = self.pending_second_media(
+                     'sibling-negative-' + mutation)
+                first_target = Path(first_completion['data']['destination']) / \
+                    first_completion['data']['target_file']['name']
+                first_before = self.local_file_identity(first_target)
+                if mutation == 'missing-completed':
+                    first_target.unlink()
+                elif mutation == 'extra-file':
+                    (first_target.parent / 'unexpected.bin').write_bytes(
+                        b'unexpected synthetic extra')
+                elif mutation == 'different-inode-same-bytes':
+                    target.write_bytes(source.read_bytes())
+                    self.assertNotEqual(source.stat().st_ino,
+                                        target.stat().st_ino)
+                    self.assertEqual(source.read_bytes(), target.read_bytes())
+                else:
+                    target.symlink_to(source)
+                    self.assertTrue(target.is_symlink())
+                target_before = self.local_file_identity(target) \
+                    if target.exists() else None
+                target_was_symlink = target.is_symlink()
+                target_link = os.readlink(target) if target_was_symlink else None
+                target_bytes = target.read_bytes() if target.exists() else None
+                source_before = self.local_file_identity(source)
+                reopened = self.helper.reopen(ledger)
+                events_before = self.helper.read_events(reopened)
+                event_bytes_before = self.helper.event_bytes(reopened)
+                before_counts = {
+                    kind: sum(event['kind'] == kind for event in events_before)
+                    for kind in ('intent', 'verification', 'publish-plan')}
+                with self.assertRaises(notes.NotesError):
+                    reopened.resume()
+                events_after = self.helper.read_events(reopened)
+                event_bytes_after = self.helper.event_bytes(reopened)
+                for name, raw in event_bytes_before.items():
+                    self.assertEqual(event_bytes_after[name], raw)
+                new_events = [event for event in events_after
+                              if event['sequence'] > len(events_before)]
+                self.assertTrue(all(
+                    event['kind'] == 'publish-progress' and
+                    event['data']['action'] == 'DIRECTORY_READY'
+                    for event in new_events))
+                self.assertEqual({
+                    kind: sum(event['kind'] == kind for event in events_after)
+                    for kind in before_counts}, before_counts)
+                self.assertEqual(sum(
+                    event['kind'] == 'completion' for event in events_after), 1)
+                self.assertFalse(any(
+                    event['kind'] == 'completion' and
+                    event['data']['media_key'] == second_attempt['media_key']
+                    for event in events_after))
+                if mutation not in ('missing-completed', 'extra-file'):
+                    self.assertEqual(self.local_file_identity(target),
+                                     target_before)
+                    self.assertEqual(target.is_symlink(), target_was_symlink)
+                    if target_was_symlink:
+                        self.assertEqual(os.readlink(target), target_link)
+                    self.assertEqual(target.read_bytes(), target_bytes)
+                else:
+                    self.assertTrue(source.is_file())
+                self.assertEqual(self.local_file_identity(source), source_before)
+                if mutation == 'missing-completed':
+                    self.assertFalse(first_target.exists())
+                if mutation != 'missing-completed':
+                    self.assert_first_completion_unchanged(
+                        first_completion, first_before)
 
     def test_empty_and_unknown_octet_stream_do_not_publish(self):
         for index, content in enumerate((b'', bytes(range(256)) * 4)):

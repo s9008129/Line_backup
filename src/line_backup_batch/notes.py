@@ -4446,21 +4446,23 @@ class NotesRecords:
                      directory == directory.resolve(strict=True),
                      'COMPLETED_DIRECTORY_CHANGED')
                 info = directory.stat()
-                expected_names = set()
+                required_names = set()
                 for event in entries:
                     target_directory = event['data']['target_directory']
                     need(info.st_dev == target_directory['device'] and
                          info.st_ino == target_directory['inode'],
                          'COMPLETED_DIRECTORY_CHANGED')
-                    expected_names.add(event['data']['target_file']['name'])
-                expected_names |= plan_names.get(directory_string, set())
-                expected_names |= active_names.get(directory_string, set())
+                    required_names.add(
+                        event['data']['target_file']['name'])
+                required_names |= active_names.get(directory_string, set())
+                allowed_names = required_names | plan_names.get(
+                    directory_string, set())
                 actual_names = {
                     child.name for child in directory.iterdir()
                     if not _is_environment_attachment(
                         child, directory=directory,
-                        reserved_names=expected_names)}
-                need(actual_names == expected_names,
+                        reserved_names=allowed_names)}
+                need(required_names <= actual_names <= allowed_names,
                      'COMPLETED_DIRECTORY_CONTENTS_CHANGED')
                 for event in entries:
                     data = event['data']
