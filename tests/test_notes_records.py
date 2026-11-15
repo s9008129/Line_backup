@@ -52,7 +52,31 @@ class NotesRecordsTests(unittest.TestCase):
         PRIVATE_TASKS.mkdir(parents=True, exist_ok=True)
         self.temporary = tempfile.TemporaryDirectory(
             prefix='notes-records-', dir=PRIVATE_TASKS)
-        self.base = Path(self.temporary.name).resolve()
+        self.addCleanup(self.temporary.cleanup)
+        self.outer = Path(self.temporary.name).resolve()
+        self.base = self.outer / 'fixture'
+        self.base.mkdir()
+        self.sentinel_path = self.outer / 'active-fallback.json'
+        self.sentinel_bytes = json.dumps(
+            dict(schema='line-notes-active-task/v1',
+                 records_root=str(self.base / 'fallback-records'),
+                 local_list_id='synthetic-fallback-list',
+                 session_id='synthetic-fallback-session',
+                 updated_at='synthetic-sentinel'),
+            sort_keys=True, separators=(',', ':')).encode('utf-8')
+        self.sentinel_path.write_bytes(self.sentinel_bytes)
+        self.addCleanup(self._assert_locator_cleanup_boundary)
+        self.addCleanup(self._cleanup_fixture)
+        self.active_path = self.base / 'active-notes-task.json'
+        self.active_path_patch = mock.patch.object(
+            notes, '_active_task_path', return_value=self.sentinel_path)
+        self.active_path_mock = self.active_path_patch.start()
+        self.addCleanup(self.active_path_patch.stop)
+        # The sentinel is the controlled fallback if fixture injection is
+        # omitted. All parent Notes operations below use the fixture locator.
+        self.active_path_mock.return_value = self.active_path
+        self.assertEqual(notes._active_task_path(), self.active_path)
+        self.assertTrue(self.active_path.is_relative_to(self.base))
         self.evidence = self.base / 'synthetic-evidence.txt'
         self.evidence.write_bytes(b'synthetic notes evidence')
         self.screenshot = self.base / 'synthetic-screenshot.txt'
@@ -63,15 +87,29 @@ class NotesRecordsTests(unittest.TestCase):
         self.collection_path = self.base / 'records'
         self.collection = NotesCollection(str(self.collection_path))
         self.session = 'synthetic-session-1'
-        self.active_patch = mock.patch.object(
-            notes, '_write_active_hint', return_value=None)
-        self.active_patch.start()
         self.records, self.summary = self.new_ledger(
             'synthetic-list-1', recovery_authorized=True)
 
-    def tearDown(self):
-        self.active_patch.stop()
-        self.temporary.cleanup()
+    @staticmethod
+    def _remove_fixture_path(path):
+        shutil.rmtree(path, ignore_errors=True)
+
+    def _cleanup_fixture(self):
+        self._remove_fixture_path(self.base)
+
+    def _assert_locator_cleanup_boundary(self):
+        self.assertFalse(self.base.exists(), 'inner fixture was not removed')
+        self.assertEqual(self.sentinel_path.read_bytes(), self.sentinel_bytes)
+
+    def read_active_locator(self):
+        return json.loads(self.active_path.read_text(encoding='utf-8'))
+
+    def assert_active_locator(self, records, session_id):
+        locator = self.read_active_locator()
+        self.assertEqual(locator['schema'], 'line-notes-active-task/v1')
+        self.assertEqual(locator['records_root'], str(records.records))
+        self.assertEqual(locator['local_list_id'], records.records.name)
+        self.assertEqual(locator['session_id'], session_id)
 
     def make_evidence(self, **context):
         output = self.evidence_packs / uuid.uuid4().hex
@@ -190,8 +228,24 @@ class NotesRecordsTests(unittest.TestCase):
     def run_cli(self, *args):
         env = dict(os.environ)
         env['PYTHONPATH'] = str(ROOT / 'src')
+        env['PYTHONDONTWRITEBYTECODE'] = '1'
+        bootstrap = (
+            'import pathlib, sys\n'
+            'from line_backup_batch import notes\n'
+            'sentinel = pathlib.Path(sys.argv[1])\n'
+            'fixture = pathlib.Path(sys.argv[2])\n'
+            'notes._active_task_path = lambda: sentinel\n'
+            'notes._active_task_path = lambda: fixture\n'
+            'boundary = pathlib.Path(sys.argv[3]).resolve()\n'
+            'active = notes._active_task_path().resolve()\n'
+            'if active != fixture.resolve():\n'
+            '    raise RuntimeError("active locator injection failed")\n'
+            'if not active.is_relative_to(boundary):\n'
+            '    raise RuntimeError("active locator is outside fixture")\n'
+            'raise SystemExit(notes.main(sys.argv[4:]))\n')
         return subprocess.run(
-            [PYTHON, '-B', '-m', 'line_backup_batch.notes', *map(str, args)],
+            [PYTHON, '-B', '-c', bootstrap, str(self.sentinel_path),
+             str(self.active_path), str(self.base), *map(str, args)],
             cwd=str(ROOT), env=env, capture_output=True, text=True)
 
     def test_two_photos_one_video_lifecycle_and_new_session_skip(self):
@@ -288,13 +342,83 @@ class NotesRecordsTests(unittest.TestCase):
                 '--handoff', self.make_evidence(
                     list_key=cli_records.list_data['list_key']))
         before = self.event_bytes(cli_records)
+        locator_before = self.active_path.read_bytes()
         rejected = self.run_cli(*args, '--context-id', 'wrong-cli-context')
         self.assertEqual(rejected.returncode, 4)
+        self.assertEqual(
+            json.loads(rejected.stdout)['reason'], 'WRONG_NOTES_CONTEXT')
         self.assertEqual(self.event_bytes(cli_records), before)
+        self.assertEqual(self.active_path.read_bytes(), locator_before)
         accepted = self.run_cli(*args, '--context-id', 'saved-cli-context')
         self.assertEqual(accepted.returncode, 0, accepted.stderr)
         result = json.loads(accepted.stdout)
         self.assertEqual(result['context_id'], 'saved-cli-context')
+        self.assert_active_locator(cli_records, 'cli-fresh-session')
+        accepted_events = self.event_bytes(cli_records)
+        accepted_locator = self.active_path.read_bytes()
+
+        rejected_again = self.run_cli(
+            *args, '--context-id', 'wrong-cli-context')
+        self.assertEqual(rejected_again.returncode, 4)
+        self.assertEqual(
+            json.loads(rejected_again.stdout)['reason'], 'WRONG_NOTES_CONTEXT')
+        self.assertEqual(self.event_bytes(cli_records), accepted_events)
+        self.assertEqual(self.active_path.read_bytes(), accepted_locator)
+        self.assertEqual(self.sentinel_path.read_bytes(), self.sentinel_bytes)
+
+    def test_active_locator_fixture_cleanup_boundary(self):
+        class PassingProbe(NotesRecordsTests):
+            def test_lifecycle_probe(self):
+                pass
+
+        class FailingProbe(NotesRecordsTests):
+            def test_lifecycle_probe(self):
+                self.fail('controlled test failure')
+
+        def run_probe(probe_type, *, fail_setup=False):
+            parent_active_path = notes._active_task_path
+            cleanup_observations = []
+            original_boundary_check = (
+                NotesRecordsTests._assert_locator_cleanup_boundary)
+
+            def observe_boundary(case):
+                original_boundary_check(case)
+                cleanup_observations.append(
+                    (case.base.exists(),
+                     case.sentinel_path.read_bytes() == case.sentinel_bytes))
+
+            probe = probe_type('test_lifecycle_probe')
+            result = unittest.TestResult()
+            with mock.patch.object(
+                    NotesRecordsTests, '_assert_locator_cleanup_boundary',
+                    observe_boundary):
+                if fail_setup:
+                    with mock.patch.object(
+                            NotesRecordsTests, 'new_ledger',
+                            side_effect=RuntimeError(
+                                'controlled setUp failure')):
+                        probe.run(result)
+                else:
+                    probe.run(result)
+
+            self.assertIs(notes._active_task_path, parent_active_path)
+            self.assertEqual(cleanup_observations, [(False, True)])
+            self.assertFalse(probe.outer.exists())
+            return result
+
+        passed = run_probe(PassingProbe)
+        self.assertTrue(passed.wasSuccessful(), passed.errors)
+        self.assertEqual(passed.testsRun, 1)
+
+        failed_test = run_probe(FailingProbe)
+        self.assertEqual(len(failed_test.failures), 1)
+        self.assertIn('controlled test failure', failed_test.failures[0][1])
+        self.assertEqual(failed_test.errors, [])
+
+        failed_setup = run_probe(PassingProbe, fail_setup=True)
+        self.assertEqual(len(failed_setup.errors), 1)
+        self.assertIn('controlled setUp failure', failed_setup.errors[0][1])
+        self.assertEqual(failed_setup.failures, [])
 
     def test_replay_second_outcome_and_second_save_all_are_refused(self):
         identity = notes.media_identity(kind=PHOTO, visual_key='single-photo')
