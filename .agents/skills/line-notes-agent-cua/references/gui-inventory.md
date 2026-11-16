@@ -94,16 +94,20 @@
 
 ### 目標與下載控制就緒（B1）
 
-- 核對 viewer 屬於同一貼文及目標媒體，再依本節後續步驟尋找並證明可唯一歸屬的下載控制；不要把「目標身分」擴張成內容或來源種類驗證。
-- 載入 spinner、黑底、空白縮圖、disabled slider、`00:00` 或影片式控制均不要求追加種類取證。目標與下載控制可核對時可按既定流程下載；來源種類不明的新項使用 `UNCLASSIFIED`。
-- 顯示下載工具列時，優先使用當次工具文件支援的無點擊移鼠，或已明確可歸屬的工具列控制。當次沒有可用的 hover-only 能力時，可考慮下列狹窄候選：授權、有效前景、來源、返回控制、已選 filmstrip 縮圖、其非播放安全邊緣、當次座標映射與預期效果均有正面證據，且在 `intent` 前最多對該安全邊緣送出一次 `NAVIGATION` click。任一前置不足或沒有可證明安全區就停止，不點主內容、播放／暫停、時間軸、其他縮圖或工具列；這是明列導覽候選，不是把 click 當作 hover 替代，也不是必須找到替代路徑。
-- `NAVIGATION` click 前依 [證據範本](evidence-template.md) 保存前置觀察、target、映射與 input 原件；點擊後立即依當次支援 API 取得可保存的截圖／AX 與原始回傳。不同觀察可能分開取得，須保存實際順序、時間與範圍，不宣稱 atomic 或 immediate 有保證；無法保存關鍵觀察就停止。
-- Reveal 導覽狀態只按當次證據分開：同一充分範圍的最新正面觀察同時顯示工具列，且下載控制可見、歸屬、啟用與映射成立時，記 `TOOLBAR_VISIBLE`；只有同一充分範圍的最新觀察足以判斷工具列不在畫面時，才記 `TOOLBAR_NOT_SHOWN`。範圍不足、可保存來源不能判斷或輸入結果不明記導覽 `UNKNOWN`，不得寫成控制不存在；AX 未列控制不能否定充分涵蓋的截圖。此處導覽 `UNKNOWN` 不是業務 `UNKNOWN`，也不新建業務 `UNKNOWN`；intent 前媒體仍 `PENDING`。
-- 工具列曾可見後消失記 `REVEAL_TRANSIENT` 並停止；播放開始、索引／媒體／viewer／列表身分漂移、幾何／映射失效或輸入不明時亦立即停止。不得自動重複同點、改點另一邊緣／縮圖探測，或返回後重新開啟以重設一次額度；前後證據與未解原因全留。
-- 只有上述 `TOOLBAR_VISIBLE` 才可建立 `intent`；之後仍重新定位下載控制並依下方原 wrapper gate。歷史成功僅為關聯，不證明其他 viewer 有效或具有固定因果；其他 viewer 有效性與 toggle／timeout／capture race 仍 `NOT_RUN`／觀察未知，不得把一次候選寫成已驗證。
-- 禁止點內容區切換播放控制、按播放／暫停、拖時間軸、切倍速或為判斷種類反覆切 viewer。
-- 下載控制若以座標點擊，必須使用 [單次 CUA 輸入保存 helper](evidence-template.md#單次-cua-輸入保存-helper) 的 `persistGroundedDownloadClick`。Agent 仍自行判讀控制區域、控制歸屬、候選點、座標映射與下一步；helper 只驗證並保存 request，再以持久讀回的 target 呼叫 `app.click([x, y])`，不負責找控制、不提供 native hit-test／receipt。普通導覽、返回與 chooser 不經此 helper；helper 不可用、欄位缺失或讀回不符時停在輸入前，不得改用任意 invoke、手動 app.click 或舊點擊入口。
-- 目標或下載控制仍無法可靠定位時，記具體阻塞，不猜點、不重新下載。
+本節是 reveal discovery、有限 re-arm、action-on-positive 與同一未收斂 attempt 的 intent 後封鎖的唯一決策本文；其他文件只記證據、交易或投影，不另定候選次數，也不改變既有 `STOPPED`／`NOT_SENT` 精確恢復與 restart 規則。
+
+- **先備妥非 GUI 前置。** 在任何 reveal 前，先完成歷史／資格／完整盤點與目標媒體細盤核對、viewer 三層身分、實際 entry anchor 與 `expected_return_role`，並解析帳本、照片 root、notes CLI、私有 task／證據父目錄、statement 骨架與精確 `intent` argv／讀回欄位。`intent` 與其空白 staging 只能在 `TOOLBAR_VISIBLE` 後由 CLI 建立；不得預先建 staging、猜 key 或先寫事件。
+- **固定額度。** 以 `list_key + post_key + media_key` 為 reveal scope；每個 scope 最多派送兩個候選，`candidate_ordinal=1`（初次）及至多 `candidate_ordinal=2`（一次 re-arm），總計最多兩個已派送候選。任何已送出的 hover／pointer move 或 `NAVIGATION` 均計數，包括 timeout、error 或結果 `UNKNOWN`；單純未通過前置而沒有輸入則不計。viewer 重開、返回、換頁、新 Session、新目錄與新 capture 都不重置。
+- **候選前稽核。** 每次輸入前保存並讀回 `candidate_ordinal`（`1`／`2`）、`prior_candidate_refs`（候選 1 為 `NONE`；候選 2 必須是同一 scope 的候選 1 持久引用）、`budget_before`（此前已派送候選累計數，只能為 `0`／`1`；未知不得當 0）、target、mapping 與 input request；輸入後保存 `budget_after`（`1`／`2`）。`budget_before=0` 只可在完整查得同一 scope 無先前候選時使用；先前 refs 缺失、不可讀或歧義時停止。`candidate_ordinal=2` 不得重播舊點、舊 mapping 或同一 candidate，且只在 `budget_before=1` 時可評估。
+- **候選共同前置。** 授權、有效前景、同一列表／貼文／媒體／viewer、來源、可歸屬返回控制、當次座標映射均成立，且無 chooser、無 intent、無未解輸入／下載或身分漂移。方法另須各自安全證據：click 僅可用已選 filmstrip 縮圖的非播放安全邊緣；文件支持的 hover 則須有該 hover 自身可歸屬作用區、非播放安全區與映射，不要求 filmstrip 或同一邊緣。任一不足就停在輸入前；不點主內容、播放／暫停、時間軸、工具列或其他縮圖，也不以 body click、次要 click、快捷鍵或猜測 API 尋找控制。
+- **Hover 能力。** 只有當次工具文件明確支持無點擊移鼠時才可使用；能力未查明記 `UNKNOWN`，明確不支援記 `NOT_AVAILABLE`。不得把 `click` 說成 hover，也不因 hover 可用而增加候選額度；hover 的安全區證據不能借用 click 的 filmstrip 條件。
+- **Action-on-positive。** 同一充分範圍的最新正面觀察同時顯示工具列，且下載控制可見、歸屬、啟用與映射成立時，記 `TOOLBAR_VISIBLE`。該觀察就是 action window；保存其 bytes／hash 與映射後，立即執行已備妥的 `intent`，不得插入固定等待或只為確認「穩定」而再捕捉一次；不能宣稱 atomic／immediate。若首次 after 的範圍、AX 或映射不足以完成 gate，可用小步唯讀觀察補足缺口；這不是 stability capture，也不是新的候選，不授予 re-arm，補足後仍須有正面控制證據才可建立 intent。
+- **有限 re-arm。** `TOOLBAR_NOT_SHOWN` 只表示該候選後最新、充分且可保存的 bounded observation 未見工具列；它不證明觀察期間從未短暫出現，也不證明 LINE 失敗，尤其不能由單一 after 畫面排除 capture 漏過 transient。`REVEAL_TRANSIENT` 則表示 intent 前曾在有效觀察中正面看見工具列，之後在有效觀察中消失；它不是永久封鎖理由。兩者都只有在仍有 `REARM_1` 額度，且有新的充分觀察證明同一三層身分／有效前景、無 intent／chooser／未解輸入，並具決策相關新證據時，才可進入一次 `REARM_1`。新證據須改變 gate，例如先前遮擋／範圍不足已消除、選取或幾何有可核對變化、或新觀察正當建立該方法的另一個安全作用區；單純再拍一張、時間流逝、只有「換點看看」、底層身分漂移或舊點失效都不是新證據。`REVEAL_TRANSIENT` 後若沒有相關新證據仍停止，不建 intent／outcome；`REARM_1` 後仍無正面控制即記 discovery blocker，不稱 LINE 下載失敗。
+- **不可或不必 re-arm 的狀態。** 導覽 `UNKNOWN`、capture／AX／截圖範圍不足、輸入結果不明、播放開始、索引／媒體／viewer／列表或返回錨點漂移、幾何／映射失效、出現 chooser 或任何未解輸入時，先停止依賴輸入；可做小步唯讀補觀察，但未達充分 `TOOLBAR_NOT_SHOWN`／`REVEAL_TRANSIENT` 與新證據前不得進候選 2。前後原件、`budget_after`、`prior_candidate_refs` 與停止原因全留。
+- **同一未收斂 attempt 的 intent 後封鎖。** 一旦開始或建立本 attempt 的 `intent`，不得再送 hover／pointer move 或 `NAVIGATION` click，也不得以控制消失、返回、reopen、新 viewer 或新 Session 為本 attempt 重開 discovery window。`intent` 讀回保存的 `post_key`、`media_key` 與原目的地後，只可依原 wrapper 對當次重新定位的下載控制送出最多一次下載控制呼叫。若此時控制不在、`REVEAL_TRANSIENT`、映射失效或輸入狀態不明，就不按並保留原 intent；控制消失本身不能證明 `NOT_SENT`，第一筆 outcome 仍依實際證據處理。此封鎖不改變既有 `STOPPED`／`NOT_SENT` 精確恢復、`restart` 或已授權新 attempt 的規則；那些路徑不是本 attempt 的 re-arm，也不得用來繞過本節的一般候選額度。
+- **狀態真值。** `TOOLBAR_VISIBLE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT` 與導覽 `UNKNOWN` 是 statement 結論，不是六類業務狀態；intent 前媒體仍為 `PENDING`。AX 未列控制不能否定充分涵蓋的截圖，截圖也不能替 AX 補成節點。只有 `TOOLBAR_VISIBLE` 可接續 intent；其餘狀態不得建立 outcome，除非既有交易規則另有可歸屬結果。
+- **下載控制定位。** 若以座標點擊，必須使用 [單次 CUA 輸入保存 helper](evidence-template.md#單次-cua-輸入保存-helper) 的 `persistGroundedDownloadClick`。Agent 仍自行判讀控制區域、歸屬、候選點、映射與下一步；helper 只驗證並保存 request，再以持久讀回的 target 呼叫 `app.click([x, y])`，不負責找控制、不提供 native hit-test／receipt。普通導覽、返回與 chooser 不經此 helper；helper 不可用、欄位缺失或讀回不符時停在輸入前，不得改用任意 invoke、手動 app.click 或舊點擊入口。
+- 目標或下載控制仍無法可靠定位時，記具體阻塞，不猜點、不重新下載。歷史成功僅為關聯；其他 viewer 有效性與 toggle／timeout／capture race 仍 `NOT_RUN`／觀察未知。
 
 若貼文只有文字而沒有任何照片／影片，標記貼文層 `NO_MEDIA`，不做下載 attempt，也不計入六類媒體完成。若看不到完整媒體、viewer 總數與貼文數量矛盾、更多指示無法展開或返回後網格變動，保留該篇待確認；只有列表級覆蓋仍成立時，保護該篇並可繼續其他已核對篇。
 
@@ -122,11 +126,11 @@
 - 捲動的方法與單位依當次工具文件；macOS native scroll 使用 page count，不從型別範例猜 pixels、捲軸值或未支援按鍵。原始輸入回傳與事後畫面一併保存；工具拒絕或角色不符的呼叫不算有效邊界探測，停止依賴該前提的操作，不換入口繞過。
 - 座標、AX 元素與快捷鍵只在當次映射成立時使用。視窗移動、縮放、換頁、popup 重開、前景中斷或觀察來源變化都會使舊定位失效。
 - 主視窗截圖／AX 可能漏掉獨立 popup 或 chooser；這不代表控制項沒有出現。必要時依當次 Owner 授權與平台能力使用指定區域的唯讀截圖，只保存任務需要的私有區域，不上傳外部服務。
-- Viewer 已就緒且媒體身分成立、仍未見控制時，先查當次工具文件與 API scope。工具不支援第二觀察來源時，來源對照標 `NOT_RUN`；不支援無點擊移鼠時，hover 對照標 `NOT_RUN`。能力不足不代表控制不存在或 LINE 失敗；只有沒有 hover-only 且本節全部前置成立時，selected-filmstrip 非播放邊緣 `NAVIGATION` 候選可在 intent 前使用一次；其餘仍無可證明控制就保存具體缺口並停在 intent 前。
+- Viewer 已就緒且媒體身分成立、仍未見控制時，先查當次工具文件與 API scope。工具不支援第二觀察來源時，來源對照標 `NOT_RUN`；無點擊移鼠能力未查明記 `UNKNOWN`、明確不支援記 `NOT_AVAILABLE`，不得猜 API。是否可使用 selected-filmstrip 候選、何時可 re-arm、額度與 action window 只依 [B1](#目標與下載控制就緒b1)；能力不足不代表控制不存在或 LINE 失敗。
 - 對可用來源，在同一媒體、同一幾何下做最小對照並保存各自原件。記錄來源、觀察時間、焦點、hover／其他輸入、幾何及變化／漂移；不同來源不是原子快照，須保留時間差並核對媒體與視窗連續性。需要比較狀態時，保留等時長靜置對照。只有文件明確支援無點擊移鼠，且安全作用區域及當次座標映射均有據時，才可移鼠一次並立即重觀察；未控制其他變項時不得宣稱 hover 因果或已驗證修復。
-- 不得猜 API；除本節明列的 selected-filmstrip `NAVIGATION` 候選外，不可額外 click 探索，且它不是 hover 或下載控制。不得切換五格反覆查找；控制歸屬、作用或定位未證明，不建 intent。不得重播 intent、使用舊點位或把固定等待當成修復；若無新資訊，沿用同根因既有嘗試上限並停止重複查證。
+- 除 [B1](#目標與下載控制就緒b1) 明列的 hover 與 selected-filmstrip `NAVIGATION` 候選外，不可額外 click 探索，且候選不是 hover 或下載控制。不得切換五格反覆查找；控制歸屬、作用或定位未證明，不建 intent。不得重播 intent、使用舊點位、以固定等待當成修復，或把 fresh capture 本身當成 re-arm 的新證據。
 - 任何下載控制、chooser 與「確認」都是獨立輸入；不要用反覆點選、猜 Return 或重開選單查證。下載派送限制與 notes CLI 交易見 [下載與 notes CLI](download-and-ledger.md)。
-- 同一根因最多三次有證據嘗試，連續兩次沒有新資訊就停止相同方法。更換觀察來源可以帶來新資訊，但不得改下載入口、跨列表或繞過工具拒絕。
+- 一般查證維持同一根因最多三次有證據嘗試，連續兩次沒有新資訊就停止相同方法；B1 的每媒體最多兩次已派送 reveal 候選同樣不可被其他查證次數擴充。更換觀察來源只有在帶來決策相關新資訊時才可支持下一步，不得改下載入口、跨列表或繞過工具拒絕。
 
 ## 返回契約與有限恢復
 
@@ -134,17 +138,21 @@
 
 ### 進入 viewer 前先保存錨點
 
-開啟 viewer 前，保存當次 observation、列表／貼文身分、來源卡片或媒體縮圖區域、目前頁面角色，以及預期返回角色。通常從貼文詳細頁開啟 viewer，預期返回同一貼文詳細頁。錨點供返回後核對，不是可重用座標或點擊指令。
+開啟 viewer 前，保存當次 observation、列表／貼文身分、來源卡片或媒體縮圖區域、`entry_page_role`、entry anchor 與 `expected_return_role`。`expected_return_role` 必須由實際進入來源建立：通常由貼文詳細頁開啟 viewer 時是同一 `POST_DETAIL`；只有確實由列表或其他角色進入時才填該角色，不固定預填 `LIST`。錨點供返回後核對，不是可重用座標或點擊指令。
 
-不要求進入 viewer 前已看見返回控制。進入 viewer 後，先觀察 app／window、頁面角色、焦點及控制歸屬。確認返回控制確屬目前 viewer、能回到預期角色且定位有效後，才建立下載 intent 或開始下載交易。單獨的「關閉按鈕」標籤不足以證明控制歸屬或作用。
+不要求進入 viewer 前已看見返回控制。進入 viewer 後，先觀察 app／window、頁面角色、焦點及控制歸屬。確認返回控制屬目前 viewer、其語意與 entry anchor 相符且定位有效後，才建立下載 intent 或開始下載交易；實際是否回到 `expected_return_role` 只能在返回後判讀。單獨的「關閉按鈕」標籤不足以證明控制歸屬或作用。
 
 ### 返回一次並重新觀察
 
 輸入前保存 viewer observation、控制所屬視窗／區域、AX role 與父層，或視覺控制區域、焦點、座標空間及當次映射。實際 target 必須與映射後的候選點一致。這些證據只能支持一次輸入的定位依據，不證明 OS hit-test 或 LINE 已接受。
 
-只送出一次已證明的返回輸入，隨即唯讀觀察。核對頁面角色、列表／貼文身分與來源錨點；符合預期返回角色及連續性才標記 `RETURNED`。每次只返回一層，確認後才選下一步。
+只送出一次已證明的返回輸入，隨即唯讀觀察。核對頁面角色、列表／貼文身分與來源錨點，並分開判讀：
 
-若頁面未變、變成聊天或無法核對來源連續性，標記 `ENTRY_LOST`，停止原方法。不得連按 Escape、Command-W、關閉或取消；不得換猜測鍵、舊座標或相簿入口。
+- `RETURNED`：符合 `expected_return_role`，且 entry anchor／來源連續性成立。
+- `RETURN_NOT_OBSERVED`：最新畫面仍是 viewer、頁面未變，或觀察不足以判斷一次返回是否生效。這不是 `ENTRY_LOST`，不得據此宣稱入口已遺失。
+- `ENTRY_LOST`：充分觀察正面顯示頁面角色或身分已失去，例如變成聊天、另一個列表／貼文，或 entry anchor 已不可連續核對。`INPUT_UNAVAILABLE` 另記，可與上述狀態同時成立。
+
+每次只返回一層；上述任一未達 `RETURNED` 即停止原方法，不得連按 Escape、Command-W、關閉或取消，也不得換猜測鍵、舊座標或相簿入口。
 
 ### 分開記錄頁面、前景與能力
 
@@ -171,6 +179,8 @@
 同一有效前景內重新取得 CUA app／window handle，沿用目前 notes 帳本 Session，不重跑 `bind`。前景中斷後由 Owner 重新交接，必須建立新的 notes 帳本 Session ID，即使仍是同一對話或 app；取得新 observation 並重新核對列表身分。
 
 新 `bind` 不會自動中斷舊 open scan。新 Session 先唯讀查歷史並核對當次新前景與列表，成功 `bind` 後才收斂舊 attempt 與命名交易；若仍有 open scan，再明確 `scan interrupt`，然後以普通 `scan start` 重新完成卡片覆蓋。不得以 restart 或 recovery scan 繞過普通入口阻塞，也不得用新 scan 解鎖 UNKNOWN。保留帳本中實際的完成、ACTIVE 與待細盤分類；待盤貼文不得改成 `NO_MEDIA` 或宣稱完成。
+
+同一有效前景的 reacquire、viewer reopen 與新 notes Session 都不重置同一 `list_key + post_key + media_key` 的 reveal 候選額度。新 Session 必須先找回該媒體的 `candidate_ordinal`、`prior_candidate_refs` 與 `budget_after`；查不到或互相矛盾時停止，不假設額度為 0。
 
 
 ## 觀察與命題分界

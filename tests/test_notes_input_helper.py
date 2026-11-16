@@ -111,6 +111,34 @@ return {calls, requestVisibleInsideInvoke, receipt, raw};
         self.assertEqual(result['raw']['value'], {'success': True, 'receiptCode': 0})
         self.assertEqual(result['receipt']['diagnostic']['readback'], 'MATCH')
 
+    def test_top_level_undefined_uses_typed_raw_without_success_claim(self):
+        result, _ = self.run_helper(r'''
+let calls = 0;
+const receipt = await evidenceTools.persistSingleInput({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  inputDir: process.env.INPUT_TEST_DIR,
+  operationId: 'top-level-undefined', request: {input_phase: 'NAVIGATION'},
+  invoke: async () => { calls += 1; return undefined; },
+});
+const raw = JSON.parse(await fsTest.readFile(receipt.files.raw_return, 'utf8'));
+const diagnostic = JSON.parse(await fsTest.readFile(receipt.files.diagnostic, 'utf8'));
+return {calls, receipt, raw, diagnostic};
+''')
+        self.assertEqual(result['calls'], 1)
+        self.assertEqual(result['receipt']['status'], 'INVOKED')
+        self.assertEqual(result['receipt']['raw_return']['kind'],
+                         'NATIVE_RETURN_UNDEFINED')
+        self.assertEqual(result['receipt']['raw_return']['value_type'], 'undefined')
+        self.assertTrue(result['receipt']['raw_return']['complete'])
+        self.assertFalse(result['receipt']['receipt_is_os_event_trace'])
+        self.assertEqual(result['raw'],
+                         {'kind': 'NATIVE_RETURN_UNDEFINED',
+                          'value_type': 'undefined'})
+        self.assertNotIn('value', result['raw'])
+        self.assertEqual(result['diagnostic']['raw_return']['kind'],
+                         'NATIVE_RETURN_UNDEFINED')
+        self.assertTrue(result['diagnostic']['raw_return']['complete'])
+
     def test_undefined_return_property_is_not_claimed_as_complete_raw(self):
         result, _ = self.run_helper(r'''
 let calls = 0;
@@ -295,6 +323,88 @@ return {calls, receipt, raw, diagnostic};
         self.assertEqual(summary['field_gaps'], ['SYMBOL_KEYED_OWN_FIELDS_UNCAPTURED:1'])
         self.assertEqual(summary['code'], 17)
         self.assertNotIn('Symbol(private-trace-key)', snapshot['own_fields'])
+
+    def test_observation_success_persists_final_ready_state_before_readback(self):
+        result, _ = self.run_helper(r'''
+const screenshotBytes = new Uint8Array([
+  0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x01,
+]);
+const observation = await evidenceTools.persistObservation({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  observationDir: process.env.INPUT_TEST_DIR,
+  observationId: 'observation-ready-success',
+  capture: {state: '{"role":"AXWindow"}', screenshot: screenshotBytes},
+});
+const diagnostic = JSON.parse(await fsTest.readFile(
+  observation.files.diagnostic, 'utf8'));
+const axText = await fsTest.readFile(observation.files.ax, 'utf8');
+const screenshotReadback = Array.from(
+  await fsTest.readFile(observation.files.screenshot));
+return {observation, diagnostic, axText, screenshotReadback};
+''')
+        observation = result['observation']
+        diagnostic = result['diagnostic']
+        self.assertTrue(observation['ready_for_bind'])
+        self.assertEqual(observation['blockers'], [])
+        self.assertTrue(diagnostic['ready_for_bind'])
+        self.assertEqual(diagnostic['blockers'], [])
+        self.assertEqual(observation['metadata_persistence']['write'], 'WRITTEN')
+        self.assertEqual(observation['metadata_persistence']['readback'], 'MATCH')
+        self.assertEqual(diagnostic['stages']['AX_PERSISTENCE']['status'], 'MATCH')
+        self.assertEqual(
+            diagnostic['stages']['SCREENSHOT_PERSISTENCE']['status'], 'MATCH')
+        self.assertEqual(result['axText'], '{"role":"AXWindow"}')
+        self.assertEqual(result['screenshotReadback'],
+                         [0x89, 0x50, 0x4e, 0x47, 0x0d,
+                          0x0a, 0x1a, 0x0a, 0x00, 0x01])
+
+    def test_observation_failure_persists_ready_false_with_blockers(self):
+        result, _ = self.run_helper(r'''
+const observation = await evidenceTools.persistObservation({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  observationDir: process.env.INPUT_TEST_DIR,
+  observationId: 'observation-ready-failure',
+  captureError: {code: 'SYNTHETIC_CAPTURE_FAILED'},
+});
+const diagnostic = JSON.parse(await fsTest.readFile(
+  observation.files.diagnostic, 'utf8'));
+return {observation, diagnostic};
+''')
+        observation = result['observation']
+        diagnostic = result['diagnostic']
+        self.assertFalse(observation['ready_for_bind'])
+        self.assertEqual(observation['blockers'], ['CAPTURE:FAILED'])
+        self.assertFalse(diagnostic['ready_for_bind'])
+        self.assertEqual(diagnostic['blockers'], ['CAPTURE:FAILED'])
+        self.assertEqual(observation['metadata_persistence']['write'], 'WRITTEN')
+        self.assertEqual(observation['metadata_persistence']['readback'], 'MATCH')
+
+    def test_observation_diagnostic_collision_keeps_outer_failure_and_original(self):
+        result, _ = self.run_helper(r'''
+const diagnosticPath = process.env.INPUT_TEST_DIR +
+  '/observation-diagnostic-collision.diagnostic.json';
+await fsTest.writeFile(diagnosticPath, 'keep original diagnostic', {flag: 'wx'});
+const observation = await evidenceTools.persistObservation({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  observationDir: process.env.INPUT_TEST_DIR,
+  observationId: 'observation-diagnostic-collision',
+  capture: {
+    state: '{"role":"AXWindow"}',
+    screenshot: new Uint8Array([0x89, 0x50, 0x4e, 0x47]),
+  },
+});
+return {
+  observation,
+  saved: await fsTest.readFile(diagnosticPath, 'utf8'),
+};
+''')
+        observation = result['observation']
+        self.assertFalse(observation['ready_for_bind'])
+        self.assertEqual(observation['blockers'],
+                         ['DIAGNOSTIC_PERSISTENCE:FAILED'])
+        self.assertEqual(observation['metadata_persistence']['write'], 'FAILED')
+        self.assertEqual(observation['metadata_persistence']['readback'], 'NOT_RUN')
+        self.assertEqual(result['saved'], 'keep original diagnostic')
 
 
 GROUNDED_SETUP = r'''

@@ -15,9 +15,9 @@ LINE 記事本與相簿是不同的產品物件、畫面入口與操作流程。
 
 日常任務只做：核對指定目標 → 找到下載控制 → 下載一次 → 基本檔案檢查 → 保存結果 → 下一項。Agent 不自行擴充成播放、內容檢視、來源種類取證或完整解碼任務。
 
-允許列表導覽、展開貼文、開啟目標 viewer、切換目標媒體、移入游標或使用明確工具列控制顯示下載工具列、下載／chooser 確認、返回及觀察下載結果。當次工具沒有可用的 hover-only（無點擊移鼠）時，僅在授權、前景、來源、返回控制、已選 filmstrip 縮圖、其非播放安全邊緣與新座標映射均有當次正面證據的狹窄條件下，可在 `intent` 前對該安全邊緣送出**一次** `NAVIGATION` click；這是明列導覽候選，不是把 click 當作 hover 替代。任一前置不足或沒有可證明安全區就停止，不為尋找替代路徑擴張操作；不得點主內容、播放／暫停、時間軸或其他控制。禁止播放／暫停、拖曳時間軸、切換倍速、點媒體內容切換播放控制、分析媒體畫面內容，或為證明種類而反覆操作 viewer。找不到可靠下載控制就記具體阻塞，不自行嘗試播放或另一下載方式。
+允許列表導覽、展開貼文、開啟目標 viewer、切換目標媒體、移入游標或使用明確工具列控制顯示下載工具列、下載／chooser 確認、返回及觀察下載結果。只有當次工具文件明確支持時才可使用無點擊移鼠；能力未知不得猜 API。click 候選僅限已選 filmstrip 縮圖的非播放安全邊緣；hover 候選則要有該 hover 自身的可歸屬作用區、非播放安全區與映射，不要求 filmstrip 或同一邊緣。同一 `list_key + post_key + media_key` 最多 `INITIAL` 加至多一次 `REARM_1`（總計最多兩次已派送候選），跨 viewer、reopen 與 Session 累計；re-arm 須有同一三層身分、有效前景、無 chooser／intent／未解輸入及決策相關的新證據，單純重拍、時間流逝或換點不算。任一前置不足、額度不可核對或沒有該方法的安全證據就停止，不點主內容、播放／暫停、時間軸或其他控制。禁止播放／暫停、拖曳時間軸、切換倍速、點媒體內容切換播放控制、分析媒體畫面內容，或為證明種類而反覆操作 viewer。找不到可靠下載控制就記具體阻塞，不自行嘗試播放或另一下載方式。
 
-Reveal 輸入後立即依當次支援 API 保存可取得的觀察；不得宣稱 atomic／immediate 有保證。狀態須依最新證據分開：同一充分範圍的最新正面觀察同時顯示工具列，且下載控制可見、歸屬、啟用與映射成立時，記 `TOOLBAR_VISIBLE`；只有同一充分範圍的最新觀察足以判斷工具列不在畫面時，才記 `TOOLBAR_NOT_SHOWN`。範圍不足、可保存來源不能判斷或輸入結果不明記導覽 `UNKNOWN`，不得記成不存在；AX 未列控制不能否定充分涵蓋的截圖。此處導覽 `UNKNOWN` 只表示觀察／輸入範圍不足，不是業務 `UNKNOWN`，也不新建業務 `UNKNOWN`；intent 前媒體仍 `PENDING`。工具列曾可見後消失記 `REVEAL_TRANSIENT` 並停止；播放開始、索引／媒體／viewer／列表身分漂移、幾何／映射失效或輸入不明時亦立即停止，不重複同點、換點探測或用 reopen 重設次數。只有 `TOOLBAR_VISIBLE` 才可建立 `intent`；intent 後仍重新定位下載控制並依原 wrapper gate。歷史成功僅為關聯；其他 viewer 有效性與 toggle／timeout／capture race 未實測。
+Reveal 輸入後立即依當次支援 API 保存可取得的觀察；不得宣稱 atomic／immediate 有保證。同一充分範圍的最新正面觀察同時顯示工具列，且下載控制可見、歸屬、啟用與映射成立時，記 `TOOLBAR_VISIBLE`；該觀察就是 action window，應立即接續預先備妥的 `intent`，不得插入固定等待或只為確認穩定而再拍一次。若首次觀察範圍、AX 或映射不足，可小步唯讀補足；這不是 stability capture，也不授予 re-arm，仍要有正面控制證據才可建 intent。`TOOLBAR_NOT_SHOWN` 只表示該 bounded window 未見工具列，不證明期間從未短暫出現，也不等於 LINE 失敗；`REVEAL_TRANSIENT` 表示 intent 前曾正面看見後又在有效觀察中消失。兩者仍可在 B1 條件下評估至多一次 `REARM_1`，但必須有新充分觀察、同一身分／有效前景、無 chooser／intent／未解輸入及相關新證據；新 capture 本身不足。導覽 `UNKNOWN`、範圍不足或輸入不明先補觀察或停止，不得記成控制不存在；AX 未列控制不能否定充分涵蓋的截圖，截圖也不能替 AX 補成節點。此處狀態不是業務 `UNKNOWN`；intent 前媒體仍 `PENDING`。一旦開始或建立本未收斂 attempt 的 `intent`，不得再為它 discovery／re-arm，只可在讀回後當次重新定位並依原 wrapper 最多派送一次下載控制；控制已消失就保留 intent 並停止。此封鎖不改變既有 `STOPPED`／`NOT_SENT` 精確恢復與 restart 規則。完整規則見 [B1](references/gui-inventory.md#目標與下載控制就緒b1)。
 
 新媒體來源種類不明時使用 `identity.kind=UNCLASSIFIED`；已有媒體一律沿用原 key／identity，不為改種類重建媒體或去重。`UNCLASSIFIED` 是種類尚未分類，不是派送結果 `UNKNOWN`。下載後由 `download-check` 辨識實際檔案種類，不要求 Agent 證明來源原先是照片或影片。
 
@@ -46,7 +46,7 @@ Agent 的任務是完成整份列表，而不是等 Owner 逐步操作：
 
 ## Viewer 返回與中斷恢復
 
-viewer 進入前保存來源錨點與預期返回角色；進入後依唯一本文[返回契約與有限恢復](references/gui-inventory.md#返回契約與有限恢復)核對控制歸屬，再開始下載交易。每次只返回一層並重新觀察；`ENTRY_LOST` 與 `INPUT_UNAVAILABLE` 分開記錄且可同時成立。通道失效後，只做工具文件支持的唯讀 app／window 列舉與 handle reacquire；沒有新證據不重試。無法恢復時，只請 Owner 把同一指定列表帶回前景。
+viewer 進入前由實際 entry anchor 保存預期返回角色：通常由貼文詳細頁進入時是 `POST_DETAIL`，只有實際由列表或其他角色進入時才填該角色，不固定預設 `LIST`。進入後依唯一本文[返回契約與有限恢復](references/gui-inventory.md#返回契約與有限恢復)核對控制歸屬，再開始下載交易。每次只返回一層並重新觀察；同頁未變或資訊不足記 `RETURN_NOT_OBSERVED`，只有正面證明頁面角色／身分／入口連續性已失去才記 `ENTRY_LOST`，且與 `INPUT_UNAVAILABLE` 分開、可同時成立。通道失效後，只做工具文件支持的唯讀 app／window 列舉與 handle reacquire；沒有新證據不重試。無法恢復時，只請 Owner 把同一指定列表帶回前景。
 
 同一有效前景內重取 CUA handle 不重跑 notes `bind` 或更換帳本 Session。真正前景中斷後，Owner 重新交接就建立新的 notes Session ID。新 bind 不會 interrupt 舊 open scan：先收斂舊交易，再明確 interrupt 舊 scan，之後以普通完整掃描接續；不得以 scan 解鎖 UNKNOWN，亦不自行使用 restart／recovery scan 繞過普通阻塞。
 
@@ -100,7 +100,7 @@ page 前的來源卡片台帳、部分／高卡片、雙向對帳及 finish 前�
 - 六類業務狀態為 `COMPLETED`、`EXCLUDED`、`PENDING`、`PREVIOUSLY_INCOMPLETE`、`UNKNOWN`、`PROTECTED_HISTORY`。`NO_MEDIA` 是貼文層級標記，不是第七類，也不是下載完成。
 - 不發訊息、刪除、分享、覆寫照片或變更舊完成事實；不擴及其他列表。工具拒絕、身分歧義、寫入衝突或不明派送時停止依賴該前提的動作，不換入口繞過。
 
-同一根因最多三次有證據嘗試；連續兩次沒有新資訊就停止相同方法，不用重試消耗次數。外部成員或程序可能改動來源，不能承諾原子快照、OS 隔離或 exactly-once。
+一般查證維持同一根因最多三次有證據嘗試；B1 reveal 候選另限兩次。連續兩次沒有新資訊就停止相同方法，不用重試消耗次數。外部成員或程序可能改動來源，不能承諾原子快照、OS 隔離或 exactly-once。
 
 ## 回報與證據界限
 
@@ -118,8 +118,8 @@ page 前的來源卡片台帳、部分／高卡片、雙向對帳及 finish 前�
 
 ## 參考文件
 
-- [GUI 導覽與盤點](references/gui-inventory.md)：入口、三層身分、卡片盤點與對帳、viewer 返回契約、入口遺失與輸入失效的有限恢復、視覺控制映射、popup、座標與輸入規則。
+- [GUI 導覽與盤點](references/gui-inventory.md)：入口、三層身分、卡片盤點與對帳、B1 reveal／有限 re-arm／action window、viewer 返回契約、入口遺失與輸入失效的有限恢復、視覺控制映射、popup、座標與輸入規則。
 - [下載與 notes CLI](references/download-and-ledger.md)：目前子命令與參數、`list-key` 建帳前 bootstrap、絕對證據路徑、`lists`→`summary` 查詢、capture、intent 前後核對、下載／chooser 各最多一次、outcome／reconcile 分流、更正與命名恢復。
 - [驗證與恢復](references/verification-and-recovery.md)：證據稽核／更正、完成／停止證據組合、AX／截圖提示分離、檔名歸屬、類型更正、來源到期、基本檔案檢查與歷史解碼相容、六類狀態與本機可用性。
 - [證據範本](references/evidence-template.md)：供 `evidence-pack` statement 使用的私有紀錄欄位、原件保存 helper、`persistGroundedDownloadClick` 單次輸入 request／raw／diagnostic 落地與 chooser 目的地核對；不是可直接傳給 `--evidence` 的自由文字 schema。
-- [證據判定案例](references/evidence-decision-cases.md)：控制隱藏、API error、chooser 延遲／預填路徑、晚到結果、未授權的播放取證、crash window 與充分／不足證據的假設案例。
+- [證據判定案例](references/evidence-decision-cases.md)：控制隱藏、bounded no-show／re-arm、action-on-positive、返回角色、API error、chooser 延遲／預填路徑、晚到結果、未授權的播放取證、crash window 與充分／不足證據的假設案例。

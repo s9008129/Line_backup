@@ -36,6 +36,20 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes evidence-pack \
 - 其他安全拒絕仍成立：input symlink 為 `EVIDENCE_SYMLINK_REFUSED`、多 hard link 為 `EVIDENCE_SOURCE_CHANGED`、輸出已存在為 `EVIDENCE_OUTPUT_DIRECTORY_EXISTS`、輸出逸出私有 tasks 為 `PROJECT_PRIVATE_EVIDENCE_REQUIRED`。舊紀錄沒有當時 argv 時保留 `UNKNOWN`，不要重跑一次來猜原失敗屬於哪一類。
 - 成功後只把 CLI 回傳的絕對 `bundle_path` 作 context 引用。原始 GUI／AX／input receipt 與整理 statement 分開保存；statement 的說明不能冒充工具原始回傳，bundle 只核對 bytes／context，不證明畫面真實或控制命中。
 
+## Viewer 身分與採信 gate
+
+這個 gate 是 Agent 寫入私有 statement 前的人工核對，不是新 CLI schema、controller、GUI sensor，也不是 helper 的圖像辨識。`evidence-pack` 仍只核對 bytes、SHA-256 與命令 context；`identity_match=MATCH` 只表示 Agent 依當次原件完成核對，不表示工具看懂了截圖。
+
+第一次看到 viewer 時，先用中性的唯一 `observation_id` 保存原始 AX／截圖並讀回，不先以 `post`、`media` 或推測的顯示名稱命名。之後從該原件讀出 viewer title 的目前 `n/N`，與既有 `list_key`、已確認的 `post_key`、`media_key`、進入 viewer 前的來源頁／entry anchor，以及任何已宣稱目標的 artifact label／目錄名交叉核對。只有在這些欄位都成立時，才可把後續證據、input 或 bundle 歸屬該 viewer。
+
+gate 本身也要寫入私有 statement／observation 並讀回，記唯一 `identity_gate_id` 與各來源 ref；只在對話記憶或 runtime 變數中完成不算持久 MATCH。每個新的 viewer、頁面切換、媒體切換或擬建立 input／intent 前，都要以當次新原件重做或重新核對，不能沿用已失效 gate。
+
+- `identity_match=MATCH`：三層 keys、viewer `n/N`、entry anchor 與 label 宣告的目標一致；才可保存成該 post／media 的候選證據。
+- `identity_match=MISMATCH`：任一可核對欄位矛盾，或 label／目錄名宣稱另一個目標。保留已寫入原件的路徑、bytes 與 SHA-256，記 `accepted=false`、`quarantine_ref` 與差異；不得改名覆寫、重封裝成該 post／media，或傳給 event／attempt。舊 bytes 不改。
+- `identity_match=UNKNOWN`：`n/N`、keys、entry anchor、label 目標或來源範圍任一不足。以中性 observation 保存，不歸屬、不建立 intent；補足新證據後另立 gate。
+
+label 只作唯一標示，即使 `MATCH` 也不能代替 keys。已存在的錯名只需在私有 correction note 追加原路徑、原 hash 與「不作該目標證據」的說明；不得以批次改名器改寫舊 bytes、舊 bundle 或既有正確的 ledger completion。若原件尚可證明屬於另一目標，先保持未採信，待統籌判斷，不由 Agent 自行改掛。
+
 ## CUA 觀察原件落地
 
 CUA 的觀察結果不會自動成為專案檔案。使用同一次 `getAXStateAndScreenshot` 取得完整 AX 與截圖，再從 CUA 的 Node runtime 直接寫入已存在的專案私有 task directory；不要從聊天摘要重建原件，也不要把 CUA 回傳貼進手寫 JSON。
@@ -43,6 +57,8 @@ CUA 的觀察結果不會自動成為專案檔案。使用同一次 `getAXStateA
 先在終端機確認 `TASK_PRIVATE_DIR` 是本次任務在 `.local/line-backup/tasks/` 下的 canonical 私有目錄，建立尚不存在的 `OBSERVATION_DIR`，並產生只含英數、點、底線或連字號的唯一 `OBSERVATION_ID`。三個值都要代入絕對路徑；範例會再核對兩者是 canonical 路徑，且 observation directory 位於 task directory 下。檔名碰撞不是重試訊號；改用新的 observation ID。
 
 下列第一段只在 CUA Node runtime 定義工具，第二段才實際取得並保存同一次回傳。`util.types.isUint8Array` 可接受真正的 Buffer／Uint8Array，包括 CUA 跨 realm 回傳值；`instanceof`、constructor 名稱或任意 array-like 都不是型別證明。副本只取 view 的 `byteLength`，不會把整個 backing buffer 當成影像。兩段之間不要另做 capture，也不要用 statement 或聊天摘要重建原件。
+
+同一次 API 呼叫不證明 AX 與截圖是同一瞬間的原子快照。Agent 另記可取得的最早 call 前時間、call 回傳時間，以及 AX／截圖各自可證明的觀察時間與來源；任一時間沒有可信來源就記 `UNKNOWN`，不得用檔案 mtime 或 helper 寫 diagnostic 的 `created_at` 冒充 capture 時間。兩來源狀態不同時分開記錄，不互相補值，也不為把兩者湊成一致而重做 capture。
 
 <!-- cua-evidence-tools:start -->
 ```js
@@ -172,16 +188,20 @@ const evidenceTools = await (async () => {
       stages: {},
       assets: {},
       ready_for_bind: false,
+      blockers: [],
     };
     const setStage = (name, status, detail) => {
       metadata.stages[name] = Object.assign({ status }, detail || {});
     };
-    const result = (blockers) => Object.assign({
+    const result = (blockers, readyForBind = false) => Object.assign({
       ready_for_bind: false,
       blockers,
       observation_id: options.observationId,
       files: metadata.files,
-    }, metadata);
+    }, metadata, {
+      ready_for_bind: readyForBind,
+      blockers: [...blockers],
+    });
 
     if (typeof options.observationId !== 'string' ||
         !/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(options.observationId)) {
@@ -278,6 +298,8 @@ const evidenceTools = await (async () => {
       setStage('SCREENSHOT_PERSISTENCE', 'SKIPPED');
     }
 
+    metadata.ready_for_bind = blockers.length === 0;
+    metadata.blockers = [...blockers];
     const diagnosticBytes = Buffer.from(JSON.stringify(metadata, null, 2) + '\n', 'utf8');
     const diagnosticWrite = await writeExclusive(metadata.files.diagnostic,
                                                   diagnosticBytes);
@@ -300,7 +322,7 @@ const evidenceTools = await (async () => {
       blockers.push('DIAGNOSTIC_PERSISTENCE:FAILED');
     }
 
-    const output = result(blockers);
+    const output = result(blockers, blockers.length === 0);
     output.metadata_persistence = diagnostic;
     output.ready_for_bind = blockers.length === 0;
     return output;
@@ -591,7 +613,7 @@ const evidenceTools = await (async () => {
       const savedEnvelope = JSON.parse(requestBytes.toString('utf8'));
       returned = await options.invoke(savedEnvelope.request);
       output.raw_return.kind = 'RETURN';
-      if (returned === undefined && grounded) {
+      if (returned === undefined) {
         output.raw_return.kind = 'NATIVE_RETURN_UNDEFINED';
         output.raw_return.value_type = 'undefined';
         rawEnvelope = { kind: 'NATIVE_RETURN_UNDEFINED', value_type: 'undefined' };
@@ -1045,7 +1067,9 @@ if (!OBSERVATION.ready_for_bind) {
 }
 ```
 
-`stages` 會分別留下 `CAPTURE`、`CAPTURE_SHAPE`、`AX`、`SCREENSHOT_TYPE`、`SCREENSHOT_LENGTH` 與各 asset 的 `*_PERSISTENCE`；`assets` 另記實際路徑、長度、SHA-256、寫入與讀回，`metadata_persistence` 則記 diagnostic 的寫入與讀回。只有 AX 與非空截圖都存在、兩者都以 `wx` 寫入並逐 bytes 讀回 MATCH，且 diagnostic 也寫入／讀回 MATCH，runtime 輸出的 `ready_for_bind` 才會是 `true`。AX 合格但截圖型別錯、空值或寫入失敗時，合格 AX 仍會保存；反向情況亦同。這些部分原件可用於唯讀診斷，但 blocker 未消除前不得 bind。
+`stages` 會分別留下 `CAPTURE`、`CAPTURE_SHAPE`、`AX`、`SCREENSHOT_TYPE`、`SCREENSHOT_LENGTH` 與各 asset 的 `*_PERSISTENCE`；`assets` 另記實際路徑、長度、SHA-256、寫入與讀回，`metadata_persistence` 則記 diagnostic 的寫入與讀回。寫入 diagnostic 前，helper 先以當次 capture／asset 結果定稿 `metadata.ready_for_bind` 與 `metadata.blockers`；diagnostic 自身的寫入／讀回是外層結果，不要求它記錄自己尚未產生的最終 hash。只有 AX 與非空截圖都存在、兩者都以 `wx` 寫入並逐 bytes 讀回 MATCH，且 diagnostic 的寫入／讀回也 MATCH，runtime 輸出與落地 diagnostic 的 readiness／blockers 才可一致為 `true`／空陣列。若 diagnostic 寫入或讀回失敗，runtime 一律回 `ready_for_bind=false` 並保留 `DIAGNOSTIC_PERSISTENCE:FAILED`，不得消費未驗證的 diagnostic；原檔碰撞時也不覆寫。AX 合格但截圖型別錯、空值或寫入失敗時，合格 AX 仍會保存；反向情況亦同。這些部分原件可用於唯讀診斷，但 blocker 未消除前不得 bind。
+
+日後讀取落地 diagnostic 時仍要核對其 bytes／SHA-256／原 asset 讀回與適用的 helper `metadata_persistence`，不能只因檔案內寫 `ready_for_bind=true` 就宣稱 bind 成功。這個欄位只表示本地 observation 保存所需檔案完整，不是 GUI 權限、畫面真實、viewer 身分、control 命中或下載成功的證明。
 
 ### 單次 CUA 輸入保存 helper
 
@@ -1062,7 +1086,7 @@ const inputReceipt = await evidenceTools.persistSingleInput({
 nodeRepl.write(JSON.stringify(inputReceipt, null, 2));
 ```
 
-helper 先把 request 以 `wx` 寫入私有目錄，再以既有 hash／readback helper 逐 bytes 核對。只有讀回 `MATCH` 才呼叫一次 `invoke`。結果或錯誤另存 raw 檔；diagnostic 摘要是另一檔。三者都不覆寫。request 寫入／讀回失敗時不呼叫。
+helper 先把 request 以 `wx` 寫入私有目錄，再以既有 hash／readback helper 逐 bytes 核對。只有讀回 `MATCH` 才呼叫一次 `invoke`。結果或錯誤另存 raw 檔；diagnostic 摘要是另一檔。三者都不覆寫。request 寫入／讀回失敗時不呼叫。任何 `persistSingleInput` 的 `invoke` 若回傳頂層 `undefined`，raw 只保存 typed `NATIVE_RETURN_UNDEFINED`／`value_type=undefined`；這只表示回傳型別可無損序列化，不是成功、控制命中或 `NOT_SENT`。巢狀 `undefined`、函式、Symbol、循環或其他不可無損 JSON 保存的欄位仍使 raw 不完整並拒絕完整宣稱。
 
 `persistSingleInput` 是一般輸入 helper；若 request 的 `input_phase` 或 `phase` 是 `DOWNLOAD_CONTROL`，它會直接拒絕，要求改用下列下載控制 wrapper。wrapper 不尋找控制、不選 action、不導覽，也不接受外部 `invoke`／`readbackExact`；它只使用已保存 request 讀回後的 `prepared_target` 呼叫一次已傳入 app handle 的 `click`。
 
@@ -1111,7 +1135,7 @@ const receipt = await evidenceTools.persistGroundedDownloadClick({
 nodeRepl.write(JSON.stringify(receipt, null, 2));
 ```
 
-這個 wrapper 的 `dispatch_call_target` 是已保存 request 讀回後實際交給 `app.click` 的參數；`native_dispatched_target`、`receipt_target_match` 仍保持 `UNKNOWN`，且 `receipt_is_os_event_trace=false`。若 app 回傳原生 `undefined`，raw 只保存 typed `NATIVE_RETURN_UNDEFINED`，不是成功，也不是 `NOT_SENT`；若呼叫前 request／source／mapping 檢查失敗，則不得呼叫 click。
+這個 wrapper 的 `dispatch_call_target` 是已保存 request 讀回後實際交給 `app.click` 的參數；`native_dispatched_target`、`receipt_target_match` 仍保持 `UNKNOWN`，且 `receipt_is_os_event_trace=false`。若 app 回傳原生 `undefined`，raw 沿用 typed `NATIVE_RETURN_UNDEFINED`，不是成功，也不是 `NOT_SENT`；普通 `persistSingleInput` 的頂層 `undefined` 使用相同 typed 表示，不改變 grounded wrapper 的既有輸出。若呼叫前 request／source／mapping 檢查失敗，則不得呼叫 click。
 
 錯誤 raw 保存完整 `message`、原型可讀的 `name`、原型可讀的 `code` 原型別，以及可忠實序列化的字串自有欄位（含 non-enumerable 欄位）。不使用 `instanceof Error` 判斷跨 realm 錯誤。若偵測到 Symbol 自有欄位，不把 Symbol key 或值轉成替代字串；保留其他可讀欄位與數值 `code`，並以 `field_gaps` 明列未捕獲數及標示 fields/raw 不完整。循環值、accessor、`undefined`、函式、Symbol、BigInt、非有限數字或非純資料物件若無法無損 JSON 保存，raw 標為不完整；diagnostic 只存可序列化的錯誤摘要與缺口。若 diagnostic 自己也無法落地，回傳明確 `complete=false`，不宣稱 raw 完整。
 
@@ -1127,8 +1151,10 @@ nodeRepl.write(JSON.stringify(receipt, null, 2));
 
 ### 單次候選與前置條件
 
-- 每個 viewer／media 當次最多只有一個 `selected-filmstrip-safe-edge` 導覽候選。先證明目標媒體是已選取項、filmstrip 中有唯一可定位的已選目標縮圖、候選點在此縮圖的非播放安全邊緣，且不落在播放／滑桿／其他控制或邊界；使用同次 before 截圖／AX 建立新的 canonical 映射、window/viewer 身分與 `mapping_id`。已選狀態、安全區、viewer 身分或映射任一為 `UNKNOWN`、過期或與其他畫面混用時，停止在輸入前。
-- 候選輸入沿用一般 `persistSingleInput`，request 的 `input_phase=NAVIGATION`；不使用下載專用的 `persistGroundedDownloadClick`，不計入下載控制呼叫。只允許一次保存並讀回的候選輸入；不得重試同一點、連點、拖曳、右鍵、快捷鍵或以 titlebar／scroll／其他畫面代替。不得把 click 宣稱成 hover 替代；沒有 hover-only 時記 `NOT_AVAILABLE`，能力未查明時記 `UNKNOWN`；僅可依 [目標與下載控制就緒](gui-inventory.md) 的完整前置考慮此明列候選，不創造額外輸入方式。
+- reveal 的允許方法、初次候選與至多一次 re-arm 的操作前提，只依 [GUI 導覽與盤點](gui-inventory.md) 的〈目標與下載控制就緒（B1）〉。本範本只保存可稽核欄位，不自行擴張動作或把 re-arm 變成新的下載入口。每個 `list_key + post_key + media_key` 的 intent 前 reveal 累計最多二次（初次加一次 re-arm）；不得用 reopen、新 Session、新目錄或換點重置。第二次候選須有新的充分觀察與相關新證據、同一三層身分／有效前景、無 chooser、無 intent、無未解輸入；連續兩次沒有新資訊即停止，且不得從舊事故剩餘額度推論本項可直接再點。
+- 每個 reveal scope 最多只有兩個 `selected-filmstrip-safe-edge` 導覽候選：`candidate_ordinal=1`（初次）及至多 `candidate_ordinal=2`（一次 re-arm）。先證明目標媒體是已選取項、filmstrip 中有唯一可定位的已選目標縮圖、候選點在此縮圖的非播放安全邊緣，且不落在播放／滑桿／其他控制或邊界；使用同次 before 截圖／AX 建立新的 canonical 映射、window/viewer 身分與 `mapping_id`。已選狀態、安全區、viewer 身分或映射任一為 `UNKNOWN`、過期或與其他畫面混用時，停止在輸入前。
+- `TOOLBAR_VISIBLE` 只有在同一充分範圍的最新 after 原件正面顯示工具列，且下載控制歸屬、啟用與映射成立時才可成立。當 intent 的其他前置也已成立，保存該 after 原件後立即建立 intent；不得插入固定 stability 等待。intent 讀回後仍重新定位；若工具列已消失，保留已建立 intent 並停止，不建立新 attempt，也不 re-arm。
+- 候選輸入沿用一般 `persistSingleInput`，request 的 `input_phase=NAVIGATION`；不使用下載專用的 `persistGroundedDownloadClick`，不計入下載控制呼叫。每個候選只允許一次保存並讀回的輸入，`candidate_ordinal=1` 與 `2` 合計仍最多兩個；不得重試同一點、連點、拖曳、右鍵、快捷鍵或以 titlebar／scroll／其他畫面代替。不得把 click 宣稱成 hover 替代；沒有 hover-only 時記 `NOT_AVAILABLE`，能力未查明時記 `UNKNOWN`；僅可依 [目標與下載控制就緒](gui-inventory.md) 的完整前置考慮此明列候選，不創造額外輸入方式。
 - 保存 before 截圖與完整 AX、輸入 request／raw receipt、after 截圖與完整 AX；同一次 observation 的相同 AX bytes 可以被重複引用，但每個 `--asset` ref 與順序都要保留。相同 AX 不代表 toolbar 狀態相同；AX 缺失、未變或沒有該 node 都不是「控制不存在」或「toolbar 未顯示」的反向證明。截圖與 AX 必須分開記錄各自來源、範圍、時間與 hash。
 
 ### 時序、狀態與停止
@@ -1136,7 +1162,7 @@ nodeRepl.write(JSON.stringify(receipt, null, 2));
 前置與停止決策依 [目標與下載控制就緒](gui-inventory.md)：播放開始、索引／來源身分漂移、幾何／映射失效或輸入不明均立即停止，不以返回或 reopen 重設一次額度。
 
 - statement 記錄 `observed_at`、`input_at`、`clock_source`、`timezone`、`precision`、capture／input 的相對序號，以及 `capture_wait_semantics`／`capture_wait_source`。除非當次工具文件或實測能證明，等待能力一律 `UNKNOWN`；不得宣稱 capture 原子、立即或能捕捉點擊瞬間。截圖或 AX 範圍不足、輸入或等待狀態無法從當次原件確認時，相關觀察欄位記 `UNKNOWN`，不自行補值；只有相對序號可支持先後，不能補出點擊與截圖的未證明時間差。
-- `TOOLBAR_VISIBLE` 只在最新且充分涵蓋的 after 原件正面顯示工具列，且下載控制歸屬、啟用與映射成立時使用；它不是穩定可重播的保證。完成唯一候選後，充分範圍的最新觀察仍看不到 toolbar，才記 `TOOLBAR_NOT_SHOWN`；範圍不足、輸入不明或前置未核對時記觀察 `UNKNOWN` 並停止，不建立業務 `UNKNOWN`。這只表示本次 bounded observation 沒有顯示，不能推論控制不存在。若 toolbar 曾出現、之後在有效觀察中消失，記 `REVEAL_TRANSIENT` 並立即停止；不得重按同一點、換點碰運氣或繼續 intent。
+- `TOOLBAR_VISIBLE` 只在最新且充分涵蓋的 after 原件正面顯示工具列，且下載控制歸屬、啟用與映射成立時使用；它不是穩定可重播的保證。候選後充分範圍的最新觀察仍看不到 toolbar，才記 `TOOLBAR_NOT_SHOWN`；範圍不足、輸入不明或前置未核對時記觀察 `UNKNOWN` 並停止，不建立業務 `UNKNOWN`。這只表示本次 bounded observation 沒有顯示，不能推論控制不存在。若 toolbar 曾出現、之後在有效觀察中消失，記 `REVEAL_TRANSIENT`；它不是永久封鎖理由，但只有 B1 的一次 `candidate_ordinal=2` 額度、新的充分觀察、同一三層身分／有效前景、無 intent／chooser／未解輸入及決策相關新證據都成立時，才可再送一次候選；單純重拍或換點不算。`candidate_ordinal=2` 後仍無正面控制即記 discovery blocker，不建立 intent／outcome。
 - 另記 `stop_reason`（例如 `PRECONDITION_UNPROVEN`、`MAPPING_STALE`、`CAPTURE_INCOMPLETE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT`）。`TOOLBAR_VISIBLE`／`TOOLBAR_NOT_SHOWN`／`REVEAL_TRANSIENT` 是 statement 結論，不是 Notes 六類業務狀態；`REVEAL_TRANSIENT` 不會把媒體改成 `UNKNOWN`、`EXCLUDED`、`NO_MEDIA` 或 `COMPLETED`，也不會建立 intent／outcome。未曾派送的媒體仍按其既有投影（通常是 `PENDING`）。
 
 ### 永久保存與合法附掛順序
@@ -1154,8 +1180,10 @@ nodeRepl.write(JSON.stringify(receipt, null, 2));
 | Restart 批次 | `restart_id`、`generation`、`confirmation_ref`、`scope_digest`、`version_directory`、`owner_consent_ref`、`recovery_scan_id`、`prior_attempt_ref`、`activation_ref` | 只在精確 `restart preview`／Owner 明示同意／`restart confirm`／confirm 後完整 recovery scan 路徑使用。`confirmation_ref`、`generation`、`scope_digest`、`version_directory` 與新 attempt 必須對應同一個已確認批次；`owner_consent_ref` 指向當次可核對的 Owner 明示回覆，不能以 Prompt 本身、沉默、逾時或一般「繼續」代替。一般 attempt 或未使用欄位記 `NOT_APPLICABLE`；無法唯一讀回才記 `UNKNOWN`，不得由路徑或檔名猜值。此區塊是私有 statement 欄位，不是新的 CLI schema；傳給 CLI 的仍是既有 v2 `bundle_path` |
 | 目的地 | `original_destination`、`destination_event_refs`、`observed_destination` | 原目的地以 intent 讀回值為準。目的地相關事件可能是 `created`（初始 root）、`destination`（追加 root）或 `intent`（attempt 目的地），各自以事件檔與讀回 hash 引用；`binding` 事件不含目的地。chooser 顯示或實際落點另記，不得反寫原目的地 |
 | 觀察來源 | `observation_id`、`source_kind`、`tool`、`api_scope`、`app_window_binding`、`role_children_ref`、`raw_return_ref`、`scope`、`capture_rect`、`raw_rect`、`image_pixels`、`window_frame`、`window_points`、`scale_factor`、`popup_covered` | 記 AX／app-bound 截圖／桌面局部截圖／Computer Use 回傳／真人觀察，並分開 AX client／API scope、app／window 綁定與 role／children 來源；範圍、原始矩形、實際像素、點數與縮放分開，來源未涵蓋 popup 時不可推論不存在。同一 viewer 的 AX 相同不得推定工具列未變，截圖與 AX 也不能互相補值 |
-| Reveal 導覽 | `navigation_kind`、`reveal_candidate_id`、`selected_state_before`、`selected_media_ref`、`safe_zone_ref`、`mapping_id`、`mapping_valid_at`、`before_screenshot_ref`、`before_ax_ref`、`input_phase`、`input_receipt_ref`、`after_screenshot_ref`、`after_ax_ref`、`reveal_state`、`capture_wait_semantics`、`capture_wait_source`、`stop_reason` | 只用既有 v2 roles；每個 viewer／media 最多一個 `selected-filmstrip-safe-edge` 候選與一次輸入。before／input／after 各自保存 bytes／hash；同 AX 可重複但不得合併不同畫面。`TOOLBAR_VISIBLE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT` 是 statement 結論，不是業務狀態；capture 等待能力未證實時記 `UNKNOWN`，曾出現又消失即停止，不得據 AX 缺失推定不存在 |
+| 身分與入口 | `identity_gate_id`、`viewer_title_ref`、`viewer_title_n_of_n`、`list_key`、`post_key`、`media_key`、`entry_anchor_ref`、`artifact_label`、`artifact_label_target`、`identity_match`、`accepted`、`quarantine_ref`、`entry_page_role`、`expected_return_role`、`return_result`、`input_capability_after` | gate 由 Agent 依當次原件持久核對並讀回，不是 helper 圖像辨識；label 不代替 keys。`expected_return_role` 由實際進入來源決定，viewer 通常回 `POST_DETAIL`，不可預填 `LIST`。角色與連續性相符才記 `RETURNED`；同頁未變或觀察不足記 `RETURN_NOT_OBSERVED`；只有正面顯示角色／身分／錨點失去才記 `ENTRY_LOST`，輸入能力另記且可同時為 `UNAVAILABLE` |
+| Reveal 導覽 | `navigation_kind`、`reveal_candidate_id`、`reveal_scope_ref`、`candidate_ordinal`、`prior_candidate_refs`、`budget_before`、`budget_after`、`rearm_preconditions_ref`、`rearm_new_information_ref`、`selected_state_before`、`selected_media_ref`、`safe_zone_ref`、`mapping_id`、`mapping_valid_at`、`before_screenshot_ref`、`before_ax_ref`、`input_phase`、`input_receipt_ref`、`after_screenshot_ref`、`after_ax_ref`、`reveal_state`、`capture_wait_semantics`、`capture_wait_source`、`stop_reason` | 操作契約只依 `gui-inventory.md` 的 B1。每個 list/post/media 的 intent 前最多兩個已派送候選；`candidate_ordinal=1` 為初次，至多一次 `candidate_ordinal=2`。`prior_candidate_refs` 在候選 1 為 `NONE`，候選 2 必須引用同一 scope 的候選 1；`budget_before`／`budget_after` 分別為輸入前累計與輸入後累計。before／input／after 各自保存 bytes／hash；同 AX 可重複但不得合併不同畫面。`TOOLBAR_VISIBLE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT` 是 statement 結論，不是業務狀態；capture 等待能力未證實時記 `UNKNOWN`，不得據 AX 缺失推定不存在 |
 | 時間 | `observed_at`、`input_at`、`clock_source`、`timezone`、`precision` | 每個時間都要有來源；不可取得工具時間或可信時鐘時寫 `UNKNOWN`，不以 mtime 冒充操作時間。capture label／sequence 只能支持相對先後；不能證明是否在輸入前時，`observation_order=UNKNOWN`，不得把檔名或 label 寫成已證實的 pre-click |
+| 來源與捕捉 | `capture_started_at`、`capture_returned_at`、`ax_observed_at`、`screenshot_observed_at`、`source_time_basis`、`capture_atomicity` | 分別保存 AX／截圖來源、bytes／hash 與可證明的時間；`capture_started_at`／`capture_returned_at` 只界定一次 API 呼叫，不證明兩來源同一瞬間。工具未提供個別時間就記 `UNKNOWN`，不補值；`capture_atomicity=UNVERIFIED`，不得宣稱 atomic／immediate |
 | 定位 | `page_role`、`focus_state`、`control_owner`、`control_visibility`、`enabled_state`、`position_source_ref`、`pre_input_observation_ref`、`post_input_observation_ref`、`observation_order`、`control_region`、`control_region_coord_space`、`candidate_point`、`candidate_point_relation`、`raw_coord_space`、`mapped_screen_point`、`coordinate_space_match`、`mapping_id`、`mapping_valid_at`、`grounding_conclusion` | 控制可見性只在充分範圍成立時記 `VISIBLE`／`NOT_OBSERVED`。由同一份當次原件記下控制區域及候選點，兩者使用相同座標空間並讀回；`position_source_ref` 指向截圖／AX 原件與 hash，先後不能判定時明記 `UNKNOWN`。候選點須在可辨識區域內部；區域外、邊界、控制歸屬／映射／先後／區域不明時，`grounding_conclusion=STOP`，不得輸入。`control_region` 是視覺篩選區域，不是原生 hit-test；通過只表示可送入對帳，不表示控制已命中 |
 | 輸入 | `input_phase`、`action`、`target_ref`、`prepared_target`、`prepared_target_readback_ref`、`candidate_target_match`、`dispatched_target`、`receipt_target_match`、`input_tool`、`input_api`、`input_receipt_ref`、`raw_tool_return`、`error_raw`、`download_control_call_count`、`chooser_confirm_call_count` | `input_phase` 至少區分 `DOWNLOAD_CONTROL`、`CHOOSER_PATH`、`CHOOSER_CONFIRM`；記工具／API 及原始成功／錯誤／逾時，並分別累計兩個至多一次的呼叫。失敗、逾時與未知也計入。`prepared_target` 是真正要送出的值，須先寫入並讀回，且與 `candidate_point` 比對；不符或無法讀回時不得呼叫。`dispatched_target` 取自實際 input receipt，再與 `prepared_target` 比對；receipt 不符或無法讀回時記 `MISMATCH`／`UNKNOWN`，不得追認為正確定位，也不得據此改寫 `NOT_SENT`。receipt 只證明保存的工具參數，不是 OS event trace 或 LINE hit-test |
 | Chooser | `appeared`、`attribution_basis`、`chooser_window_process`、`source_viewer_ref`、`attempt_link`、`path_field_readback`、`panel_current_directory`、`where_value`、`intent_staging_destination`、`destination_agreement`、`destination_check`、`confirm_raw_return` | PathTextField、panel current directory 與 intent staging 分開記錄；只有來源 viewer／attempt、視窗／process 與三者一致的新空白目的地能唯一對應才可確認；延遲出現仍不是下載完成 |
@@ -1173,6 +1201,25 @@ identity:
   post_key: UNKNOWN
   media_key: UNKNOWN
   source_order: UNKNOWN
+  identity_gate_id: UNKNOWN
+  viewer_title_ref: UNKNOWN
+  viewer_title_n_of_n: UNKNOWN
+  entry_anchor_ref: UNKNOWN
+  artifact_label: UNKNOWN
+  artifact_label_target: NEUTRAL or UNKNOWN or [declared list/post/media target]
+  identity_match: MATCH or MISMATCH or UNKNOWN
+  accepted: true or false or UNKNOWN
+  mismatch_reason: UNKNOWN
+  quarantine_ref: UNKNOWN
+
+entry:
+  entry_page_role: UNKNOWN
+  expected_return_role: UNKNOWN
+  expected_return_basis_ref: UNKNOWN
+  return_input_receipt_ref: UNKNOWN
+  return_result: RETURNED or RETURN_NOT_OBSERVED or ENTRY_LOST or UNKNOWN
+  input_capability_after: AVAILABLE or UNAVAILABLE or UNKNOWN
+  return_observation_ref: UNKNOWN
 
 attempt:
   attempt_id: UNKNOWN
@@ -1210,6 +1257,12 @@ observation:
   window_points: UNKNOWN
   scale_factor: UNKNOWN
   popup_covered: UNKNOWN
+  capture_started_at: UNKNOWN
+  capture_returned_at: UNKNOWN
+  ax_observed_at: UNKNOWN
+  screenshot_observed_at: UNKNOWN
+  source_time_basis: UNKNOWN
+  capture_atomicity: UNVERIFIED
   observed_at: UNKNOWN
   clock_source: UNKNOWN
   timezone: UNKNOWN
@@ -1221,6 +1274,13 @@ observation:
 reveal:
   navigation_kind: NOT_APPLICABLE or selected-filmstrip-safe-edge
   reveal_candidate_id: UNKNOWN
+  reveal_scope_ref: UNKNOWN
+  candidate_ordinal: 1 or 2 or NOT_APPLICABLE or UNKNOWN
+  prior_candidate_refs: NONE or [persisted candidate refs] or UNKNOWN
+  budget_before: 0 or 1 or UNKNOWN
+  budget_after: 1 or 2 or UNKNOWN
+  rearm_preconditions_ref: UNKNOWN
+  rearm_new_information_ref: UNKNOWN
   selected_state_before: UNKNOWN
   selected_state_after: UNKNOWN
   selected_media_ref: UNKNOWN
@@ -1348,9 +1408,10 @@ finish_coverage:
 
 ## 引用檔名與 hash
 
-- 使用可避免覆寫的唯一檔名，例如 `<attempt_id>__<phase>__<sequence>__<source_kind>.<ext>`；不得因同名而覆寫先前證據。`evidence-pack` 會自行計算並核對原件 hash；不要手填或改寫 bundle 內部 hash。
+- 使用可避免覆寫的中性唯一檔名，例如 `<attempt_id>__<phase>__<sequence>__<source_kind>.<ext>`；不得因同名而覆寫先前證據。若要使用帶目標語意的 label，必須先通過上一節的 identity gate；label 即使 `MATCH` 也不能單獨建立歸屬。`evidence-pack` 會自行計算並核對原件 hash；不要手填或改寫 bundle 內部 hash。
 - 保存 `evidence-pack` 的完整命令、exit code、stdout 與 stderr；用回傳的 `bundle_path`、outer SHA-256 及 context 作引用。hash 只證明 bundle／子 blob 的位元組與 context，不證明畫面真實、媒體身分、控制命中或下載完成。
 - 檔名、相同 basename、隱藏副檔名、修改時間、hash、畫面出現順序與鄰近時間都不能單獨建立 attempt／chooser／檔案歸屬；每個 attempt 仍用獨立空白目的地，metadata 不足記 `UNKNOWN`，不新增全域改名器。
+- 發現既有 label 與 viewer 身分矛盾時，保留原路徑與 bytes，記 `identity_match=MISMATCH`、`accepted=false`、`quarantine_ref`；不覆寫、不改名、不重封裝，也不拿它作另一 post／media 的證據。只可追加 correction note，舊 bytes 與既有正確 ledger completion 不動。
 
 ## 使用界限
 

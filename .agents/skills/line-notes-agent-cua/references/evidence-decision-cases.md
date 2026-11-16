@@ -105,12 +105,39 @@
 - **禁止推論：** 已確認一次就可無限重送或擴及其他項；再次中斷自動代表舊 UNKNOWN 已停止；取消舊 chooser 等於舊操作終止；晚到檔案屬新 attempt；可重用舊路徑、舊座標或把舊 history 改寫成新版本。
 - **缺少證據：** 真實 GUI 的晚到輸入／chooser、舊寫入停止證據、新 viewer 與 staging 的連續歸屬，以及跨 Session 的實際恢復結果仍 `NOT_RUN`；文件案例不能補成 E2E PASS。
 
+## C13 候選後 bounded no-show 與 D 類 capture 盲區
+
+- **前提：** intent 前已有一次 B1 候選；input receipt／回傳已保存且沒有未解輸入，最新 after 具充分範圍但未見工具列，尚無 intent、chooser 或業務 outcome。
+- **觀察（假設）：** 只有單一 after 未見控制；同次 capture 不能證明候選與截圖之間從未出現 transient，D 類四項的既有證據即屬這種有限觀察。
+- **可支持命題：** 最多支持本次 bounded observation 的 `TOOLBAR_NOT_SHOWN`；不能推論 LINE 沒有控制、控制從未短暫出現或下載失敗。
+- **允許動作：** 保存 before／input／after；若仍有 `REARM_1` 額度及 B1 要求的相關新證據，可評估第二次。新 capture 本身、時間流逝或另一個點都不是新證據；沒有新資訊即停止。
+- **禁止推論：** D 類 after 可排除 transient；fresh capture 可重置或授予 re-arm；absent AX 等於截圖不存在；bounded no-show 可建立 intent／outcome。
+- **缺少證據：** 能涵蓋 transient 的觀察時序、相關新資訊與真實 GUI 結果仍 `NOT_RUN`／`UNKNOWN`。
+
+## C14 intent 前 transient 後的一次有限 re-arm
+
+- **前提：** intent 前候選曾在有效觀察中正面看見工具列，之後同身分、同前景的新觀察中消失；無 chooser、無 intent、無未解輸入，尚有一次 reveal 額度。
+- **觀察（假設）：** 新充分觀察提供決策相關新證據，例如先前遮罩／範圍不足已消除，或該輸入方法的新安全作用區與映射已成立。
+- **可支持命題：** `REVEAL_TRANSIENT` 只描述「曾見後消失」，不是永久 discovery 封鎖；仍可依 B1 評估一次 `REARM_1`。
+- **允許動作：** 保存兩個狀態與新證據，重新取得 before 觀察、身分與映射；通過 B1 全部前置後可送一次，且第二次仍無正面控制就停止。
+- **禁止推論：** transient 後自動再點；只靠新 capture／時間流逝成立 re-arm；沿用舊點或舊 mapping；已有 intent 後仍 re-arm。
+- **缺少證據：** 真正 transient 時序、新證據是否改變 gate 與實機結果仍 `NOT_RUN`。
+
+## C15 TOOLBAR_VISIBLE 的 action-on-positive
+
+- **前提：** B1 候選後，最新充分 after 正面顯示工具列，下載控制可見、歸屬、啟用且映射成立；其他 intent 前置已備妥。
+- **觀察（假設）：** 該正面觀察是 action window；不是需要再等一次的暫態提示。
+- **可支持命題：** 可用這份已保存的正面觀察與映射接續 intent，不因未再次 capture 而失效。
+- **允許動作：** 若原件範圍／AX／映射不足，可小步唯讀補足缺口；補足仍正面才建 intent。正面足夠時立即使用預備 argv 建立並讀回 intent，之後只做原 wrapper 要求的當次重定位與最多一次下載控制。
+- **禁止推論：** 插入無新增 gate 價值的 stability capture／固定等待；沒有正面控制證據就建 intent；把補範圍的 capture 當成 re-arm；intent 後控制消失再 discovery 或重按。
+- **缺少證據：** C 類實際時序與 GUI 結果仍 `NOT_RUN`；本案例不能指控原流程有固定等待指令。
+
 ## D1 Viewer 返回契約在進入後核對
 
 - **前提：** 目標貼文／媒體已核對，尚未建立下載 intent，Agent 準備開啟 viewer。
 - **觀察（假設）：** 貼文詳細頁來源 observation 與貼文錨點已保存；viewer 尚未進入，因此尚無 viewer 返回控制。
-- **可支持命題：** 可用來源錨點與預期返回角色核對稍後返回。進入前看不到返回控制是正常資訊缺口，不代表禁止進入。
-- **允許動作：** 依有效前景及當次映射開啟目標 viewer；進入後先觀察控制所屬 app／window、角色、焦點與歸屬。確認可返回預期角色後才建立下載 intent。
+- **可支持命題：** 可用來源錨點與預期返回角色核對稍後返回；`expected_return_role` 由實際 entry anchor 決定，通常為 `POST_DETAIL`，不是固定 `LIST`。進入前看不到返回控制是正常資訊缺口，不代表禁止進入。
+- **允許動作：** 依有效前景及當次映射開啟目標 viewer；進入後先觀察控制所屬 app／window、角色、焦點與歸屬。確認返回控制與 entry anchor／預期角色相符且定位有效後才建立下載 intent；實際返回結果仍須在輸入後判讀。
 - **禁止推論：** 進入前不存在返回按鈕；單獨標為「關閉」的按鈕必定回到來源貼文；舊 viewer 座標可重用。
 - **缺少證據：** viewer 內返回控制的歸屬與作用須由進入後的新 observation 判斷；本案例不是實機結果。
 
@@ -118,7 +145,7 @@
 
 - **前提：** 已從 viewer 送出一次有證據的返回輸入。
 - **觀察（假設）：** 新 observation 顯示畫面仍是 viewer、已變成聊天，或無法連回來源貼文錨點。
-- **可支持命題：** 返回未得到預期的 `POST_DETAIL`；若列表連續性也消失，記 `ENTRY_LOST`。
+- **可支持命題：** 頁面未變或觀察不足時只記 `RETURN_NOT_OBSERVED`，不能宣稱 `ENTRY_LOST`；只有充分觀察正面顯示頁面角色／身分或 entry 連續性已失去，才記 `ENTRY_LOST`。
 - **允許動作：** 停止原返回方法，保存前後 observation 與輸入 receipt；分開記錄頁面角色、前景、觀察及輸入能力。
 - **禁止推論：** 再按一次 Escape／Command-W、改猜關閉鍵或沿用舊座標可安全退一層。
 - **缺少證據：** 真實返回控制命中、後續 GUI 行為與 LINE E2E 均 `NOT_RUN`。
@@ -145,7 +172,7 @@
 
 - **前提：** 重新取得 CUA app／window handle，或 Owner 將中斷的指定列表重新帶回前景。
 - **觀察（假設）：** 前者仍是同一有效前景；後者是新的正式前景交接，可能仍在相同對話。
-- **可支持命題：** 同一有效前景內的平台 reacquire 沿用 notes Session，不重跑 `bind`。真正中斷後重新交接須使用新 notes Session ID。
+- **可支持命題：** 同一有效前景內的平台 reacquire 沿用 notes Session，不重跑 `bind`。真正中斷後重新交接須使用新 notes Session ID；新 Session、reopen 或新目錄都不重置同一媒體的 reveal 額度。
 - **允許動作：** 新 Session 保存新 observation、核對列表，先處理舊交易，再顯式 interrupt 舊 open scan，之後以普通完整 scan 接續。
 - **禁止推論：** `bind` 會替舊 scan interrupt；新 scan 可解鎖 UNKNOWN；一般入口恢復可使用 restart／recovery scan；帳本內既有完成或待盤狀態可改寫。本匿名事故案例的兩項 ACTIVE 與 49 篇 `DETAIL_PENDING` 是案例事實，不是所有列表的固定數值。
 - **缺少證據：** 跨 Session 真實恢復及完整 51 篇 E2E 仍 `NOT_RUN`。
