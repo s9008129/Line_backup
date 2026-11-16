@@ -46,7 +46,7 @@ gate 本身也要寫入私有 statement／observation 並讀回，記唯一 `ide
 
 - `identity_match=MATCH`：三層 keys、viewer `n/N`、entry anchor 與 label 宣告的目標一致；才可保存成該 post／media 的候選證據。
 - `identity_match=MISMATCH`：任一可核對欄位矛盾，或 label／目錄名宣稱另一個目標。保留已寫入原件的路徑、bytes 與 SHA-256，記 `accepted=false`、`quarantine_ref` 與差異；不得改名覆寫、重封裝成該 post／media，或傳給 event／attempt。舊 bytes 不改。
-- `identity_match=UNKNOWN`：`n/N`、keys、entry anchor、label 目標或來源範圍任一不足。以中性 observation 保存，不歸屬、不建立 intent；補足新證據後另立 gate。
+- `identity_match=UNKNOWN`：`n/N`、keys、entry anchor 或來源範圍任一不足；`artifact_label_target=NEUTRAL` 的中性唯一 label 不因未宣告 post／media 目標而單獨成為 `UNKNOWN`，若有宣告目標但不足則記 `UNKNOWN`。以中性 observation 保存，不歸屬、不建立 intent；補足新證據後另立 gate。
 
 label 只作唯一標示，即使 `MATCH` 也不能代替 keys。已存在的錯名只需在私有 correction note 追加原路徑、原 hash 與「不作該目標證據」的說明；不得以批次改名器改寫舊 bytes、舊 bundle 或既有正確的 ledger completion。若原件尚可證明屬於另一目標，先保持未採信，待統籌判斷，不由 Agent 自行改掛。
 

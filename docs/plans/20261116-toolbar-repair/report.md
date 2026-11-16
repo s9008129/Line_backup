@@ -155,4 +155,10 @@ Tester 的完整釐清見 `tester-clarification.md`（SHA-256 `77bc1168596d7a04f
 
 模型證據分層：原 Herdr Workers 的 UI 顯示保留不變；Owner 指定的 GPT-6 Luna helper 以 native spawn 的 `model=gpt-6-luna` 參數派送。這是 request parameter 證據，不由此聲稱 provider backend、usage、成本或節省量。Git 交付以後續實際 commit／push 回讀為準，不以測試或 helper 報告冒充遠端發布。
 
+### Owner 再次交辦後的 Worker 補修
+
+統籌再次透過 Herdr 將剩餘契約核對分派 Worker1／Worker2，依具體差異授權各自修改：Worker1 在 B1 與下載本文兩處，把 intent 後的控制消失改用自然語句，不再沿用 intent 前的 `REVEAL_TRANSIENT` 名稱，並限定不得為原未收斂 attempt 重開 viewer；Worker2 在身分 gate 一處明確中性 label 不會只因未宣告 post／media 目標而單獨成為 UNKNOWN。三層 keys、viewer、entry anchor 的必要條件不放寬，既有精確恢復規則不變。
+
+本輪只有三行產品文件變動，沒有 helper、測試、src、CLI、ledger 或正式 Prompt 修改。`git diff --check` exit 0；未重跑程式測試，前述 73／319 是 `df81616` 的既有結果，不能寫成本輪新測試。GUI、下載及獨立接受仍 NOT_RUN；六項狀態維持上表，不稱整體 DONE。私有分工與結果保存在 `worker1-followup.md`、`worker2-followup.md`。
+
 原始分析輸入：根目錄使用者改寫 `問題提報單.md`，SHA-256 `84f64c4ea5a05b03b27f6d45613ad0cd55310e0d9b77dfc50de1387648fec382`（保留未提交）。私有任務證據：`.local/line-backup/tasks/20261116-toolbar-repair/`。公開文件不含私人標題、作者、媒體內容或原始檔名。
