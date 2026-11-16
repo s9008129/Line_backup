@@ -25,6 +25,7 @@
 | intent、新空白目錄、`save_all_count=0` | 本機 attempt 與派送前保護已建立 | 不能證明未派送；維持禁止重送，不以零計數、空目錄或 marker 缺席解鎖 |
 | 當次控制可見、作用及映射明確 | 具備單次輸入的定位依據 | 不推論已命中、App 已接受或下載已發生；視窗／頁面／來源改變即失效 |
 | input API 的原始成功、錯誤或逾時回傳 | 工具回傳了該結果 | 未有排除副作用保證時不推 `NOT_SENT`；不得因 error／timeout 再點一次，結果不明記 `UNKNOWN` |
+| 一次 selected-filmstrip `NAVIGATION` 的 input receipt 與前後觀察 | 該次導覽輸入及其各自來源、範圍與先後的當次觀察 | 不證明 hover、工具列出現、控制命中或下載；不得據此重試／換點；曾見後消失記 `REVEAL_TRANSIENT` |
 | 可歸屬同一 viewer／attempt 的 chooser | App 有階段性回應，可能延遲出現 | 核對精確來源與目的地；chooser 不是下載結果，出處不明時不確認 |
 | 只有 timeout、畫面未變、空目錄或缺少 marker | 當下尚無足夠結果證據 | 尚無 outcome 時先以 `outcome` 記 `UNKNOWN`；已有 `outcome=UNKNOWN` 則保留。沒有新資訊就停止相同查證，不重送、不建新 attempt，也不派送下一項 |
 | 可歸屬的正面下載終結訊號，加上原目的地的穩定結果檔 | 支持進入日常 `download-check` 的候選結果 | 不同媒體不要求同一種 UI 訊號；單一弱訊號不足以判完成 |
@@ -36,6 +37,14 @@
 - **下載結果。** 需要同時能歸屬原 attempt／viewer／原目的地，並具備當次正面終結觀察與穩定結果檔；提示本身不取代同 attempt 終結、穩定檔、`download-check` 與 completion。不得播放以取得提示或種類證據。
 - **檔案與 completion（日常）。** `DOWNLOAD_FINISHED` 只允許進入 `download-check`；magic MIME／suffix 分類、非空穩定檔案、SHA-256、防覆寫、身分核對與 completion 讀回成立後，記 `assurance=DOWNLOAD_ONLY`。完整解碼不屬日常條件。
 - **停止／未派送。** 必須有可歸屬、能排除原操作稍後繼續的正面證據；`timeout`、API error、控制不見、空目錄、缺少 marker、舊計數為零與播放結束都不足。假設案例中的此類 receipt 不得寫成已取得；沒有證據就保留 `UNKNOWN` 並停止新派送。
+
+### 控制發現與 Reveal 的狀態邊界
+
+- `TOOLBAR_VISIBLE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT` 是 intent 前的控制發現狀態，不是六類業務狀態，也不新增第七類。控制尚未成立時仍是 `PENDING`；控制缺席本身不構成 `EXCLUDED` 或 `NO_MEDIA` 的證據，既有排除規則不變；也不是派送結果 `UNKNOWN`。
+- `TOOLBAR_VISIBLE` 只在同一充分範圍的最新正面觀察同時顯示工具列，且下載控制可見、歸屬、啟用與映射均成立時使用；AX 沒有控制不能否定充分涵蓋的截圖，截圖也不能替 AX 補成節點。只有此狀態可建立 intent；之後仍重新定位下載控制並依原 wrapper gate，下載控制與 chooser 最終確認仍各最多一次。
+- 當次支援無點擊移鼠時，hover 仍優先。沒有 hover-only 時，才可依 [目標與下載控制就緒](gui-inventory.md) 考慮對已選 filmstrip 縮圖的非播放安全邊緣送出一次 `NAVIGATION` click；此候選不是 hover 替代，授權、前景、來源、返回控制、已選狀態、安全邊緣與新映射任一不足或有疑義就停止，不點主內容、播放／暫停或其他控制。
+- 點擊後立即以當次支援 API 保存可取得的觀察與原始回傳，不得宣稱 atomic／immediate。只有同一充分範圍的最新觀察足以判斷工具列不在畫面時，才可記 `TOOLBAR_NOT_SHOWN`；範圍不足、可保存來源不能判斷或輸入結果不明記導覽 `UNKNOWN`，不得據 AX 未列控制推定不存在。
+- 工具列曾可見後消失記 `REVEAL_TRANSIENT` 並停止；播放、索引／媒體／viewer／列表身分漂移、幾何／映射失效或輸入不明時亦立即停止。不得重複同點、改點另一邊緣／縮圖，或返回／reopen 重設額度；前後證據與未解原因全留。歷史成功僅為關聯，其他 viewer 有效性與 toggle／timeout／capture race 均未實測。
 
 ## 證據稽核、頁面更正與類型更正
 

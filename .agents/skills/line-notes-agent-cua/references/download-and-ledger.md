@@ -280,6 +280,15 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
 
 每個 GUI 控制／chooser 操作當下保存定位觀察與工具原始回傳；原件不可事後重建。intent 仍須先保存並讀回。需要寫入有 evidence 參數的事件前，才依 [證據範本](evidence-template.md) 整理 statement，將同一 attempt、同一 context 適用的原件一併封裝並傳入 CLI 回傳的 `bundle_path`；若新事件需要新的事實或 context，另建 bundle。`intent` 沒有一般 evidence 參數，其預檢與讀回證據留在私有任務區，不能冒充 CLI 欄位。同一 attempt 可多次 reconcile；每次完成後都要追加該次 sequence／event SHA-256 與結果引用，保留全部歷史，不以最後一筆覆寫。bundle 只證明指定 bytes 與 context 一致，不解析 statement 的語意真假；缺少必要值時寫 `UNKNOWN`，不可由檔名、猜測或另一個來源補值。
 
+### Reveal 前阻塞與永久證據
+
+`selected-filmstrip-safe-edge` 只是 intent 前的單次導覽候選，不是新的下載控制。每個 viewer／media 最多一次，必須先有唯一可定位的已選目標縮圖、非播放安全區、新的 canonical mapping 與同次 viewer 身分；不做 hover 替代、不連點、不換點重試。before 截圖／AX、輸入 receipt、after 截圖／AX 要分別保存 bytes／hash；相同 AX 可以重複引用但不得合併不同畫面。capture 等待能力沒有當次工具證據，或截圖／AX 範圍、輸入狀態不能由同次原件確認時，相關 observation 欄位記 `UNKNOWN`，不以推測補值。狀態使用 `TOOLBAR_VISIBLE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT` 作為 statement 結論：AX 沒看到 toolbar 不能推論不存在；`TOOLBAR_VISIBLE` 仍須最新正面觀察支持下載控制歸屬、啟用與映射；若曾出現又消失，記 `REVEAL_TRANSIENT` 並停止，不寫入業務狀態，也不建立 intent／outcome。未曾派送的媒體仍按既有投影為 `PENDING`。
+
+這些原件仍只用既有 v2 roles；本方案無需新增 `navigation_receipt`、schema、CLI 或 GUI sensor。`evidence-pack` 只寫私有 bundle，必須經既有 event 的 evidence 參數保存並讀回才算進永久帳本。合法順序只有：
+
+- 新 scan 的 `post`／`media` 細盤尚未 append 時，先取得 reveal 原件，再以該事件的精確 context（`list_key + post_key + scan_id`；`media_key` 僅在 statement）封裝並傳入該次 `--evidence`。不要為方便附掛到 `page`、`scan`、`bind` 或 `protect`。
+- 同 scan 的 `post`／`media` 各只能寫一次；已寫入後沒有追加 observation 的合法路徑。pre-intent blocker 的 before／input／after 原件只留在私有 task 區，明列「永久帳本未保存」，不開新 scan、不建 intent／outcome、不改舊 detail／completion。日後同一個實際 attempt 有合法 outcome 時，才可把仍適用的原件按該 attempt 的精確 context 重新封裝；沒有 attempt context 的舊 bundle 不得冒用為新 attempt 或另一畫面的證據。若沒有既有事件可合法附掛，保留私有原件與 hash 並回報限制，不擴 schema 或交易。
+
 ## 恢復與不可解鎖狀態
 
 | 既有狀態／證據 | 下一步 |

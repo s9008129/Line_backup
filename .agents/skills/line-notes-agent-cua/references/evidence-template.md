@@ -22,7 +22,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes evidence-pack \
   --list-key "$LIST_KEY"
 ```
 
-`--asset` 可重複；role 限 `screenshot`、`ax`、`input_receipt`、`command_stdout`、`command_stderr`、`observation`。statement 與畫面／AX 不可空；`command_stdout`／`command_stderr` 可為零 bytes。貼文層另加 `--post-key "$POST_KEY"`；媒體層再加 `--media-key "$MEDIA_KEY"` 及適用的 `--attempt-id "$ATTEMPT_ID"`／`--scan-id "$SCAN_ID"`。Owner 不需要提供 JSON、UUID、key、路徑或 hash。
+`--asset` 可重複，同一 role 也可出現多次；role 限 `screenshot`、`ax`、`input_receipt`、`command_stdout`、`command_stderr`、`observation`。statement 與畫面／AX 不可空；`command_stdout`／`command_stderr` 可為零 bytes。貼文層另加 `--post-key "$POST_KEY"`；媒體層再加 `--media-key "$MEDIA_KEY"` 及適用的 `--attempt-id "$ATTEMPT_ID"`／`--scan-id "$SCAN_ID"`。Owner 不需要提供 JSON、UUID、key、路徑或 hash。
 
 ## 路徑與前置條件
 
@@ -1121,6 +1121,30 @@ nodeRepl.write(JSON.stringify(receipt, null, 2));
 
 這段只保存 CUA 回傳的 bytes，不代表畫面真實、列表身分已確認或 GUI 權限成立。statement 另記實際 app／window、API、範圍與時間來源；未知值照實填 `UNKNOWN`。以剛保存的路徑作 `--asset ax` 與 `--asset screenshot` 執行既有 `evidence-pack`，再把 CLI 回傳的 bundle path 傳給 `bind --observation`／`--handoff`。兩個命題只有在同一原件確實支持且 context 相同時才共用 bundle；否則各自封裝適用原件，不複製或擴張原件能證明的範圍。
 
+## Reveal 導覽證據（沿用既有 v2 roles）
+
+本節只定義人工 statement 的欄位與保存順序，不是新的 event、schema、CLI 或 GUI sensor。v2 role 已足夠；本方案無需新增 `navigation_receipt`。`NAVIGATION` 與 `selected-filmstrip-safe-edge` 是 statement 內的 phase／方法名稱，仍使用既有的 `screenshot`、`ax`、`input_receipt`、`observation` roles；同一 role 可重複。
+
+### 單次候選與前置條件
+
+- 每個 viewer／media 當次最多只有一個 `selected-filmstrip-safe-edge` 導覽候選。先證明目標媒體是已選取項、filmstrip 中有唯一可定位的已選目標縮圖、候選點在此縮圖的非播放安全邊緣，且不落在播放／滑桿／其他控制或邊界；使用同次 before 截圖／AX 建立新的 canonical 映射、window/viewer 身分與 `mapping_id`。已選狀態、安全區、viewer 身分或映射任一為 `UNKNOWN`、過期或與其他畫面混用時，停止在輸入前。
+- 候選輸入沿用一般 `persistSingleInput`，request 的 `input_phase=NAVIGATION`；不使用下載專用的 `persistGroundedDownloadClick`，不計入下載控制呼叫。只允許一次保存並讀回的候選輸入；不得重試同一點、連點、拖曳、右鍵、快捷鍵或以 titlebar／scroll／其他畫面代替。不得把 click 宣稱成 hover 替代；沒有 hover-only 時記 `NOT_AVAILABLE`，能力未查明時記 `UNKNOWN`；僅可依 [目標與下載控制就緒](gui-inventory.md) 的完整前置考慮此明列候選，不創造額外輸入方式。
+- 保存 before 截圖與完整 AX、輸入 request／raw receipt、after 截圖與完整 AX；同一次 observation 的相同 AX bytes 可以被重複引用，但每個 `--asset` ref 與順序都要保留。相同 AX 不代表 toolbar 狀態相同；AX 缺失、未變或沒有該 node 都不是「控制不存在」或「toolbar 未顯示」的反向證明。截圖與 AX 必須分開記錄各自來源、範圍、時間與 hash。
+
+### 時序、狀態與停止
+
+前置與停止決策依 [目標與下載控制就緒](gui-inventory.md)：播放開始、索引／來源身分漂移、幾何／映射失效或輸入不明均立即停止，不以返回或 reopen 重設一次額度。
+
+- statement 記錄 `observed_at`、`input_at`、`clock_source`、`timezone`、`precision`、capture／input 的相對序號，以及 `capture_wait_semantics`／`capture_wait_source`。除非當次工具文件或實測能證明，等待能力一律 `UNKNOWN`；不得宣稱 capture 原子、立即或能捕捉點擊瞬間。截圖或 AX 範圍不足、輸入或等待狀態無法從當次原件確認時，相關觀察欄位記 `UNKNOWN`，不自行補值；只有相對序號可支持先後，不能補出點擊與截圖的未證明時間差。
+- `TOOLBAR_VISIBLE` 只在最新且充分涵蓋的 after 原件正面顯示工具列，且下載控制歸屬、啟用與映射成立時使用；它不是穩定可重播的保證。完成唯一候選後，充分範圍的最新觀察仍看不到 toolbar，才記 `TOOLBAR_NOT_SHOWN`；範圍不足、輸入不明或前置未核對時記觀察 `UNKNOWN` 並停止，不建立業務 `UNKNOWN`。這只表示本次 bounded observation 沒有顯示，不能推論控制不存在。若 toolbar 曾出現、之後在有效觀察中消失，記 `REVEAL_TRANSIENT` 並立即停止；不得重按同一點、換點碰運氣或繼續 intent。
+- 另記 `stop_reason`（例如 `PRECONDITION_UNPROVEN`、`MAPPING_STALE`、`CAPTURE_INCOMPLETE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT`）。`TOOLBAR_VISIBLE`／`TOOLBAR_NOT_SHOWN`／`REVEAL_TRANSIENT` 是 statement 結論，不是 Notes 六類業務狀態；`REVEAL_TRANSIENT` 不會把媒體改成 `UNKNOWN`、`EXCLUDED`、`NO_MEDIA` 或 `COMPLETED`，也不會建立 intent／outcome。未曾派送的媒體仍按其既有投影（通常是 `PENDING`）。
+
+### 永久保存與合法附掛順序
+
+1. **新 scan 的細盤事件尚未寫入。** 先完成該 scan、post 與 media 的合法細盤；在 append 前取得 reveal before／input／after 原件，將它們封裝成 v2 bundle，再把 `bundle_path` 傳給該次 `post` 或 `media` 的 `--evidence`。`post`／`media` event context 均為 `list_key + post_key + scan_id`；`media_key` 只可寫在 statement，不能填入該事件 context。此路徑可在一次事件中保存精確細盤與當次 reveal 事實，但 statement 仍只是人工紀錄。
+2. **post／media 細盤已寫入。** 同 scan 的 `post`／`media` 各只能追加一次，沒有「再補 observation」的合法命令；此時 pre-intent blocker 原件只能留在私有 task 區，尚未進永久帳本。不得為留證另開 scan，不得改用 `bind`、`protect`、`intent` 或 `outcome` 冒充附掛，也不得改寫舊 scan／detail／completion。日後同一個實際 attempt 有合法 outcome 時，才可把仍適用的原件依該 attempt 的精確 context 重新封裝；不得把沒有 attempt context 的 before-intent bundle 直接冒用為新 attempt 或另一個 context 的證據。新 attempt 需要自己的觀察與 context，舊 blocker 只能作歷史來源引用。
+3. `evidence-pack` 本身只建立私有 bundle，不是永久帳本寫入；只有既有 event 成功保存並讀回其 evidence ref 後，才可聲稱已進永久帳本。若沒有可合法承載的既有事件，保留私有原件與 hash，明列「永久帳本未保存」，交回具體缺口；本方案不為補證據擴 schema、CLI 或交易。
+
 ## 必錄欄位
 
 | 區塊 | 欄位／內容 | 最低要求 |
@@ -1130,6 +1154,7 @@ nodeRepl.write(JSON.stringify(receipt, null, 2));
 | Restart 批次 | `restart_id`、`generation`、`confirmation_ref`、`scope_digest`、`version_directory`、`owner_consent_ref`、`recovery_scan_id`、`prior_attempt_ref`、`activation_ref` | 只在精確 `restart preview`／Owner 明示同意／`restart confirm`／confirm 後完整 recovery scan 路徑使用。`confirmation_ref`、`generation`、`scope_digest`、`version_directory` 與新 attempt 必須對應同一個已確認批次；`owner_consent_ref` 指向當次可核對的 Owner 明示回覆，不能以 Prompt 本身、沉默、逾時或一般「繼續」代替。一般 attempt 或未使用欄位記 `NOT_APPLICABLE`；無法唯一讀回才記 `UNKNOWN`，不得由路徑或檔名猜值。此區塊是私有 statement 欄位，不是新的 CLI schema；傳給 CLI 的仍是既有 v2 `bundle_path` |
 | 目的地 | `original_destination`、`destination_event_refs`、`observed_destination` | 原目的地以 intent 讀回值為準。目的地相關事件可能是 `created`（初始 root）、`destination`（追加 root）或 `intent`（attempt 目的地），各自以事件檔與讀回 hash 引用；`binding` 事件不含目的地。chooser 顯示或實際落點另記，不得反寫原目的地 |
 | 觀察來源 | `observation_id`、`source_kind`、`tool`、`api_scope`、`app_window_binding`、`role_children_ref`、`raw_return_ref`、`scope`、`capture_rect`、`raw_rect`、`image_pixels`、`window_frame`、`window_points`、`scale_factor`、`popup_covered` | 記 AX／app-bound 截圖／桌面局部截圖／Computer Use 回傳／真人觀察，並分開 AX client／API scope、app／window 綁定與 role／children 來源；範圍、原始矩形、實際像素、點數與縮放分開，來源未涵蓋 popup 時不可推論不存在。同一 viewer 的 AX 相同不得推定工具列未變，截圖與 AX 也不能互相補值 |
+| Reveal 導覽 | `navigation_kind`、`reveal_candidate_id`、`selected_state_before`、`selected_media_ref`、`safe_zone_ref`、`mapping_id`、`mapping_valid_at`、`before_screenshot_ref`、`before_ax_ref`、`input_phase`、`input_receipt_ref`、`after_screenshot_ref`、`after_ax_ref`、`reveal_state`、`capture_wait_semantics`、`capture_wait_source`、`stop_reason` | 只用既有 v2 roles；每個 viewer／media 最多一個 `selected-filmstrip-safe-edge` 候選與一次輸入。before／input／after 各自保存 bytes／hash；同 AX 可重複但不得合併不同畫面。`TOOLBAR_VISIBLE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT` 是 statement 結論，不是業務狀態；capture 等待能力未證實時記 `UNKNOWN`，曾出現又消失即停止，不得據 AX 缺失推定不存在 |
 | 時間 | `observed_at`、`input_at`、`clock_source`、`timezone`、`precision` | 每個時間都要有來源；不可取得工具時間或可信時鐘時寫 `UNKNOWN`，不以 mtime 冒充操作時間。capture label／sequence 只能支持相對先後；不能證明是否在輸入前時，`observation_order=UNKNOWN`，不得把檔名或 label 寫成已證實的 pre-click |
 | 定位 | `page_role`、`focus_state`、`control_owner`、`control_visibility`、`enabled_state`、`position_source_ref`、`pre_input_observation_ref`、`post_input_observation_ref`、`observation_order`、`control_region`、`control_region_coord_space`、`candidate_point`、`candidate_point_relation`、`raw_coord_space`、`mapped_screen_point`、`coordinate_space_match`、`mapping_id`、`mapping_valid_at`、`grounding_conclusion` | 控制可見性只在充分範圍成立時記 `VISIBLE`／`NOT_OBSERVED`。由同一份當次原件記下控制區域及候選點，兩者使用相同座標空間並讀回；`position_source_ref` 指向截圖／AX 原件與 hash，先後不能判定時明記 `UNKNOWN`。候選點須在可辨識區域內部；區域外、邊界、控制歸屬／映射／先後／區域不明時，`grounding_conclusion=STOP`，不得輸入。`control_region` 是視覺篩選區域，不是原生 hit-test；通過只表示可送入對帳，不表示控制已命中 |
 | 輸入 | `input_phase`、`action`、`target_ref`、`prepared_target`、`prepared_target_readback_ref`、`candidate_target_match`、`dispatched_target`、`receipt_target_match`、`input_tool`、`input_api`、`input_receipt_ref`、`raw_tool_return`、`error_raw`、`download_control_call_count`、`chooser_confirm_call_count` | `input_phase` 至少區分 `DOWNLOAD_CONTROL`、`CHOOSER_PATH`、`CHOOSER_CONFIRM`；記工具／API 及原始成功／錯誤／逾時，並分別累計兩個至多一次的呼叫。失敗、逾時與未知也計入。`prepared_target` 是真正要送出的值，須先寫入並讀回，且與 `candidate_point` 比對；不符或無法讀回時不得呼叫。`dispatched_target` 取自實際 input receipt，再與 `prepared_target` 比對；receipt 不符或無法讀回時記 `MISMATCH`／`UNKNOWN`，不得追認為正確定位，也不得據此改寫 `NOT_SENT`。receipt 只證明保存的工具參數，不是 OS event trace 或 LINE hit-test |
@@ -1192,6 +1217,27 @@ observation:
   evidence_bundle_path: UNKNOWN
   evidence_bundle_sha256: UNKNOWN
   evidence_pack_command_ref: UNKNOWN
+
+reveal:
+  navigation_kind: NOT_APPLICABLE or selected-filmstrip-safe-edge
+  reveal_candidate_id: UNKNOWN
+  selected_state_before: UNKNOWN
+  selected_state_after: UNKNOWN
+  selected_media_ref: UNKNOWN
+  safe_zone_ref: UNKNOWN
+  mapping_id: UNKNOWN
+  mapping_valid_at: UNKNOWN
+  hover_primitive: UNKNOWN or NOT_AVAILABLE
+  before_screenshot_ref: UNKNOWN
+  before_ax_ref: UNKNOWN
+  input_phase: NAVIGATION or NOT_APPLICABLE or UNKNOWN
+  input_receipt_ref: UNKNOWN
+  after_screenshot_ref: UNKNOWN
+  after_ax_ref: UNKNOWN
+  reveal_state: TOOLBAR_VISIBLE or TOOLBAR_NOT_SHOWN or REVEAL_TRANSIENT or UNKNOWN
+  capture_wait_semantics: UNKNOWN
+  capture_wait_source: UNKNOWN
+  stop_reason: UNKNOWN
 
 localization:
   page_role: UNKNOWN
