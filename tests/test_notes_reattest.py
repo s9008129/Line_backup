@@ -277,6 +277,8 @@ class NotesReattestPreviewTests(unittest.TestCase):
             self.complete_media(
                 ledger, outside['outside']['post_key'], outside_key,
                 'outside-complete-' + str(self.case_number))
+            outside_completion = ledger['records'].events[-1]
+            self.assertEqual(outside_completion['kind'], 'completion')
         post_identity = notes.post_identity(
             visual_key='current-post-' + str(self.case_number))
         current_media = [photo_b]
@@ -306,15 +308,17 @@ class NotesReattestPreviewTests(unittest.TestCase):
             ledger['records'] = notes.NotesRecords(
                 str(ledger['records'].records),
                 _allow_injected_verification=True)
+        if outside_scope:
+            outside_target = (
+                Path(outside_completion['data']['destination']) /
+                outside_completion['data']['target_file']['name'])
+            outside_target.write_bytes(
+                b'synthetic changed completion outside scope')
         preview = ledger['records'].restart_preview()
         self.assertEqual(preview['status'], 'RESTART_REQUIRED')
         scoped = {row['media_key'] for post in preview['scope']['posts']
                   for row in post['media']}
         self.assertIn(unknown['media_key'], scoped)
-        if include_completion and not outside_scope and change_device:
-            self.assertTrue(any(
-                'LOCAL_CHANGED' in post['reasons']
-                for post in preview['scope']['posts']))
         ledger['records'].restart_confirm(
             session_id=ledger['session'], preview=preview,
             evidence=self.evidence(

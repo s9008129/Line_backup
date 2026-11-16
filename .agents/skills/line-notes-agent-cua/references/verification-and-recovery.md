@@ -108,7 +108,7 @@ ffmpeg 完整解碼仍不能保證偵測所有靜默損壞，也不代表與服�
 - 相同 basename、相同可見名稱、隱藏副檔名或缺少來源 metadata 只供顯示，不證明同一媒體、既有命名來源或可合併；每次 attempt 仍使用獨立空白目的地，metadata 不足記 `UNKNOWN`，不新增全域改名器。
 - completion 必須保存可核對的來源身分、目的地、檔集、manifest、驗證工具與證據摘要，寫入後讀回。舊 completion 不改寫，新狀態以追加事件表達。
 - 檔案驗證完成但 completion 寫入失敗時，回報「檔案已驗證、completion 尚未保存」；保留原檔，不重下、不手寫 completion。
-- 命名／發布中斷使用 `resume`。只有來源、暫名、目標、journal 與 hash 可唯一對應才接續；目標既有內容、非屬合格環境附屬項的額外檔、symlink、inode／device 漂移或 hash 不符時 fail closed，保留原件，不重送下載。
+- 命名／發布中斷使用 `resume` 接續原交易，不建立新 intent、verification、publish-plan 或 generation。只有來源、暫名、目標、journal、inode、時間與 hash 可唯一對應才接續；歷史 device-only 差異不單獨拒絕。目標若已存在，必須證明它是該交易已發布的同一檔案；未歸屬的目標、非預期額外檔、symlink、inode／內容不符或不明 link 狀態都 fail closed，保留原件，不重送下載。hardlink 當下的 source／target parent 仍須位於同一檔案系統；link／unlink 前後仍核對當期 device＋inode 與允許的 link count，不能以歷史 device 的容忍解除這些條件。
 
 ## 六類狀態與貼文層 NO_MEDIA
 
@@ -132,7 +132,7 @@ ffmpeg 完整解碼仍不能保證偵測所有靜默損壞，也不代表與服�
 業務完成事實與目前照片區是否可用分開投影：
 
 - `LOCAL_MISSING`：整篇完成目錄不存在。保留 `COMPLETED` 與禁止重下，回報「本機不可用；外部副本未驗證」。不要求外接硬碟在線或歸檔登記，也不因此把 completion 降格。
-- `LOCAL_CHANGED`：目錄仍存在，但有部分缺檔、非屬合格環境附屬項的額外檔、檔名／大小／SHA-256／mtime／ctime 漂移、inode／device 改變、symlink、或 manifest／身分不符。此分類核對的是受管理完成媒體或其交易目錄；普通列表容器單獨的歷史 device 差異不會把媒體改列 `LOCAL_CHANGED`。保護原件，scope 外停止新派送並回報差異；只有 fresh `restart preview` 精確列出該篇且 Owner 明示確認該批後，才保留舊目錄並在新 `versions/gNNNNNNNN/` 目錄重建。仍不重下補帳、不原地覆寫、不重建空目錄、不手改紀錄。合格環境附屬項的存在、bytes 改變或消失不列入 witness、manifest 或媒體計數，也不改變 completion 或 `LOCAL_VERIFIED`。
+- `LOCAL_CHANGED`：目錄仍存在，但有部分缺檔、非屬合格環境附屬項的額外檔、檔名／大小／SHA-256 不符、symlink、非預期 hardlink、或 manifest／授權路徑身分不符。完成媒體與已驗證 candidate 的歷史 device／inode／mtime／ctime 是診斷資料，不能單獨否決內容與布局；每次仍須穩定讀回內容，讀取期間的替換或變動照常拒絕，不重寫舊紀錄。普通列表綁定仍核對 path／inode，reattest 仍採既有嚴格規則；pending 發布仍核對交易 inode／時間／journal，僅容忍歷史 device-only 差異。保護原件，scope 外停止新派送並回報差異；只有 fresh `restart preview` 精確列出該篇且 Owner 明示確認該批後，才保留舊目錄並在新 `versions/gNNNNNNNN/` 目錄重建。仍不重下補帳、不原地覆寫、不重建空目錄、不手改紀錄。合格環境附屬項的存在、bytes 改變或消失不列入 witness、manifest 或媒體計數，也不改變 completion 或 `LOCAL_VERIFIED`。
 - 目錄讀取權限異常、只有部分目錄可見或不能區分是缺席還是損壞時，不自動歸類為 `LOCAL_MISSING`；先保留阻塞並查證。
 
 `LOCAL_MISSING`／`LOCAL_CHANGED` 都不是六類業務狀態，也不得自行解除 `UNKNOWN`、活動下載或未完成命名交易；只有精確 restart 批次可在已確認 scope 內以新版本重建 `LOCAL_CHANGED`。照片區可被 Owner 搬走或整個刪除；帳本、證據與 completion 必須留在照片區外。
@@ -144,6 +144,7 @@ ffmpeg 完整解碼仍不能保證偵測所有靜默損壞，也不代表與服�
 | 前次實際情況 | 下一步 |
 |---|---|
 | `COMPLETED` 且檔案完整 | 跳過並讀回 completion；不重下 |
+| 完成媒體／已驗證 candidate 只有歷史 device／inode／時間不同，內容與布局核對一致 | 保留原完成事實與保存值；不因 metadata 單獨重建、不新增 confirmation。pending 發布另按原交易的 inode／時間／journal 與內容核對，只容忍歷史 device-only 差異 |
 | `COMPLETED` 但整篇目錄缺席 | 保留完成，標 `LOCAL_MISSING`；不重下，不聲稱外部副本已驗證 |
 | 完成目錄存在但部分缺檔／非屬合格環境附屬項的額外檔／漂移／symlink | 標 `LOCAL_CHANGED`，保護原件，scope 外停止新派送；只有 fresh restart preview 精確列出且 Owner 明示確認該批，才保留原檔並在新版本目錄重建 |
 | 已下載完成、尚未基本檢查（包含 legacy `VERIFY_REQUIRED`） | 執行 `download-check`。若 magic MIME 明確為 `text/plain`、`text/html`、`application/pdf` 或 `application/zip`，追加 `line-notes-download-exclusion/v1`，將該 attempt 記為 `EXCLUDED` 並保留 staging；不寫 completion，也不宣稱來源本身不是媒體。未知 MIME、`application/octet-stream` 或 MIME／suffix 不相符時保持 pending 並拒絕完成，不猜種類、不改 key、不重下。保留的 `VERIFY_REQUIRED` 是相容標記，不啟動舊 `verify` 或來源種類取證 |

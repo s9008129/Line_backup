@@ -48,6 +48,83 @@ def video_bytes(marker=0):
     return b'ftypisom' + b'\0' * 8 + bytes([marker]) * 64
 
 
+class _ShiftedStat:
+    """Expose one stat result with a synthetic historical drift."""
+
+    def __init__(self, value, *, device=None, mtime_ns=None):
+        self._value = value
+        self._device = device
+        self._mtime_ns = mtime_ns
+
+    def __getattr__(self, name):
+        if name == 'st_dev' and self._device is not None:
+            return self._device
+        if name == 'st_mtime_ns' and self._mtime_ns is not None:
+            return self._mtime_ns
+        return getattr(self._value, name)
+
+
+def _path_is_within(path, root):
+    try:
+        path = Path(path).absolute()
+    except (TypeError, ValueError):
+        return False
+    return path == root or root in path.parents
+
+
+@contextlib.contextmanager
+def _candidate_device_drift(candidate_path):
+    """Model a candidate subtree observed on a different device."""
+    candidate_path = Path(candidate_path).absolute()
+    directory = candidate_path.parent
+    candidate_inode = candidate_path.stat().st_ino
+    original_stat = os.stat
+    original_lstat = os.lstat
+    original_fstat = os.fstat
+
+    def shifted(value):
+        return _ShiftedStat(value, device=value.st_dev + 1000003)
+
+    def stat(path, *args, **kwargs):
+        value = original_stat(path, *args, **kwargs)
+        return shifted(value) if _path_is_within(path, directory) else value
+
+    def lstat(path, *args, **kwargs):
+        value = original_lstat(path, *args, **kwargs)
+        return shifted(value) if _path_is_within(path, directory) else value
+
+    def fstat(fd):
+        value = original_fstat(fd)
+        return shifted(value) if value.st_ino == candidate_inode else value
+
+    with mock.patch.object(os, 'stat', side_effect=stat), \
+            mock.patch.object(os, 'lstat', side_effect=lstat), \
+            mock.patch.object(os, 'fstat', side_effect=fstat):
+        yield
+
+
+@contextlib.contextmanager
+def _candidate_change_during_read(candidate_path):
+    """Make the second fstat of one bounded read disagree with the first."""
+    candidate_inode = Path(candidate_path).stat().st_ino
+    original_fstat = os.fstat
+    calls = 0
+
+    def fstat(fd):
+        nonlocal calls
+        value = original_fstat(fd)
+        if value.st_ino != candidate_inode:
+            return value
+        calls += 1
+        if calls % 2 == 0:
+            return _ShiftedStat(
+                value, mtime_ns=value.st_mtime_ns + 1)
+        return value
+
+    with mock.patch.object(os, 'fstat', side_effect=fstat):
+        yield
+
+
 class NotesRestartTests(unittest.TestCase):
     def setUp(self):
         PRIVATE_TASKS.mkdir(parents=True, exist_ok=True)
@@ -368,6 +445,40 @@ class NotesRestartTests(unittest.TestCase):
             session_id=session, attempt_id=attempt['attempt_id'],
             outcome='DOWNLOAD_FINISHED', evidence=evidence)
         return attempt
+
+    def two_media_restart_scope(self, label):
+        first = notes.media_identity(
+            kind=PHOTO, visual_key=label + '-first')
+        second = notes.media_identity(
+            kind=PHOTO, visual_key=label + '-second')
+        post_identity = notes.post_identity(visual_key=label + '-post')
+        observed = self.scan_posts(
+            self.records,
+            [dict(name='post', identity=post_identity,
+                  date='2026-11-03', media=[first, second])])
+        post_key_value, _scan = observed['post']
+        keys = [self.media_key(post_key_value, identity)
+                for identity in (first, second)]
+        _first_attempt, first_completion = self.download(
+            self.records, keys[0], 'old-0.png', png((10, 20, 30)))
+        old = self.records.intent(
+            session_id=self.session, media_key_value=keys[1])
+        (Path(old['destination']) / 'old-1.png').write_bytes(
+            png((11, 21, 31)))
+        self.records.outcome(
+            session_id=self.session, attempt_id=old['attempt_id'],
+            outcome='UNKNOWN',
+            evidence=self.attempt_evidence(self.records, old))
+        preview = self.records.restart_preview()
+        self.assertEqual(preview['status'], 'RESTART_REQUIRED')
+        self.confirm_restart(self.records, preview)
+        self.scan_after_confirm(
+            self.records,
+            [dict(name='post', identity=post_identity,
+                  date='2026-11-03', media=[first, second])])
+        return dict(keys=keys, identities=(first, second),
+                    first_completion=first_completion,
+                    post_identity=post_identity, preview=preview)
 
     def event_files(self, records=None):
         records = records or self.records
@@ -1582,16 +1693,16 @@ class NotesRestartTests(unittest.TestCase):
             session_id=self.session, attempt_id=attempt['attempt_id'],
             verifier=self.pass_verifier, stability_interval=0)
         candidate_path = Path(candidate['candidate']['path'])
-        original_read_file = notes.read_file
+        original_read_regular = notes._read_regular
 
-        def deny_candidate_read(path):
+        def deny_candidate_read(path, *args, **kwargs):
             if Path(path) == candidate_path:
                 raise PermissionError(
                     errno.EACCES, 'synthetic candidate permission denied')
-            return original_read_file(path)
+            return original_read_regular(path, *args, **kwargs)
 
         with mock.patch.object(
-                notes, 'read_file', side_effect=deny_candidate_read):
+                notes, '_read_regular', side_effect=deny_candidate_read):
             self.assertEqual(
                 self.records._candidate_file_availability(
                     candidate['candidate']),
@@ -2702,7 +2813,7 @@ class NotesRestartTests(unittest.TestCase):
         directory = Path(candidate['candidate']['path']).parent
         environment = directory / '.DS_Store'
         before_events = self.event_files()
-        original_read = notes.read_file
+        original_read = notes._read_regular
 
         def guarded_read(path, *args, **kwargs):
             if Path(path).name == '.DS_Store':
@@ -2711,7 +2822,8 @@ class NotesRestartTests(unittest.TestCase):
 
         for payload in (b'environment', b'changed environment'):
             environment.write_bytes(payload)
-            with mock.patch.object(notes, 'read_file', side_effect=guarded_read):
+            with mock.patch.object(
+                    notes, '_read_regular', side_effect=guarded_read):
                 self.assertEqual(
                     self.records._candidate_file_availability(
                         candidate['candidate']), LOCAL_VERIFIED)
@@ -2774,7 +2886,7 @@ class NotesRestartTests(unittest.TestCase):
         for name, raw in before.items():
             self.assertEqual(after[name], raw)
 
-    def test_candidate_symlink_hardlink_and_inode_drift_are_rejected(self):
+    def test_candidate_replacement_is_accepted_but_links_are_rejected(self):
         context = self.one_media_restart_context('restart-c10-identity')
         attempt = self.restart_download(
             self.records, context['key'], 'new.png', png((34, 35, 36)),
@@ -2810,7 +2922,7 @@ class NotesRestartTests(unittest.TestCase):
         os.replace(str(replacement), str(third_path))
         self.assertEqual(
             self.records._candidate_file_availability(third['candidate']),
-            notes.LOCAL_CHANGED)
+            notes.LOCAL_VERIFIED)
         self.assertFalse(any(
             event['kind'] == 'restart-activation'
             for event in self.records.events))
@@ -2818,6 +2930,231 @@ class NotesRestartTests(unittest.TestCase):
         self.assertTrue(first_path.is_symlink())
         self.assertEqual(os.stat(str(second_path)).st_nlink, 2)
         self.assertEqual(third_path.read_bytes(), png((34, 35, 36)))
+
+    def test_candidate_device_and_time_drift_remain_verified(self):
+        context = self.one_media_restart_context('restart-candidate-drift')
+        attempt = self.restart_download(
+            self.records, context['key'], 'new.png', png((120, 121, 122)),
+            context['preview']['restart_id'])
+        candidate = self.records.verify(
+            session_id=self.session, attempt_id=attempt['attempt_id'],
+            verifier=self.pass_verifier, stability_interval=0)
+        activated = self.records.restart_resume(
+            session_id=self.session, verifier=self.pass_verifier,
+            stability_interval=0)
+        self.assertEqual(activated['action'], 'RESTART_ACTIVATED')
+
+        candidate_path = Path(candidate['candidate']['path'])
+        original = candidate_path.stat()
+        os.utime(
+            candidate_path,
+            ns=(original.st_atime_ns, original.st_mtime_ns + 2000000000))
+        self.assertNotEqual(candidate_path.stat().st_mtime_ns,
+                            original.st_mtime_ns)
+        before_events = self.event_files()
+
+        with _candidate_device_drift(candidate_path):
+            self.assertEqual(
+                self.records._candidate_file_availability(
+                    candidate['candidate']), LOCAL_VERIFIED)
+            summary = self.records.summary()
+            row = next(
+                item for item in summary['media']
+                if item['media_key'] == attempt['media_key'])
+            self.assertEqual((row['status'], row['local_files']),
+                             ('COMPLETED', LOCAL_VERIFIED))
+            self.assertEqual(summary['local_counts'][LOCAL_VERIFIED], 1)
+            self.assertNotIn(
+                'COMPLETED_FILES_CHANGED', summary['dispatch_blockers'])
+            preview = self.records.restart_preview()
+            self.assertEqual(preview['status'], 'NO_RESTART_REQUIRED')
+        self.assertEqual(self.event_files(), before_events)
+
+    def test_candidate_change_during_bounded_read_is_local_changed(self):
+        context = self.one_media_restart_context('restart-candidate-read')
+        attempt = self.restart_download(
+            self.records, context['key'], 'new.png', png((123, 124, 125)),
+            context['preview']['restart_id'])
+        candidate = self.records.verify(
+            session_id=self.session, attempt_id=attempt['attempt_id'],
+            verifier=self.pass_verifier, stability_interval=0)
+        activated = self.records.restart_resume(
+            session_id=self.session, verifier=self.pass_verifier,
+            stability_interval=0)
+        self.assertEqual(activated['action'], 'RESTART_ACTIVATED')
+        candidate_path = Path(candidate['candidate']['path'])
+        before_events = self.event_files()
+
+        with _candidate_change_during_read(candidate_path):
+            self.assertEqual(
+                self.records._candidate_file_availability(
+                    candidate['candidate']), notes.LOCAL_CHANGED)
+            summary = self.records.summary()
+            row = next(
+                item for item in summary['media']
+                if item['media_key'] == attempt['media_key'])
+            self.assertEqual((row['status'], row['local_files']),
+                             ('COMPLETED', notes.LOCAL_CHANGED))
+            self.assertEqual(summary['local_counts'][notes.LOCAL_CHANGED], 1)
+            self.assertIn(
+                'COMPLETED_FILES_CHANGED', summary['dispatch_blockers'])
+        self.assertEqual(self.event_files(), before_events)
+
+    def test_candidate_whole_version_directory_missing_is_local_missing(self):
+        context = self.one_media_restart_context(
+            'restart-candidate-directory-missing')
+        attempt = self.restart_download(
+            self.records, context['key'], 'new.png', png((126, 127, 128)),
+            context['preview']['restart_id'])
+        candidate = self.records.verify(
+            session_id=self.session, attempt_id=attempt['attempt_id'],
+            verifier=self.pass_verifier, stability_interval=0)
+        activated = self.records.restart_resume(
+            session_id=self.session, verifier=self.pass_verifier,
+            stability_interval=0)
+        self.assertEqual(activated['action'], 'RESTART_ACTIVATED')
+
+        candidate_path = Path(candidate['candidate']['path'])
+        version_directory = candidate_path.parent
+        candidate_path.unlink()
+        version_directory.rmdir()
+        self.assertEqual(
+            self.records._candidate_file_availability(
+                candidate['candidate']), notes.LOCAL_MISSING)
+        summary = self.records.summary()
+        row = next(
+            item for item in summary['media']
+            if item['media_key'] == attempt['media_key'])
+        self.assertEqual((row['status'], row['local_files']),
+                         ('COMPLETED', notes.LOCAL_MISSING))
+        self.assertEqual(summary['local_counts'][notes.LOCAL_MISSING], 1)
+        self.assertNotIn(
+            'COMPLETED_FILES_CHANGED', summary['dispatch_blockers'])
+
+        before_events = self.event_files()
+        with self.assertRaisesRegex(
+                NotesError, 'COMPLETED_OR_EXCLUDED_NO_REDOWNLOAD'):
+            self.records.intent(
+                session_id=self.session, media_key_value=attempt['media_key'])
+        self.assertEqual(self.event_files(), before_events)
+
+    def test_candidate_partial_file_missing_is_local_changed(self):
+        context = self.one_media_restart_context(
+            'restart-candidate-file-missing')
+        attempt = self.restart_download(
+            self.records, context['key'], 'new.png', png((129, 130, 131)),
+            context['preview']['restart_id'])
+        candidate = self.records.verify(
+            session_id=self.session, attempt_id=attempt['attempt_id'],
+            verifier=self.pass_verifier, stability_interval=0)
+        activated = self.records.restart_resume(
+            session_id=self.session, verifier=self.pass_verifier,
+            stability_interval=0)
+        self.assertEqual(activated['action'], 'RESTART_ACTIVATED')
+
+        candidate_path = Path(candidate['candidate']['path'])
+        candidate_path.unlink()
+        self.assertTrue(candidate_path.parent.is_dir())
+        self.assertEqual(
+            self.records._candidate_file_availability(
+                candidate['candidate']), notes.LOCAL_CHANGED)
+        summary = self.records.summary()
+        row = next(
+            item for item in summary['media']
+            if item['media_key'] == attempt['media_key'])
+        self.assertEqual((row['status'], row['local_files']),
+                         ('COMPLETED', notes.LOCAL_CHANGED))
+        self.assertEqual(summary['local_counts'][notes.LOCAL_CHANGED], 1)
+        self.assertIn(
+            'COMPLETED_FILES_CHANGED', summary['dispatch_blockers'])
+
+        before_events = self.event_files()
+        with self.assertRaisesRegex(
+                NotesError, 'COMPLETED_FILES_CHANGED_NO_REDOWNLOAD'):
+            self.records.intent(
+                session_id=self.session, media_key_value=attempt['media_key'])
+        self.assertEqual(self.event_files(), before_events)
+
+    def test_missing_sibling_candidate_is_not_masked_by_expected_names(self):
+        context = self.two_media_restart_scope('restart-candidate-sibling')
+        first_attempt = self.restart_download(
+            self.records, context['keys'][0], 'first.png', png((132, 133, 134)),
+            context['preview']['restart_id'])
+        first_candidate = self.records.verify(
+            session_id=self.session, attempt_id=first_attempt['attempt_id'],
+            verifier=self.pass_verifier, stability_interval=0)
+        second_attempt = self.restart_download(
+            self.records, context['keys'][1], 'second.png', png((135, 136, 137)),
+            context['preview']['restart_id'])
+        second_candidate = self.records.verify(
+            session_id=self.session, attempt_id=second_attempt['attempt_id'],
+            verifier=self.pass_verifier, stability_interval=0)
+        first_path = Path(first_candidate['candidate']['path'])
+        second_path = Path(second_candidate['candidate']['path'])
+        self.assertEqual(first_path.parent, second_path.parent)
+        activated = self.records.restart_resume(
+            session_id=self.session, verifier=self.pass_verifier,
+            stability_interval=0)
+        self.assertEqual(activated['action'], 'RESTART_ACTIVATED')
+
+        first_path.unlink()
+        self.assertEqual(
+            self.records._candidate_file_availability(
+                second_candidate['candidate']), notes.LOCAL_CHANGED)
+        summary = self.records.summary()
+        row = next(
+            item for item in summary['media']
+            if item['media_key'] == second_attempt['media_key'])
+        self.assertEqual((row['status'], row['local_files']),
+                         ('COMPLETED', notes.LOCAL_CHANGED))
+        self.assertEqual(summary['local_counts'][notes.LOCAL_CHANGED], 2)
+        self.assertIn(
+            'COMPLETED_FILES_CHANGED', summary['dispatch_blockers'])
+
+        before_events = self.event_files()
+        with self.assertRaisesRegex(
+                NotesError, 'COMPLETED_FILES_CHANGED_NO_REDOWNLOAD'):
+            self.records.intent(
+                session_id=self.session,
+                media_key_value=second_attempt['media_key'])
+        self.assertEqual(self.event_files(), before_events)
+
+    def test_uncopied_restart_plan_target_is_not_required_by_candidate_layout(self):
+        context = self.two_media_restart_scope('restart-candidate-plan-layout')
+        first_attempt = self.restart_download(
+            self.records, context['keys'][0], 'first.png', png((138, 139, 140)),
+            context['preview']['restart_id'])
+        first_candidate = self.records.verify(
+            session_id=self.session, attempt_id=first_attempt['attempt_id'],
+            verifier=self.pass_verifier, stability_interval=0)
+        second_attempt = self.restart_download(
+            self.records, context['keys'][1], 'second.png', png((141, 142, 143)),
+            context['preview']['restart_id'])
+        with mock.patch.object(
+                media_verify, 'copy_exclusive',
+                side_effect=OSError('synthetic copy interruption')):
+            with self.assertRaisesRegex(OSError, 'synthetic copy interruption'):
+                self.records.verify(
+                    session_id=self.session,
+                    attempt_id=second_attempt['attempt_id'],
+                    verifier=self.pass_verifier, stability_interval=0)
+
+        plan = next(
+            event for event in self.records.events
+            if event['kind'] == 'restart-copy-plan' and
+            event['data']['attempt_id'] == second_attempt['attempt_id'])
+        target = Path(plan['data']['target_directory']) / plan['data']['target_name']
+        self.assertFalse(target.exists())
+        self.assertEqual(
+            self.records._candidate_file_availability(
+                first_candidate['candidate']), LOCAL_VERIFIED)
+        summary = self.records.summary()
+        self.assertNotIn(
+            'COMPLETED_FILES_CHANGED', summary['dispatch_blockers'])
+        self.assertFalse(any(
+            event['kind'] == 'restart-candidate' and
+            event['data']['attempt_id'] == second_attempt['attempt_id']
+            for event in self.records.events))
 
     def test_complete_copy_without_manifest_is_not_adopted(self):
         context = self.one_media_restart_context('restart-c08-manifest')

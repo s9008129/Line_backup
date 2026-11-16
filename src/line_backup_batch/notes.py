@@ -4245,34 +4245,41 @@ class NotesRecords:
 
     def _candidate_file_availability(self, candidate):
         path = Path(candidate['path'])
-        entry = _entry(path)
-        if entry is None:
-            return LOCAL_MISSING
+        directory = path.parent
         try:
-            need(stat.S_ISREG(entry.st_mode) and entry.st_nlink == 1 and
-                 not path.is_symlink(), 'ACTIVE_CANDIDATE_CHANGED')
-            info = os.stat(str(path), follow_symlinks=False)
-            need((info.st_dev, info.st_ino, info.st_size,
-                  info.st_mtime_ns, info.st_ctime_ns) ==
-                 (candidate['device'], candidate['inode'], candidate['size'],
-                  candidate['mtime_ns'], candidate['ctime_ns']),
-                 'ACTIVE_CANDIDATE_CHANGED')
-            need(digest(read_file(path)) == candidate['sha256'],
-                 'ACTIVE_CANDIDATE_CHANGED')
-            directory = path.parent
             directory_entry = _entry(directory)
-            need(directory_entry is not None and
-                 stat.S_ISDIR(directory_entry.st_mode) and
+            if directory_entry is None:
+                return LOCAL_MISSING
+            need(stat.S_ISDIR(directory_entry.st_mode) and
                  not directory.is_symlink() and
                  directory == directory.resolve(strict=True),
                  'ACTIVE_CANDIDATE_CHANGED')
+            entry = _entry(path)
+            need(entry is not None and stat.S_ISREG(entry.st_mode) and
+                 entry.st_nlink == 1 and
+                 not path.is_symlink(), 'ACTIVE_CANDIDATE_CHANGED')
+            raw, after = _read_regular(
+                path, allowed_nlinks=(1,), code='ACTIVE_CANDIDATE_CHANGED')
+            need(after.st_size == candidate['size'] and
+                 digest(raw) == candidate['sha256'],
+                 'ACTIVE_CANDIDATE_CHANGED')
+            required_names = {candidate['name']}
+            completions, _ = self._completion_projection()
+            for event in completions.values():
+                data = event['data']
+                if Path(data['destination']) == directory:
+                    required_names.add(data['target_file']['name'])
+            for version in self._active_media_versions().values():
+                active = version['candidate']['data']['candidate']
+                if Path(active['path']).parent == directory:
+                    required_names.add(active['name'])
             expected_names = self._target_names_for_directory(directory)
             actual_names = {
                 child.name for child in directory.iterdir()
                 if not _is_environment_attachment(
                     child, directory=directory,
                     reserved_names=expected_names)}
-            need(actual_names <= expected_names,
+            need(required_names <= actual_names <= expected_names,
                  'ACTIVE_CANDIDATE_CHANGED')
             return LOCAL_VERIFIED
         except (NotesError, DailyError, OSError, ValueError):
@@ -4445,13 +4452,8 @@ class NotesRecords:
                      not directory.is_symlink() and
                      directory == directory.resolve(strict=True),
                      'COMPLETED_DIRECTORY_CHANGED')
-                info = directory.stat()
                 required_names = set()
                 for event in entries:
-                    target_directory = event['data']['target_directory']
-                    need(info.st_dev == target_directory['device'] and
-                         info.st_ino == target_directory['inode'],
-                         'COMPLETED_DIRECTORY_CHANGED')
                     required_names.add(
                         event['data']['target_file']['name'])
                 required_names |= active_names.get(directory_string, set())
@@ -4473,14 +4475,11 @@ class NotesRecords:
                          stat.S_ISREG(file_entry.st_mode) and
                          file_entry.st_nlink == 1 and
                          not path.is_symlink(), 'COMPLETED_FILE_CHANGED')
-                    file_info = os.stat(str(path), follow_symlinks=False)
-                    need((file_info.st_dev, file_info.st_ino,
-                          file_info.st_size, file_info.st_mtime_ns,
-                          file_info.st_ctime_ns) ==
-                         (row['device'], row['inode'], row['size'],
-                          row['mtime_ns'], row['ctime_ns']),
-                         'COMPLETED_FILE_CHANGED')
-                    need(digest(read_file(path)) == row['sha256'],
+                    raw, after = _read_regular(
+                        path, allowed_nlinks=(1,),
+                        code='COMPLETED_FILE_CHANGED')
+                    need(after.st_size == row['size'] and
+                         digest(raw) == row['sha256'],
                          'COMPLETED_FILE_CHANGED')
                     availability[data['media_key']] = LOCAL_VERIFIED
             except (NotesError, DailyError, OSError, ValueError):
@@ -5816,8 +5815,7 @@ class NotesRecords:
         need(staging.is_dir() and staging == staging.resolve(strict=True) and
              not staging.is_symlink(), 'STAGING_DIRECTORY_CHANGED')
         info = staging.stat()
-        need(info.st_dev == intent_data['directory_device'] and
-             info.st_ino == intent_data['directory_inode'],
+        need(info.st_ino == intent_data['directory_inode'],
              'STAGING_DIRECTORY_CHANGED')
         list_directory = self._require_current_list_directory()
         need(staging.parent == list_directory,
@@ -6032,8 +6030,7 @@ class NotesRecords:
             plan['transaction_id'], 'DIRECTORY_READY')
         if directory_progress:
             previous = directory_progress[0]['data']
-            need(previous.get('directory_device') == info.st_dev and
-                 previous.get('directory_inode') == info.st_ino,
+            need(previous.get('directory_inode') == info.st_ino,
                  'PUBLISH_DIRECTORY_IDENTITY_CHANGED')
         else:
             self._append_progress(plan['transaction_id'], 'DIRECTORY_READY',
@@ -6048,9 +6045,8 @@ class NotesRecords:
         need(entry is not None and stat.S_ISREG(entry.st_mode) and
              not path.is_symlink(), 'PUBLISH_SOURCE_CHANGED')
         info = os.stat(str(path), follow_symlinks=False)
-        need((info.st_dev, info.st_ino, info.st_size,
-              info.st_mtime_ns) ==
-             (row['device'], row['inode'], row['size'], row['mtime_ns']) and
+        need((info.st_ino, info.st_size, info.st_mtime_ns) ==
+             (row['inode'], row['size'], row['mtime_ns']) and
              info.st_nlink in allowed_nlinks,
              'PUBLISH_SOURCE_CHANGED')
         if not allow_link_change:
@@ -6058,7 +6054,10 @@ class NotesRecords:
                  'PUBLISH_SOURCE_CHANGED')
         raw, after = _read_regular(path, allowed_nlinks=allowed_nlinks,
                                    code='PUBLISH_SOURCE_CHANGED')
-        need(digest(raw) == row['sha256'],
+        need((after.st_ino, after.st_size, after.st_mtime_ns) ==
+             (row['inode'], row['size'], row['mtime_ns']) and
+             (allow_link_change or after.st_ctime_ns == row['ctime_ns']) and
+             digest(raw) == row['sha256'],
              'PUBLISH_SOURCE_CHANGED')
         return after
 
@@ -6106,8 +6105,7 @@ class NotesRecords:
             target_info = self._source_row_matches(
                 target_path, source, allow_link_change=True,
                 allowed_nlinks=(1,))
-            need((target_info.st_dev, target_info.st_ino) ==
-                 (source['device'], source['inode']),
+            need(target_info.st_ino == source['inode'],
                  'PUBLISH_PATH_STATE_AMBIGUOUS')
         elif source_entry is not None:
             self._source_row_matches(
@@ -6127,8 +6125,7 @@ class NotesRecords:
                                        sha256=source['sha256']))
         else:
             linked = linked_progress[0]['data']
-            need(linked.get('target_device') == target_info.st_dev and
-                 linked.get('target_inode') == target_info.st_ino and
+            need(linked.get('target_inode') == target_info.st_ino and
                  linked.get('sha256') == source['sha256'],
                  'PUBLISH_TARGET_BINDING_CHANGED')
         if _entry(source_path) is not None:
@@ -6163,8 +6160,7 @@ class NotesRecords:
                 sync_dir(staging.parent)
         target_info = os.stat(str(target_path), follow_symlinks=False)
         need(target_info.st_nlink == 1 and target_info.st_size == source['size'] and
-             (target_info.st_dev, target_info.st_ino) ==
-             (source['device'], source['inode']),
+             target_info.st_ino == source['inode'],
              'PUBLISH_TARGET_CHANGED')
         need(digest(read_file(target_path)) == source['sha256'],
              'PUBLISH_TARGET_CHANGED')
@@ -6486,7 +6482,8 @@ class NotesRecords:
         plan_event = plans[-1] if plans else None
         target_path = None
         if plan_event is not None:
-            need(plan_event['data']['source'] == source,
+            need(_same_source_row_except_device(
+                plan_event['data']['source'], source),
                  'RESTART_COPY_SOURCE_CHANGED')
             candidate_path = (Path(plan_event['data']['target_directory']) /
                               plan_event['data']['target_name'])
@@ -6531,7 +6528,7 @@ class NotesRecords:
                     media_key=media_key_value,
                     post_key=intent_data['post_key'],
                     kind=kind,
-                    source=source,
+                    source=plan_event['data']['source'],
                     candidate=candidate,
                     manifest=[candidate],
                     manifest_sha256=digest(encoded([candidate])),
@@ -6784,7 +6781,8 @@ class NotesRecords:
                      BASIC_VERIFICATION_SCHEMA, 'DOWNLOAD_CHECK_REQUIRED')
                 stable = _stable_media_inventory(
                     staging, expected=1, interval=stability_interval)
-                need(stable[0] == verification_event['data']['manifest'][0],
+                need(_same_source_row_except_device(
+                    stable[0], verification_event['data']['manifest'][0]),
                      'VERIFICATION_SOURCE_CHANGED')
             plan_event = self._append_publish_plan(
                 attempt_id, intent_data, verification_event)
@@ -7227,6 +7225,12 @@ def _inventory_row(path):
                 inode=after.st_ino, nlink=after.st_nlink,
                 size=after.st_size, sha256=digest(raw),
                 mtime_ns=after.st_mtime_ns, ctime_ns=after.st_ctime_ns)
+
+
+def _same_source_row_except_device(left, right):
+    """Keep every source-row fact except historical device identity."""
+    return ({key: value for key, value in left.items() if key != 'device'} ==
+            {key: value for key, value in right.items() if key != 'device'})
 
 
 def _inventory_once(directory):
