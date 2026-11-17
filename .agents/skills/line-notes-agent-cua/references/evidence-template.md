@@ -1157,6 +1157,108 @@ nodeRepl.write(JSON.stringify(receipt, null, 2));
 - 候選輸入沿用一般 `persistSingleInput`，request 的 `input_phase=NAVIGATION`；不使用下載專用的 `persistGroundedDownloadClick`，不計入下載控制呼叫。每個候選只允許一次保存並讀回的輸入，`candidate_ordinal=1` 與 `2` 合計仍最多兩個；不得重試同一點、連點、拖曳、右鍵、快捷鍵或以 titlebar／scroll／其他畫面代替。不得把 click 宣稱成 hover 替代；沒有 hover-only 時記 `NOT_AVAILABLE`，能力未查明時記 `UNKNOWN`；僅可依 [目標與下載控制就緒](gui-inventory.md) 的完整前置考慮此明列候選，不創造額外輸入方式。
 - 保存 before 截圖與完整 AX、輸入 request／raw receipt、after 截圖與完整 AX；同一次 observation 的相同 AX bytes 可以被重複引用，但每個 `--asset` ref 與順序都要保留。相同 AX 不代表 toolbar 狀態相同；AX 缺失、未變或沒有該 node 都不是「控制不存在」或「toolbar 未顯示」的反向證明。截圖與 AX 必須分開記錄各自來源、範圍、時間與 hash。
 
+### 單次輸入與直接 after 觀察
+
+只有在 B1 的候選前置全部成立、input／observation 目錄與唯一 ID 已備妥，且同一個 `app` handle 已取得後，才呼叫下列 composition。它不改 helper、不建立 intent，也不自行授予 `TOOLBAR_VISIBLE`。click 與 capture 必須在同一次 CUA runtime invocation；兩者之間不得跨模型回合，亦不得寫檔、固定等待、重新取得 app 或插入其他輸入。
+
+<!-- notes-reveal-capture:start -->
+```js
+async function persistRevealWithDirectAfter({
+  taskDir, inputDir, observationDir, operationId, observationId, request, app,
+}) {
+  const hostCalls = {
+    input_call_sequence: 1,
+    capture_call_sequence: 'NOT_RUN',
+    input_call_started_at: 'UNKNOWN',
+    input_call_returned_at: 'UNKNOWN',
+    capture_call_started_at: 'UNKNOWN',
+    capture_call_returned_at: 'UNKNOWN',
+    clock_source: 'HOST_JS_DATE',
+    precision: 'CALL_BOUNDARY_ONLY',
+    os_event_time: 'UNKNOWN',
+    ax_observed_at: 'UNKNOWN',
+    screenshot_observed_at: 'UNKNOWN',
+  };
+  let afterCapture = null;
+  let afterCaptureError = null;
+  const hostNow = () => new Date().toISOString();
+  const inputReceipt = await evidenceTools.persistSingleInput({
+    taskDir,
+    inputDir,
+    operationId,
+    request,
+    invoke: async savedRequest => {
+      hostCalls.input_call_started_at = hostNow();
+      let inputReturn;
+      try {
+        inputReturn = await app.click(savedRequest.prepared_target);
+      } finally {
+        hostCalls.input_call_returned_at = hostNow();
+      }
+      hostCalls.capture_call_sequence = 2;
+      hostCalls.capture_call_started_at = hostNow();
+      try {
+        afterCapture = await app.getAXStateAndScreenshot({
+          emit: false,
+          disableDiffing: true,
+        });
+      } catch (error) {
+        afterCaptureError = evidenceTools.describeError(error);
+      } finally {
+        hostCalls.capture_call_returned_at = hostNow();
+      }
+      return inputReturn;
+    },
+  });
+  const inputPersisted = inputReceipt.status === 'INVOKED' &&
+    inputReceipt.request.readback === 'MATCH' &&
+    inputReceipt.raw_return.readback === 'MATCH' &&
+    inputReceipt.raw_return.complete === true &&
+    inputReceipt.diagnostic.complete === true &&
+    !(inputReceipt.blockers || []).length;
+  let afterObservation = null;
+  if (hostCalls.capture_call_sequence === 2) {
+    afterObservation = await evidenceTools.persistObservation({
+      taskDir,
+      observationDir,
+      observationId,
+      ...(afterCaptureError
+        ? { captureError: afterCaptureError }
+        : { capture: afterCapture }),
+    });
+  }
+  const failClosed = !(inputPersisted &&
+    inputReceipt.raw_return.kind !== 'ERROR' &&
+    afterCaptureError === null &&
+    afterObservation !== null &&
+    afterObservation.ready_for_bind === true);
+  return { inputReceipt, afterObservation, hostCalls, fail_closed: failClosed };
+}
+```
+<!-- notes-reveal-capture:end -->
+
+呼叫時把已核對的 request 傳入；`operationId` 與 `observationId` 必須在輸入前就備妥，且不得重用已完成 ID。下列值只是形狀示意，不可照抄：
+
+```js
+const revealApp = await cua.getApp('jp.naver.line.mac');
+const REVEAL_RUN = await persistRevealWithDirectAfter({
+  taskDir: '/ABS/TASK_PRIVATE_DIR',
+  inputDir: '/ABS/EXISTING_PRIVATE_INPUT_DIR',
+  observationDir: '/ABS/EXISTING_PRIVATE_OBSERVATION_DIR',
+  operationId: 'UNIQUE_NAVIGATION_INPUT_ID',
+  observationId: 'UNIQUE_AFTER_OBSERVATION_ID',
+  request: verifiedRevealRequest,
+  app: revealApp,
+});
+nodeRepl.write(JSON.stringify(REVEAL_RUN, null, 2));
+```
+
+callback 原樣返回 click 的回傳值，包含頂層 `undefined`；capture 只留在 closure。helper 保存原 input request／raw／diagnostic 並讀回。只要 callback 已執行 capture（`capture_call_sequence=2`），composition 就用同一份 `afterCapture` bytes／AX 呼叫 `persistObservation`；capture 失敗也以 `captureError` 保存失敗 diagnostic。即使 input raw／diagnostic 不完整，已取得的 after 仍保留，但 `fail_closed=true`，不得把 `afterObservation.ready_for_bind` 單獨當成 input 完整、B1 資格或可建立 intent 的證明。request 未成功保存／讀回時 callback 不會執行，因此零 input、零 capture；click 本身 `ERROR` 時也沒有 capture，兩者都回 `afterObservation=null`、`fail_closed=true`。
+
+`fail_closed=false` 只表示同一組合的 input raw／request／diagnostic 完整、click 不是 `ERROR`、capture 沒有拋錯，且該次 after 已以 `persistObservation` 保存並本地讀回完整；它仍不是 `TOOLBAR_VISIBLE`、GUI sensor 或 intent。input 派送後，若 capture 或落檔失敗，就停止後續輸入；不得重點、不得用缺 raw／缺 after 解鎖重送，程序若中斷於 raw 落地前也保留該未解輸入。
+
+呼叫後把 `hostCalls` 原樣記入 statement：它只記錄本機 host 呼叫前後時間與相對序號；OS event 時間及 AX／截圖各自的 capture 時間仍是 `UNKNOWN`。click 與 capture 是同次 invocation 的兩個相依 API 呼叫，不是 atomic，也不保證 0–1 秒或任何延遲上限。B1 的兩候選額度、`TOOLBAR_VISIBLE`／`TOOLBAR_NOT_SHOWN`／`REVEAL_TRANSIENT` 判讀與停止條件均不變；沒有充分 after 與正面控制證據時，不建立 intent 或 outcome。
+
 ### 時序、狀態與停止
 
 前置與停止決策依 [目標與下載控制就緒](gui-inventory.md)：播放開始、索引／來源身分漂移、幾何／映射失效或輸入不明均立即停止，不以返回或 reopen 重設一次額度。

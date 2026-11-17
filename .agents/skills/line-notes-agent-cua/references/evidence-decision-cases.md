@@ -1,6 +1,6 @@
 # 證據判定案例
 
-本檔用固定案例檢查 [證據與允許行為矩陣](verification-and-recovery.md#證據與允許行為矩陣)、[下載與 notes CLI](download-and-ledger.md) 與 [證據範本](evidence-template.md) 的判斷是否一致。全部案例都是文件規則的假設情境，不是本次 LINE 操作、真實停止 receipt、實機 `OBSERVED` 或 E2E PASS；案例中的時間、視窗與回傳若未由當次工具提供，實際紀錄必須寫 `UNKNOWN`。
+本檔用固定案例檢查 [B1](gui-inventory.md#目標與下載控制就緒b1)、[證據與允許行為矩陣](verification-and-recovery.md#證據與允許行為矩陣)、[下載與 notes CLI](download-and-ledger.md) 與 [證據範本](evidence-template.md) 的判斷是否一致。全部案例都是文件規則的假設情境，不是本次 LINE 操作、真實停止 receipt、實機 `OBSERVED` 或 E2E PASS；案例中的時間、視窗與回傳若未由當次工具提供，實際紀錄必須寫 `UNKNOWN`。
 
 ## C1 控制檢查後隱藏
 
@@ -131,6 +131,24 @@
 - **允許動作：** 若原件範圍／AX／映射不足，可小步唯讀補足缺口；補足仍正面才建 intent。正面足夠時立即使用預備 argv 建立並讀回 intent，之後只做原 wrapper 要求的當次重定位與最多一次下載控制。
 - **禁止推論：** 插入無新增 gate 價值的 stability capture／固定等待；沒有正面控制證據就建 intent；把補範圍的 capture 當成 re-arm；intent 後控制消失再 discovery 或重按。
 - **缺少證據：** C 類實際時序與 GUI 結果仍 `NOT_RUN`；本案例不能指控原流程有固定等待指令。
+
+## C16 同次 reveal input → after 的保存順序
+
+- **前提：** intent 尚未建立；B1 前置、當次安全作用區與映射均成立；input／after observation 目錄已在 reveal 前備妥；input request 已保存並讀回 `MATCH`；當次工具文件支持對同一 app 依序執行一次 input 與 observation。
+- **觀察（假設）：** callback 內只送出一次已核對 input；原生回傳後不離開 callback，直接取得同一 app 的 after；input 回傳、after 回傳／error 在記憶體分開保留，input raw 與 after bytes 在 callback 返回後才持久化。
+- **可支持命題：** after 來自同一次 runtime invocation，且位於一次 input 之後；這是兩個相依 API，不是 atomic 或固定秒數保證。工具回報的內部等待只能按其文件語意記錄，不能補成 OS event 命中、精確 capture 時間或 toolbar 保證存續。
+- **允許動作：** callback 原樣回傳 input 回傳；返回後先保存 input raw／diagnostic，再用 `persistObservation` 保存剛才取得的同一份 after bytes，不重新 capture。記錄 host 層 call 前／回傳時間與相對序號；缺少 OS event 或個別 capture 時間就記 `UNKNOWN`。保存骨架見 [單次輸入與直接 after 觀察](evidence-template.md#單次輸入與直接-after-觀察) 的 `persistRevealWithDirectAfter`。
+- **禁止推論：** 在 input 後另開 shell、插入模型回合或固定等待；把兩個 API 說成 atomic／0–1 秒完成；用 after 成功反推 input 命中；以 mtime 冒充精確時間；保存後再 capture 一次；以任意縮圖邊緣或固定左上／右上熱點代替當次安全區。
+- **缺少證據：** OS event trace、native hit-test、個別 capture 的精確時間、真實 GUI 的 toolbar 存續與 C 類實機結果仍 `NOT_RUN`／`UNKNOWN`。
+
+## C17 input 已送出但 after 或保存缺口
+
+- **前提：** reveal request 已保存並讀回 `MATCH`，候選已送出一次 input；之後 after API error、callback 中斷或程序 crash，input raw／diagnostic／after bytes 至少一項未完成持久化與讀回；尚無 chooser、intent 或 outcome。
+- **觀察（假設）：** request 可能仍在，記憶體可能有部分 input 回傳或 bytes，但缺少完整 receipt 或同一份 after；無法證明 input 未送出、控制命中、toolbar 曾顯示或下載開始。
+- **可支持命題：** 只能支持一次候選已派送但證據保存不完整；capture error、空 after、缺 raw、無 after 或重啟都不是 `NOT_SENT`，且候選額度已消耗。
+- **允許動作：** 立即停止；保存仍可得的 request、input 回傳／error、部分 bytes 與停止原因，`budget_after` 照算。只有原 callback 已取得的同一份 after bytes 可補做原保存；不得重新取得。證據不足時記 discovery blocker，不建立 intent／outcome。
+- **禁止推論：** capture error 等於未輸入；缺 raw／after 可重拍或重送；用新 viewer、Session、目錄或 re-arm 解鎖；把 partial persistence 當成控制可見或交易資格；以另一次 input 查證。
+- **缺少證據：** 完整 input receipt、同一份 after bytes、OS event／hit-test、chooser／進度／檔案與可歸屬終結訊號。
 
 ## D1 Viewer 返回契約在進入後核對
 

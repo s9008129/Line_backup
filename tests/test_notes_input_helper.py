@@ -11,6 +11,8 @@ TEMPLATE = ROOT / '.agents' / 'skills' / 'line-notes-agent-cua' / 'references' /
 TASKS = ROOT / '.local' / 'line-backup' / 'tasks'
 START = '<!-- cua-evidence-tools:start -->'
 END = '<!-- cua-evidence-tools:end -->'
+REVEAL_START = '<!-- notes-reveal-capture:start -->'
+REVEAL_END = '<!-- notes-reveal-capture:end -->'
 
 
 def documented_tools_source():
@@ -21,13 +23,22 @@ def documented_tools_source():
     return text[code_start:code_end]
 
 
+def documented_reveal_source():
+    text = TEMPLATE.read_text(encoding='utf-8')
+    start = text.index(REVEAL_START) + len(REVEAL_START)
+    code_start = text.index('```js', start) + len('```js')
+    code_end = text.index('```', code_start)
+    return text[code_start:code_end]
+
+
 class NotesInputHelperTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.tools_source = documented_tools_source()
+        cls.reveal_source = documented_reveal_source()
         TASKS.mkdir(parents=True, exist_ok=True)
 
-    def run_helper(self, body):
+    def run_helper(self, body, extra_source=''):
         with tempfile.TemporaryDirectory(prefix='.notes-input-helper-', dir=TASKS) as temp:
             root = Path(temp).resolve()
             output_dir = root / 'observations'
@@ -35,7 +46,7 @@ class NotesInputHelperTests(unittest.TestCase):
             script = self.tools_source + '\n' + r'''
 const fsTest = await import('node:fs/promises');
 const result = await (async () => {
-''' + body + r'''
+''' + extra_source + '\n' + body + r'''
 })();
 console.log(JSON.stringify(result));
 '''
@@ -49,6 +60,9 @@ console.log(JSON.stringify(result));
                              (completed.returncode, completed.stdout,
                               completed.stderr))
             return json.loads(completed.stdout), output_dir
+
+    def run_reveal(self, body):
+        return self.run_helper(body, extra_source=self.reveal_source)
 
     def test_cross_realm_error_preserves_numeric_code_full_message_and_own_fields_once(self):
         result, output_dir = self.run_helper(r'''
@@ -323,6 +337,327 @@ return {calls, receipt, raw, diagnostic};
         self.assertEqual(summary['field_gaps'], ['SYMBOL_KEYED_OWN_FIELDS_UNCAPTURED:1'])
         self.assertEqual(summary['code'], 17)
         self.assertNotIn('Symbol(private-trace-key)', snapshot['own_fields'])
+
+    def test_reveal_composition_reads_request_then_clicks_and_captures_before_raw(self):
+        result, _ = self.run_reveal(r'''
+let clicks = 0;
+let captures = 0;
+let requestReadable = false;
+let rawAtCapture = true;
+const afterBytes = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x01, 0x02]);
+const rawPath = process.env.INPUT_TEST_DIR + '/reveal-order.input.raw.json';
+const app = {
+  async click(target) {
+    clicks += 1;
+    const saved = JSON.parse(await fsTest.readFile(
+      process.env.INPUT_TEST_DIR + '/reveal-order.input.request.json', 'utf8'));
+    requestReadable = saved.request.input_phase === 'NAVIGATION' &&
+      JSON.stringify(saved.request.prepared_target) === JSON.stringify(target);
+    return {native_code: 0};
+  },
+  async getAXStateAndScreenshot() {
+    captures += 1;
+    rawAtCapture = await fsTest.stat(rawPath).then(() => true, () => false);
+    return {state: '{"role":"AXWindow"}', screenshot: afterBytes};
+  },
+};
+const run = await persistRevealWithDirectAfter({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  inputDir: process.env.INPUT_TEST_DIR,
+  observationDir: process.env.INPUT_TEST_DIR,
+  operationId: 'reveal-order',
+  observationId: 'reveal-order-after',
+  request: {input_phase: 'NAVIGATION', prepared_target: [12, 34]},
+  app,
+});
+const rawAtReturn = await fsTest.stat(rawPath).then(() => true, () => false);
+return {clicks, captures, requestReadable, rawAtCapture, rawAtReturn, run};
+''')
+        run = result['run']
+        self.assertEqual(result['clicks'], 1)
+        self.assertEqual(result['captures'], 1)
+        self.assertTrue(result['requestReadable'])
+        self.assertFalse(result['rawAtCapture'])
+        self.assertTrue(result['rawAtReturn'])
+        self.assertEqual(run['inputReceipt']['status'], 'INVOKED')
+        self.assertEqual(run['inputReceipt']['request']['readback'], 'MATCH')
+        self.assertEqual(run['inputReceipt']['raw_return']['readback'], 'MATCH')
+        self.assertEqual(run['inputReceipt']['raw_return']['kind'], 'RETURN')
+        self.assertTrue(run['afterObservation']['ready_for_bind'])
+        self.assertFalse(run['fail_closed'])
+        self.assertEqual(run['hostCalls']['input_call_sequence'], 1)
+        self.assertEqual(run['hostCalls']['capture_call_sequence'], 2)
+        self.assertNotEqual(run['hostCalls']['input_call_started_at'], 'UNKNOWN')
+        self.assertNotEqual(run['hostCalls']['input_call_returned_at'], 'UNKNOWN')
+        self.assertNotEqual(run['hostCalls']['capture_call_started_at'], 'UNKNOWN')
+        self.assertNotEqual(run['hostCalls']['capture_call_returned_at'], 'UNKNOWN')
+        self.assertEqual(run['hostCalls']['os_event_time'], 'UNKNOWN')
+
+    def test_reveal_undefined_click_return_keeps_typed_raw_and_saves_after(self):
+        result, _ = self.run_reveal(r'''
+let captures = 0;
+const app = {
+  async click() { return undefined; },
+  async getAXStateAndScreenshot() {
+    captures += 1;
+    return {
+      state: '{"role":"AXWindow"}',
+      screenshot: new Uint8Array([0x89, 0x50, 0x4e, 0x47]),
+    };
+  },
+};
+const run = await persistRevealWithDirectAfter({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  inputDir: process.env.INPUT_TEST_DIR,
+  observationDir: process.env.INPUT_TEST_DIR,
+  operationId: 'reveal-undefined',
+  observationId: 'reveal-undefined-after',
+  request: {input_phase: 'NAVIGATION', prepared_target: [1, 2]},
+  app,
+});
+const raw = JSON.parse(await fsTest.readFile(
+  run.inputReceipt.files.raw_return, 'utf8'));
+return {captures, run, raw};
+''')
+        self.assertEqual(result['captures'], 1)
+        self.assertEqual(result['raw'],
+                         {'kind': 'NATIVE_RETURN_UNDEFINED',
+                          'value_type': 'undefined'})
+        self.assertEqual(result['run']['inputReceipt']['raw_return']['kind'],
+                         'NATIVE_RETURN_UNDEFINED')
+        self.assertTrue(result['run']['inputReceipt']['raw_return']['complete'])
+        self.assertTrue(result['run']['afterObservation']['ready_for_bind'])
+        self.assertFalse(result['run']['fail_closed'])
+
+    def test_reveal_capture_error_preserves_input_return_and_never_reclicks(self):
+        result, _ = self.run_reveal(r'''
+let clicks = 0;
+let captures = 0;
+const captureError = new Error('synthetic capture failed');
+captureError.code = 'CAPTURE_TEST';
+const app = {
+  async click() { clicks += 1; return {native_code: 7}; },
+  async getAXStateAndScreenshot() { captures += 1; throw captureError; },
+};
+const run = await persistRevealWithDirectAfter({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  inputDir: process.env.INPUT_TEST_DIR,
+  observationDir: process.env.INPUT_TEST_DIR,
+  operationId: 'reveal-capture-error',
+  observationId: 'reveal-capture-error-after',
+  request: {input_phase: 'NAVIGATION', prepared_target: [3, 4]},
+  app,
+});
+const raw = JSON.parse(await fsTest.readFile(
+  run.inputReceipt.files.raw_return, 'utf8'));
+const diagnostic = JSON.parse(await fsTest.readFile(
+  run.afterObservation.files.diagnostic, 'utf8'));
+return {clicks, captures, run, raw, diagnostic};
+''')
+        self.assertEqual(result['clicks'], 1)
+        self.assertEqual(result['captures'], 1)
+        self.assertEqual(result['raw']['kind'], 'RETURN')
+        self.assertEqual(result['raw']['value'], {'native_code': 7})
+        self.assertTrue(result['run']['inputReceipt']['raw_return']['complete'])
+        self.assertFalse(result['run']['afterObservation']['ready_for_bind'])
+        self.assertTrue(result['run']['fail_closed'])
+        self.assertEqual(result['run']['afterObservation']['blockers'],
+                         ['CAPTURE:FAILED'])
+        self.assertEqual(result['diagnostic']['blockers'], ['CAPTURE:FAILED'])
+        self.assertEqual(result['run']['hostCalls']['capture_call_sequence'], 2)
+
+    def test_reveal_input_error_preserves_raw_and_skips_capture_and_after(self):
+        result, _ = self.run_reveal(r'''
+let clicks = 0;
+let captures = 0;
+const inputError = new Error('synthetic click failed');
+inputError.code = 91;
+const app = {
+  async click() { clicks += 1; throw inputError; },
+  async getAXStateAndScreenshot() { captures += 1; throw new Error('unexpected'); },
+};
+const run = await persistRevealWithDirectAfter({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  inputDir: process.env.INPUT_TEST_DIR,
+  observationDir: process.env.INPUT_TEST_DIR,
+  operationId: 'reveal-input-error',
+  observationId: 'reveal-input-error-after',
+  request: {input_phase: 'NAVIGATION', prepared_target: [5, 6]},
+  app,
+});
+const raw = JSON.parse(await fsTest.readFile(
+  run.inputReceipt.files.raw_return, 'utf8'));
+const afterExists = await fsTest.stat(
+  process.env.INPUT_TEST_DIR + '/reveal-input-error-after.diagnostic.json')
+  .then(() => true, () => false);
+return {clicks, captures, run, raw, afterExists};
+''')
+        self.assertEqual(result['clicks'], 1)
+        self.assertEqual(result['captures'], 0)
+        self.assertEqual(result['raw']['kind'], 'ERROR')
+        self.assertEqual(result['raw']['error']['code'], 91)
+        self.assertEqual(result['run']['inputReceipt']['raw_return']['kind'],
+                         'ERROR')
+        self.assertIsNone(result['run']['afterObservation'])
+        self.assertTrue(result['run']['fail_closed'])
+        self.assertEqual(result['run']['hostCalls']['capture_call_sequence'],
+                         'NOT_RUN')
+        self.assertFalse(result['afterExists'])
+
+    def test_reveal_after_observation_saves_same_bytes_without_recapture(self):
+        result, _ = self.run_reveal(r'''
+let captures = 0;
+const expected = [0x89, 0x50, 0x4e, 0x47, 0x00, 0x2a];
+const app = {
+  async click() { return {native_code: 0}; },
+  async getAXStateAndScreenshot() {
+    captures += 1;
+    return {state: '{"role":"AXWindow"}', screenshot: new Uint8Array(expected)};
+  },
+};
+const run = await persistRevealWithDirectAfter({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  inputDir: process.env.INPUT_TEST_DIR,
+  observationDir: process.env.INPUT_TEST_DIR,
+  operationId: 'reveal-same-bytes',
+  observationId: 'reveal-same-bytes-after',
+  request: {input_phase: 'NAVIGATION', prepared_target: [7, 8]},
+  app,
+});
+const saved = Array.from(await fsTest.readFile(
+  run.afterObservation.files.screenshot));
+return {captures, expected, saved, run};
+''')
+        self.assertEqual(result['captures'], 1)
+        self.assertEqual(result['saved'], result['expected'])
+        self.assertTrue(result['run']['afterObservation']['ready_for_bind'])
+        self.assertFalse(result['run']['fail_closed'])
+
+    def test_reveal_request_persist_gate_blocks_click_capture_and_after(self):
+        result, _ = self.run_reveal(r'''
+let clicks = 0;
+let captures = 0;
+const requestPath = process.env.INPUT_TEST_DIR + '/reveal-request-gate.input.request.json';
+await fsTest.writeFile(requestPath, 'keep request sentinel', {flag: 'wx'});
+const app = {
+  async click() { clicks += 1; return {native_code: 0}; },
+  async getAXStateAndScreenshot() { captures += 1; throw new Error('unexpected'); },
+};
+const run = await persistRevealWithDirectAfter({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  inputDir: process.env.INPUT_TEST_DIR,
+  observationDir: process.env.INPUT_TEST_DIR,
+  operationId: 'reveal-request-gate',
+  observationId: 'reveal-request-gate-after',
+  request: {input_phase: 'NAVIGATION', prepared_target: [9, 10]},
+  app,
+});
+const afterExists = await fsTest.stat(
+  process.env.INPUT_TEST_DIR + '/reveal-request-gate-after.diagnostic.json')
+  .then(() => true, () => false);
+return {
+  clicks, captures, run, afterExists,
+  saved: await fsTest.readFile(requestPath, 'utf8'),
+};
+''')
+        self.assertEqual(result['clicks'], 0)
+        self.assertEqual(result['captures'], 0)
+        self.assertEqual(result['saved'], 'keep request sentinel')
+        self.assertEqual(result['run']['inputReceipt']['status'],
+                         'REQUEST_PERSIST_FAILED')
+        self.assertIsNone(result['run']['afterObservation'])
+        self.assertTrue(result['run']['fail_closed'])
+        self.assertFalse(result['afterExists'])
+
+    def test_reveal_partial_input_persistence_saves_after_and_fails_closed(self):
+        result, _ = self.run_reveal(r'''
+let clicks = 0;
+let captures = 0;
+const expected = [0x89, 0x50, 0x4e, 0x47];
+const rawPath = process.env.INPUT_TEST_DIR + '/reveal-partial.input.raw.json';
+await fsTest.writeFile(rawPath, 'keep raw sentinel', {flag: 'wx'});
+const app = {
+  async click() { clicks += 1; return {native_code: 0}; },
+  async getAXStateAndScreenshot() {
+    captures += 1;
+    return {
+      state: '{"role":"AXWindow"}',
+      screenshot: new Uint8Array(expected),
+    };
+  },
+};
+const run = await persistRevealWithDirectAfter({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  inputDir: process.env.INPUT_TEST_DIR,
+  observationDir: process.env.INPUT_TEST_DIR,
+  operationId: 'reveal-partial',
+  observationId: 'reveal-partial-after',
+  request: {input_phase: 'NAVIGATION', prepared_target: [11, 12]},
+  app,
+});
+const savedScreenshot = Array.from(await fsTest.readFile(
+  run.afterObservation.files.screenshot));
+return {
+  clicks, captures, run, expected, savedScreenshot,
+  saved: await fsTest.readFile(rawPath, 'utf8'),
+};
+''')
+        self.assertEqual(result['clicks'], 1)
+        self.assertEqual(result['captures'], 1)
+        self.assertEqual(result['saved'], 'keep raw sentinel')
+        self.assertEqual(result['run']['inputReceipt']['raw_return']['write'],
+                         'FAILED')
+        self.assertFalse(result['run']['inputReceipt']['raw_return']['complete'])
+        self.assertTrue(result['run']['afterObservation']['ready_for_bind'])
+        self.assertEqual(result['savedScreenshot'], result['expected'])
+        self.assertTrue(result['run']['fail_closed'])
+
+    def test_reveal_diagnostic_persistence_failure_saves_after_and_fails_closed(self):
+        result, _ = self.run_reveal(r'''
+let clicks = 0;
+let captures = 0;
+const expected = [0x89, 0x50, 0x4e, 0x47, 0x2a];
+const diagnosticPath =
+  process.env.INPUT_TEST_DIR + '/reveal-diagnostic-partial.input.diagnostic.json';
+await fsTest.writeFile(diagnosticPath, 'keep diagnostic sentinel', {flag: 'wx'});
+const app = {
+  async click() { clicks += 1; return {native_code: 0}; },
+  async getAXStateAndScreenshot() {
+    captures += 1;
+    return {
+      state: '{"role":"AXWindow"}',
+      screenshot: new Uint8Array(expected),
+    };
+  },
+};
+const run = await persistRevealWithDirectAfter({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  inputDir: process.env.INPUT_TEST_DIR,
+  observationDir: process.env.INPUT_TEST_DIR,
+  operationId: 'reveal-diagnostic-partial',
+  observationId: 'reveal-diagnostic-partial-after',
+  request: {input_phase: 'NAVIGATION', prepared_target: [13, 14]},
+  app,
+});
+const savedScreenshot = Array.from(await fsTest.readFile(
+  run.afterObservation.files.screenshot));
+return {
+  clicks, captures, run, expected, savedScreenshot,
+  savedDiagnostic: await fsTest.readFile(diagnosticPath, 'utf8'),
+};
+''')
+        self.assertEqual(result['clicks'], 1)
+        self.assertEqual(result['captures'], 1)
+        self.assertEqual(result['savedDiagnostic'], 'keep diagnostic sentinel')
+        self.assertEqual(result['run']['inputReceipt']['raw_return']['readback'],
+                         'MATCH')
+        self.assertTrue(result['run']['inputReceipt']['raw_return']['complete'])
+        self.assertEqual(result['run']['inputReceipt']['diagnostic']['status'],
+                         'FAILED')
+        self.assertFalse(result['run']['inputReceipt']['diagnostic']['complete'])
+        self.assertTrue(result['run']['afterObservation']['ready_for_bind'])
+        self.assertEqual(result['savedScreenshot'], result['expected'])
+        self.assertTrue(result['run']['fail_closed'])
 
     def test_observation_success_persists_final_ready_state_before_readback(self):
         result, _ = self.run_helper(r'''
