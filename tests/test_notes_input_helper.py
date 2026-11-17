@@ -533,6 +533,233 @@ return {captures, expected, saved, run};
         self.assertTrue(result['run']['afterObservation']['ready_for_bind'])
         self.assertFalse(result['run']['fail_closed'])
 
+    def test_deferred_candidate_request_is_readback_before_input_and_slot_cannot_reenter(self):
+        result, _ = self.run_reveal(r'''
+let clicks = 0;
+let captures = 0;
+let requestSeenAtClick = null;
+const operationId = 'notes-reveal-c2-attempt-delayed';
+const requestPath = process.env.INPUT_TEST_DIR +
+  '/notes-reveal-c2-attempt-delayed.input.request.json';
+const priorRef = {
+  path: process.env.INPUT_TEST_ROOT + '/synthetic-candidate-1.receipt.json',
+  bytes: 1,
+  sha256: 'a'.repeat(64),
+};
+const request = {
+  input_phase: 'NAVIGATION',
+  attempt_id: 'attempt-delayed',
+  intent_event_ref: 'intent-event-synthetic',
+  navigation_kind: 'selected-filmstrip-safe-edge',
+  reveal_candidate_id: 'candidate-2-synthetic',
+  reveal_scope_ref: 'list-post-media-synthetic',
+  candidate_ordinal: 2,
+  prior_candidate_refs: [priorRef],
+  budget_before: 1,
+  budget_after: 2,
+  rearm_preconditions_ref: 'synthetic-gate-ref',
+  rearm_new_information_ref: 'synthetic-control-lost-ref',
+  before_screenshot_ref: 'synthetic-before-screenshot-ref',
+  before_ax_ref: 'synthetic-before-ax-ref',
+  prepared_target: [31, 47],
+};
+const app = {
+  async click(target) {
+    clicks += 1;
+    const saved = JSON.parse(await fsTest.readFile(requestPath, 'utf8'));
+    requestSeenAtClick = saved.request;
+    return {target};
+  },
+  async getAXStateAndScreenshot() {
+    captures += 1;
+    return {
+      state: '{"role":"AXWindow"}',
+      screenshot: new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x01]),
+    };
+  },
+};
+const common = {
+  taskDir: process.env.INPUT_TEST_ROOT,
+  inputDir: process.env.INPUT_TEST_DIR,
+  observationDir: process.env.INPUT_TEST_DIR,
+  operationId,
+  app,
+};
+const first = await persistRevealWithDirectAfter({
+  ...common,
+  observationId: 'deferred-candidate-after-1',
+  request,
+});
+const second = await persistRevealWithDirectAfter({
+  ...common,
+  observationId: 'deferred-candidate-after-2',
+  request: {...request, prepared_target: [32, 48]},
+});
+const saved = JSON.parse(await fsTest.readFile(requestPath, 'utf8'));
+return {clicks, captures, first, second, requestSeenAtClick, saved};
+''')
+        self.assertEqual(result['clicks'], 1)
+        self.assertEqual(result['captures'], 1)
+        self.assertEqual(result['first']['inputReceipt']['request']['readback'], 'MATCH')
+        self.assertEqual(result['first']['inputReceipt']['status'], 'INVOKED')
+        self.assertEqual(result['first']['inputReceipt']['raw_return']['readback'], 'MATCH')
+        self.assertTrue(result['first']['afterObservation']['ready_for_bind'])
+        self.assertFalse(result['first']['fail_closed'])
+        self.assertEqual(result['requestSeenAtClick']['attempt_id'], 'attempt-delayed')
+        self.assertEqual(result['requestSeenAtClick']['intent_event_ref'],
+                         'intent-event-synthetic')
+        self.assertEqual(result['requestSeenAtClick']['candidate_ordinal'], 2)
+        self.assertEqual(result['requestSeenAtClick']['budget_before'], 1)
+        self.assertEqual(result['requestSeenAtClick']['budget_after'], 2)
+        self.assertEqual(result['requestSeenAtClick']['prior_candidate_refs'],
+                         result['saved']['request']['prior_candidate_refs'])
+        self.assertEqual(result['second']['inputReceipt']['status'],
+                         'REQUEST_PERSIST_FAILED')
+        self.assertIsNone(result['second']['afterObservation'])
+        self.assertTrue(result['second']['fail_closed'])
+
+    def test_deferred_candidate_capture_error_has_no_after_source_for_download(self):
+        result, _ = self.run_reveal(r'''
+let clicks = 0;
+let captures = 0;
+const captureError = new Error('synthetic deferred capture failed');
+captureError.code = 'DEFERRED_CAPTURE_TEST';
+const app = {
+  async click() { clicks += 1; return {native_code: 0}; },
+  async getAXStateAndScreenshot() { captures += 1; throw captureError; },
+};
+const run = await persistRevealWithDirectAfter({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  inputDir: process.env.INPUT_TEST_DIR,
+  observationDir: process.env.INPUT_TEST_DIR,
+  operationId: 'notes-reveal-c2-attempt-capture-error',
+  observationId: 'deferred-candidate-capture-error-after',
+  request: {
+    input_phase: 'NAVIGATION',
+    attempt_id: 'attempt-capture-error',
+    intent_event_ref: 'intent-event-capture-error',
+    candidate_ordinal: 2,
+    prior_candidate_refs: ['synthetic-candidate-1'],
+    budget_before: 1,
+    budget_after: 2,
+    prepared_target: [41, 57],
+  },
+  app,
+});
+const screenshotExists = await fsTest.stat(
+  run.afterObservation.files.screenshot).then(() => true, () => false);
+return {clicks, captures, run, screenshotExists};
+''')
+        self.assertEqual(result['clicks'], 1)
+        self.assertEqual(result['captures'], 1)
+        self.assertTrue(result['run']['fail_closed'])
+        self.assertFalse(result['run']['afterObservation']['ready_for_bind'])
+        self.assertEqual(result['run']['afterObservation']['blockers'],
+                         ['CAPTURE:FAILED'])
+        self.assertFalse(result['screenshotExists'])
+
+    def test_deferred_candidate_same_after_bytes_feed_grounded_helper_once(self):
+        result, _ = self.run_reveal(r'''
+let revealClicks = 0;
+let revealCaptures = 0;
+let downloadClicks = 0;
+const afterBytes = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
+const revealApp = {
+  async click() { revealClicks += 1; return {native_code: 0}; },
+  async getAXStateAndScreenshot() {
+    revealCaptures += 1;
+    return {
+      state: '{"role":"AXWindow","marker":"same-after"}',
+      screenshot: new Uint8Array(afterBytes),
+    };
+  },
+};
+const revealRun = await persistRevealWithDirectAfter({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  inputDir: process.env.INPUT_TEST_DIR,
+  observationDir: process.env.INPUT_TEST_DIR,
+  operationId: 'notes-reveal-c2-attempt-download-handoff',
+  observationId: 'deferred-candidate-download-handoff-after',
+  request: {
+    input_phase: 'NAVIGATION',
+    attempt_id: 'attempt-download-handoff',
+    intent_event_ref: 'intent-event-download-handoff',
+    candidate_ordinal: 2,
+    prior_candidate_refs: ['synthetic-candidate-1'],
+    budget_before: 1,
+    budget_after: 2,
+    prepared_target: [51, 67],
+  },
+  app: revealApp,
+});
+const screenshotAsset = revealRun.afterObservation.assets.screenshot;
+const axAsset = revealRun.afterObservation.assets.ax;
+const screenshotRef = {
+  path: screenshotAsset.path,
+  bytes: screenshotAsset.bytes,
+  sha256: screenshotAsset.sha256,
+};
+const axRef = {path: axAsset.path, bytes: axAsset.bytes, sha256: axAsset.sha256};
+const sourceBytes = new Uint8Array(await fsTest.readFile(screenshotRef.path));
+const downloadRequest = {
+  input_phase: 'DOWNLOAD_CONTROL',
+  attempt_id: 'attempt-download-handoff',
+  app_window_binding: {
+    app_bundle_id: 'jp.naver.line.mac',
+    window_id: 'synthetic-window',
+  },
+  source_observation: screenshotRef,
+  source_observation_ref: screenshotRef,
+  mapping_evidence_ref: axRef,
+  mapping_status: 'MATCH',
+  observation_order: 'PRE_INPUT',
+  grounding_conclusion: 'PASS_TO_INPUT',
+  candidate_point_relation: 'INSIDE',
+  coordinate_space_match: 'MATCH',
+  control_region_coord_space: 'SCREEN_POINTS',
+  target_coord_space: 'SCREEN_POINTS',
+  control_region: [20, 30, 80, 90],
+  candidate_point: [50, 60],
+  prepared_target: [50, 60],
+};
+const downloadApp = {async click(target) { downloadClicks += 1; return {target}; }};
+const downloadOperationId = 'notes-download-attempt-download-handoff';
+const firstDownload = await evidenceTools.persistGroundedDownloadClick({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  inputDir: process.env.INPUT_TEST_DIR,
+  operationId: downloadOperationId,
+  request: downloadRequest,
+  source_observation_bytes: sourceBytes,
+  app: downloadApp,
+});
+const secondDownload = await evidenceTools.persistGroundedDownloadClick({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  inputDir: process.env.INPUT_TEST_DIR,
+  operationId: downloadOperationId,
+  request: {...downloadRequest, candidate_point: [51, 61], prepared_target: [51, 61]},
+  source_observation_bytes: sourceBytes,
+  app: downloadApp,
+});
+const savedAfterBytes = Array.from(await fsTest.readFile(screenshotRef.path));
+return {
+  revealClicks, revealCaptures, revealRun, sourceBytes: Array.from(sourceBytes),
+  savedAfterBytes, screenshotAsset, downloadClicks, firstDownload, secondDownload,
+};
+''')
+        self.assertEqual(result['revealClicks'], 1)
+        self.assertEqual(result['revealCaptures'], 1)
+        self.assertFalse(result['revealRun']['fail_closed'])
+        self.assertTrue(result['revealRun']['afterObservation']['ready_for_bind'])
+        self.assertEqual(result['savedAfterBytes'], result['sourceBytes'])
+        self.assertEqual(result['firstDownload']['status'], 'INVOKED')
+        self.assertEqual(result['firstDownload']['source_observation_readback']['status'],
+                         'MATCH')
+        self.assertEqual(result['firstDownload']['mapping_evidence_readback']['status'],
+                         'MATCH')
+        self.assertEqual(result['downloadClicks'], 1)
+        self.assertEqual(result['secondDownload']['status'], 'REQUEST_PERSIST_FAILED')
+        self.assertEqual(result['downloadClicks'], 1)
+
     def test_reveal_request_persist_gate_blocks_click_capture_and_after(self):
         result, _ = self.run_reveal(r'''
 let clicks = 0;

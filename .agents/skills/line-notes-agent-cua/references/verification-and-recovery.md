@@ -25,7 +25,7 @@
 | intent、新空白目錄、`save_all_count=0` | 本機 attempt 與派送前保護已建立 | 不能證明未派送；維持禁止重送，不以零計數、空目錄或 marker 缺席解鎖 |
 | 當次控制可見、作用及映射明確 | 具備單次輸入的定位依據 | 不推論已命中、App 已接受或下載已發生；視窗／頁面／來源改變即失效 |
 | input API 的原始成功、錯誤或逾時回傳 | 工具回傳了該結果 | 未有排除副作用保證時不推 `NOT_SENT`；不得因 error／timeout 再點一次，結果不明記 `UNKNOWN` |
-| 每次 reveal candidate（文件支持的 hover 或 selected-filmstrip `NAVIGATION`）的 input receipt 與前後觀察 | 該次輸入及其各自來源、範圍與先後的當次觀察 | 不證明工具列出現、控制命中或下載；是否可一次 `REARM_1` 只依 B1。intent 前的 `REVEAL_TRANSIENT` 不是永久封鎖，須有相關新證據；intent 後不得 re-arm |
+| 每次 reveal candidate（文件支持的 hover 或 selected-filmstrip `NAVIGATION`）的 input receipt 與前後觀察 | 該次輸入及其各自來源、範圍與先後的當次觀察 | 不證明工具列出現、控制命中或下載；是否可一次 `REARM_1` 只依 B1。intent 前的 `REVEAL_TRANSIENT` 不是永久封鎖，須有相關新證據；intent 後僅可依 B1 的窄例外延後原第二候選，舊 UNKNOWN／crash 不適用 |
 | 可歸屬同一 viewer／attempt 的 chooser | App 有階段性回應，可能延遲出現 | 核對精確來源與目的地；chooser 不是下載結果，出處不明時不確認 |
 | 只有 timeout、畫面未變、空目錄或缺少 marker | 當下尚無足夠結果證據 | 尚無 outcome 時先以 `outcome` 記 `UNKNOWN`；已有 `outcome=UNKNOWN` 則保留。沒有新資訊就停止相同查證，不重送、不建新 attempt，也不派送下一項 |
 | 可歸屬的正面下載終結訊號，加上原目的地的穩定結果檔 | 支持進入日常 `download-check` 的候選結果 | 不同媒體不要求同一種 UI 訊號；單一弱訊號不足以判完成 |
@@ -40,11 +40,11 @@
 
 ### 控制發現與 Reveal 的狀態邊界
 
-- `TOOLBAR_VISIBLE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT` 是 intent 前的控制發現狀態，不是六類業務狀態，也不新增第七類。控制尚未成立時仍是 `PENDING`；控制缺席本身不構成 `EXCLUDED` 或 `NO_MEDIA` 的證據，既有排除規則不變；也不是派送結果 `UNKNOWN`。
+- `TOOLBAR_VISIBLE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT` 是控制可見性的 statement 結論，不是六類業務狀態，也不新增第七類。intent 前控制尚未成立時仍是 `PENDING`；已建 intent 的結果仍按 outcome／reconcile，不以 reveal 狀態改寫；控制缺席本身不構成 `EXCLUDED` 或 `NO_MEDIA` 的證據，既有排除規則不變；也不是派送結果 `UNKNOWN`。
 - `TOOLBAR_VISIBLE` 只在同一充分範圍的最新正面觀察同時顯示工具列，且下載控制可見、歸屬、啟用與映射均成立時使用；AX 沒有控制不能否定充分涵蓋的截圖，截圖也不能替 AX 補成節點。只有此狀態可建立 intent；觀察原件不足可小步唯讀補足，但沒有正面控制證據不得建 intent。該正面觀察即 action window，不得插入固定 stability 等待；intent 後仍重新定位下載控制並依原 wrapper gate，下載控制與 chooser 最終確認仍各最多一次。
 - `TOOLBAR_NOT_SHOWN` 只表示該 candidate 後最新、充分且可保存的 bounded observation 未見工具列；它不證明期間從未短暫出現，亦不證明 LINE 失敗。`REVEAL_TRANSIENT` 表示 intent 前曾在有效觀察中正面看見、之後又在有效觀察中消失；兩者都須交回 [B1](gui-inventory.md#目標與下載控制就緒b1) 判斷是否有剩餘額度、相關新證據及完整前置，才可考慮一次 `REARM_1`。fresh capture 本身不是新證據。
 - hover 與 selected-filmstrip click 的操作條件、安全區、候選次數、持久累計與 action-on-positive 只依 B1；本節不另造輸入方法。範圍不足、輸入結果不明或身分／播放狀態漂移時先保留證據並停止依賴輸入；補足觀察可帶來新資訊，但不得把 `UNKNOWN` 或控制缺席寫成正面控制證據。
-- 同一未收斂 attempt 一旦建立 intent，不得再為它 discovery／re-arm；控制消失只保留原 intent 並依實際 outcome 分流，不能重按或建立第二窗口。既有 `STOPPED`／`NOT_SENT` 精確恢復與 restart 是另定的授權路徑，本節不改其規則。前後證據與未解原因全留；歷史成功僅為關聯，其他 viewer 有效性與 toggle／timeout／capture race 均未實測。
+- intent 後的唯一延後候選資格與兩次總額只依 [B1](gui-inventory.md#目標與下載控制就緒b1)，不由本矩陣另行授權。已有 UNKNOWN、crash window、下載控制呼叫或前景／Session 中斷不得適用；不滿足時保留原 intent 依實際 outcome 分流，不重按或另開窗口。既有 `STOPPED`／`NOT_SENT` 精確恢復與 restart 規則不變。歷史成功僅為關聯，其他 viewer 有效性與 toggle／timeout／capture race 均未實測。
 
 ## 證據稽核、頁面更正與類型更正
 

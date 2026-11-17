@@ -7,8 +7,8 @@
 - **前提：** `intent` 已保存並讀回，尚未有 outcome；下載控制曾在同一 viewer 可見且映射明確。
 - **觀察（假設）：** 最後一次輸入前核對時控制消失，沒有可歸屬 chooser、進度或終結訊號。
 - **可支持命題：** 只支持當下未見控制與舊定位失效；不能證明未輸入、未派送、App 拒絕或控制不存在。
-- **允許動作：** 停止輸入並重新定位；若沒有正面終態證據，按可能已派送保護，第一筆 outcome 記 `UNKNOWN`，之後只以新證據 reconcile。
-- **禁止推論：** 控制隱藏等於未命中／未派送；沿用舊座標；用第二次點擊查證；換相簿入口。
+- **允許動作：** 先停止下載輸入並依 B1 核對是否完整符合一次延後第二候選；不符合就只做唯讀定位。若沒有正面終態證據，按可能已派送保護，第一筆 outcome 記 `UNKNOWN`，之後只以新證據 reconcile。
+- **禁止推論：** 控制隱藏自動授予候選；已有 UNKNOWN／crash 可用新例外；控制隱藏等於未命中／未派送；沿用舊座標；用第二次點擊查證；換相簿入口。
 - **缺少證據：** 真正的 input 原始回傳、attempt／viewer 歸屬、chooser／進度、檔案或可歸屬終結訊號。
 
 ## C2 API error 但 chooser 出現
@@ -120,7 +120,7 @@
 - **觀察（假設）：** 新充分觀察提供決策相關新證據，例如先前遮罩／範圍不足已消除，或該輸入方法的新安全作用區與映射已成立。
 - **可支持命題：** `REVEAL_TRANSIENT` 只描述「曾見後消失」，不是永久 discovery 封鎖；仍可依 B1 評估一次 `REARM_1`。
 - **允許動作：** 保存兩個狀態與新證據，重新取得 before 觀察、身分與映射；通過 B1 全部前置後可送一次，且第二次仍無正面控制就停止。
-- **禁止推論：** transient 後自動再點；只靠新 capture／時間流逝成立 re-arm；沿用舊點或舊 mapping；已有 intent 後仍 re-arm。
+- **禁止推論：** transient 後自動再點；只靠新 capture／時間流逝成立 re-arm；沿用舊點或舊 mapping；已有 intent 就可一般 re-arm；B1 的延後第二候選有獨立完整前置，不能借本案例授權。
 - **缺少證據：** 真正 transient 時序、新證據是否改變 gate 與實機結果仍 `NOT_RUN`。
 
 ## C15 TOOLBAR_VISIBLE 的 action-on-positive
@@ -129,7 +129,7 @@
 - **觀察（假設）：** 該正面觀察是 action window；不是需要再等一次的暫態提示。
 - **可支持命題：** 可用這份已保存的正面觀察與映射接續 intent，不因未再次 capture 而失效。
 - **允許動作：** 若原件範圍／AX／映射不足，可小步唯讀補足缺口；補足仍正面才建 intent。正面足夠時立即使用預備 argv 建立並讀回 intent，之後只做原 wrapper 要求的當次重定位與最多一次下載控制。
-- **禁止推論：** 插入無新增 gate 價值的 stability capture／固定等待；沒有正面控制證據就建 intent；把補範圍的 capture 當成 re-arm；intent 後控制消失再 discovery 或重按。
+- **禁止推論：** 插入無新增 gate 價值的 stability capture／固定等待；沒有正面控制證據就建 intent；把補範圍的 capture 當成 re-arm；intent 後控制消失就自動 discovery 或重按；僅 B1 完整成立的延後第二候選可例外。
 - **缺少證據：** C 類實際時序與 GUI 結果仍 `NOT_RUN`；本案例不能指控原流程有固定等待指令。
 
 ## C16 同次 reveal input → after 的保存順序
@@ -149,6 +149,14 @@
 - **允許動作：** 立即停止；保存仍可得的 request、input 回傳／error、部分 bytes 與停止原因，`budget_after` 照算。只有原 callback 已取得的同一份 after bytes 可補做原保存；不得重新取得。證據不足時記 discovery blocker，不建立 intent／outcome。
 - **禁止推論：** capture error 等於未輸入；缺 raw／after 可重拍或重送；用新 viewer、Session、目錄或 re-arm 解鎖；把 partial persistence 當成控制可見或交易資格；以另一次 input 查證。
 - **缺少證據：** 完整 input receipt、同一份 after bytes、OS event／hit-test、chooser／進度／檔案與可歸屬終結訊號。
+
+## C18 新 intent 後原第二候選的窄例外
+
+- **前提（假設）：** 同 Session／連續前景的新 intent 已讀回；原第一候選完整且 budget 為 1。完整連續原件正面核對尚未呼叫下載控制、尚無 outcome／chooser／未解輸入／其他全局阻塞；intent 前工具列正面可見，intent 後同一 viewer 的充分觀察顯示它消失。
+- **允許動作：** 只依 B1 重新核對安全作用區／映射、固定 slot 的第二候選 request 保存讀回，送一次 input→直接 after。當次無 hover API 時只可使用已選 filmstrip 的非播放安全邊緣 click；無此區域即停。Agent 從已保存 after 判斷全部下載 gate，才交最新原件給既有 grounded helper 最多一次下載控制呼叫。
+- **停止反例：** 第一候選已用兩次或額度不明；已有 UNKNOWN／舊無 outcome crash window；前景或 Session 中斷；已有下載控制呼叫；無安全區；媒體／viewer／播放狀態漂移。任一成立都不輸入，不以零計數或空 staging 解鎖。
+- **保存缺口：** 第二候選 error／timeout、after error、request 以外任一保存缺口、程序 crash 或控制再消失，均保留原 intent、消耗該額度並停，不重送、不建新 attempt。第一筆 outcome 缺少正面終態則為 UNKNOWN，已有 UNKNOWN 只 reconcile。
+- **證據界線：** 本例不是實機成功；不保證 click 能叫回 toolbar，也不保證工具列維持到下載呼叫。舊事故與真實新例外皆未在本輪執行，維持 `NOT_RUN`。
 
 ## D1 Viewer 返回契約在進入後核對
 

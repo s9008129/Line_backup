@@ -1151,9 +1151,9 @@ nodeRepl.write(JSON.stringify(receipt, null, 2));
 
 ### 單次候選與前置條件
 
-- reveal 的允許方法、初次候選與至多一次 re-arm 的操作前提，只依 [GUI 導覽與盤點](gui-inventory.md) 的〈目標與下載控制就緒（B1）〉。本範本只保存可稽核欄位，不自行擴張動作或把 re-arm 變成新的下載入口。每個 `list_key + post_key + media_key` 的 intent 前 reveal 累計最多二次（初次加一次 re-arm）；不得用 reopen、新 Session、新目錄或換點重置。第二次候選須有新的充分觀察與相關新證據、同一三層身分／有效前景、無 chooser、無 intent、無未解輸入；連續兩次沒有新資訊即停止，且不得從舊事故剩餘額度推論本項可直接再點。
+- reveal 的允許方法、初次候選、至多一次 re-arm 與唯一 intent 後延後候選的操作前提，只依 [GUI 導覽與盤點](gui-inventory.md) 的〈目標與下載控制就緒（B1）〉。本範本只保存可稽核欄位，不自行擴張動作或把 re-arm 變成新的下載入口。每個 `list_key + post_key + media_key` 的 reveal 累計最多二次（初次加至多一次第二候選）；不得用 reopen、新 Session、新目錄或換點重置。intent 前的第二候選須有新的充分觀察與相關新證據、同一三層身分／有效前景、無 chooser、無 intent、無未解輸入；連續兩次沒有新資訊即停止，且不得從舊事故剩餘額度推論本項可直接再點。只有 B1 明列的 intent 後延後例外可按[單次保留](#intent-後延後候選的單次保留)交付原第二候選。
 - 每個 reveal scope 最多只有兩個 `selected-filmstrip-safe-edge` 導覽候選：`candidate_ordinal=1`（初次）及至多 `candidate_ordinal=2`（一次 re-arm）。先證明目標媒體是已選取項、filmstrip 中有唯一可定位的已選目標縮圖、候選點在此縮圖的非播放安全邊緣，且不落在播放／滑桿／其他控制或邊界；使用同次 before 截圖／AX 建立新的 canonical 映射、window/viewer 身分與 `mapping_id`。已選狀態、安全區、viewer 身分或映射任一為 `UNKNOWN`、過期或與其他畫面混用時，停止在輸入前。
-- `TOOLBAR_VISIBLE` 只有在同一充分範圍的最新 after 原件正面顯示工具列，且下載控制歸屬、啟用與映射成立時才可成立。當 intent 的其他前置也已成立，保存該 after 原件後立即建立 intent；不得插入固定 stability 等待。intent 讀回後仍重新定位；若工具列已消失，保留已建立 intent 並停止，不建立新 attempt，也不 re-arm。
+- `TOOLBAR_VISIBLE` 只有在同一充分範圍的最新 after 原件正面顯示工具列，且下載控制歸屬、啟用與映射成立時才可成立。當 intent 的其他前置也已成立，保存該 after 原件後立即建立 intent；不得插入固定的 stability 等待。intent 讀回後仍重新定位；控制消失時一般停止並保留原 intent，不建立新 attempt，也不增加候選。只有 B1 的 intent 後延後例外可交付本輪已計畫但尚未派送的原第二候選，見[單次保留](#intent-後延後候選的單次保留)。
 - 候選輸入沿用一般 `persistSingleInput`，request 的 `input_phase=NAVIGATION`；不使用下載專用的 `persistGroundedDownloadClick`，不計入下載控制呼叫。每個候選只允許一次保存並讀回的輸入，`candidate_ordinal=1` 與 `2` 合計仍最多兩個；不得重試同一點、連點、拖曳、右鍵、快捷鍵或以 titlebar／scroll／其他畫面代替。不得把 click 宣稱成 hover 替代；沒有 hover-only 時記 `NOT_AVAILABLE`，能力未查明時記 `UNKNOWN`；僅可依 [目標與下載控制就緒](gui-inventory.md) 的完整前置考慮此明列候選，不創造額外輸入方式。
 - 保存 before 截圖與完整 AX、輸入 request／raw receipt、after 截圖與完整 AX；同一次 observation 的相同 AX bytes 可以被重複引用，但每個 `--asset` ref 與順序都要保留。相同 AX 不代表 toolbar 狀態相同；AX 缺失、未變或沒有該 node 都不是「控制不存在」或「toolbar 未顯示」的反向證明。截圖與 AX 必須分開記錄各自來源、範圍、時間與 hash。
 
@@ -1257,15 +1257,72 @@ callback 原樣返回 click 的回傳值，包含頂層 `undefined`；capture �
 
 `fail_closed=false` 只表示同一組合的 input raw／request／diagnostic 完整、click 不是 `ERROR`、capture 沒有拋錯，且該次 after 已以 `persistObservation` 保存並本地讀回完整；它仍不是 `TOOLBAR_VISIBLE`、GUI sensor 或 intent。input 派送後，若 capture 或落檔失敗，就停止後續輸入；不得重點、不得用缺 raw／缺 after 解鎖重送，程序若中斷於 raw 落地前也保留該未解輸入。
 
-呼叫後把 `hostCalls` 原樣記入 statement：它只記錄本機 host 呼叫前後時間與相對序號；OS event 時間及 AX／截圖各自的 capture 時間仍是 `UNKNOWN`。click 與 capture 是同次 invocation 的兩個相依 API 呼叫，不是 atomic，也不保證 0–1 秒或任何延遲上限。B1 的兩候選額度、`TOOLBAR_VISIBLE`／`TOOLBAR_NOT_SHOWN`／`REVEAL_TRANSIENT` 判讀與停止條件均不變；沒有充分 after 與正面控制證據時，不建立 intent 或 outcome。
+呼叫後把 `hostCalls` 原樣記入 statement：它只記錄本機 host 呼叫前後時間與相對序號；OS event 時間及 AX／截圖各自的 capture 時間仍是 `UNKNOWN`。click 與 capture 是同次 invocation 的兩個相依 API 呼叫，不是 atomic，也不保證 0–1 秒或任何延遲上限。B1 的兩候選額度、`TOOLBAR_VISIBLE`／`TOOLBAR_NOT_SHOWN`／`REVEAL_TRANSIENT` 判讀與停止條件均不變；intent 前沒有充分 after 與正面控制證據時，不建立 intent 或 outcome。B1 的唯一 intent 後延後例外仍沿用同一 composition，見下節。
+
+### intent 後延後候選的單次保留
+
+本節只把 B1 已允許的唯一 intent 後例外落成既有 composition 的可重複用法；它不自行判斷例外、不新增 event／schema／CLI／controller，也不把 request 標記說成 `NOT_SENT`。適用對象限本輪新建立、從同一 `list_key + post_key + media_key` 的候選 1 起連續可稽核、intent 已讀回、尚無 outcome、尚無任何下載控制呼叫、無 chooser／活動下載／未解輸入、同一 Session 且前景不中斷的原 `candidate_ordinal=2`。舊 UNKNOWN、舊 crash window、額度不明、已用兩次或任何無法正面核對的狀態一律停止；零 `download_control_call_count`、空 staging、缺檔或缺紀錄不能單獨證明未曾呼叫下載控制。
+
+**intent 前準備。** Agent 在建立 intent 前先完成 B1 的非 GUI 前置，並在私有 statement 骨架備妥延後候選的方法、安全作用區、原 before 原件、同 scope 候選 1 的完整 receipt、`budget_before=1`、`budget_after=2` 與 request 值；只使用既有[Reveal 導覽欄位](#可複製骨架)，不建立新的持久狀態。此時不建 staging、不先派送候選、不以預備 request 代替 intent 成功或前置證據。只有在正面控制成立後才可執行 intent CLI；intent CLI 成功並建立 staging 後，才讀回 `attempt_id` 與同一三層身分／原目的地，並由該 attempt 的唯讀事件 `sequence`／`event_sha256` 建立 `intent_event_ref`（不是 CLI 原生欄位）。若控制曾可見而在充分、連續的當次觀察中消失，才可由 Agent 依 B1 評估原第二候選。
+
+**canonical slot。** 延後候選與同 attempt 的其他私有 input 共用原 `taskDir`、`inputDir` 與既有 input request 路徑；`operationId` 固定由該次 intent 讀回的 `attempt_id` 導出，例如 `notes-reveal-c2-<attempt_id>`，並在輸入前確認它是當次文件允許的 ID。不得換新 operationId、taskDir、inputDir、Session 或目錄另開 slot；ID 無法形成、request 檔已存在、寫入或讀回不是 `MATCH` 時零 input、零 capture，保留既有檔與停止原因。request 以 `persistSingleInput` 的 `wx` 寫入及同一份 bytes 讀回，因此該 request 本身就是輸入前的持久預留，卻不是 LINE event、未派送證明或額度以外的授權。
+
+request 重用既有欄位，至少保留 `input_phase=NAVIGATION`、`attempt_id`、由唯讀事件建立的 `intent_event_ref`、`navigation_kind`、`reveal_candidate_id`、`reveal_scope_ref`、`candidate_ordinal=2`、同一 scope 候選 1 的 `prior_candidate_refs`、`budget_before=1`、`budget_after=2`、`rearm_preconditions_ref`、`rearm_new_information_ref`、當次 before 截圖／AX 引用、`selected_state_before`、`selected_state_after`、`selected_media_ref`、`safe_zone_ref`、`mapping_id`、`mapping_valid_at`、`position_source_ref`、`prepared_target` 與適用方法安全區。`selected_state_after` 在 request 尚未派送時記 `UNKNOWN`，不可先填事後結果。`attempt_id`、`intent_event_ref`、三層身分、候選 1 ref、額度或任一 target／mapping 讀回不符時不建立 request；不可把欄位命名為新的 ledger 狀態。
+
+以下只示範沿用既有 composition；路徑、ID、數值與證據均為形狀示意，不可照抄或當成合成 fixture 以外的證據：
+
+```js
+// CLI 不原生回傳 intent_event_ref；此形狀只由唯讀事件的 sequence／hash 建立。
+const INTENT_EVENT_REF = {
+  sequence: INTENT_EVENT_READBACK.sequence,
+  event_sha256: INTENT_EVENT_READBACK.event_sha256,
+};
+const deferredCandidateRequest = {
+  input_phase: 'NAVIGATION',
+  attempt_id: INTENT_READBACK.attempt_id,
+  intent_event_ref: INTENT_EVENT_REF,
+  navigation_kind: 'selected-filmstrip-safe-edge',
+  reveal_candidate_id: 'SYNTHETIC_CANDIDATE_2',
+  reveal_scope_ref: 'SYNTHETIC_LIST_POST_MEDIA_SCOPE',
+  candidate_ordinal: 2,
+  prior_candidate_refs: [CANDIDATE_1_RECEIPT_REF],
+  budget_before: 1,
+  budget_after: 2,
+  rearm_preconditions_ref: CURRENT_B1_GATE_REF,
+  rearm_new_information_ref: INTENT_POST_VISIBLE_CONTROL_LOST_REF,
+  before_screenshot_ref: CURRENT_PRE_INPUT_SCREENSHOT_REF,
+  before_ax_ref: CURRENT_PRE_INPUT_AX_REF,
+  selected_state_before: 'SELECTED',
+  selected_state_after: 'UNKNOWN',
+  selected_media_ref: CURRENT_SELECTED_MEDIA_REF,
+  safe_zone_ref: CURRENT_SAFE_ZONE_REF,
+  mapping_id: CURRENT_MAPPING_ID,
+  mapping_valid_at: CURRENT_MAPPING_VALID_AT,
+  position_source_ref: CURRENT_PRE_INPUT_SCREENSHOT_REF,
+  prepared_target: CURRENT_VERIFIED_REVEAL_TARGET,
+};
+const deferredCandidateOperationId =
+  'notes-reveal-c2-' + INTENT_READBACK.attempt_id;
+const deferredCandidateRun = await persistRevealWithDirectAfter({
+  taskDir: SAME_ATTEMPT_TASK_DIR,
+  inputDir: SAME_ATTEMPT_INPUT_DIR,
+  observationDir: SAME_ATTEMPT_OBSERVATION_DIR,
+  operationId: deferredCandidateOperationId,
+  observationId: DEFERRED_CANDIDATE_AFTER_OBSERVATION_ID,
+  request: deferredCandidateRequest,
+  app: SAME_SESSION_APP_HANDLE,
+});
+```
+
+**after 與下載交接。** `persistRevealWithDirectAfter` 的成功 request 讀回才呼叫一次已核對 input，並在同一 callback 直接保存同一份 after bytes／AX。只有 `fail_closed=false`、input raw/diagnostic 完整、after observation `ready_for_bind=true`，且 Agent 在同一 after 原件正面核對工具列、控制歸屬、啟用、三層身分與最新映射後，才可使用該份 after 作為 grounded download request 的 `source_observation`／`source_observation_ref`。下載 helper 只能取得這份原件，不得再 capture、讀取舊畫面、換 after 或改用其他 slot；同一 attempt 的 download-control request 檔仍是唯一 slot，已存在、讀回失敗或結果未知時不提供第二次呼叫。after API error、空 after、缺少 screenshot／AX、input error／timeout、`fail_closed=true`、再消失、任何身分／播放／前景漂移或證據保存不完整時，不呼叫下載 helper，停止並保留原 intent、request、raw、after 失敗 diagnostic 與 `budget_after=2`；已派送 input 時依既有交易記第一筆真實 outcome，證據不足記 `UNKNOWN`，不得稱 `NOT_SENT`、建立新 attempt 或第三候選。
 
 ### 時序、狀態與停止
 
 前置與停止決策依 [目標與下載控制就緒](gui-inventory.md)：播放開始、索引／來源身分漂移、幾何／映射失效或輸入不明均立即停止，不以返回或 reopen 重設一次額度。
 
 - statement 記錄 `observed_at`、`input_at`、`clock_source`、`timezone`、`precision`、capture／input 的相對序號，以及 `capture_wait_semantics`／`capture_wait_source`。除非當次工具文件或實測能證明，等待能力一律 `UNKNOWN`；不得宣稱 capture 原子、立即或能捕捉點擊瞬間。截圖或 AX 範圍不足、輸入或等待狀態無法從當次原件確認時，相關觀察欄位記 `UNKNOWN`，不自行補值；只有相對序號可支持先後，不能補出點擊與截圖的未證明時間差。
-- `TOOLBAR_VISIBLE` 只在最新且充分涵蓋的 after 原件正面顯示工具列，且下載控制歸屬、啟用與映射成立時使用；它不是穩定可重播的保證。候選後充分範圍的最新觀察仍看不到 toolbar，才記 `TOOLBAR_NOT_SHOWN`；範圍不足、輸入不明或前置未核對時記觀察 `UNKNOWN` 並停止，不建立業務 `UNKNOWN`。這只表示本次 bounded observation 沒有顯示，不能推論控制不存在。若 toolbar 曾出現、之後在有效觀察中消失，記 `REVEAL_TRANSIENT`；它不是永久封鎖理由，但只有 B1 的一次 `candidate_ordinal=2` 額度、新的充分觀察、同一三層身分／有效前景、無 intent／chooser／未解輸入及決策相關新證據都成立時，才可再送一次候選；單純重拍或換點不算。`candidate_ordinal=2` 後仍無正面控制即記 discovery blocker，不建立 intent／outcome。
-- 另記 `stop_reason`（例如 `PRECONDITION_UNPROVEN`、`MAPPING_STALE`、`CAPTURE_INCOMPLETE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT`）。`TOOLBAR_VISIBLE`／`TOOLBAR_NOT_SHOWN`／`REVEAL_TRANSIENT` 是 statement 結論，不是 Notes 六類業務狀態；`REVEAL_TRANSIENT` 不會把媒體改成 `UNKNOWN`、`EXCLUDED`、`NO_MEDIA` 或 `COMPLETED`，也不會建立 intent／outcome。未曾派送的媒體仍按其既有投影（通常是 `PENDING`）。
+- `TOOLBAR_VISIBLE` 只在最新且充分涵蓋的 after 原件正面顯示工具列，且下載控制歸屬、啟用與映射成立時使用；它不是穩定可重播的保證。候選後充分範圍的最新觀察仍看不到 toolbar，才記 `TOOLBAR_NOT_SHOWN`；intent 前範圍不足、輸入不明或前置未核對時記觀察 `UNKNOWN` 並停止，不建立業務 `UNKNOWN`。這只表示本次 bounded observation 沒有顯示，不能推論控制不存在。若 toolbar 曾出現、之後在有效觀察中消失，記 `REVEAL_TRANSIENT`；intent 前只有 B1 的第二候選額度、新的充分觀察、同一三層身分／有效前景、無 chooser／未解輸入及決策相關新證據都成立時，才可再送一次候選；單純重拍或換點不算。intent 後則只可按[單次保留](#intent-後延後候選的單次保留)交付原第二候選，不得增加或重播候選。intent 前的 `candidate_ordinal=2` 後仍無正面控制即記 discovery blocker，不建立 intent／outcome；intent 後的延後候選已綁定原 intent，任何 input error／timeout／無正面控制或證據缺口都按既有交易記第一筆真實 outcome，證據不足記 `UNKNOWN`，不建立新 attempt 或第三候選。
+- 另記 `stop_reason`（例如 `PRECONDITION_UNPROVEN`、`MAPPING_STALE`、`CAPTURE_INCOMPLETE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT`）。`TOOLBAR_VISIBLE`／`TOOLBAR_NOT_SHOWN`／`REVEAL_TRANSIENT` 是 statement 結論，不是 Notes 六類業務狀態；在 intent 前，`REVEAL_TRANSIENT` 不會把媒體改成 `UNKNOWN`、`EXCLUDED`、`NO_MEDIA` 或 `COMPLETED`，也不會建立 intent／outcome。intent 後延後候選失敗時仍只依原 attempt 的真實結果分流；前述觀察本身不能預填 outcome。未曾派送的媒體仍按其既有投影（通常是 `PENDING`）。
 
 ### 永久保存與合法附掛順序
 
@@ -1283,7 +1340,7 @@ callback 原樣返回 click 的回傳值，包含頂層 `undefined`；capture �
 | 目的地 | `original_destination`、`destination_event_refs`、`observed_destination` | 原目的地以 intent 讀回值為準。目的地相關事件可能是 `created`（初始 root）、`destination`（追加 root）或 `intent`（attempt 目的地），各自以事件檔與讀回 hash 引用；`binding` 事件不含目的地。chooser 顯示或實際落點另記，不得反寫原目的地 |
 | 觀察來源 | `observation_id`、`source_kind`、`tool`、`api_scope`、`app_window_binding`、`role_children_ref`、`raw_return_ref`、`scope`、`capture_rect`、`raw_rect`、`image_pixels`、`window_frame`、`window_points`、`scale_factor`、`popup_covered` | 記 AX／app-bound 截圖／桌面局部截圖／Computer Use 回傳／真人觀察，並分開 AX client／API scope、app／window 綁定與 role／children 來源；範圍、原始矩形、實際像素、點數與縮放分開，來源未涵蓋 popup 時不可推論不存在。同一 viewer 的 AX 相同不得推定工具列未變，截圖與 AX 也不能互相補值 |
 | 身分與入口 | `identity_gate_id`、`viewer_title_ref`、`viewer_title_n_of_n`、`list_key`、`post_key`、`media_key`、`entry_anchor_ref`、`artifact_label`、`artifact_label_target`、`identity_match`、`accepted`、`quarantine_ref`、`entry_page_role`、`expected_return_role`、`return_result`、`input_capability_after` | gate 由 Agent 依當次原件持久核對並讀回，不是 helper 圖像辨識；label 不代替 keys。`expected_return_role` 只由當次可引用原件的實際 entry role 決定，不預填 `LIST`、`POST_DETAIL` 或其他期待值。返回後以 `post_input_observation_ref` 指向的原件記錄實際 `page_role` 與文字 basis；角色判定只依[返回契約](gui-inventory.md#返回契約與有限恢復)。角色與來源連續性相符才記 `RETURNED`；長貼文占滿 viewport、搜尋列／卡片標頭／返回控制不可見不足以判 `POST_DETAIL`，也不證明控制不存在。證據不足或矛盾時記 `page_role=UNKNOWN`、`return_result=RETURN_NOT_OBSERVED`；若正面觀察仍是 viewer，保留 `VIEWER` 並記 `RETURN_NOT_OBSERVED`；只有正面顯示角色／身分／錨點失去才記 `ENTRY_LOST`。輸入能力另記且可同時為 `UNAVAILABLE`；此列沿用既有欄位，不新增 schema |
-| Reveal 導覽 | `navigation_kind`、`reveal_candidate_id`、`reveal_scope_ref`、`candidate_ordinal`、`prior_candidate_refs`、`budget_before`、`budget_after`、`rearm_preconditions_ref`、`rearm_new_information_ref`、`selected_state_before`、`selected_media_ref`、`safe_zone_ref`、`mapping_id`、`mapping_valid_at`、`before_screenshot_ref`、`before_ax_ref`、`input_phase`、`input_receipt_ref`、`after_screenshot_ref`、`after_ax_ref`、`reveal_state`、`capture_wait_semantics`、`capture_wait_source`、`stop_reason` | 操作契約只依 `gui-inventory.md` 的 B1。每個 list/post/media 的 intent 前最多兩個已派送候選；`candidate_ordinal=1` 為初次，至多一次 `candidate_ordinal=2`。`prior_candidate_refs` 在候選 1 為 `NONE`，候選 2 必須引用同一 scope 的候選 1；`budget_before`／`budget_after` 分別為輸入前累計與輸入後累計。before／input／after 各自保存 bytes／hash；同 AX 可重複但不得合併不同畫面。`TOOLBAR_VISIBLE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT` 是 statement 結論，不是業務狀態；capture 等待能力未證實時記 `UNKNOWN`，不得據 AX 缺失推定不存在 |
+| Reveal 導覽 | `navigation_kind`、`reveal_candidate_id`、`reveal_scope_ref`、`candidate_ordinal`、`prior_candidate_refs`、`budget_before`、`budget_after`、`rearm_preconditions_ref`、`rearm_new_information_ref`、`selected_state_before`、`selected_media_ref`、`safe_zone_ref`、`mapping_id`、`mapping_valid_at`、`before_screenshot_ref`、`before_ax_ref`、`input_phase`、`input_receipt_ref`、`after_screenshot_ref`、`after_ax_ref`、`reveal_state`、`capture_wait_semantics`、`capture_wait_source`、`stop_reason` | 操作契約只依 `gui-inventory.md` 的 B1。每個 list/post/media 的 intent 前最多兩個已派送候選；`candidate_ordinal=1` 為初次，至多一次 `candidate_ordinal=2`。`prior_candidate_refs` 在候選 1 為 `NONE`，候選 2 必須引用同一 scope 的候選 1；`budget_before`／`budget_after` 分別為輸入前累計與輸入後累計。唯一 intent 後延後例外沿用這些欄位與同一 attempt 的既有 input request slot，見[單次保留](#intent-後延後候選的單次保留)。before／input／after 各自保存 bytes／hash；同 AX 可重複但不得合併不同畫面。`TOOLBAR_VISIBLE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT` 是 statement 結論，不是業務狀態；capture 等待能力未證實時記 `UNKNOWN`，不得據 AX 缺失推定不存在 |
 | 時間 | `observed_at`、`input_at`、`clock_source`、`timezone`、`precision` | 每個時間都要有來源；不可取得工具時間或可信時鐘時寫 `UNKNOWN`，不以 mtime 冒充操作時間。capture label／sequence 只能支持相對先後；不能證明是否在輸入前時，`observation_order=UNKNOWN`，不得把檔名或 label 寫成已證實的 pre-click |
 | 來源與捕捉 | `capture_started_at`、`capture_returned_at`、`ax_observed_at`、`screenshot_observed_at`、`source_time_basis`、`capture_atomicity` | 分別保存 AX／截圖來源、bytes／hash 與可證明的時間；`capture_started_at`／`capture_returned_at` 只界定一次 API 呼叫，不證明兩來源同一瞬間。工具未提供個別時間就記 `UNKNOWN`，不補值；`capture_atomicity=UNVERIFIED`，不得宣稱 atomic／immediate |
 | 定位 | `page_role`、`focus_state`、`control_owner`、`control_visibility`、`enabled_state`、`position_source_ref`、`pre_input_observation_ref`、`post_input_observation_ref`、`observation_order`、`control_region`、`control_region_coord_space`、`candidate_point`、`candidate_point_relation`、`raw_coord_space`、`mapped_screen_point`、`coordinate_space_match`、`mapping_id`、`mapping_valid_at`、`grounding_conclusion` | 控制可見性只在充分範圍成立時記 `VISIBLE`／`NOT_OBSERVED`。由同一份當次原件記下控制區域及候選點，兩者使用相同座標空間並讀回；`position_source_ref` 指向截圖／AX 原件與 hash，先後不能判定時明記 `UNKNOWN`。候選點須在可辨識區域內部；區域外、邊界、控制歸屬／映射／先後／區域不明時，`grounding_conclusion=STOP`，不得輸入。`control_region` 是視覺篩選區域，不是原生 hit-test；通過只表示可送入對帳，不表示控制已命中 |
