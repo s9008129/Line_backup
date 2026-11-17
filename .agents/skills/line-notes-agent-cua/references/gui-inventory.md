@@ -138,7 +138,7 @@
 
 ### 進入 viewer 前先保存錨點
 
-開啟 viewer 前，保存當次 observation、列表／貼文身分、來源卡片或媒體縮圖區域、`entry_page_role`、entry anchor 與 `expected_return_role`。`expected_return_role` 必須由實際進入來源建立：通常由貼文詳細頁開啟 viewer 時是同一 `POST_DETAIL`；只有確實由列表或其他角色進入時才填該角色，不固定預填 `LIST`。錨點供返回後核對，不是可重用座標或點擊指令。
+開啟 viewer 前，保存當次 observation、列表／貼文身分、來源卡片或媒體縮圖區域、`entry_page_role`、entry anchor 與 `expected_return_role`。`expected_return_role` 必須由當次可引用原件的實際進入角色建立，直接記該 entry role；不得預填 `LIST`、`POST_DETAIL` 或其他期待值，也不把任一角色當常見預設。`LIST` 與 `POST_DETAIL` 等都是合法角色，只有原件支持的入口角色可供返回後核對。錨點供返回後核對，不是可重用座標或點擊指令。
 
 不要求進入 viewer 前已看見返回控制。進入 viewer 後，先觀察 app／window、頁面角色、焦點及控制歸屬。確認返回控制屬目前 viewer、其語意與 entry anchor 相符且定位有效後，才建立下載 intent 或開始下載交易；實際是否回到 `expected_return_role` 只能在返回後判讀。單獨的「關閉按鈕」標籤不足以證明控制歸屬或作用。
 
@@ -148,7 +148,9 @@
 
 只送出一次已證明的返回輸入，隨即唯讀觀察。核對頁面角色、列表／貼文身分與來源錨點，並分開判讀：
 
-- `RETURNED`：符合 `expected_return_role`，且 entry anchor／來源連續性成立。
+頁面角色須由當次可引用原件正面支持。長貼文占滿 viewport、搜尋列／卡片標頭／返回控制不可見，均不足以判 `POST_DETAIL`，也不證明返回控制不存在。同一 app／window、與入口相符的可捲動 List／多 row 結構、可核對同一 scroll 位置及卡片 anchor／前後卡片連續，且沒有相反正面角色轉換證據時，判 `LIST`；hash、row 結構或單一 scroll 數字均不能單獨決定角色，scroll 變動也不單獨證明角色轉換。`POST_DETAIL` 須有當次原件正面支持，不要求另開視窗，也不假定所有 LINE 版本有固定詳情頁 UI；即使同一視窗也可能有正面角色轉換，須照實記錄。證據不足或矛盾時記 `page_role=UNKNOWN`、`return_result=RETURN_NOT_OBSERVED`；若已正面觀察仍是 viewer，保留 `page_role=VIEWER` 並記 `RETURN_NOT_OBSERVED`，不把已知角色洗成 `UNKNOWN`。
+
+- `RETURNED`：符合 `expected_return_role`，且 entry anchor／來源連續性成立。一次返回符合時即完成這一層判定，不為尋找虛構的第二層再關閉。
 - `RETURN_NOT_OBSERVED`：最新畫面仍是 viewer、頁面未變，或觀察不足以判斷一次返回是否生效。這不是 `ENTRY_LOST`，不得據此宣稱入口已遺失。
 - `ENTRY_LOST`：充分觀察正面顯示頁面角色或身分已失去，例如變成聊天、另一個列表／貼文，或 entry anchor 已不可連續核對。`INPUT_UNAVAILABLE` 另記，可與上述狀態同時成立。
 
@@ -158,7 +160,7 @@
 
 | 欄位 | 值 | 證據 |
 |---|---|---|
-| `page_role` | `LIST`、`POST_DETAIL`、`VIEWER`、`CHAT`、`UNKNOWN` | 當次 AX／畫面支持的角色 |
+| `page_role` | `LIST`、`POST_DETAIL`、`VIEWER`、`CHAT`、`UNKNOWN` | 當次可引用 AX／畫面正面支持的角色；充分截圖可作直接證據。hash、row 結構、scroll 或單一缺項不能單獨決定；矛盾或不足記 `UNKNOWN`。 |
 | `foreground` | `VALID`、`INTERRUPTED`、`UNKNOWN` | app／window 綁定、交接及連續性 |
 | `observe_capability` | `AVAILABLE`、`UNAVAILABLE`、`UNKNOWN` | AX／截圖的當次可用性與範圍 |
 | `input_capability` | `AVAILABLE`、`UNAVAILABLE`、`UNKNOWN` | 工具文件支持的輸入能力與原始回傳 |

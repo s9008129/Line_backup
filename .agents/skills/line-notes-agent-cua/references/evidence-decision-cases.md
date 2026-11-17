@@ -136,7 +136,7 @@
 
 - **前提：** 目標貼文／媒體已核對，尚未建立下載 intent，Agent 準備開啟 viewer。
 - **觀察（假設）：** 貼文詳細頁來源 observation 與貼文錨點已保存；viewer 尚未進入，因此尚無 viewer 返回控制。
-- **可支持命題：** 可用來源錨點與預期返回角色核對稍後返回；`expected_return_role` 由實際 entry anchor 決定，通常為 `POST_DETAIL`，不是固定 `LIST`。進入前看不到返回控制是正常資訊缺口，不代表禁止進入。
+- **可支持命題：** 可用來源錨點與預期返回角色核對稍後返回；`expected_return_role` 由實際 entry anchor 的當次角色決定，`LIST` 與 `POST_DETAIL` 都是合法結果，不得預設其一；入口角色沒有充分原件時記 `UNKNOWN`。進入前看不到返回控制是正常資訊缺口，不代表禁止進入；進入 viewer 後才核對控制歸屬與角色，實際返回結果仍須在輸入後判讀。
 - **允許動作：** 依有效前景及當次映射開啟目標 viewer；進入後先觀察控制所屬 app／window、角色、焦點與歸屬。確認返回控制與 entry anchor／預期角色相符且定位有效後才建立下載 intent；實際返回結果仍須在輸入後判讀。
 - **禁止推論：** 進入前不存在返回按鈕；單獨標為「關閉」的按鈕必定回到來源貼文；舊 viewer 座標可重用。
 - **缺少證據：** viewer 內返回控制的歸屬與作用須由進入後的新 observation 判斷；本案例不是實機結果。
@@ -149,6 +149,16 @@
 - **允許動作：** 停止原返回方法，保存前後 observation 與輸入 receipt；分開記錄頁面角色、前景、觀察及輸入能力。
 - **禁止推論：** 再按一次 Escape／Command-W、改猜關閉鍵或沿用舊座標可安全退一層。
 - **缺少證據：** 真實返回控制命中、後續 GUI 行為與 LINE E2E 均 `NOT_RUN`。
+
+以下五列均為 **假設文件案例、非實機驗證**；不引用真實列表、截圖、key 或交易結果。
+
+| 案例 | 證據 | 正確判斷／禁止動作 |
+|---|---|---|
+| **長卡正例**（假設文件案例、非實機驗證） | LIST 入口；同 app／window 的可捲動 List／多 row；scroll、entry anchor 與相鄰卡片連續；viewer 已離開；沒有角色轉換證據。 | 判 `page_role=LIST`。只有 `expected_return_role` 與 anchor／身分都吻合才記 `RETURNED`；不因長卡再找第二層返回或重複關閉。 |
+| **長卡資訊不足**（假設文件案例、非實機驗證） | 只有長卡，或只有單一 hash／scroll，缺列表身分或 anchor；沒有正面角色／導覽證據。 | 記 `UNKNOWN`／`RETURN_NOT_OBSERVED`；若已正面觀察仍在 viewer，保留 `page_role=VIEWER` 並記 `RETURN_NOT_OBSERVED`，不洗成 `UNKNOWN`。不得因看不到搜尋列、卡頭或返回控制就猜 `POST_DETAIL`，也不得猜第二次 close。 |
+| **真實詳情頁**（假設文件案例、非實機驗證） | 當次可引用原件正面支持詳情頁角色或導覽轉換；可位於同一 app／window，不要求另開視窗。 | 可判 `page_role=POST_DETAIL`；返回結果依實際 `expected_return_role` 與 anchor／身分判讀，不強制 `LIST`。不得因長卡反例否定真實詳情頁。 |
+| **正面偏離**（假設文件案例、非實機驗證） | 充分觀察正面顯示變成其他列表／聊天／貼文，或來源 anchor 與連續身分已失去。 | 保留 `ENTRY_LOST`；長卡不等於 `POST_DETAIL` 的反例不能豁免正面偏離證據。 |
+| **摘要待盤**（假設文件案例、非實機驗證） | 其他貼文為 `DETAIL_PENDING`，但目標貼文細盤合格；另有 notes 摘要 blocker。 | `POST_DETAIL_PENDING` 只是列表級摘要狀態，不得映射成 GUI `page_role=POST_DETAIL`。整份列表仍未完成，也不自動授予派送；不可當成目標 viewer 返回失敗或下載授權。 |
 
 ## D3 AX 沒有 Notes 控制但視覺可見
 
