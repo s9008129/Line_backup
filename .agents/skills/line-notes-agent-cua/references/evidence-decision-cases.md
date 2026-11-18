@@ -158,6 +158,31 @@
 - **保存缺口：** 第二候選 error／timeout、after error、request 以外任一保存缺口、程序 crash 或控制再消失，均保留原 intent、消耗該額度並停，不重送、不建新 attempt。第一筆 outcome 缺少正面終態則為 UNKNOWN，已有 UNKNOWN 只 reconcile。
 - **證據界線：** 本例不是實機成功；不保證 click 能叫回 toolbar，也不保證工具列維持到下載呼叫。舊事故與真實新例外皆未在本輪執行，維持 `NOT_RUN`。
 
+## C19 客觀條件成立時的 intent 前延後候選骨架
+
+- **前提（假設）：** 同 scope 候選 1 的 request／raw／after 已完整保存讀回，仍有第二候選額度；同一 scope／viewer／有效前景連續，且延後方法的安全作用區與映射有具體證據。
+- **觀察（假設）：** 當次下載控制可見，沒有任何工具列將消失的預測或實際消失證據。
+- **可支持命題：** 準備條件已由客觀證據成立，不能等待 transient 預測才準備；骨架只保存既有 statement／request 欄位，不是真正 input request、receipt、派送或已耗額度。
+- **允許動作：** 在 intent 前保存並讀回骨架；成功後才依 B1 以當次正面控制建立 intent。intent CLI 成功後補入 attempt／event 引用，再以 fresh before／AX 重核安全作用區與映射，通過原 gate 後才保存真正 request。骨架保存／讀回失敗時停在 intent 前，不把 I/O 失敗當成安全方法不足而繼續。
+- **禁止推論：** 計畫 `budget_after=2` 是已耗額；未派送骨架等於 input receipt；先建 staging 或猜 ID；沿用骨架舊點；未見 transient 就不必準備。
+- **缺少證據：** 真實 GUI 準備與延後候選成效仍 `NOT_RUN`；文件案例不是實機 `OBSERVED`。
+
+## C20 未具延後準備條件時的直接下載
+
+- **前提（假設）：** 當次工具列與其他派送 gate 成立，但沒有第二候選的安全方法、額度不足／不明，或候選 1 原件不完整。
+- **可支持命題：** 只表示延後例外未準備，不表示目前控制不能直接下載，也不表示可以補做未授權的 GUI 探索。
+- **允許動作：** 在既有 statement 記錄未準備原因；不為準備增加 GUI 輸入。若原本完整 gate 仍成立，可繼續該次直接下載；控制之後消失就停止，不得臨時補骨架或候選。
+- **禁止推論：** 沒有安全方法就以 hover／click 嘗試取得；未準備阻止所有合法直接下載；I/O 失敗可冒充本案例的安全方法不足。
+- **缺少證據：** 真實控制存續與下載結果仍 `NOT_RUN`。
+
+## C21 intent 後才發現未準備或額度不符
+
+- **前提（假設）：** intent 已讀回，但 statement 沒有可讀回的延後候選骨架，或候選 1 不完整、已用兩次、額度不明，或存在舊 `UNKNOWN`／舊 crash window。
+- **可支持命題：** 骨架必須在 intent 前備妥；intent 後不能臨時補造，既有骨架本身也不是派送、額度或解鎖證明。
+- **允許動作：** 保留原 intent；依實際下載控制呼叫與結果走原有 outcome／reconcile 分流，證據不足記 `UNKNOWN`。沒有完整 B1 gate 就不送第二候選。
+- **禁止推論：** intent 後補 statement／request；重播舊點或舊 mapping；第三候選；空 staging、缺 receipt 或零計數等於額度 0；舊 `UNKNOWN` 可解鎖。
+- **缺少證據：** 實際晚發現情境與 GUI 結果仍 `NOT_RUN`，不能當成已驗證恢復。
+
 ## D1 Viewer 返回契約在進入後核對
 
 - **前提：** 目標貼文／媒體已核對，尚未建立下載 intent，Agent 準備開啟 viewer。
