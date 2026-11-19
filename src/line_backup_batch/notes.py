@@ -45,6 +45,10 @@ BASIC_VERIFICATION_SCHEMA = 'line-notes-verification/v2'
 BASIC_RESTART_PLAN_SCHEMA = 'line-notes-restart-copy-plan/v2'
 BASIC_RESTART_CANDIDATE_SCHEMA = 'line-notes-restart-candidate/v2'
 MEDIA_KIND_RECONCILE_SCHEMA = 'line-notes-media-kind-reconcile/v1'
+ATTEMPT_ISOLATION_SCHEMA = 'line-notes-attempt-isolation/v1'
+INTENT_V5_SCHEMA = 'line-notes-intent/v5'
+ISOLATION_AVAILABLE = 'REDOWNLOAD_AVAILABLE'
+ISOLATION_EXHAUSTED = 'REDOWNLOAD_EXHAUSTED'
 STATUSES = ('COMPLETED', 'EXCLUDED', 'PENDING', 'PREVIOUSLY_INCOMPLETE',
             'UNKNOWN', 'PROTECTED_HISTORY')
 OUTCOMES = ('STOPPED', 'NOT_SENT', 'DOWNLOAD_FINISHED', 'UNKNOWN')
@@ -1568,6 +1572,7 @@ class NotesRecords:
                       'recovery_evidence'}
             v2_fields = common | {'scan_id', 'effective_kind',
                                   'kind_correction_ref'}
+            v5_fields = v2_fields | {'isolation_ref'}
             v3_fields = {'schema', 'restart_id', 'generation',
                          'confirmation_ref', 'prior_attempt',
                          'media_key', 'post_key', 'identity',
@@ -1582,6 +1587,8 @@ class NotesRecords:
                   (data.get('schema') in ('line-notes-intent/v2',
                                           'line-notes-intent/v4') and
                    set(data) == v2_fields) or
+                  (data.get('schema') == INTENT_V5_SCHEMA and
+                   set(data) == v5_fields) or
                   (data.get('schema') == 'line-notes-intent/v3' and
                    set(data) == v3_fields)), 'INVALID_INTENT_EVENT')
             if 'scan_id' in data:
@@ -1624,10 +1631,43 @@ class NotesRecords:
                 if data['prior_attempt'] is not None:
                     _check_event_ref(data['prior_attempt'],
                                      'INVALID_INTENT_EVENT')
+            elif data['schema'] == INTENT_V5_SCHEMA:
+                need(isinstance(data['recovery_of'], str) and
+                     data['recovery_evidence'] is None,
+                     'INVALID_INTENT_EVENT')
+                _check_event_ref(data['isolation_ref'],
+                                 'INVALID_INTENT_EVENT')
             elif data['recovery_evidence'] is not None:
                 self._event_evidence(
                     event, 'recovery_evidence', data['recovery_evidence'],
                     self._intent_evidence_context(data['recovery_of']))
+        elif kind == 'attempt-isolation':
+            _check_exact(data, ('schema', 'session_id', 'binding_ref',
+                                'intent_ref', 'result_ref',
+                                'destination_binding_ref', 'expected_tip',
+                                'disposition', 'evidence'),
+                         'INVALID_ATTEMPT_ISOLATION')
+            need(data['schema'] == ATTEMPT_ISOLATION_SCHEMA and
+                 isinstance(data['session_id'], str) and
+                 bool(data['session_id']) and
+                 data['disposition'] in (ISOLATION_AVAILABLE,
+                                         ISOLATION_EXHAUSTED),
+                 'INVALID_ATTEMPT_ISOLATION')
+            for field in ('binding_ref', 'intent_ref', 'result_ref',
+                          'destination_binding_ref', 'expected_tip'):
+                _check_event_ref(data[field], 'INVALID_ATTEMPT_ISOLATION')
+            intent_event = self._event_for_ref(
+                self.events, data['intent_ref'],
+                'INVALID_ATTEMPT_ISOLATION', kind='intent')
+            context = self._intent_evidence_context(
+                intent_event['data']['attempt_id'])
+            need(context['scan_id'] != notes_evidence.UNKNOWN,
+                 'EVIDENCE_SCAN_CONTEXT_REQUIRED')
+            inspected = self._event_evidence(
+                event, 'evidence', data['evidence'], context,
+                require_v2=True, require_scan_context=True)
+            if self._audit_rows is None:
+                self._validate_isolation_evidence(inspected)
         elif kind == 'outcome':
             _check_exact(data, ('schema', 'attempt_id', 'media_key',
                                 'outcome', 'evidence'), 'INVALID_OUTCOME_EVENT')
@@ -2208,6 +2248,7 @@ class NotesRecords:
         """Reject internally inconsistent event graphs before projecting them."""
         self._validate_reattest_projection()
         kind_reconciliations = self._media_kind_reconcile_projection()
+        isolation = self._isolation_projection()
         latest, scans = self._open_scan()
         for scan_id, scan in scans.items():
             if scan['complete'] is None:
@@ -2349,7 +2390,8 @@ class NotesRecords:
         self._source_unavailable_projection()
         for event in self.events:
             if event['kind'] != 'intent' or event['data']['schema'] not in (
-                    'line-notes-intent/v2', 'line-notes-intent/v3', 'line-notes-intent/v4'):
+                    'line-notes-intent/v2', 'line-notes-intent/v3',
+                    'line-notes-intent/v4', INTENT_V5_SCHEMA):
                 continue
             data = event['data']
             corrections = [
@@ -2380,6 +2422,54 @@ class NotesRecords:
                 if attempts['order'][other] < attempts['order'][attempt_id]]
             if data['schema'] == 'line-notes-intent/v3':
                 continue
+            if data['schema'] == INTENT_V5_SCHEMA:
+                prior = data['recovery_of']
+                isolation_event = isolation.get(prior)
+                need(isolation_event is not None and
+                     isolation_event['sequence'] < attempts['order'][attempt_id] and
+                     data['isolation_ref'] == _event_ref(isolation_event),
+                     'ISOLATION_INTENT_CHANGED')
+                need(isolation_event['data']['disposition'] ==
+                     ISOLATION_AVAILABLE,
+                     'REDOWNLOAD_BUDGET_EXHAUSTED')
+                need(earlier and data['recovery_of'] == max(
+                    earlier, key=lambda item: attempts['order'][item]),
+                    'RECOVERY_OF_NOT_LATEST')
+                need(prior in attempts['attempts'] and
+                     attempts['attempts'][prior]['media_key'] ==
+                     data['media_key'] and
+                     self._attempt_result(prior, attempts) == 'UNKNOWN',
+                     'RECOVERY_ATTEMPT_NOT_UNKNOWN')
+                intent_sequence = attempts['order'][attempt_id]
+                prefix = self.events[:intent_sequence - 1]
+                bindings = [row for row in prefix if row['kind'] == 'binding']
+                need(bindings and
+                     bindings[-1]['data']['session_id'] == data['session_id'],
+                     'FRESH_FOREGROUND_BINDING_REQUIRED')
+                need(not self._redownload_intents(data['media_key'], prefix),
+                     'REDOWNLOAD_BUDGET_EXHAUSTED')
+                restart = self._restart_projection(prefix)
+                need(not any(restart_id not in restart['activations']
+                             for restart_id in restart['confirmations']),
+                     'ISOLATION_REDOWNLOAD_OPEN_RESTART')
+                originating_scan, prior_scans = self._open_scan(prefix)
+                scan = prior_scans.get(data['scan_id'])
+                need(scan is not None and scan['complete'] is not None and
+                     scan['start']['sequence'] > isolation_event['sequence'] and
+                     scan['start']['data']['session_id'] == data['session_id'] and
+                     scan['start']['data'].get('purpose') != 'RECOVERY_EVALUATION' and
+                     originating_scan == data['scan_id'],
+                     'POST_ISOLATION_SCAN_REQUIRED')
+                self._validate_attempt_origin_scan(data)
+                effective_binding = self._effective_list_binding(events=prefix)
+                need(effective_binding is not None and
+                     isolation_event['data']['destination_binding_ref'] ==
+                     _event_ref(effective_binding[0]) and
+                     Path(data['destination']).parent ==
+                     Path(effective_binding[1]['list_directory']) and
+                     data['destination'] != attempts['attempts'][prior]['destination'],
+                     'ISOLATION_DESTINATION_CHANGED')
+                continue
             recovery_of = data['recovery_of']
             if recovery_of is None:
                 need(not earlier, 'RECOVERY_OF_REQUIRED')
@@ -2391,6 +2481,8 @@ class NotesRecords:
             need(prior is not None and prior['media_key'] == data['media_key'] and
                  attempts['order'][recovery_of] < attempts['order'][attempt_id],
                  'RECOVERY_ATTEMPT_CHANGED')
+            need(recovery_of not in isolation,
+                 'ISOLATED_RECOVERY_REQUIRES_V5')
             latest_prior = max(earlier, key=lambda item: attempts['order'][item])
             need(recovery_of == latest_prior, 'RECOVERY_OF_NOT_LATEST')
             need(self._attempt_result(recovery_of, attempts) in
@@ -2399,6 +2491,19 @@ class NotesRecords:
                  'NOTES_RECOVERY_NOT_AUTHORIZED')
             need(data['recovery_evidence'] is not None,
                  'RECOVERY_EVIDENCE_REQUIRED')
+        for attempt_id, isolation_event in isolation.items():
+            for later in self.events[isolation_event['sequence']:]:
+                data = later['data']
+                need(not (later['kind'] in (
+                    'outcome', 'reconcile', 'verification', 'publish-plan',
+                    'completion', 'download-exclusion',
+                    'media-kind-reconcile') and
+                    data.get('attempt_id') == attempt_id),
+                    'ISOLATED_ATTEMPT_IMMUTABLE')
+                need(not (later['kind'] == 'intent' and
+                          data.get('recovery_of') == attempt_id and
+                          data.get('schema') != INTENT_V5_SCHEMA),
+                    'ISOLATED_RECOVERY_REQUIRES_V5')
         for attempt_id in attempts['attempts']:
             outcome = attempts['outcomes'].get(attempt_id)
             reconciles = attempts['reconciles'].get(attempt_id, [])
@@ -2720,6 +2825,153 @@ class NotesRecords:
             need(info.st_dev == state['directory_device'],
                  'CURRENT_NOTES_LIST_DIRECTORY_CHANGED')
         return list_directory
+
+    def _validate_isolation_evidence(self, inspected):
+        need(inspected['data']['schema'] == notes_evidence.SCHEMA,
+             'EVIDENCE_BUNDLE_REQUIRED')
+        roles = {row['role'] for row in inspected['data']['assets']
+                 if row['bytes'] > 0}
+        need(bool(roles & {'screenshot', 'ax', 'observation'}),
+             'ISOLATION_EVIDENCE_ASSET_REQUIRED')
+        return inspected
+
+    def _isolation_staging_signature(self, intent_data):
+        list_directory = self._require_current_list_directory()
+        staging = Path(intent_data['destination'])
+        entry = _entry(staging)
+        need(entry is not None, 'ISOLATION_STAGING_MISSING')
+        need(stat.S_ISDIR(entry.st_mode) and not staging.is_symlink() and
+             staging == staging.resolve(strict=True),
+             'ISOLATION_STAGING_CHANGED')
+        need(entry.st_ino == intent_data['directory_inode'],
+             'ISOLATION_STAGING_CHANGED')
+        need(staging.parent == list_directory,
+             'ISOLATION_STAGING_OUTSIDE_CURRENT_LIST')
+        children = []
+        for child in staging.iterdir():
+            if _is_environment_attachment(
+                    child, directory=staging, reserved_names=set()):
+                child_info = child.lstat()
+                children.append((child.name, child_info.st_dev,
+                                 child_info.st_ino, child_info.st_size,
+                                 child_info.st_mtime_ns,
+                                 child_info.st_ctime_ns))
+            else:
+                raise NotesError('ISOLATION_STAGING_NOT_EMPTY')
+        info = staging.stat()
+        return dict(path=str(staging), device=info.st_dev, inode=info.st_ino,
+                    mtime_ns=info.st_mtime_ns, ctime_ns=info.st_ctime_ns,
+                    children=sorted(children))
+
+    def _isolation_event_data(self, *, session_id, intent_data, evidence,
+                              expected_tip, disposition):
+        bindings = [event for event in self.events if event['kind'] == 'binding']
+        destination_binding = self._effective_list_binding()
+        need(bindings and destination_binding is not None,
+             'FRESH_FOREGROUND_BINDING_REQUIRED')
+        return dict(
+            schema=ATTEMPT_ISOLATION_SCHEMA,
+            session_id=session_id,
+            binding_ref=_event_ref(bindings[-1]),
+            intent_ref=_event_ref(self._event_by_sequence(
+                self._attempt_projection()['order'][intent_data['attempt_id']])),
+            result_ref=_event_ref(_attempt_result_event(
+                intent_data['attempt_id'], self._attempt_projection())),
+            destination_binding_ref=_event_ref(destination_binding[0]),
+            expected_tip=expected_tip,
+            disposition=disposition,
+            evidence=evidence)
+
+    def isolate(self, *, session_id, attempt_id, evidence, expected_tip):
+        _check_event_ref(expected_tip, 'INVALID_EXPECTED_TIP')
+        with self.locked():
+            self._require_session(session_id)
+            need(self.list_data['recovery_authorized'],
+                 'NOTES_RECOVERY_NOT_AUTHORIZED')
+            projection, media_key_value = self._require_latest_attempt(attempt_id)
+            intent_data = projection['attempts'][attempt_id]
+            context = self._intent_evidence_context(attempt_id)
+            need(context['scan_id'] != notes_evidence.UNKNOWN,
+                 'EVIDENCE_SCAN_CONTEXT_REQUIRED')
+            inspected = self._validate_isolation_evidence(
+                _preflight_evidence(evidence, context))
+            evidence_directory = _evidence_directory(self.records)
+            saved_ref = dict(
+                path=str(evidence_directory /
+                         inspected['reference']['sha256']),
+                bytes=inspected['reference']['bytes'],
+                sha256=inspected['reference']['sha256'])
+            isolation = self._isolation_projection()
+            existing = isolation.get(attempt_id)
+            prior_v5 = bool(self._redownload_intents(media_key_value))
+            disposition = (ISOLATION_EXHAUSTED if prior_v5
+                           else ISOLATION_AVAILABLE)
+            if existing is not None:
+                need(expected_tip == existing['data']['expected_tip'],
+                     'ISOLATION_EXPECTED_TIP_CHANGED')
+                need(_event_ref(self.events[-1]) == _event_ref(existing),
+                     'ISOLATION_EXACT_REPLAY_REQUIRED')
+                candidate = self._isolation_event_data(
+                    session_id=session_id, intent_data=intent_data,
+                    evidence=saved_ref, expected_tip=expected_tip,
+                    disposition=disposition)
+                need(candidate == existing['data'],
+                     'ISOLATION_EXACT_REPLAY_REQUIRED')
+                return dict(
+                    status='ISOLATED', attempt_id=attempt_id,
+                    media_key=media_key_value,
+                    post_key=intent_data['post_key'],
+                    isolation_ref=_event_ref(existing),
+                    disposition=disposition,
+                    redownload_remaining=(0 if disposition ==
+                                          ISOLATION_EXHAUSTED else 1),
+                    next_action=('RECOVERY_EXHAUSTED'
+                                 if disposition == ISOLATION_EXHAUSTED
+                                 else 'RECOVERY_SCAN_REQUIRED'),
+                    replayed=True, dispatch_authorized=False)
+            need(expected_tip == _event_ref(self.events[-1]),
+                 'ISOLATION_EXPECTED_TIP_CHANGED')
+            need(self._attempt_result(attempt_id, projection) == 'UNKNOWN',
+                 'ISOLATION_RESULT_NOT_UNKNOWN')
+            self._validate_attempt_origin_scan(intent_data)
+            need(not self._pending_publish_plans(),
+                 'ISOLATION_PENDING_NAMING')
+            need(self._restart_open_confirmation() is None,
+                 'ISOLATION_OPEN_RESTART')
+            need(media_key_value not in self._completion_projection()[0] and
+                 media_key_value not in self._exclusion_projection() and
+                 media_key_value not in self._protection_projection() and
+                 media_key_value not in self._source_unavailable_projection() and
+                 media_key_value not in self._active_media_versions(),
+                 'ISOLATION_AFTER_TERMINAL_WORK')
+            self._assert_no_local_changed()
+            staging_before = self._isolation_staging_signature(intent_data)
+            data = self._isolation_event_data(
+                session_id=session_id, intent_data=intent_data,
+                evidence=saved_ref, expected_tip=expected_tip,
+                disposition=disposition)
+            saved = _preserve_evidence(
+                self.records, evidence, context,
+                expected_reference=inspected['reference'])
+            need(saved == saved_ref, 'EVIDENCE_SOURCE_CHANGED')
+            need(staging_before == self._isolation_staging_signature(intent_data),
+                 'ISOLATION_STAGING_CHANGED')
+            self.append('attempt-isolation', data)
+            event = self.events[-1]
+            self._load(self.records)
+            need(self._event_by_sequence(event['sequence']) == event,
+                 'ISOLATION_READBACK_CHANGED')
+            return dict(
+                status='ISOLATED', attempt_id=attempt_id,
+                media_key=media_key_value,
+                post_key=intent_data['post_key'],
+                isolation_ref=_event_ref(event), disposition=disposition,
+                redownload_remaining=(0 if disposition ==
+                                      ISOLATION_EXHAUSTED else 1),
+                next_action=('RECOVERY_EXHAUSTED'
+                             if disposition == ISOLATION_EXHAUSTED
+                             else 'RECOVERY_SCAN_REQUIRED'),
+                replayed=False, dispatch_authorized=False)
 
     def _require_reattest_fresh_scan(self, start_event):
         binding = self._effective_list_binding()
@@ -3472,7 +3724,8 @@ class NotesRecords:
             if not recovery:
                 need(not self._pending_publish_plans(),
                      'PENDING_NAMING_TRANSACTION')
-                self._assert_no_unknown_attempts()
+                self._assert_no_unknown_attempts(
+                    allow_isolated=self._restart_open_confirmation() is None)
             if latest is not None:
                 need(scans[latest]['complete'] is not None or
                      scans[latest]['interrupted'] is not None,
@@ -3907,11 +4160,131 @@ class NotesRecords:
                     reconciles=reconciles, latest_by_media=latest_by_media,
                     attempts_by_media=attempts_by_media)
 
+    def _event_for_ref(self, events, ref, code, kind=None):
+        _check_event_ref(ref, code)
+        need(ref['sequence'] <= len(events), code)
+        event = events[ref['sequence'] - 1]
+        need(_event_ref(event) == ref and
+             (kind is None or event['kind'] == kind), code)
+        return event
+
+    def _isolation_projection(self, events=None):
+        """Validate append-only isolation events without rewriting history."""
+        source_events = self.events if events is None else events
+        by_attempt = {}
+        for event in source_events:
+            if event['kind'] != 'attempt-isolation':
+                continue
+            need(self.list_data['recovery_authorized'],
+                 'NOTES_RECOVERY_NOT_AUTHORIZED')
+            data = event['data']
+            prefix = source_events[:event['sequence'] - 1]
+            attempts = self._attempt_projection(prefix)
+            intent_event = self._event_for_ref(
+                prefix, data['intent_ref'], 'ISOLATION_INTENT_CHANGED',
+                kind='intent')
+            intent_data = intent_event['data']
+            attempt_id = intent_data['attempt_id']
+            media_key_value = intent_data['media_key']
+            need(attempt_id not in by_attempt,
+                 'DUPLICATE_ATTEMPT_ISOLATION')
+            need(attempts['latest_by_media'].get(media_key_value) == attempt_id,
+                 'ISOLATION_ATTEMPT_NOT_LATEST')
+            result_event = self._event_for_ref(
+                prefix, data['result_ref'], 'ISOLATION_RESULT_CHANGED')
+            need(result_event['kind'] in ('outcome', 'reconcile') and
+                 result_event['data']['attempt_id'] == attempt_id and
+                 result_event['data']['media_key'] == media_key_value and
+                 result_event == _attempt_result_event(attempt_id, attempts),
+                 'ISOLATION_RESULT_CHANGED')
+            need(self._attempt_result(attempt_id, attempts) == 'UNKNOWN',
+                 'ISOLATION_RESULT_NOT_UNKNOWN')
+            bindings = [row for row in prefix if row['kind'] == 'binding']
+            need(bindings and data['binding_ref'] == _event_ref(bindings[-1]) and
+                 bindings[-1]['data']['session_id'] == data['session_id'],
+                 'ISOLATION_BINDING_CHANGED')
+            destination_binding = self._effective_list_binding(events=prefix)
+            need(destination_binding is not None and
+                 data['destination_binding_ref'] ==
+                 _event_ref(destination_binding[0]) and
+                 Path(intent_data['destination']).parent ==
+                 Path(destination_binding[1]['list_directory']),
+                 'ISOLATION_DESTINATION_CHANGED')
+            need(prefix and data['expected_tip'] == _event_ref(prefix[-1]),
+                 'ISOLATION_EXPECTED_TIP_CHANGED')
+            for earlier in prefix:
+                earlier_data = earlier['data']
+                need(not (earlier['kind'] in (
+                    'completion', 'exclusion', 'download-exclusion', 'protection',
+                    'source-unavailable') and
+                    earlier_data.get('media_key') == media_key_value),
+                    'ISOLATION_AFTER_TERMINAL_WORK')
+                need(not (earlier['kind'] in (
+                    'verification', 'publish-plan', 'completion',
+                    'download-exclusion', 'media-kind-reconcile') and
+                    earlier_data.get('attempt_id') == attempt_id),
+                    'ISOLATION_AFTER_ATTEMPT_WORK')
+            need(not self._pending_publish_plans(prefix),
+                 'ISOLATION_PENDING_NAMING')
+            restart = self._restart_projection(prefix)
+            need(not any(restart_id not in restart['activations']
+                         for restart_id in restart['confirmations']),
+                 'ISOLATION_OPEN_RESTART')
+            need(media_key_value not in restart['active_by_media'],
+                 'ISOLATION_AFTER_TERMINAL_WORK')
+            expected_disposition = (
+                ISOLATION_EXHAUSTED if self._redownload_intents(
+                    media_key_value, prefix) else ISOLATION_AVAILABLE)
+            need(data['disposition'] == expected_disposition,
+                 'ISOLATION_DISPOSITION_CHANGED')
+            by_attempt[attempt_id] = event
+        return by_attempt
+
+    def _redownload_intents(self, media_key_value, events=None):
+        return [event for event in
+                (self.events if events is None else events)
+                if event['kind'] == 'intent' and
+                event['data']['schema'] == INTENT_V5_SCHEMA and
+                event['data']['media_key'] == media_key_value]
+
+    def _post_isolation_scan_satisfied(self, isolation_event, session_id):
+        latest, scans = self._open_scan()
+        if latest is None or scans[latest]['complete'] is None:
+            return False
+        start = scans[latest]['start']
+        return (start['sequence'] > isolation_event['sequence'] and
+                start['data']['session_id'] == session_id and
+                start['data'].get('purpose') != 'RECOVERY_EVALUATION')
+
+    def _attempt_phase(self, attempt_id, projection, isolation):
+        result = self._attempt_result(attempt_id, projection)
+        if result is None:
+            return 'OUTCOME_REQUIRED'
+        if result != 'UNKNOWN':
+            return ('VERIFY_REQUIRED' if result == 'DOWNLOAD_FINISHED'
+                    else 'RECOVERY_REVIEW_REQUIRED')
+        isolation_event = isolation.get(attempt_id)
+        if isolation_event is None:
+            return 'RECONCILE_REQUIRED'
+        if isolation_event['data']['disposition'] == ISOLATION_EXHAUSTED:
+            return 'RECOVERY_EXHAUSTED'
+        binding = self._latest_binding()
+        if not binding or not self._post_isolation_scan_satisfied(
+                isolation_event, binding['session_id']):
+            return 'RECOVERY_SCAN_REQUIRED'
+        return 'REDOWNLOAD_REQUIRED'
+
+    def _require_attempt_not_isolated(self, attempt_id):
+        need(attempt_id not in self._isolation_projection(),
+             'ISOLATED_ATTEMPT_IMMUTABLE')
+
     @staticmethod
     def _attempt_kind(intent_data):
         return (intent_data.get('effective_kind')
                 if intent_data['schema'] in ('line-notes-intent/v2',
-                                             'line-notes-intent/v3', 'line-notes-intent/v4')
+                                             'line-notes-intent/v3',
+                                             'line-notes-intent/v4',
+                                             INTENT_V5_SCHEMA)
                 else intent_data['identity']['kind'])
 
     def _verification_kind_for_attempt(self, attempt_id, projection=None):
@@ -4386,13 +4759,14 @@ class NotesRecords:
                 if transaction not in completed_transactions and
                 event['sequence'] not in suppressed]
 
-    def _assert_no_unknown_attempts(self):
+    def _assert_no_unknown_attempts(self, *, allow_isolated=False):
         projection = self._attempt_projection()
         resolved = set(self._completion_projection()[0])
         resolved |= set(self._active_media_versions())
         resolved |= set(self._exclusion_projection())
+        isolated = self._isolation_projection() if allow_isolated else {}
         for media_key_value, attempt_id in projection['latest_by_media'].items():
-            if media_key_value in resolved:
+            if media_key_value in resolved or attempt_id in isolated:
                 continue
             result = self._attempt_result(attempt_id, projection)
             need(result in ('STOPPED', 'NOT_SENT'),
@@ -5024,7 +5398,7 @@ class NotesRecords:
                         save_all_count=0)
             self.append('intent', data)
             return dict(data, status='UNKNOWN', restart_id=restart_id,
-                        dispatch_authorized=False)
+                        phase='OUTCOME_REQUIRED', dispatch_authorized=False)
 
     def intent(self, *, session_id, media_key_value, recovery_evidence=None,
                restart_id=None):
@@ -5064,7 +5438,23 @@ class NotesRecords:
                  'STALE_MEDIA_INVENTORY')
             attempts = self._attempt_projection()
             prior = attempts['latest_by_media'].get(media_key_value)
-            if prior is not None:
+            isolated = self._isolation_projection()
+            isolation = isolated.get(prior)
+            if isolation is not None:
+                need(self._restart_open_confirmation() is None,
+                     'ISOLATION_REDOWNLOAD_OPEN_RESTART')
+                need(isolation['data']['disposition'] == ISOLATION_AVAILABLE and
+                     not self._redownload_intents(media_key_value),
+                     'REDOWNLOAD_BUDGET_EXHAUSTED')
+                need(recovery_evidence is None,
+                     'ISOLATED_RECOVERY_REQUIRES_V5')
+                need(self._post_isolation_scan_satisfied(isolation, session_id),
+                     'POST_ISOLATION_SCAN_REQUIRED')
+                binding = self._effective_list_binding()
+                need(binding is not None and _event_ref(binding[0]) ==
+                     isolation['data']['destination_binding_ref'],
+                     'ISOLATION_DESTINATION_CHANGED')
+            elif prior is not None:
                 result = self._attempt_result(prior, attempts)
                 need(result in ('STOPPED', 'NOT_SENT'),
                      'UNKNOWN_OR_RUNNING_NO_REPLAY')
@@ -5078,10 +5468,11 @@ class NotesRecords:
             resolved = set(self._completion_projection()[0])
             resolved |= set(self._active_media_versions())
             resolved |= set(self._exclusion_projection())
+            if isolated and self._restart_open_confirmation() is not None:
+                isolated = {}
             for other_key, attempt_id in attempts['latest_by_media'].items():
-                if other_key == media_key_value:
-                    continue
-                if other_key in resolved:
+                if (other_key == media_key_value or other_key in resolved or
+                        attempt_id in isolated):
                     continue
                 other_result = self._attempt_result(attempt_id, attempts)
                 need(other_result in ('STOPPED', 'NOT_SENT'),
@@ -5101,8 +5492,9 @@ class NotesRecords:
                 if recovery_evidence is not None else None)
             effective_kind, kind_correction_ref = self._effective_media_kind(
                 media_key_value, target['identity']['kind'])
-            data = dict(schema=('line-notes-intent/v4' if effective_kind == UNCLASSIFIED
-                                else 'line-notes-intent/v2'),
+            schema = ('line-notes-intent/v4' if effective_kind == UNCLASSIFIED
+                      else 'line-notes-intent/v2')
+            data = dict(schema=schema,
                         media_key=media_key_value,
                         post_key=target['post_key'],
                         identity=target['identity'],
@@ -5118,8 +5510,19 @@ class NotesRecords:
                         save_all_count=0,
                         recovery_of=prior,
                         recovery_evidence=recovery_ref)
+            if isolation is not None:
+                data.update(schema=INTENT_V5_SCHEMA,
+                            isolation_ref=_event_ref(isolation))
             self.append('intent', data)
-            return dict(data, status='UNKNOWN', dispatch_authorized=False)
+            result = dict(data, status='UNKNOWN', phase='OUTCOME_REQUIRED',
+                          dispatch_authorized=False)
+            if isolation is not None:
+                event = self.events[-1]
+                self._load(self.records)
+                need(self._event_by_sequence(event['sequence']) == event,
+                     'ISOLATION_INTENT_READBACK_CHANGED')
+                result['redownload_budget'] = 'CONSUMED'
+            return result
 
     def _require_latest_attempt(self, attempt_id):
         projection = self._attempt_projection()
@@ -5153,6 +5556,7 @@ class NotesRecords:
         with self.locked():
             self._require_session(session_id)
             projection, media_key_value = self._require_latest_attempt(attempt_id)
+            self._require_attempt_not_isolated(attempt_id)
             need(attempt_id not in projection['outcomes'] and
                  attempt_id not in projection['reconciles'],
                  'OUTCOME_ALREADY_RECORDED')
@@ -5175,6 +5579,7 @@ class NotesRecords:
         with self.locked():
             self._require_session(session_id)
             projection, media_key_value = self._require_latest_attempt(attempt_id)
+            self._require_attempt_not_isolated(attempt_id)
             current = self._attempt_result(attempt_id, projection)
             need(current == 'UNKNOWN', 'UNKNOWN_OUTCOME_REQUIRED_FOR_RECONCILE')
             restart_scope = self._restart_attempt_scope(attempt_id, projection)
@@ -5486,6 +5891,7 @@ class NotesRecords:
         unavailable = self._source_unavailable_projection()
         reconciliations = self._media_kind_reconcile_projection()['by_attempt']
         attempts = self._attempt_projection()
+        isolation = self._isolation_projection()
         rows = []
         for key, row in media.items():
             status = statuses[key]
@@ -5513,7 +5919,12 @@ class NotesRecords:
                 source_order=row['source_order'],
                 missing=bool(row.get('missing')),
                 missing_reason=row.get('missing_reason'),
-                status=status, local_files=local,
+                status=status,
+                attempt_phase=(self._attempt_phase(
+                    latest_attempt, attempts, isolation)
+                    if latest_attempt is not None and status in (
+                        'UNKNOWN', 'PENDING', 'PREVIOUSLY_INCOMPLETE') else None),
+                local_files=local,
                 source_availability=('EXPIRED' if key in unavailable
                                      else 'UNKNOWN'))
             completion = self._completion_projection()[0].get(key)
@@ -5607,6 +6018,7 @@ class NotesRecords:
 
     def _unresolved_attempts(self):
         attempts = self._attempt_projection()
+        isolation = self._isolation_projection()
         completions, _ = self._completion_projection()
         exclusions = self._exclusion_projection()
         protections = self._protection_projection()
@@ -5619,9 +6031,14 @@ class NotesRecords:
             if key in completions or key in exclusions or key in protections:
                 continue
             data = attempts['attempts'][attempt_id]
+            isolated = isolation.get(attempt_id)
             rows.append(dict(
                 media_key=key,
+                post_key=data['post_key'],
                 attempt_id=attempt_id,
+                attempt_phase=self._attempt_phase(attempt_id, attempts, isolation),
+                isolation_ref=(_event_ref(isolated) if isolated is not None
+                               else data.get('isolation_ref')),
                 scan_id=data.get('scan_id'),
                 has_outcome=attempt_id in attempts['outcomes'],
                 last_result=self._attempt_result(attempt_id, attempts),
@@ -5736,6 +6153,7 @@ class NotesRecords:
         if stale_media_inventory:
             blockers.append('STALE_MEDIA_INVENTORY')
         attempts = self._attempt_projection()
+        isolation = self._isolation_projection()
         status_by_key = {row['media_key']: row['status'] for row in media_rows}
         for media_key_value, attempt_id in attempts['latest_by_media'].items():
             if media_key_value in self._completion_projection()[0]:
@@ -5745,7 +6163,13 @@ class NotesRecords:
                 continue
             result = self._attempt_result(attempt_id, attempts)
             if result in (None, 'UNKNOWN'):
-                blockers.append('UNKNOWN_ATTEMPT')
+                if attempt_id in isolation and open_restart is None:
+                    phase = self._attempt_phase(attempt_id, attempts, isolation)
+                    blockers.append(
+                        'RECOVERY_EXHAUSTED' if phase == 'RECOVERY_EXHAUSTED'
+                        else 'REDOWNLOAD_REQUIRED')
+                else:
+                    blockers.append('UNKNOWN_ATTEMPT')
             elif result == 'DOWNLOAD_FINISHED':
                 blockers.append('VERIFY_REQUIRED')
         blockers = sorted(set(blockers))
@@ -5773,6 +6197,7 @@ class NotesRecords:
             for event in sorted(kind_reconciliations['by_attempt'].values(),
                                 key=lambda item: item['sequence'])]
         return dict(schema=MEMORY_SCHEMA,
+                    expected_tip=_event_ref(self.events[-1]),
                     local_list_id=self.records.name,
                     records_root=str(self.records),
                     list_key=self.list_data['list_key'],
@@ -6695,6 +7120,7 @@ class NotesRecords:
         with self.locked():
             self._require_session(session_id)
             projection, media_key_value = self._require_latest_attempt(attempt_id)
+            self._require_attempt_not_isolated(attempt_id)
             if projection['attempts'][attempt_id]['schema'] == \
                     'line-notes-intent/v3':
                 return self._restart_verify_locked(
@@ -6818,6 +7244,7 @@ class NotesRecords:
                             completion=completion['data'],
                             dispatch_authorized=False)
             projection = self._attempt_projection()
+            isolation = self._isolation_projection()
             unavailable = self._source_unavailable_projection()
             actions = []
             for media_key_value, attempt_id in projection['latest_by_media'].items():
@@ -6827,6 +7254,8 @@ class NotesRecords:
                 intent_data = projection['attempts'][attempt_id]
                 if media_key_value in unavailable:
                     action = 'SOURCE_UNAVAILABLE'
+                elif attempt_id in isolation:
+                    action = self._attempt_phase(attempt_id, projection, isolation)
                 elif self._attempt_result(attempt_id, projection) == 'DOWNLOAD_FINISHED':
                     try:
                         self._require_download_settlement(intent_data)
@@ -6836,13 +7265,7 @@ class NotesRecords:
                 elif not self._attempt_scan_binding_matches(intent_data):
                     action = 'SCAN_BINDING_REVIEW_REQUIRED'
                 else:
-                    result = self._attempt_result(attempt_id, projection)
-                    if result in (None, 'UNKNOWN'):
-                        action = 'RECONCILE_REQUIRED'
-                    elif result == 'DOWNLOAD_FINISHED':
-                        action = 'VERIFY_REQUIRED'
-                    else:
-                        action = 'RECOVERY_REVIEW_REQUIRED'
+                    action = self._attempt_phase(attempt_id, projection, isolation)
                 actions.append(dict(media_key=media_key_value,
                                     attempt_id=attempt_id, action=action))
             return dict(action='NO_NAMING_TRANSACTION', pending=actions,
@@ -7587,6 +8010,15 @@ def _build_notes_parser():
     intent.add_argument('--recovery-evidence',
                         help='Required only when recovering a STOPPED/NOT_SENT attempt')
 
+    isolate = sub.add_parser(
+        'isolate', help='Preserve one unresolved attempt for bounded redownload')
+    add_records(isolate, 'Preserve one unresolved attempt for bounded redownload')
+    isolate.add_argument('--session-id', required=True)
+    isolate.add_argument('--attempt-id', required=True)
+    isolate.add_argument('--evidence', required=True)
+    isolate.add_argument('--expected-tip', required=True,
+                         help='Ledger tip as JSON or @JSON-file')
+
     restart = sub.add_parser(
         'restart', help='Preview, confirm, or resume one restart batch')
     add_records(restart, 'Preview, confirm, or resume one restart batch')
@@ -7769,7 +8201,7 @@ def main(argv=None):
                 history_scope_evidence=args.history_scope_evidence,
                 recovery_authorized=args.recovery_authorized)
         elif args.command in ('memory', 'bind', 'scan', 'page', 'post',
-                              'media', 'intent', 'outcome', 'reconcile',
+                              'media', 'intent', 'isolate', 'outcome', 'reconcile',
                               'download-check', 'verify', 'resume', 'summary', 'evidence-audit',
                               'evidence-correct', 'media-kind-correct', 'media-kind-reconcile',
                               'source-unavailable', 'destination', 'exclude',
@@ -7840,6 +8272,12 @@ def main(argv=None):
                     media_key_value=args.media_key,
                     recovery_evidence=args.recovery_evidence,
                     restart_id=args.restart_id)
+            elif args.command == 'isolate':
+                expected_tip = _json_cli_argument(
+                    parser, args.expected_tip, '--expected-tip')
+                result = records.isolate(
+                    session_id=args.session_id, attempt_id=args.attempt_id,
+                    expected_tip=expected_tip, evidence=args.evidence)
             elif args.command == 'outcome':
                 result = records.outcome(
                     session_id=args.session_id, attempt_id=args.attempt_id,

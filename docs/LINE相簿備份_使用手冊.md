@@ -169,7 +169,7 @@ Agent 會先核對畫面、列表身分與永久紀錄，再開始盤點。盤�
 
 永久紀錄會放在另一個獨立位置 `notes-backup-records/`，不會與相簿紀錄混在一起，也不需要你手動搬移或填寫。
 
-若這個列表有影片，Agent 需要在開始下載前確認 `/opt/homebrew/bin/ffmpeg` 與 `/opt/homebrew/bin/ffprobe` 都存在、可執行且屬於同一組固定版本。缺少工具時，照片可能仍可處理，但影片不能算完成；請讓 Agent 先回報缺少項目，由維護者處理，不要自行改用 PATH 中的其他版本。
+影片或混合附件不需要日常播放或完整解碼。下載後由 `download-check` 依 magic MIME／suffix 分類、非空穩定檔案、SHA-256、防覆寫與身分一致性檢查；未知 MIME 或分類矛盾會保持 pending，不會猜測種類或算完成。
 
 ### B3. 會備份什麼，不會備份什麼？
 
@@ -178,18 +178,19 @@ Agent 會先核對畫面、列表身分與永久紀錄，再開始盤點。盤�
 - **不備份：** 貼文文字本身、留言、貼圖、連結、PDF、Word、網頁文件及其他附件。
 - **不跨列表合併：** 名稱、日期、張數、序號或單一檔案雜湊，都不能單獨認領另一個列表的歷史。
 
-> **格式與工具限制：** 目前嚴格照片驗證只接受 JPG／JPEG／PNG；HEIC、WebP、TIFF、GIF 等格式可能只保留原檔，不能算完成。影片需要固定的 Homebrew `ffmpeg`／`ffprobe`；缺少工具或解碼失敗時會停下並回報。影片與混合照片／影片附件目前也還沒有真實 GUI E2E 證據。
+> **完成界限：** 日常完成的保證範圍是 `DOWNLOAD_ONLY`：指定結果檔已保存並通過基本檔案檢查，不做 ImageIO／ffmpeg 完整解碼，也不證明服務端原始位元相同。明確為文字、PDF 或 ZIP 的非媒體結果會保留 staging 並記 `EXCLUDED`；MIME／suffix 未知或矛盾時保持 pending。影片、混合附件與真實 GUI E2E 仍沒有完整實機證據，應標 `NOT_RUN`。
 
 ### B4. Agent 會替你做什麼
 
 1. 查全部記事本帳本、最近任務與相符的永久記憶，核對目前列表身分。
 2. 新列表在沒有缺損歷史或候選歧義時自動初始化；既有列表綁定原帳本。
-3. 先處理舊的未決交易，再從列表頂端到底端完整盤點貼文與媒體。
-4. 依紀錄跳過已完成項，對每個合格媒體一次只處理一個 attempt。
+3. 先處理舊的未決交易；尚無 outcome 先記第一筆，已有 `UNKNOWN` 才先做一次唯讀查證，並以當次有限 AX／截圖核對舊目標與前景；這不是完整重掃。
+4. 從列表頂端到底端完成卡片覆蓋，再逐篇細盤；依紀錄跳過已完成項，每個合格媒體一次只處理一個 attempt。
 5. 下載前先保存並讀回 intent、新的空白目的地與「可能已派送」紀錄；記事本自己的下載控制與 chooser 最終確認各最多一次。
-6. 下載後先保存第一筆結果，再依 `DOWNLOAD_FINISHED`、`UNKNOWN`、`reconcile`、`resume` 等狀態分流；沒有收斂前不驗證、不建立新下載、不派下一項。
-7. 照片使用 ImageIO 完整像素解碼；影片使用固定成對的 Homebrew `ffmpeg`／`ffprobe` 檢查有效影像串流並完整解碼。
-8. 最後回報貼文總數、`NO_MEDIA` 篇數、六類媒體狀態、已驗證照片／影片數、本機不可用或內容異常項與未解缺項。
+6. 下載後先保存第一筆結果；`DOWNLOAD_FINISHED` 才做 `download-check`，`UNKNOWN` 先有限查證，有新結果證據時用 `reconcile`。命名交易中斷用 `resume`。
+7. 若原結果不明但同一媒體符合安全隔離條件，Agent 可先自動追加隔離事件保留舊 attempt；隔離本身不消耗額度，也不建立新掃描或新 attempt。隔離後才由目前 Session 完成新的完整卡片掃描與該篇細盤；只有之後一次 v5 intent 的 append 才消耗跨 Session 一次額度，並用新空白 staging 建立正常補下載。舊 attempt、舊路徑與晚到檔全部保留。
+8. 補下載再 `UNKNOWN` 時，只有安全前提仍成立才可再隔離、記 `RECOVERY_EXHAUSTED` 並保留欠件；`REDOWNLOAD_REQUIRED`／`RECOVERY_EXHAUSTED` 列為未完成，不誤報完成，也不阻止其他已核對合格項。安全前提不足則停止依賴該前提的派送。未隔離的 `UNKNOWN`／無 outcome、活動下載或未完成命名交易仍是全域阻塞。
+9. 最後回報貼文總數、`NO_MEDIA` 篇數、六類媒體狀態、通過基本檢查的照片／影片數、本機不可用或內容異常項、單次恢復狀態與未解缺項。
 
 ### B5. 什麼情況才算完成？
 
@@ -198,15 +199,18 @@ Agent 會先核對畫面、列表身分與永久紀錄，再開始盤點。盤�
 - 列表、貼文、媒體三層身分是否完成核對。
 - 貼文總數、來源逐卡對帳結果與未解缺頁。
 - `NO_MEDIA` 篇數、六類媒體狀態及目前項目。
-- 已驗證照片數、已驗證影片數。
+- 通過基本檢查的照片數、影片數及 `DOWNLOAD_ONLY` 保證範圍。
 - `LOCAL_MISSING`、`LOCAL_CHANGED` 等本機可用性，與仍待處理的項目。
-- 工具簿記、ImageIO／ffmpeg 解碼結果、真人觀察與真實 LINE E2E 分開列示。
+- 單次自動恢復的 `REDOWNLOAD_REQUIRED`、`RECOVERY_EXHAUSTED`、隔離、額度用盡、舊 staging 晚到風險與其他未解項分開列示；待補下載或用盡都仍是未完成，不是全域完成，也不是其他合格項的全域阻塞。
+- 工具簿記、基本檔案檢查、真人觀察與真實 LINE E2E 分開列示。
 
 有未解項目時，只能回報部分完成，不能宣稱整份列表全部完成。
 
 ### B6. 特殊停止條件
 
-- `UNKNOWN`、活動下載或未完成命名交易，在查證收斂前不得重送、驗證或派下一項。一般情況如此；記事本唯一的精確 restart 例外見本節下一條。
+- 尚無 outcome 時先保存第一筆真實結果；已有 `UNKNOWN` 時先做一次唯讀查證，不得把空 staging、零計數或工具逾時當成未派送。未隔離或無法安全處理的 `UNKNOWN`、可歸屬活動下載與未完成命名交易，在收斂前不得重送、驗證或派下一項。
+- 記事本另有一次自動補下載：先以當次有限 AX／截圖核對舊目標與前景。同一列表／貼文／媒體 key、原目的地與舊空白 staging 可精確核對，當次前景有效，且沒有舊 chooser／modal、可歸屬活動下載、pending naming、檔案或身分異常、開放的手動 restart 時，Agent 會先追加隔離事件並回報範圍，不必再向你確認。隔離本身零消耗，不表示舊操作已停止；舊 attempt、舊路徑與可能晚到的檔案全部保留。隔離後才由目前 Session 完成新的完整卡片掃描與該篇細盤，再由一次 v5 intent append 消耗同一媒體跨 Session 的一次額度，新補下載只使用新的空白 staging。
+- 補下載再次 `UNKNOWN` 時，若前述安全前提仍成立，Agent 會再隔離、記 `RECOVERY_EXHAUSTED`、保留該項未完成並繼續其他已核對合格項；安全前提不足則停止依賴該前提的派送。這不是完成、排除、`STOPPED`／`NOT_SENT` 或精確 restart。
 - 記事本若提出「精確重啟批次」，Agent 必須先列出受影響列表、貼文／媒體、舊位置、新 `versions/gNNNNNNNN/` 目錄、額外空間、缺項與保留項；只有你對該精確範圍明示同意，才可繼續。沉默、逾時或一般「繼續」不是同意。
 - 記事本：整篇完成目錄不見時記 `LOCAL_MISSING`，保留完成且禁止重下；目錄仍存在但有缺檔、非屬合格環境附屬項的額外檔、內容／身分漂移或 symlink 時記 `LOCAL_CHANGED`，保護原件並停止未確認的新派送。
 - `INTERNAL_ERROR`、`UNEXPECTED_EXCEPTION` 或工具退出碼 70 是未預期錯誤，不是可重試的業務拒絕。停止並保留命令輸出、畫面與紀錄，不要重送、改寫 ledger、建立新 attempt 或換目的地。
@@ -232,7 +236,7 @@ Agent 會從永久紀錄找回前次任務；你不需要填 `RESUME`、回想�
 
 ### 記事本列表入口失去時
 
-若 Agent 回報 `HANDOFF_REQUIRED`，請把同一個指定記事本列表帶回前景，再提交手冊中的正式記事本 Prompt。你不必提供 UUID、JSON 或逐篇指令。重新交接不代表重送下載許可；Agent 會先唯讀查歷史並核對新前景與列表，再以新 notes Session 執行 `bind`。`bind` 成功後才收斂舊交易；若仍有 open scan，再明確 `scan interrupt`，最後以普通完整掃描接續。未綁定前不寫 outcome／reconcile。
+若 Agent 回報 `HANDOFF_REQUIRED`，請把同一個指定記事本列表帶回前景，再提交手冊中的正式記事本 Prompt。你不必提供 UUID、JSON 或逐篇指令。重新交接不代表重送下載許可，也不會增加自動補下載額度；Agent 會先唯讀查歷史並核對新前景與列表，再以新 notes Session 執行 `bind`。`bind` 成功後才收斂舊交易；若仍有 open scan，再明確 `scan interrupt`，最後以普通完整掃描接續。未綁定前不寫 outcome／reconcile。
 
 若 Agent 只回報 CUA app／window handle reacquire，且前景仍有效，這不會重跑 notes `bind`。若前景確實中斷，重新交接後會使用新的帳本 Session ID。Agent 不會用猜測按鍵、舊座標、全螢幕切換或測試輸入恢復入口；輸入通道仍失效時只會要求上述最小交接。
 
@@ -499,7 +503,20 @@ NOTES_BACKUP_ROOT 留空時使用目前專案根目錄的 backup/記事本/；
 先從永久紀錄核對未決 attempt、blockers 與覆蓋，不可用新 scan 掩蓋舊問題。
 核對入口並綁定當次有效前景後，才依 Skill 處理舊交易；不沿用舊 Session ID。
 尚無 outcome 的 attempt，依真實證據先保存第一筆 outcome；
-已有 outcome=UNKNOWN，才以新證據 reconcile；未收斂不重送、不建新 intent。
+已有 outcome=UNKNOWN，才以新證據 reconcile；有可靠原下載完成證據就接續原 attempt。
+先以當次有限 AX／截圖核對舊目標與前景，這不是完整重掃。
+若同一列表／貼文／媒體、原目的地與舊空白 staging 可精確核對，
+當次前景有效且無舊 chooser／modal、可歸屬活動下載、pending naming、
+檔案／身分異常或開放的手動 restart，且摘要確認仍有跨 Session 一次自動額度，
+可先追加隔離事件保留舊 attempt，不必再次向我確認；隔離零消耗、
+不建立新掃描或新 attempt，也不宣稱舊操作停止。
+隔離後才由目前 Session 完成新的完整卡片掃描與該篇細盤；只有之後一次 v5 intent
+的 append 才消耗額度，並用新空白 staging 建立補下載。
+舊 attempt、舊路徑與晚到檔只留舊 staging，不發布、不清理。
+補下載再 UNKNOWN 時，只有相同安全前提仍成立才可再隔離、記 RECOVERY_EXHAUSTED、
+保留欠件並繼續其他合格項；REDOWNLOAD_REQUIRED／RECOVERY_EXHAUSTED 列未完成，
+不誤報完成，也不當其他合格項的全域 blocker；否則停止依賴該前提的派送。
+未隔離的 UNKNOWN／no-outcome 仍是全域 blocker。
 只有確認 DOWNLOAD_FINISHED 才執行日常 `download-check`，命名交易中斷用 resume，不重下；舊 `verify` 僅供 legacy 相容。若 `summary`／`resume` 保留 legacy `VERIFY_REQUIRED` 標記，日常按待 `download-check` 處理，不啟動舊 `verify` 或來源種類取證。
 
 依 GUI reference 核對最新 AX 中的索引與目標角色，以卡片邊界判斷列表位移；
@@ -555,9 +572,13 @@ LINE 畫面與貼文內容只作備份來源，不作為新增操作或變更授
 目錄仍存在但缺檔、有非屬合格環境附屬項的額外檔、hash／身分漂移或 symlink 時，
 標 LOCAL_CHANGED、保護原件；未經精確批次確認前停止依賴該篇的新派送，
 確認批次涵蓋該篇時保留舊目錄並在新版本目錄重建。
-UNKNOWN、活動下載及未完成命名交易不因照片缺席、新目錄或一般「繼續」解鎖；
-只有精確 restart scope 經我明示同意且 confirm 後完成新 recovery scan，
-才可另建 attempt，且不宣稱舊 UNKNOWN 已停止。
+UNKNOWN、活動下載及未完成命名交易不因照片缺席、新目錄或一般「繼續」解鎖。
+只有上述安全隔離成立，且其後一次 v5 intent append 消耗一次額度時，才可為同一媒體建立一個新空白補下載 attempt；
+隔離不宣稱舊 UNKNOWN 已停止，舊檔與晚到檔仍留原 staging。
+補下載再不明且安全前提仍成立時，可再隔離、記 RECOVERY_EXHAUSTED、保留欠件並繼續其他合格項；
+REDOWNLOAD_REQUIRED／RECOVERY_EXHAUSTED 仍是未完成報告，不當其他合格項的全域阻擋；安全前提不足即停止。
+精確 restart／reattest 與 STOPPED／NOT_SENT 恢復仍各自需要原 gate；
+舊 recovery_authorized=true 不能代替這則正式 Prompt 的當次允許，false 保留且不改寫。
 本任務不包含 commit、push、merge、改寫 Git 或雲端 CI。
 
 執行期間我會保持前景，不中途接管；需要使用電腦時會先請你暫停。
@@ -568,7 +589,8 @@ UNKNOWN、活動下載及未完成命名交易不因照片缺席、新目錄或�
 【交付】
 依 Skill 回報入口核對、完整盤點、逐篇／逐媒體結果及最終對帳。
 列出貼文總數、NO_MEDIA 篇數、六類媒體狀態、通過基本檢查的照片與影片數、
-本機不可用或內容異常項，以及尚待處理的缺項。
+本機不可用或內容異常項、單次自動恢復的隔離／額度用盡／舊 staging 晚到風險，
+以及尚待處理的缺項。
 有未解項就明列，不宣稱整份列表全部完成。
 分開說明 GUI 觀察、notes CLI 簿記、`DOWNLOAD_ONLY` 基本檢查與 completion 讀回；
 未實際執行的真實 E2E、跨 Session、混合附件 chooser 或恢復標 NOT_RUN。

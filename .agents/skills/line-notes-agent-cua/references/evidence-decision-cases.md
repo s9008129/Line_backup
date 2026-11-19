@@ -34,8 +34,8 @@
 - **前提：** attempt A 已有 `UNKNOWN`；下一項 B 尚未建立 intent。
 - **觀察（假設）：** A 初次等待後又出現 chooser、進度或檔案，可能屬於 A，但尚未完成歸屬核對。
 - **可支持命題：** 晚到證據只能先回到 A；出現時間本身不能指定所有權，也不能證明下載完成。
-- **允許動作：** 暫停 B；以 A 的原事件、原 viewer、原目的地 reconcile。若正面完成證據成立才可 `DOWNLOAD_FINISHED` 並 `download-check`；否則維持 `UNKNOWN`。
-- **禁止推論：** 晚到結果算成 B；重設 A；看到檔案就直接 `download-check`；為 B 建 intent 或重送。
+- **允許動作：** 先暫停 B；以 A 的原事件、原 viewer、原目的地 reconcile。若正面完成證據成立才可 `DOWNLOAD_FINISHED` 並 `download-check`；仍不明時只有 A 符合安全隔離，才可先保留 A，且只有後續 v5 intent append 才消耗一次額度，再處理 B。晚到 A 檔只留 A 的舊 staging，不變成 B 的結果。
+- **禁止推論：** 晚到結果算成 B；重設 A；看到檔案就直接 `download-check`；未隔離 A 就為 B 建 intent；晚到檔可發布、清理或併入新 attempt。
 - **缺少證據：** attempt／viewer／目的地歸屬、終結訊號、穩定檔集；若檔案存在，還缺基本檔案檢查與 completion。
 
 ## C5 播放不是操作步驟或取證來源
@@ -47,18 +47,18 @@
 - **前提：** `intent` 已保存並讀回，可能已輸入；程序在第一筆 outcome 前 crash 或重啟。
 - **觀察（假設）：** ledger 有 intent、沒有 outcome；重啟後沒有可歸屬 chooser／進度／檔案，暫存目錄可能為空。
 - **可支持命題：** 只支持存在 crash window 與可能已派送；缺少資料不是空帳，也不是未派送證明。
-- **允許動作：** 找回原 attempt；用 `outcome` 記第一筆真實結果，證據不足就記 `UNKNOWN`；有後續新證據才可 reconcile。停止新派送、檔案檢查與下一項。
+- **允許動作：** 找回原 attempt；用 `outcome` 記第一筆真實結果，證據不足就記 `UNKNOWN`。之後可做一次唯讀 reconcile；仍不明且安全隔離條件成立時，依 CLI 追加零消耗隔離，完成隔離後新完整 scan／細盤再以 v5 intent 消耗一次額度；否則停止新派送、檔案檢查與下一項。
 - **禁止推論：** 沒有 outcome 就是未送出；空目錄等於 `NOT_SENT`；先呼叫 reconcile；建立新空白 attempt 或重建 ledger。
 - **缺少證據：** 是否真正送出、原 viewer／chooser／進度、原目的地檔案、可歸屬終結或停止證據。
 
-## C7 UNKNOWN 未收斂
+## C7 UNKNOWN 未收斂：安全隔離或停止
 
 - **前提：** attempt 已有 `UNKNOWN`，並已依原事件、原 viewer、原目的地調和。
 - **觀察（假設）：** 只有 timeout、畫面未變、空目錄或缺 marker；相同查證方法連續兩次沒有新資訊。
-- **可支持命題：** 只支持尚未收斂；這是同一列表帳本的 blocker，不是 `NOT_SENT` 或完成。
-- **允許動作：** 保留 `UNKNOWN`，停止相同查證，保存證據並提出最小具體問題。
-- **禁止推論：** Owner 口頭聲明、換目錄、重置 ledger、換列表或相簿入口可解鎖；缺 marker 可改寫成 `NOT_SENT`。
-- **缺少證據：** 可歸屬終結訊號，或足以安全支持 `STOPPED`／`NOT_SENT` 且排除晚到作用的停止 receipt；目前能力仍 `UNKNOWN`。
+- **可支持命題：** 只支持尚未收斂；隔離事件只記錄舊 attempt 的處置，本身零消耗，不證明 `NOT_SENT`、停止或完成。
+- **允許動作：** 保留 `UNKNOWN`，停止相同查證。同一媒體、有效前景、舊空白 staging、無 chooser／活動下載／命名／異常／手動 restart 且 CLI 支援時，可由追加隔離事件保留舊 attempt；完成隔離後才開始的新完整掃描與該篇細盤，再由一次 v5 intent append 消耗額度並建立一次新空白補下載。否則保存證據並停止。
+- **禁止推論：** 換目錄、重置 ledger、換列表或相簿入口可解鎖；缺 marker 可改寫成 `NOT_SENT`；隔離等於舊操作停止或可無限重送。
+- **缺少證據：** 可歸屬終結訊號，或足以安全支持 `STOPPED`／`NOT_SENT` 且排除晚到作用的停止 receipt；自動單次路徑只接受隔離與新 attempt 證據，不能補成停止。
 
 ## C8 完成證據：充分與不足
 
@@ -167,14 +167,14 @@
 - **禁止推論：** 刪除或覆寫 slot 可安全重試；下載 helper 呼叫前失敗等於未派送；下載控制一旦開始後仍可回 reveal；slot 成功建立就等於 App 接受或下載開始。
 - **缺少證據：** 真實並行競爭、slot 修復與 GUI 行為仍 `NOT_RUN`。
 
-## C20 舊 UNKNOWN、無 outcome crash 與 exact restart
+## C20 舊 UNKNOWN／無 outcome：單次自動恢復與 exact restart
 
 - **前提（假設）：** 同一媒體已有舊 `UNKNOWN`，或 intent 後 crash 且尚無 outcome；目前工具列可能隱藏或可見，但沒有新的精確 restart 授權。
 - **觀察（假設）：** 舊 intent／crash window 與舊歷史仍存在；最新畫面或空 staging 不足以證明舊操作未送出。
-- **可支持命題：** 普通流程不得重進該舊 attempt 或建立新 attempt；新 Session、fresh capture、控制重新出現、零計數與空 staging 都不解鎖。只有 fresh `restart preview` 精確列出該 scope、Owner 明示同意、`restart confirm` 且完成新的完整 recovery scan，才可依既有規則建立新的 v3 attempt。
-- **允許動作：** 先查原 attempt；未有 outcome 時記第一筆真實結果，已有 `UNKNOWN` 才 reconcile。符合 exact restart 時保留舊歷史，使用新 generation／staging，B1 額度仍跨 Session 累計且不自動重置；新 attempt 的方法／額度仍要在 intent 前稽核。
-- **禁止推論：** 舊 UNKNOWN 已停止或可清除；restart 自動提供 reveal 額度；新 attempt 可重用舊 viewer／chooser／座標；一般「繼續」或 `dispatch_authorized=false` 等於 restart 同意。
-- **缺少證據：** 真實舊 UNKNOWN 收斂、restart 後額度查回與實機結果仍 `NOT_RUN`。
+- **可支持命題：** 新 Session、fresh capture、控制重新出現、零計數與空 staging 單獨都不解鎖。舊 `UNKNOWN` 可在同一媒體安全隔離與跨 Session 一次額度成立時建立一個新空白補下載；隔離零消耗，只有其後 v5 intent 消耗額度。批次 scope、`LOCAL_CHANGED`、既有完成或其他版本策略仍只能走 fresh `restart preview`、Owner 明示同意、`restart confirm` 與新 recovery scan。
+- **允許動作：** 先以有限 AX／截圖核對舊目標與前景；未有 outcome 時記第一筆真實結果，已有 `UNKNOWN` 才 reconcile。符合單次路徑時追加隔離、完成隔離後才開始的新普通完整 scan／細盤，再由一次 v5 intent 消耗額度並補下載；符合 exact restart 時保留舊歷史，使用新 generation／staging。B1 額度仍跨 Session 累計且不自動重置；新 attempt 的方法／額度仍要在 intent 前稽核。
+- **禁止推論：** 舊 UNKNOWN 已停止或可清除；單次自動恢復可取代 restart 批次或無限重送；restart 自動提供 reveal 額度；新 attempt 可重用舊 viewer／chooser／座標；一般「繼續」或 `dispatch_authorized=false` 等於 restart 同意。
+- **缺少證據：** 真實舊 UNKNOWN 收斂、隔離後跨 Session 一次額度、restart 後額度查回與實機結果仍 `NOT_RUN`。
 
 ## C21 intent 後前景或身分中斷
 

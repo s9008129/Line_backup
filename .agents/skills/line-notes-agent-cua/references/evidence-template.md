@@ -1640,12 +1640,24 @@ const revealDownloadReceipt = await dispatchDownload({
 2. **post／media 細盤已寫入。** 細盤事件只保存當時的非 reveal 盤點原件；同 scan 的 `post`／`media` 各只能追加一次，沒有「再補 observation」的合法命令。此時 intent 後的 direct／reveal／after 原件與 pre-intent blocker 原件只能留在私有 task 區，尚未進永久帳本。不得為留證另開 scan，不得改用 `bind`、`protect`、`intent` 或 `outcome` 冒充附掛，也不得改寫舊 scan／detail／completion。日後同一個實際 attempt 有合法 outcome 時，才可把仍適用的 direct／reveal／after 原件依該 attempt 的精確 context 重新封裝；不得把沒有 attempt context 的 before-intent bundle 直接冒用為新 attempt 或另一個 context 的證據。新 attempt 需要自己的觀察與 context，舊 blocker 只能作歷史來源引用。
 3. `evidence-pack` 本身只建立私有 bundle，不是永久帳本寫入；只有既有 event 成功保存並讀回其 evidence ref 後，才可聲稱已進永久帳本。若沒有可合法承載的既有事件，保留私有原件與 hash，明列「永久帳本未保存」，交回具體缺口；本方案不為補證據擴 schema、CLI 或交易。
 
+## 自動補下載隔離證據
+
+隔離只處置一個已知舊 attempt，不是新媒體認領、GUI 授權、停止證明或下載完成。statement 要能唯讀說明並引用：
+
+- 舊 `list_key + post_key + media_key`、exact `attempt_id`／intent ref、第一筆 `UNKNOWN` outcome ref 與已完成的 reconcile 結果；三者需能唯一回到同一媒體，否則不得隔離。
+- 原目的地 binding／staging 精確路徑與身分，以及隔離前後舊 staging 為空、穩定且未被新 attempt 使用的當次觀察。空目錄或零計數單獨仍不是 `NOT_SENT`。
+- 當次有效前景、目標列表／viewer 的 AX／截圖原件與涵蓋範圍；最新觀察是否看到舊 chooser／modal、可歸屬活動下載、來源歧義、pending naming、檔案異常或開放的手動 restart。缺席只在觀察範圍足夠時記 `NOT_OBSERVED`，否則 `UNKNOWN`。
+- 隔離事件 ref、`disposition`／`redownload_remaining` 的 CLI 讀回值與衝突／拒絕原因；隔離本身零消耗，後續 v5 intent 才消耗一次額度。隔離 event context 依 CLI 契約綁舊 intent／scan，不借用一個不存在的新 scan 冒充來源。
+
+隔離成功後的新完整掃描、目標細盤、新 empty staging、control／chooser 與結果仍各自需要新的當次證據。舊 attempt 的晚到檔只作舊 staging 的事實，不能附掛成新 attempt 的完成或發布證據。
+
 ## 必錄欄位
 
 | 區塊 | 欄位／內容 | 最低要求 |
 |---|---|---|
 | 身分 | `list_key`、`post_key`、`media_key`、`source_order` | key 以 notes CLI 產生／讀回值為準；任一層不能唯一對應就記 `UNKNOWN`，不得以顯示名稱、日期、張數、序號或單一 hash 代替 |
 | Attempt | `attempt_id`、`intent_event_ref`、`outcome_event_ref`、`reconcile_event_refs`、`recovery_of`、`recovery_evidence_ref` | `attempt_id` 以 CLI 結果為準。現行 CLI 的 intent／outcome／reconcile 回傳 payload 不直接提供 event sequence；event ref 由唯讀核對 `events/%08d.json`（例如 `00000001.json`）、記錄 sequence 與該檔 SHA-256 讀回建立。同一 attempt 可多次 reconcile；每次都要新增一筆 `reconcile_event_refs`，保留全部 sequence／event SHA-256 與結果，不用最後一筆覆寫先前歷史。沒有 reconcile 記 `NOT_APPLICABLE`；任何一次無法唯一核對時，該次記 `UNKNOWN`，不得由資料夾、檔名或媒體 hash 反推 |
+| 自動恢復隔離 | `isolation_event_ref`、`old_outcome_ref`、`reconcile_refs`、`destination_binding_ref`、`old_staging_ref`、`staging_empty_ref`、`foreground_ref`、`no_chooser_ref`、`no_active_download_ref`、`budget_before`、`budget_after`、`expected_tip` | 只在同一媒體、舊 attempt 已有持久 `UNKNOWN`、安全前提成立時記錄；隔離零消耗，`budget_before`／`budget_after` 應相等，只有其後 v5 intent append 才消耗一次額度。隔離不是 `STOPPED`／`NOT_SENT`，不得用隔離 statement 補成停止、下載或完成證據。舊 staging 之後出現晚到 bytes 時保留原處並更新事實，不轉正成新 attempt |
 | Restart 批次 | `restart_id`、`generation`、`confirmation_ref`、`scope_digest`、`version_directory`、`owner_consent_ref`、`recovery_scan_id`、`prior_attempt_ref`、`activation_ref` | 只在精確 `restart preview`／Owner 明示同意／`restart confirm`／confirm 後完整 recovery scan 路徑使用。`confirmation_ref`、`generation`、`scope_digest`、`version_directory` 與新 attempt 必須對應同一個已確認批次；`owner_consent_ref` 指向當次可核對的 Owner 明示回覆，不能以 Prompt 本身、沉默、逾時或一般「繼續」代替。一般 attempt 或未使用欄位記 `NOT_APPLICABLE`；無法唯一讀回才記 `UNKNOWN`，不得由路徑或檔名猜值。此區塊是私有 statement 欄位，不是新的 CLI schema；傳給 CLI 的仍是既有 v2 `bundle_path` |
 | 目的地 | `original_destination`、`destination_event_refs`、`observed_destination` | 原目的地以 intent 讀回值為準。目的地相關事件可能是 `created`（初始 root）、`destination`（追加 root）或 `intent`（attempt 目的地），各自以事件檔與讀回 hash 引用；`binding` 事件不含目的地。chooser 顯示或實際落點另記，不得反寫原目的地 |
 | 觀察來源 | `observation_id`、`source_kind`、`tool`、`api_scope`、`app_window_binding`、`role_children_ref`、`raw_return_ref`、`scope`、`capture_rect`、`raw_rect`、`image_pixels`、`window_frame`、`window_points`、`scale_factor`、`popup_covered` | 記 AX／app-bound 截圖／桌面局部截圖／Computer Use 回傳／真人觀察，並分開 AX client／API scope、app／window 綁定與 role／children 來源；範圍、原始矩形、實際像素、點數與縮放分開，來源未涵蓋 popup 時不可推論不存在。同一 viewer 的 AX 相同不得推定工具列未變，截圖與 AX 也不能互相補值 |
@@ -1886,5 +1898,5 @@ finish_coverage:
 - 主視窗截圖／AX 未涵蓋獨立 popup 或 chooser 時，控制可見性記 `UNKNOWN`；只有充分涵蓋的來源才可記 `NOT_OBSERVED`。不要猜全域座標或改用相簿流程。
 - 同一「下載完畢」提示在截圖可見但 AX 不含時，只記截圖來源與當次範圍，不把 AX 記成看見；反之亦然。瞬態時間／涵蓋範圍不可得就寫 `UNKNOWN`，不為取得提示重新下載。
 - input 原始成功／錯誤只證明工具回傳，不是 App 接受；chooser 只證明階段性回應，不是下載完成；終結訊號不等於檔案驗證；completion 也不等於外部副本或服務端原始位元相同。
-- `intent` 已保存但沒有 outcome 時，第一筆真實結果用 `outcome`（可為 `UNKNOWN`）；只有已有 `outcome=UNKNOWN` 才用 `reconcile`。未收斂不得 verify、建立新 attempt、重下或派下一項。
+- `intent` 已保存但沒有 outcome 時，第一筆真實結果用 `outcome`（可為 `UNKNOWN`）；只有已有 `outcome=UNKNOWN` 才用 `reconcile`。仍不明時，只有同一媒體符合 Skill 的安全隔離條件，才可先追加隔離事件保留舊 attempt；隔離零消耗，完成隔離後才開始的新完整掃描與細盤後，再由一次 v5 intent append 消耗跨 Session 一次額度並建立一次新空白補下載。其他情況不得 verify、建立新 attempt、重下或派下一項。
 - 本範本與填入內容都不是 GUI 授權、實機結果、E2E PASS 或獨立驗收。相關案例見 [證據判定案例](evidence-decision-cases.md)。

@@ -27,7 +27,7 @@
 | input API 的原始成功、錯誤或逾時回傳 | 工具回傳了該結果 | 未有排除副作用保證時不推 `NOT_SENT`；不得因 error／timeout 再點一次，結果不明記 `UNKNOWN` |
 | 每次 reveal candidate（文件支持的 hover 或 selected-filmstrip `NAVIGATION`）的 input receipt 與前後觀察 | 該次輸入及其各自來源、範圍與先後的當次觀察 | 只在既有 intent 讀回後、同一新 attempt 使用一次；不證明工具列出現、控制命中或下載。ordinal／budget、跨 Session 累計與停止只依 B1；intent 前不得先送 reveal，舊 UNKNOWN／crash 不適用 |
 | 可歸屬同一 viewer／attempt 的 chooser | App 有階段性回應，可能延遲出現 | 核對精確來源與目的地；chooser 不是下載結果，出處不明時不確認 |
-| 只有 timeout、畫面未變、空目錄或缺少 marker | 當下尚無足夠結果證據 | 尚無 outcome 時先以 `outcome` 記 `UNKNOWN`；已有 `outcome=UNKNOWN` 則保留。沒有新資訊就停止相同查證，不重送、不建新 attempt，也不派送下一項 |
+| 只有 timeout、畫面未變、空目錄或缺少 marker | 當下尚無足夠結果證據 | 尚無 outcome 時先以 `outcome` 記真實結果（可為 `UNKNOWN`）；已有 `outcome=UNKNOWN` 則先有限查證，有新結果證據才用 `reconcile`。沒有新資訊就停止相同查證；只有同一媒體符合 Skill 的安全隔離與跨 Session 一次額度時，才可保留舊 attempt 後另建一次補下載。未隔離／無法安全處理時不重送、不建新 attempt，也不派送下一項 |
 | 可歸屬的正面下載終結訊號，加上原目的地的穩定結果檔 | 支持進入日常 `download-check` 的候選結果 | 不同媒體不要求同一種 UI 訊號；單一弱訊號不足以判完成 |
 | `download-check` 的基本檢查，加上 completion 書寫與讀回 | 指定項目／目的地達到 `DOWNLOAD_ONLY` 完成條件 | 不證明來源原件、完整解碼、外部副本或整份列表完成 |
 | 可歸屬且足以排除原操作稍後繼續的明確停止／未派送證據 | 可能安全終結原 attempt | 只有此類正面證據才可進 `STOPPED`／`NOT_SENT`；目前是否能取得此證據仍 `UNKNOWN`，不憑推測建立 |
@@ -36,7 +36,7 @@
 
 - **下載結果。** 需要同時能歸屬原 attempt／viewer／原目的地，並具備當次正面終結觀察與穩定結果檔；提示本身不取代同 attempt 終結、穩定檔、`download-check` 與 completion。不得播放以取得提示或種類證據。
 - **檔案與 completion（日常）。** `DOWNLOAD_FINISHED` 只允許進入 `download-check`；magic MIME／suffix 分類、非空穩定檔案、SHA-256、防覆寫、身分核對與 completion 讀回成立後，記 `assurance=DOWNLOAD_ONLY`。完整解碼不屬日常條件。
-- **停止／未派送。** 必須有可歸屬、能排除原操作稍後繼續的正面證據；`timeout`、API error、控制不見、空目錄、缺少 marker、舊計數為零與播放結束都不足。假設案例中的此類 receipt 不得寫成已取得；沒有證據就保留 `UNKNOWN` 並停止新派送。
+- **停止／未派送。** 必須有可歸屬、能排除原操作稍後繼續的正面證據；`timeout`、API error、控制不見、空目錄、缺少 marker、舊計數為零與播放結束都不足。假設案例中的此類 receipt 不得寫成已取得；沒有證據就保留 `UNKNOWN`。只有 Skill 的同一媒體安全隔離與一次額度成立時，才可在不宣稱停止的情況下建立新空白補下載；其他情況停止依賴該前提的新派送。
 
 ### 控制發現與 Reveal 的狀態邊界
 
@@ -159,7 +159,10 @@ ffmpeg 完整解碼仍不能保證偵測所有靜默損壞，也不代表與服�
 | 已下載完成、尚未基本檢查（包含 legacy `VERIFY_REQUIRED`） | 執行 `download-check`。若 magic MIME 明確為 `text/plain`、`text/html`、`application/pdf` 或 `application/zip`，追加 `line-notes-download-exclusion/v1`，將該 attempt 記為 `EXCLUDED` 並保留 staging；不寫 completion，也不宣稱來源本身不是媒體。未知 MIME、`application/octet-stream` 或 MIME／suffix 不相符時保持 pending 並拒絕完成，不猜種類、不改 key、不重下。保留的 `VERIFY_REQUIRED` 是相容標記，不啟動舊 `verify` 或來源種類取證 |
 | 命名／發布 journal 中斷 | `resume` 同一交易；不重送下載 |
 | `STOPPED`／`NOT_SENT` 且未完成、原授權涵蓋恢復、帳本已持久化 `recovery_authorized=true` 且有充分停止證據 | 保留原檔，依 [下載與 notes CLI](download-and-ledger.md) 以 `intent --recovery-evidence` 建立另一個新空白恢復目錄及新 attempt；授權未持久化或證據不足時停止，已完成項跳過 |
-| 已有 `outcome=UNKNOWN` 或 intent 尚無 outcome | 先以原事件、目的地與當次畫面／檔案查證；已有 outcome 才 `reconcile`，尚無 outcome 先保存第一筆真實結果。未收斂前不得執行 `download-check` 或 legacy `verify`，也不得重送、建新 attempt 或派下一項；沒有新資訊就停止相同查證。只有 fresh restart preview 精確列出該媒體、Owner 明示確認該批，且 confirm 後完成新的完整 recovery scan，才可 `intent --restart-id`；舊 UNKNOWN／無 outcome 保留，不偽造 STOPPED |
+| intent 尚無 outcome | 先以原事件、目的地與當次畫面／檔案查證，並用 `outcome` 保存第一筆真實結果；不得先 `reconcile`。未寫第一筆結果或未安全隔離前，不得 `download-check`、legacy `verify`、重送或派下一項。 |
+| 已有持久 `outcome=UNKNOWN`，且同一媒體的安全隔離、有效前景、原目的地、舊空白 staging、無 chooser／活動下載／pending naming／檔案異常／手動 restart 均成立 | 先做一次有限查證，有新結果證據才用 `reconcile`。結果仍不明時，可由 CLI 的追加 `attempt-isolation` 事件保留舊 attempt。先以當次有限 AX／截圖核對舊目標，不需完整重掃；隔離本身零消耗、不建立 scan／新 attempt、不宣稱停止且不清除 UNKNOWN。之後仍須由目前綁定 Session 完成隔離後才開始的新普通完整掃描與該篇細盤；只有一次 v5 intent append 才消耗跨 Session 一次額度，並用新空白 staging 建立補下載。 |
+| 補下載再次 `UNKNOWN` | 若相同安全前提仍成立，再追加一次隔離，投影 `RECOVERY_EXHAUSTED`／欠件並保留該項未完成；`REDOWNLOAD_REQUIRED`／`RECOVERY_EXHAUSTED` 列未完成，不當其他合格項的全域阻擋。若出現 chooser、可歸屬活動下載、舊 staging 未核對／仍在變動、命名交易、檔案異常或身分／授權／覆蓋不明，停止依賴該前提的派送。舊檔與晚到檔只留舊 staging，不發布、不清理。 |
+| 未隔離或無法安全處理的 `UNKNOWN`／no-outcome | 保留原 `UNKNOWN`／第一筆結果，停止相同查證、重送、新 intent 與下一項。只有另外取得 fresh restart preview 精確 scope、Owner 明示確認該批並完成 confirm 後 recovery scan，才可走 `intent --restart-id`；舊史保留，不偽造 STOPPED。 |
 | `restart preview` 回報 `RESTART_REQUIRED`／`OPEN_BATCH` | Agent 出示精確列表、受影響貼文／媒體、已完成 sibling、舊版位置、新 `versions/gNNNNNNNN/`、額外空間及缺項／保留項；Owner 明示同意該 scope 才可 `restart confirm`。confirm 後以 `scan start --recovery` 完成新的完整 recovery scan，才逐項 `intent --restart-id`。日常 `restart resume --download-only` 對 candidate 作基本檢查；若 scope 中候選明確為非媒體，回報 `RESTART_SCOPE_NON_MEDIA` 並停止，不自動更改已確認 scope。同一已確認 scope 完成前再次中斷可從 `OPEN_BATCH` 找回，只對未完成或結果不確定的項目另建 attempt；scope／身分／目的地／版本策略改變要重新預覽與確認 |
 | 普通 `created`／`destination` 列表只有歷史 device 值改變 | 沿原日常流程核對列表／貼文／媒體、path／inode／授權邊界及 ledger 狀態；不單獨拒絕、不呼叫 reattest。UNKNOWN、pending、已完成媒體或實際身分疑義仍照各自規則停止 |
 | 有效 binding 已是 `list-directory-reattest`，path／inode 相同但 device 改變 | 執行唯讀 `reattest preview`。只在 `CONFIRMATION_REQUIRED`、完整 witness 與精確 scope 均可解釋，且 Owner 另行明示同意該 preview 後，才 `reattest confirm`。成功後完成新的 recovery scan，才接續原批次。每帳本最多一次；再次漂移或任何拒絕都停止，不換目的地或重送 |
@@ -168,14 +171,17 @@ ffmpeg 完整解碼仍不能保證偵測所有靜默損壞，也不代表與服�
 | 缺帳本、索引毀損或多個列表候選 | 保留原件與來源，停止相關寫入；不以空帳、重掃或改名解鎖 |
 | 純文字貼文 | 記貼文層 `NO_MEDIA`，不做下載 attempt |
 
-恢復只涵蓋原任務授權內未完成的項目，不重跑已完成清單，也不擴及另一個列表。新 attempt 的目的地必須是新的空白暫存／恢復目錄；原暫存、部分下載、舊 completion 與 evidence 全留。`STOPPED`／`NOT_SENT` 的 v2 recovery 與精確 restart 批次是兩條不同路徑：前者使用 `intent --recovery-evidence`，需要已持久化 `recovery_authorized=true` 與充分停止證據；後者需要 fresh preview、Owner 對精確 scope 的明示同意、`restart confirm`，以及 confirm 後新的完整 `scan start --recovery`。一般日常恢復授權、沉默、逾時或「繼續」都不是批次同意，`recovery_authorized` 也不能代替它。同一已確認批次涵蓋完成前再次中斷；scope、身分、目的地或版本策略改變須重新確認。即使有批次同意，也不宣稱舊 UNKNOWN 已停止；只有全部 candidate 通過 `restart resume --download-only` 基本檢查並 activation 後，新版本才成為目前結果。若原 Prompt 沒有涵蓋恢復、結果仍 UNKNOWN、帳本未持久化恢復授權或工具無法安全調和，停止並提出最小具體問題；不直接修改 ledger 取得授權。
+恢復只涵蓋原任務授權內未完成的項目，不重跑已完成清單，也不擴及另一個列表。新 attempt 的目的地必須是新的空白暫存／恢復目錄；原暫存、部分下載、舊 completion 與 evidence 全留。`STOPPED`／`NOT_SENT` 的 v2 recovery 與精確 restart 批次是兩條不同路徑：前者使用 `intent --recovery-evidence`，需要已持久化 `recovery_authorized=true`、當次正式 Prompt 明示涵蓋此次恢復、有效前景與充分停止證據；後者需要 fresh preview、Owner 對精確 scope 的明示同意、`restart confirm`，以及 confirm 後新的完整 `scan start --recovery`。`recovery_authorized=true` 只是持久資格，不能代替當次正式 Prompt；`false` 保留，不由單次 UNKNOWN 路徑改寫或拿來繞過，也不解除 STOPPED／NOT_SENT 原 gate。一般日常恢復授權、沉默、逾時或「繼續」都不是批次同意，`recovery_authorized` 也不能代替它。同一已確認批次涵蓋完成前再次中斷；scope、身分、目的地或版本策略改變須重新確認。即使有批次同意，也不宣稱舊 UNKNOWN 已停止；只有全部 candidate 通過 `restart resume --download-only` 基本檢查並 activation 後，新版本才成為目前結果。若原 Prompt 沒有涵蓋恢復、安全單次路徑不可用且結果仍 UNKNOWN、帳本未持久化恢復授權或工具無法安全調和，停止並提出最小具體問題；不直接修改 ledger 取得授權。
+
+同一媒體的安全隔離單次補下載是第三條獨立路徑：它保留原 attempt 與第一筆 `UNKNOWN`，不宣稱 `STOPPED`／`NOT_SENT`，也不建立 restart generation。隔離前只需當次有限 AX／截圖核對舊目標與前景；隔離事件零消耗，也不建立 scan／新 attempt。補下載前必須先完成隔離事件讀回、隔離後才開始的新普通完整掃描與目標細盤，再由一次 v5 intent append 消耗額度；新結果仍要走 control／chooser 各一次、`download-check` 與 completion。再次不明且安全前提成立時，可再隔離一次並保留欠件、開放其他合格項，不自動第三次重送。
 
 ## 合成測試與真實 GUI 的證據界限
 
 notes 功能至少需以合成 fixture 覆蓋以下驗證，實際執行結果要保存命令、exit code、版本與輸出摘要。本文件不是測試報告；沒有當次實際命令與輸出證據時，這些項目一律 `NOT_RUN`，不得預填 PASS：
 
 - 日常基本檢查：初始化 → 盤點 → intent → outcome → `download-check` → completion → 新 Session 查詢跳過；明確非媒體 MIME 追加 exclusion，不寫 completion；未知／不一致 MIME 保持 pending 並拒絕。
-- 重送拒絕、記事本當次下載控制（若 UI 顯示 Save All，須證明是本記事本自己的控制）單次限制、UNKNOWN `reconcile`、命名中斷 `resume`。
+- 重送拒絕、記事本當次下載控制（若 UI 顯示 Save All，須證明是本記事本自己的控制）單次限制、無 outcome 第一筆、UNKNOWN `reconcile`、命名中斷 `resume`。
+- 既有 1 筆 `UNKNOWN`＋6 筆 pending、空 staging 安全隔離、跨 Session 一次額度、新完整 scan／細盤後一次補下載、completion 重開、再次不明耗盡後保留欠件與其他項繼續、舊 staging 晚到檔不可發布／清理、範圍或身分不符拒絕。
 - 跨列表隔離、缺帳本、索引毀損與不開空帳。
 - 完成後整個貼文目錄刪除仍不解鎖；部分缺檔、hash／身分漂移、非屬合格環境附屬項的額外檔與 symlink 保護。
 - 來源重排、新增媒體、刪除媒體、編輯貼文與 `NO_MEDIA`。

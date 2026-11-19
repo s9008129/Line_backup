@@ -96,7 +96,7 @@
 
 本節是穩定前置、當次方法與可核對額度、既有 intent 邊界、intent 後單一路徑、同次 after 與一次 guarded click 的唯一決策本文；其他文件只記證據、交易或投影，不另定候選次數，也不改變既有 `STOPPED`／`NOT_SENT` 精確恢復與 restart 規則。可執行 composition `persistRevealWithDirectAfter` 見 [單次輸入與直接 after 觀察](evidence-template.md#單次輸入與直接-after-觀察)；範例只實作本節，不複製或擴張 helper、次數與停止條件。
 
-- **先核對穩定前置。** 在 intent 前完成歷史／資格／完整盤點與目標媒體細盤核對、viewer 三層身分、實際 entry anchor 與 `expected_return_role`、同一有效前景、可歸屬返回控制、當次座標映射，並排除 chooser、活動下載、舊無 outcome／未解輸入、其他未決 attempt、pending naming、來源或播放狀態漂移。一般路徑的舊 `UNKNOWN` 或舊無 outcome attempt 不得重進；只有原授權與既有 CLI 允許的新 attempt 可適用。精確 restart 的 Owner 明示同意、scope、confirm 後新 recovery scan 與舊歷史保留規則照舊，不能由本節解鎖或重置額度。
+- **先核對穩定前置。** 在 intent 前完成歷史／資格／完整盤點與目標媒體細盤核對、viewer 三層身分、實際 entry anchor 與 `expected_return_role`、同一有效前景、可歸屬返回控制、當次座標映射，並排除 chooser、活動下載、舊無 outcome／未解輸入、其他未有效隔離的未決 attempt、pending naming、來源或播放狀態漂移。舊 `UNKNOWN` 或舊無 outcome 必須先依 Skill「結果不明的單次恢復」分流；只有該媒體已持久隔離、目前 Session 已完成新的普通完整掃描與細盤，才可對新空白 attempt 套用 B1。精確 restart 的 Owner 明示同意、scope、confirm 後新 recovery scan 與舊歷史保留規則照舊，不能由本節解鎖或重置額度。
 - **intent 前的方法與額度分流。** 最新充分觀察正面支持記事本下載控制可見、歸屬、啟用與映射時，可直接備妥 intent，之後仍須在 intent 後重取當次畫面。工具列未見時，只有同一 viewer／選中項的當次安全 reveal 方法已獨立成立、本節額度可完整稽核，且依 ordinal 規則有下一個可用候選（`0`→`1`，或 `1`→`2` 的前次引用／連續性／相關新證據均成立），才可建立 intent；方法與安全區只以當次唯讀觀察建立，不為通過此 gate 先送 reveal。無安全方法、無可用候選、額度不明、選取或歸屬不明，應在 intent 前停止，不得先用 hover／click 探索，也不得預建任何未派送的候選或 input request。工具列未見不是 intent 的唯一阻塞，但 intent 前仍不得送出 reveal。控制可見分支若在 intent 後轉為隱藏，而 intent 前沒有已稽核的方法與額度，仍在該處停止。
 - **固定額度與候選前稽核。** 以 `list_key + post_key + media_key` 為 reveal scope；同一 scope 跨 viewer、reopen、Session 與 restart 累計最多兩個已派送 reveal 候選，attempt 內至多一個。輸入前保存並讀回 `candidate_ordinal`、`prior_candidate_refs`、`budget_before`、本次方法、安全作用區、選取、before 原件、映射與 input request；輸入後保存 `budget_after`。已送出 `0` 次且同一 scope 完整查無先前已派送候選，只可用 `candidate_ordinal=1`、`budget_before=0`；已送出 `1` 次時，只有原候選 request／raw／after 完整、未決為零、連續性成立，且有改變既有決策 gate 的相關新證據，才可用 `candidate_ordinal=2`、`budget_before=1`。新 attempt、fresh capture、時間流逝或只換點本身不是新證據。已送出 `2` 次或計數不明者沒有 reveal 路徑；目前控制直接可見且其他 gate 成立時，仍可走直接路徑。任何開始送出的 hover／pointer move 或 `NAVIGATION` 均耗額，error、timeout、crash、缺 receipt 或結果不明也照算，不能以缺證退回較低計數。
 - **用既有 CLI 保留本項。** intent 前先解析帳本、照片 root、notes CLI、私有 task／證據父目錄、兩條路徑所需的 statement 與 helper 呼叫架構及精確 argv。通過上述 gate 後只執行一次既有 `intent`，讀回唯一 attempt、原 event、三層身分、Session、新空白 staging 的精確路徑及身分、`save_all_limit=1`、`save_all_count=0` 與禁止重送紀錄。這仍是一筆 `status=UNKNOWN`、`dispatch_authorized=false` 的既有 intent，不是新 ledger 狀態、新事件、新授權或「prepared 可恢復」語意；intent 本身不證明控制已按、下載已開始或已送出。CLI／讀回失敗、衝突或前景中斷時零 GUI 輸入，保留可得證據並依既有規則停止。
@@ -178,7 +178,7 @@
 
 同一有效前景內重新取得 CUA app／window handle，沿用目前 notes 帳本 Session，不重跑 `bind`。前景中斷後由 Owner 重新交接，必須建立新的 notes 帳本 Session ID，即使仍是同一對話或 app；取得新 observation 並重新核對列表身分。
 
-新 `bind` 不會自動中斷舊 open scan。新 Session 先唯讀查歷史並核對當次新前景與列表，成功 `bind` 後才收斂舊 attempt 與命名交易；若仍有 open scan，再明確 `scan interrupt`，然後以普通 `scan start` 重新完成卡片覆蓋。不得以 restart 或 recovery scan 繞過普通入口阻塞，也不得用新 scan 解鎖 UNKNOWN。保留帳本中實際的完成、ACTIVE 與待細盤分類；待盤貼文不得改成 `NO_MEDIA` 或宣稱完成。
+新 `bind` 不會自動中斷舊 open scan。新 Session 先唯讀查歷史並核對當次新前景與列表，成功 `bind` 後才收斂舊 attempt 與命名交易；若仍有 open scan，再明確 `scan interrupt`，然後以普通 `scan start` 重新完成卡片覆蓋。不得以 restart 或 recovery scan 繞過普通入口阻塞；新 scan 本身不解鎖 UNKNOWN，只有同一媒體的安全隔離事件持久讀回後，才可由目前 Session 以新的普通完整掃描接續一次補下載。保留帳本中實際的完成、ACTIVE 與待細盤分類；待盤貼文不得改成 `NO_MEDIA` 或宣稱完成。
 
 同一有效前景的 reacquire、viewer reopen 與新 notes Session 都不重置同一 `list_key + post_key + media_key` 的 reveal 候選額度。新 Session 必須先找回該媒體的 `candidate_ordinal`、`prior_candidate_refs` 與 `budget_after`；查不到或互相矛盾時停止，不假設額度為 0。
 
