@@ -2,13 +2,13 @@
 
 本檔用固定案例檢查 [B1](gui-inventory.md#目標與下載控制就緒b1)、[證據與允許行為矩陣](verification-and-recovery.md#證據與允許行為矩陣)、[下載與 notes CLI](download-and-ledger.md) 與 [證據範本](evidence-template.md) 的判斷是否一致。全部案例都是文件規則的假設情境，不是本次 LINE 操作、真實停止 receipt、實機 `OBSERVED` 或 E2E PASS；案例中的時間、視窗與回傳若未由當次工具提供，實際紀錄必須寫 `UNKNOWN`。
 
-## C1 控制檢查後隱藏
+## C1 intent 後控制才消失
 
-- **前提：** `intent` 已保存並讀回，尚未有 outcome；下載控制曾在同一 viewer 可見且映射明確。
-- **觀察（假設）：** 最後一次輸入前核對時控制消失，沒有可歸屬 chooser、進度或終結訊號。
-- **可支持命題：** 只支持當下未見控制與舊定位失效；不能證明未輸入、未派送、App 拒絕或控制不存在。
-- **允許動作：** 先停止下載輸入並依 B1 核對是否完整符合一次延後第二候選；不符合就只做唯讀定位。若沒有正面終態證據，按可能已派送保護，第一筆 outcome 記 `UNKNOWN`，之後只以新證據 reconcile。
-- **禁止推論：** 控制隱藏自動授予候選；已有 UNKNOWN／crash 可用新例外；控制隱藏等於未命中／未派送；沿用舊座標；用第二次點擊查證；換相簿入口。
+- **前提：** 新 attempt 的 `intent` 已保存並讀回，尚未有下載控制呼叫或 outcome。intent 前依 B1 走可見控制分支，或已稽核同一 scope 的當次安全 reveal 方法與 `0`／`1` 額度；沒有 chooser、未解輸入或前景中斷。
+- **觀察（假設）：** intent 後最新的同一 viewer 原件未見控制。若 intent 前只有控制可見而沒有稽核 reveal 方法／額度，這裡沒有可用的隱藏分支；若有稽核且方法／額度仍成立，才可評估一次 reveal。
+- **可支持命題：** 只支持當下 bounded observation 未見控制與舊定位失效；不能證明未輸入、未派送、App 拒絕或控制不存在。只有 intent 前已完整稽核的方法／額度仍成立時，才有本 attempt 的一次 reveal 路徑。
+- **允許動作：** 先停止任何下載輸入。隱藏分支的 intent 前稽核完整且仍成立時，使用 `notes-reveal-c2-<attempt_id>` 送一次 reveal、保存同一份 after；after 正面才把該份原件交給下載 helper 一次。方法／額度不明、intent 前沒有稽核、after 失敗或控制再消失就停止；第一筆 outcome 依實際證據，不足為 `UNKNOWN`，已有 outcome 才 reconcile。
+- **禁止推論：** 控制隱藏自動授予或重置候選；intent 前先送 reveal；已有 UNKNOWN／crash 可用新例外；控制隱藏等於未命中／未派送；沿用舊座標；重開 viewer 或換相簿入口。
 - **缺少證據：** 真正的 input 原始回傳、attempt／viewer 歸屬、chooser／進度、檔案或可歸屬終結訊號。
 
 ## C2 API error 但 chooser 出現
@@ -105,83 +105,85 @@
 - **禁止推論：** 已確認一次就可無限重送或擴及其他項；再次中斷自動代表舊 UNKNOWN 已停止；取消舊 chooser 等於舊操作終止；晚到檔案屬新 attempt；可重用舊路徑、舊座標或把舊 history 改寫成新版本。
 - **缺少證據：** 真實 GUI 的晚到輸入／chooser、舊寫入停止證據、新 viewer 與 staging 的連續歸屬，以及跨 Session 的實際恢復結果仍 `NOT_RUN`；文件案例不能補成 E2E PASS。
 
-## C13 候選後 bounded no-show 與 D 類 capture 盲區
+## C13 V1／V2 的 intent 前隱藏控制差異
 
-- **前提：** intent 前已有一次 B1 候選；input receipt／回傳已保存且沒有未解輸入，最新 after 具充分範圍但未見工具列，尚無 intent、chooser 或業務 outcome。
-- **觀察（假設）：** 只有單一 after 未見控制；同次 capture 不能證明候選與截圖之間從未出現 transient，D 類四項的既有證據即屬這種有限觀察。
-- **可支持命題：** 最多支持本次 bounded observation 的 `TOOLBAR_NOT_SHOWN`；不能推論 LINE 沒有控制、控制從未短暫出現或下載失敗。
-- **允許動作：** 保存 before／input／after；若仍有 `REARM_1` 額度及 B1 要求的相關新證據，可評估第二次。新 capture 本身、時間流逝或另一個點都不是新證據；沒有新資訊即停止。
-- **禁止推論：** D 類 after 可排除 transient；fresh capture 可重置或授予 re-arm；absent AX 等於截圖不存在；bounded no-show 可建立 intent／outcome。
-- **缺少證據：** 能涵蓋 transient 的觀察時序、相關新資訊與真實 GUI 結果仍 `NOT_RUN`／`UNKNOWN`。
+- **前提（假設）：** 同一 viewer 的最新 bounded observation 未見控制；三層身分、有效前景、返回控制與所有非 GUI 前置成立，當次 selected-filmstrip 安全方法可歸屬，且同一 scope 完整查得已送出 `0` 次 reveal、無 chooser／未解輸入／舊 UNKNOWN／舊無 outcome。尚未建立 intent，也尚未送出任何 reveal。
+- **觀察（假設）：** 這正是 V1 與 V2 的差異點；工具列仍隱藏，沒有新的可見控制。
+- **可支持命題：** V1 要求工具列先可見才能建立 intent，因此同一輸入在 V1 會停在 intent 前。V2 允許以「當次安全方法＋可核對的 `0`／`1` 額度」作為隱藏分支前置，可建立既有 intent；但這不是 reveal 授權，intent 前仍不得送出任何 GUI 輸入，intent 後控制仍隱藏才可送一次。
+- **允許動作：** V2 保存方法、安全區、選取、mapping、額度與非 GUI 前置後，建立並讀回 intent；最新原件仍隱藏時才依 C15 走一次 fixed-slot reveal。V1 只可停下並記錄缺可見控制，不得改寫成已 intent。
+- **停止反例：** 無當次安全方法、方法不能歸屬同一 viewer／選中項、已用兩次、額度不明、舊 UNKNOWN／舊無 outcome、前景中斷或任何未決；任一成立都在 intent 前停止。V2 也不能用 intent 前 reveal、舊骨架、猜 hover、固定等待或 fresh capture 補條件。
+- **缺少證據：** V1／V2 的真實 GUI 差異與 V2 隱藏分支成效仍 `NOT_RUN`；本案例不是實機結果。
 
-## C14 intent 前 transient 後的一次有限 re-arm
+## C14 intent 後最新控制可見的直接路徑
 
-- **前提：** intent 前候選曾在有效觀察中正面看見工具列，之後同身分、同前景的新觀察中消失；無 chooser、無 intent、無未解輸入，尚有一次 reveal 額度。
-- **觀察（假設）：** 新充分觀察提供決策相關新證據，例如先前遮罩／範圍不足已消除，或該輸入方法的新安全作用區與映射已成立。
-- **可支持命題：** `REVEAL_TRANSIENT` 只描述「曾見後消失」，不是永久 discovery 封鎖；仍可依 B1 評估一次 `REARM_1`。
-- **允許動作：** 保存兩個狀態與新證據，重新取得 before 觀察、身分與映射；通過 B1 全部前置後可送一次，且第二次仍無正面控制就停止。
-- **禁止推論：** transient 後自動再點；只靠新 capture／時間流逝成立 re-arm；沿用舊點或舊 mapping；已有 intent 就可一般 re-arm；B1 的延後第二候選有獨立完整前置，不能借本案例授權。
-- **缺少證據：** 真正 transient 時序、新證據是否改變 gate 與實機結果仍 `NOT_RUN`。
+- **前提（假設）：** B1 前置成立，既有 intent 已保存並讀回；intent 後最新的同一 viewer 原件正面顯示記事本下載控制可見、歸屬、啟用與映射成立，且無 chooser／未解輸入。
+- **可支持命題：** 這份 intent 後原件支持直接下載定位，不需要也不得再送 reveal。intent 前的可見觀察不能用來跳過 intent 後重核。
+- **允許動作：** 保存原件與映射，組出 request 並連同同一份原件交 `persistGroundedDownloadClick` 一次；由 helper 以 `wx` 獨占建立並讀回 `notes-download-<attempt_id>` 後才 click。直接路徑不消耗 reveal 額度；其後 chooser 仍依既有至多一次確認。
+- **禁止推論：** intent 後不重取即可沿用舊點；固定等待可保證工具列存續；helper 呼叫等於 native hit-test、App 接受或下載成功；控制一旦可見就能重播或再按一次。
+- **缺少證據：** 真實控制時序、native hit-test、chooser 與下載終結仍 `NOT_RUN`／`UNKNOWN`。
 
-## C15 TOOLBAR_VISIBLE 的 action-on-positive
+## C15 隱藏分支的 0→1 與固定 reveal slot
 
-- **前提：** B1 候選後，最新充分 after 正面顯示工具列，下載控制可見、歸屬、啟用且映射成立；其他 intent 前置已備妥。
-- **觀察（假設）：** 該正面觀察是 action window；不是需要再等一次的暫態提示。
-- **可支持命題：** 可用這份已保存的正面觀察與映射接續 intent，不因未再次 capture 而失效。
-- **允許動作：** 若原件範圍／AX／映射不足，可小步唯讀補足缺口；補足仍正面才建 intent。正面足夠時立即使用預備 argv 建立並讀回 intent，之後只做原 wrapper 要求的當次重定位與最多一次下載控制。
-- **禁止推論：** 插入無新增 gate 價值的 stability capture／固定等待；沒有正面控制證據就建 intent；把補範圍的 capture 當成 re-arm；intent 後控制消失就自動 discovery 或重按；僅 B1 完整成立的延後第二候選可例外。
-- **缺少證據：** C 類實際時序與 GUI 結果仍 `NOT_RUN`；本案例不能指控原流程有固定等待指令。
+- **前提（假設）：** 新 attempt 的 intent 已讀回；intent 前完整查得同一 scope 已送出 `0` 次，當次安全方法仍在最新原件可歸屬，沒有 chooser、下載控制呼叫或 outcome。
+- **觀察（假設）：** intent 後最新原件仍隱藏控制；這是一般 V2 hidden branch，不是額外候選或另一次嘗試。
+- **可支持命題：** 只可在同一 attempt 使用一次 `candidate_ordinal=1`、`budget_before=0`；送出後 `budget_after` 為 `1`，不論 error、timeout、crash 或缺 receipt 都耗額。
+- **允許動作：** 組出 request 交 `persistRevealWithDirectAfter`；由其內部的 `persistSingleInput` 以 `wx` 建立並逐 bytes 讀回 `notes-reveal-c2-<attempt_id>`，`c2` 是固定檔名，ordinal `1` 只寫在 request。同一次 callback 送一次安全 reveal 並保存同一份 after；after 正面才交給下載 helper 一次。
+- **停止反例：** slot 已存在、並行競爭、讀回不符、request 保存失敗、方法／mapping 失效或 after 缺口時零額外 input並停止；不得改 ordinal 命名、換 slot、重送或建新 attempt。
+- **缺少證據：** 真實工具列的顯示／消失與 reveal 成效仍 `NOT_RUN`；本案例不證明工具列會出現。
 
 ## C16 同次 reveal input → after 的保存順序
 
-- **前提：** intent 尚未建立；B1 前置、當次安全作用區與映射均成立；input／after observation 目錄已在 reveal 前備妥；input request 已保存並讀回 `MATCH`；當次工具文件支持對同一 app 依序執行一次 input 與 observation。
+- **前提（假設）：** 既有 intent 已建立並讀回；B1 的 intent 前方法／額度 gate、當次安全作用區與映射均成立；input／after observation 目錄事先備妥；`notes-reveal-c2-<attempt_id>` request 已保存並讀回 `MATCH`；當次工具文件支持對同一 app 依序執行一次 input 與 observation。
 - **觀察（假設）：** callback 內只送出一次已核對 input；原生回傳後不離開 callback，直接取得同一 app 的 after；input 回傳、after 回傳／error 在記憶體分開保留，input raw 與 after bytes 在 callback 返回後才持久化。
 - **可支持命題：** after 來自同一次 runtime invocation，且位於一次 input 之後；這是兩個相依 API，不是 atomic 或固定秒數保證。工具回報的內部等待只能按其文件語意記錄，不能補成 OS event 命中、精確 capture 時間或 toolbar 保證存續。
 - **允許動作：** callback 原樣回傳 input 回傳；返回後先保存 input raw／diagnostic，再用 `persistObservation` 保存剛才取得的同一份 after bytes，不重新 capture。記錄 host 層 call 前／回傳時間與相對序號；缺少 OS event 或個別 capture 時間就記 `UNKNOWN`。保存骨架見 [單次輸入與直接 after 觀察](evidence-template.md#單次輸入與直接-after-觀察) 的 `persistRevealWithDirectAfter`。
-- **禁止推論：** 在 input 後另開 shell、插入模型回合或固定等待；把兩個 API 說成 atomic／0–1 秒完成；用 after 成功反推 input 命中；以 mtime 冒充精確時間；保存後再 capture 一次；以任意縮圖邊緣或固定左上／右上熱點代替當次安全區。
+- **禁止推論：** 在 input 後另開 shell、插入模型回合或固定等待；把兩個 API 說成 atomic／固定秒數完成；用 after 成功反推 input 命中；以 mtime 冒充精確時間；保存後再 capture 一次；以任意縮圖邊緣或固定左上／右上熱點代替當次安全區。
 - **缺少證據：** OS event trace、native hit-test、個別 capture 的精確時間、真實 GUI 的 toolbar 存續與 C 類實機結果仍 `NOT_RUN`／`UNKNOWN`。
 
-## C17 input 已送出但 after 或保存缺口
+## C17 intent 後 reveal 已送出但 after 或保存缺口
 
-- **前提：** reveal request 已保存並讀回 `MATCH`，候選已送出一次 input；之後 after API error、callback 中斷或程序 crash，input raw／diagnostic／after bytes 至少一項未完成持久化與讀回；尚無 chooser、intent 或 outcome。
+- **前提（假設）：** 既有 intent 已讀回；hidden branch 已稽核；`notes-reveal-c2-<attempt_id>` request 已保存並讀回 `MATCH`，候選已送出一次 input；之後 after API error、callback 中斷或程序 crash，input raw／diagnostic／after bytes 至少一項未完成持久化與讀回。
 - **觀察（假設）：** request 可能仍在，記憶體可能有部分 input 回傳或 bytes，但缺少完整 receipt 或同一份 after；無法證明 input 未送出、控制命中、toolbar 曾顯示或下載開始。
 - **可支持命題：** 只能支持一次候選已派送但證據保存不完整；capture error、空 after、缺 raw、無 after 或重啟都不是 `NOT_SENT`，且候選額度已消耗。
-- **允許動作：** 立即停止；保存仍可得的 request、input 回傳／error、部分 bytes 與停止原因，`budget_after` 照算。只有原 callback 已取得的同一份 after bytes 可補做原保存；不得重新取得。證據不足時記 discovery blocker，不建立 intent／outcome。
-- **禁止推論：** capture error 等於未輸入；缺 raw／after 可重拍或重送；用新 viewer、Session、目錄或 re-arm 解鎖；把 partial persistence 當成控制可見或交易資格；以另一次 input 查證。
+- **允許動作：** 立即停止；保存仍可得的 request、input 回傳／error、部分 bytes 與停止原因，`budget_after` 照算。只有原 callback 已取得的同一份 after bytes 可補做原保存；不得重新取得。證據不足時保留原 intent，依實際結果記第一次 outcome 或保留 `UNKNOWN`，之後才可 reconcile。
+- **禁止推論：** capture error 等於未輸入；缺 raw／after 可重拍或重送；用新 viewer、Session、目錄、另一個 slot 或第二次 reveal 解鎖；把 partial persistence 當成控制可見或交易資格；以另一次 input 查證。
 - **缺少證據：** 完整 input receipt、同一份 after bytes、OS event／hit-test、chooser／進度／檔案與可歸屬終結訊號。
 
-## C18 新 intent 後原第二候選的窄例外
+## C18 跨 Session 的 1→2 與新證據
 
-- **前提（假設）：** 同 Session／連續前景的新 intent 已讀回；原第一候選完整且 budget 為 1。完整連續原件正面核對尚未呼叫下載控制、尚無 outcome／chooser／未解輸入／其他全局阻塞；intent 前工具列正面可見，intent 後同一 viewer 的充分觀察顯示它消失。
-- **允許動作：** 只依 B1 重新核對安全作用區／映射、固定 slot 的第二候選 request 保存讀回，送一次 input→直接 after。當次無 hover API 時只可使用已選 filmstrip 的非播放安全邊緣 click；無此區域即停。Agent 從已保存 after 判斷全部下載 gate，才交最新原件給既有 grounded helper 最多一次下載控制呼叫。
-- **停止反例：** 第一候選已用兩次或額度不明；已有 UNKNOWN／舊無 outcome crash window；前景或 Session 中斷；已有下載控制呼叫；無安全區；媒體／viewer／播放狀態漂移。任一成立都不輸入，不以零計數或空 staging 解鎖。
-- **保存缺口：** 第二候選 error／timeout、after error、request 以外任一保存缺口、程序 crash 或控制再消失，均保留原 intent、消耗該額度並停，不重送、不建新 attempt。第一筆 outcome 缺少正面終態則為 UNKNOWN，已有 UNKNOWN 只 reconcile。
-- **證據界線：** 本例不是實機成功；不保證 click 能叫回 toolbar，也不保證工具列維持到下載呼叫。舊事故與真實新例外皆未在本輪執行，維持 `NOT_RUN`。
+- **前提（假設）：** 同一三層身分在不同 notes Session 查回已送出 `1` 次；原候選 request／raw／after 完整、未決為零、同一 viewer／前景連續，且有改變既有決策 gate 的相關新證據；新 attempt 的 intent 已讀回且最新控制仍隱藏。
+- **觀察（假設）：** 跨 Session 沒有重置額度；新的 attempt 或 fresh capture 本身不是新證據，只有例如舊遮罩／範圍不足已消除、或新安全作用區被當次原件重新建立，才可能改變 gate。
+- **可支持命題：** 只有完整稽核為 `budget_before=1` 且上述新證據成立，才可用 `candidate_ordinal=2`；否則一律沒有 reveal 路徑。直接控制可見仍可依直接路徑下載，但不消耗 reveal 額度。
+- **允許動作：** 使用同一固定 `notes-reveal-c2-<attempt_id>` slot，ordinal `2` 只寫在 request；同次 input→after 後，正面才交給下載 helper一次。任何跨 Session 查不到先前引用、額度矛盾或新證據不足就停在輸入前。
+- **禁止推論：** 新 Session／reopen／restart 可重置為 ordinal 1；第三候選；舊點位或舊 mapping 可重播；新 attempt 自動等於新證據；直接可見路徑可用以掩蓋 reveal 額度不明。
+- **缺少證據：** 跨 Session 實際查回、新證據是否足以改變 gate 與 GUI 結果仍 `NOT_RUN`。
 
-## C19 客觀條件成立時的 intent 前延後候選骨架
+## C19 固定 slot 衝突、並行與下載關閉
 
-- **前提（假設）：** 同 scope 候選 1 的 request／raw／after 已完整保存讀回，仍有第二候選額度；同一 scope／viewer／有效前景連續，且延後方法的安全作用區與映射有具體證據。
-- **觀察（假設）：** 當次下載控制可見，沒有任何工具列將消失的預測或實際消失證據。
-- **可支持命題：** 準備條件已由客觀證據成立，不能等待 transient 預測才準備；骨架只保存既有 statement／request 欄位，不是真正 input request、receipt、派送或已耗額度。
-- **允許動作：** 在 intent 前保存並讀回骨架；成功後才依 B1 以當次正面控制建立 intent。intent CLI 成功後補入 attempt／event 引用，再以 fresh before／AX 重核安全作用區與映射，通過原 gate 後才保存真正 request。骨架保存／讀回失敗時停在 intent 前，不把 I/O 失敗當成安全方法不足而繼續。
-- **禁止推論：** 計畫 `budget_after=2` 是已耗額；未派送骨架等於 input receipt；先建 staging 或猜 ID；沿用骨架舊點；未見 transient 就不必準備。
-- **缺少證據：** 真實 GUI 準備與延後候選成效仍 `NOT_RUN`；文件案例不是實機 `OBSERVED`。
+- **前提（假設）：** 新 attempt 的 intent 已讀回，B1 允許一次 reveal 或直接下載；同一 attempt 的 `notes-reveal-c2-<attempt_id>` 或 `notes-download-<attempt_id>` 已被建立，或其 `wx` 寫入遇到並行競爭／逐 bytes 讀回不符。
+- **觀察（假設）：** 檔案存在但內容不屬本 attempt，或另一次同 attempt 呼叫正在建立相同 slot；沒有任何新的 input receipt。
+- **可支持命題：** 固定 slot 是持久獨占邊界；碰撞只支持「不能用這個 slot 送出此步」，不證明輸入已送出或可改 ordinal／換目錄重開。
+- **允許動作：** 零 input、零下載控制呼叫；保存碰撞／讀回錯誤與原 intent，停止本 attempt 的新輸入，依既有 outcome／reconcile 與人工程序處理。不得改 `notes-reveal-c2` 的 `c2`、以 ordinal 改名、換 taskDir／inputDir／Session、重播或建立替代 attempt。
+- **禁止推論：** 刪除或覆寫 slot 可安全重試；下載 helper 呼叫前失敗等於未派送；下載控制一旦開始後仍可回 reveal；slot 成功建立就等於 App 接受或下載開始。
+- **缺少證據：** 真實並行競爭、slot 修復與 GUI 行為仍 `NOT_RUN`。
 
-## C20 未具延後準備條件時的直接下載
+## C20 舊 UNKNOWN、無 outcome crash 與 exact restart
 
-- **前提（假設）：** 當次工具列與其他派送 gate 成立，但沒有第二候選的安全方法、額度不足／不明，或候選 1 原件不完整。
-- **可支持命題：** 只表示延後例外未準備，不表示目前控制不能直接下載，也不表示可以補做未授權的 GUI 探索。
-- **允許動作：** 在既有 statement 記錄未準備原因；不為準備增加 GUI 輸入。若原本完整 gate 仍成立，可繼續該次直接下載；控制之後消失就停止，不得臨時補骨架或候選。
-- **禁止推論：** 沒有安全方法就以 hover／click 嘗試取得；未準備阻止所有合法直接下載；I/O 失敗可冒充本案例的安全方法不足。
-- **缺少證據：** 真實控制存續與下載結果仍 `NOT_RUN`。
+- **前提（假設）：** 同一媒體已有舊 `UNKNOWN`，或 intent 後 crash 且尚無 outcome；目前工具列可能隱藏或可見，但沒有新的精確 restart 授權。
+- **觀察（假設）：** 舊 intent／crash window 與舊歷史仍存在；最新畫面或空 staging 不足以證明舊操作未送出。
+- **可支持命題：** 普通流程不得重進該舊 attempt 或建立新 attempt；新 Session、fresh capture、控制重新出現、零計數與空 staging 都不解鎖。只有 fresh `restart preview` 精確列出該 scope、Owner 明示同意、`restart confirm` 且完成新的完整 recovery scan，才可依既有規則建立新的 v3 attempt。
+- **允許動作：** 先查原 attempt；未有 outcome 時記第一筆真實結果，已有 `UNKNOWN` 才 reconcile。符合 exact restart 時保留舊歷史，使用新 generation／staging，B1 額度仍跨 Session 累計且不自動重置；新 attempt 的方法／額度仍要在 intent 前稽核。
+- **禁止推論：** 舊 UNKNOWN 已停止或可清除；restart 自動提供 reveal 額度；新 attempt 可重用舊 viewer／chooser／座標；一般「繼續」或 `dispatch_authorized=false` 等於 restart 同意。
+- **缺少證據：** 真實舊 UNKNOWN 收斂、restart 後額度查回與實機結果仍 `NOT_RUN`。
 
-## C21 intent 後才發現未準備或額度不符
+## C21 intent 後前景或身分中斷
 
-- **前提（假設）：** intent 已讀回，但 statement 沒有可讀回的延後候選骨架，或候選 1 不完整、已用兩次、額度不明，或存在舊 `UNKNOWN`／舊 crash window。
-- **可支持命題：** 骨架必須在 intent 前備妥；intent 後不能臨時補造，既有骨架本身也不是派送、額度或解鎖證明。
-- **允許動作：** 保留原 intent；依實際下載控制呼叫與結果走原有 outcome／reconcile 分流，證據不足記 `UNKNOWN`。沒有完整 B1 gate 就不送第二候選。
-- **禁止推論：** intent 後補 statement／request；重播舊點或舊 mapping；第三候選；空 staging、缺 receipt 或零計數等於額度 0；舊 `UNKNOWN` 可解鎖。
-- **缺少證據：** 實際晚發現情境與 GUI 結果仍 `NOT_RUN`，不能當成已驗證恢復。
+- **前提（假設）：** 新 attempt 的 intent 已讀回，尚未送 reveal 或下載；Owner 將前景交給其他 app，或最新原件顯示 viewer／列表／貼文／媒體／返回錨點已漂移。
+- **觀察（假設）：** 舊 viewer 與 mapping 不再有效；可能有未完成 input 或尚未送出的 slot。
+- **可支持命題：** 只支持目前不能安全輸入；有效前景與連續性消失，不得用新 Session、reopen、舊座標或另一個 attempt 接續同一未決 attempt。
+- **允許動作：** 零後續 GUI 輸入，保存最新原件、停止原因與原 intent；若此前已有 input，依 input receipt／候選額度與既有 outcome／reconcile 處理。前景恢復後仍要重新核對列表與歷史；舊 attempt 不會因新交接自動解鎖。
+- **禁止推論：** 新 Session 重置額度；可由另一 viewer 完成同 attempt；控制重新出現即可重按；未見 chooser 或空 staging 等於未送出。
+- **缺少證據：** 真實中斷、跨 Session 交接與恢復結果仍 `NOT_RUN`。
 
 ## D1 Viewer 返回契約在進入後核對
 

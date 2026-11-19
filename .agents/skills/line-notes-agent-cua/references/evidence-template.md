@@ -1149,17 +1149,17 @@ nodeRepl.write(JSON.stringify(receipt, null, 2));
 
 本節只定義人工 statement 的欄位與保存順序，不是新的 event、schema、CLI 或 GUI sensor。v2 role 已足夠；本方案無需新增 `navigation_receipt`。`NAVIGATION` 與 `selected-filmstrip-safe-edge` 是 statement 內的 phase／方法名稱，仍使用既有的 `screenshot`、`ax`、`input_receipt`、`observation` roles；同一 role 可重複。
 
-### 單次候選與前置條件
+### 本輪 intent 後的單一路徑
 
-- reveal 的允許方法、初次候選、至多一次 re-arm 與唯一 intent 後延後候選的操作前提，只依 [GUI 導覽與盤點](gui-inventory.md) 的〈目標與下載控制就緒（B1）〉。本範本只保存可稽核欄位，不自行擴張動作或把 re-arm 變成新的下載入口。每個 `list_key + post_key + media_key` 的 reveal 累計最多二次（初次加至多一次第二候選）；不得用 reopen、新 Session、新目錄或換點重置。intent 前的第二候選須有新的充分觀察與相關新證據、同一三層身分／有效前景、無 chooser、無 intent、無未解輸入；連續兩次沒有新資訊即停止，且不得從舊事故剩餘額度推論本項可直接再點。只有 B1 明列的 intent 後延後例外可按[單次保留](#intent-後延後候選的單次保留)交付原第二候選。
-- 每個 reveal scope 最多只有兩個 `selected-filmstrip-safe-edge` 導覽候選：`candidate_ordinal=1`（初次）及至多 `candidate_ordinal=2`（一次 re-arm）。先證明目標媒體是已選取項、filmstrip 中有唯一可定位的已選目標縮圖、候選點在此縮圖的非播放安全邊緣，且不落在播放／滑桿／其他控制或邊界；使用同次 before 截圖／AX 建立新的 canonical 映射、window/viewer 身分與 `mapping_id`。已選狀態、安全區、viewer 身分或映射任一為 `UNKNOWN`、過期或與其他畫面混用時，停止在輸入前。
-- `TOOLBAR_VISIBLE` 只有在同一充分範圍的最新 after 原件正面顯示工具列，且下載控制歸屬、啟用與映射成立時才可成立。當 intent 的其他前置也已成立，保存該 after 原件後立即建立 intent；不得插入固定的 stability 等待。intent 讀回後仍重新定位；控制消失時一般停止並保留原 intent，不建立新 attempt，也不增加候選。只有 B1 的 intent 後延後例外可交付本輪已計畫但尚未派送的原第二候選，見[單次保留](#intent-後延後候選的單次保留)。
-- 候選輸入沿用一般 `persistSingleInput`，request 的 `input_phase=NAVIGATION`；不使用下載專用的 `persistGroundedDownloadClick`，不計入下載控制呼叫。每個候選只允許一次保存並讀回的輸入，`candidate_ordinal=1` 與 `2` 合計仍最多兩個；不得重試同一點、連點、拖曳、右鍵、快捷鍵或以 titlebar／scroll／其他畫面代替。不得把 click 宣稱成 hover 替代；沒有 hover-only 時記 `NOT_AVAILABLE`，能力未查明時記 `UNKNOWN`；僅可依 [目標與下載控制就緒](gui-inventory.md) 的完整前置考慮此明列候選，不創造額外輸入方式。
+- intent 前只依 [GUI 導覽與盤點](gui-inventory.md) 的〈目標與下載控制就緒（B1）〉核對本輪前置：若控制正面可定位，保留直接下載的可能；若控制隱藏，另須有當次可歸屬的 `selected-filmstrip-safe-edge` 安全區、選取狀態、三層身分、映射與明確額度。方法、歸屬或額度任一不足就停在 intent 前，不先送 reveal。
+- 每個 attempt 只執行一次既有 `intent` 並讀回 JSON。`attempt_id` 以讀回值為準；`intent_event_ref` 只由 Agent 以唯讀方式核對該 intent 事件檔後記成 `{sequence, event_sha256}`。這個範本不掃描帳本、不重算 event hash、不重驗 schema，也不建立新的持久狀態。
+- intent 後取得一次最新 observation。控制正面可見且歸屬、啟用、映射成立時走直接路徑，以這份 observation 準備下載；控制不可見時，才可使用一次固定 `notes-reveal-c2-<attempt_id>` 的本輪 reveal。兩條路徑互斥，且共用唯一的 `notes-download-<attempt_id>` 下載 slot。
+- 本範本的可執行 reveal 範例只用當次畫面可證的 `selected-filmstrip-safe-edge` click。若當次工具文件沒有明確支持無點擊 hover，不得以 click 冒充 hover，也不得猜測未提供的 API。候選 `candidate_ordinal=1` 對應額度 `0→1`，且 `prior_candidate_refs` 為 `NONE`；只有同一 scope 前一候選 request／raw／after 完整、連續性與相關新證據成立時，才可用 `candidate_ordinal=2` 與額度 `1→2`。已用滿、舊 UNKNOWN、缺 receipt 或額度不明時沒有 reveal 路徑。
 - 保存 before 截圖與完整 AX、輸入 request／raw receipt、after 截圖與完整 AX；同一次 observation 的相同 AX bytes 可以被重複引用，但每個 `--asset` ref 與順序都要保留。相同 AX 不代表 toolbar 狀態相同；AX 缺失、未變或沒有該 node 都不是「控制不存在」或「toolbar 未顯示」的反向證明。截圖與 AX 必須分開記錄各自來源、範圍、時間與 hash。
 
 ### 單次輸入與直接 after 觀察
 
-只有在 B1 的候選前置全部成立、input／observation 目錄與唯一 ID 已備妥，且同一個 `app` handle 已取得後，才呼叫下列 composition。它不改 helper、不建立 intent，也不自行授予 `TOOLBAR_VISIBLE`。click 與 capture 必須在同一次 CUA runtime invocation；兩者之間不得跨模型回合，亦不得寫檔、固定等待、重新取得 app 或插入其他輸入。
+只有在 intent 已保存並讀回、B1 的隱藏分支前置成立、input／observation 目錄與唯一 ID 已備妥，且同一個 `app` handle 已取得後，才可經下方 wrapper 呼叫這個 composition。它不改 helper、不改帳本，也不自行授予 `TOOLBAR_VISIBLE`。click 與 capture 必須在同一次 CUA runtime invocation；兩者之間不得跨模型回合，亦不得寫檔、固定等待、重新取得 app 或插入其他輸入。
 
 <!-- notes-reveal-capture:start -->
 ```js
@@ -1237,97 +1237,407 @@ async function persistRevealWithDirectAfter({
 ```
 <!-- notes-reveal-capture:end -->
 
-呼叫時把已核對的 request 傳入；`operationId` 與 `observationId` 必須在輸入前就備妥，且不得重用已完成 ID。下列值只是形狀示意，不可照抄：
+<!-- notes-intent-dispatch:start -->
+```js
+const notesIntentDispatch = await (async () => {
+  const stop = (reason, detail = {}) => ({
+    status: 'STOP', reason, blockers: detail.blockers || [reason], ...detail,
+  });
+  const ready = detail => ({
+    status: 'READY', reason: null, blockers: [], ...detail,
+  });
+  const isObject = value => value !== null && typeof value === 'object' &&
+    !Array.isArray(value);
+  const isId = value => typeof value === 'string' &&
+    /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(value);
+  const isEventRef = value => isObject(value) &&
+    Object.keys(value).sort().join(',') === 'event_sha256,sequence' &&
+    Number.isSafeInteger(value.sequence) && value.sequence >= 1 &&
+    typeof value.event_sha256 === 'string' &&
+    /^[0-9a-f]{64}$/.test(value.event_sha256);
+  const sameEventRef = (left, right) => isEventRef(left) && isEventRef(right) &&
+    left.sequence === right.sequence &&
+    left.event_sha256 === right.event_sha256;
+  const isFileRef = value => isObject(value) &&
+    typeof value.path === 'string' && value.path.length > 0 &&
+    value.path !== 'UNKNOWN' &&
+    Number.isSafeInteger(value.bytes) && value.bytes > 0 &&
+    typeof value.sha256 === 'string' && /^[0-9a-f]{64}$/.test(value.sha256);
+  const fileRef = value => isFileRef(value)
+    ? { path: value.path, bytes: value.bytes, sha256: value.sha256 } : null;
+  const sameFileRef = (left, right) => isFileRef(left) && isFileRef(right) &&
+    left.path === right.path && left.bytes === right.bytes &&
+    left.sha256 === right.sha256;
+
+  function checkIntent(options) {
+    if (!isObject(options) || !isObject(options.intent) ||
+        !isId(options.intent.attempt_id)) {
+      return stop('INTENT_READBACK_INVALID');
+    }
+    if (options.intent.status !== 'UNKNOWN' ||
+        options.intent.dispatch_authorized !== false) {
+      return stop('INTENT_NOT_DISPATCHABLE');
+    }
+    if (!isEventRef(options.intentEventRef)) {
+      return stop('INTENT_EVENT_REF_INVALID');
+    }
+    if (!isObject(options.request) ||
+        options.request.attempt_id !== options.intent.attempt_id) {
+      return stop('INTENT_ATTEMPT_MISMATCH');
+    }
+    if (!sameEventRef(options.request.intent_event_ref,
+                      options.intentEventRef)) {
+      return stop('INTENT_EVENT_REF_MISMATCH');
+    }
+    return ready({
+      attempt_id: options.intent.attempt_id,
+      intent_event_ref: { sequence: options.intentEventRef.sequence,
+                          event_sha256: options.intentEventRef.event_sha256 },
+    });
+  }
+
+  function checkReveal(options) {
+    const gate = checkIntent(options);
+    if (gate.status !== 'READY') return gate;
+    const request = options.request;
+    if (request.input_phase !== 'NAVIGATION') {
+      return stop('REVEAL_PHASE_INVALID');
+    }
+    if (request.navigation_kind !== 'selected-filmstrip-safe-edge') {
+      return stop('REVEAL_KIND_UNSUPPORTED');
+    }
+    const ordinal = request.candidate_ordinal;
+    if (ordinal === 1) {
+      if (request.budget_before !== 0 || request.budget_after !== 1 ||
+          request.prior_candidate_refs !== 'NONE') {
+        return stop('REVEAL_ORDINAL_BUDGET_MISMATCH');
+      }
+    } else if (ordinal === 2) {
+      if (request.budget_before !== 1 || request.budget_after !== 2 ||
+          !Array.isArray(request.prior_candidate_refs) ||
+          request.prior_candidate_refs.length === 0) {
+        return stop('REVEAL_ORDINAL_BUDGET_MISMATCH');
+      }
+    } else {
+      return stop('REVEAL_ORDINAL_INVALID');
+    }
+    return ready({ ...gate, candidate_ordinal: ordinal });
+  }
+
+  async function persistReveal(options) {
+    const gate = checkReveal(options);
+    if (gate.status !== 'READY') return gate;
+    const operationId = 'notes-reveal-c2-' + gate.attempt_id;
+    try {
+      const run = await persistRevealWithDirectAfter({
+        taskDir: options.taskDir,
+        inputDir: options.inputDir,
+        observationDir: options.observationDir,
+        operationId,
+        observationId: operationId + '-after',
+        request: options.request,
+        app: options.app,
+      });
+      const invoked = run.fail_closed === false;
+      return {
+        ...gate,
+        status: invoked ? 'INVOKED' : 'STOP',
+        reason: invoked ? null : 'REVEAL_INPUT_OR_AFTER_INCOMPLETE',
+        blockers: invoked ? [] : ['REVEAL_INPUT_OR_AFTER_INCOMPLETE'],
+        operation_id: operationId,
+        candidate_ordinal: options.request.candidate_ordinal,
+        run,
+        afterObservation: run.afterObservation,
+      };
+    } catch (error) {
+      return stop('REVEAL_WRAPPER_FAILED', {
+        operation_id: operationId,
+        error: evidenceTools.describeError(error),
+      });
+    }
+  }
+
+  function observationAssets(observation) {
+    if (!isObject(observation) || observation.ready_for_bind !== true ||
+        !isObject(observation.assets)) return null;
+    const screenshot = fileRef(observation.assets.screenshot);
+    const ax = fileRef(observation.assets.ax);
+    return screenshot && ax ? { screenshot, ax } : null;
+  }
+
+  function downloadSource(options, gate) {
+    const request = options.request;
+    if ((options.reveal === undefined) === (options.observation === undefined)) {
+      return stop(options.reveal === undefined
+        ? 'DOWNLOAD_OBSERVATION_REQUIRED' : 'DOWNLOAD_OBSERVATION_AMBIGUOUS');
+    }
+    let mode;
+    let assets;
+    if (options.reveal !== undefined) {
+      const reveal = options.reveal;
+      if (!isObject(reveal) || reveal.status !== 'INVOKED' ||
+          reveal.attempt_id !== gate.attempt_id ||
+          reveal.operation_id !== 'notes-reveal-c2-' + gate.attempt_id ||
+          !isObject(reveal.run) || reveal.run.fail_closed !== false) {
+        return stop('REVEAL_AFTER_NOT_DISPATCHABLE');
+      }
+      assets = observationAssets(reveal.run.afterObservation);
+      mode = 'REVEAL_SAME_AFTER';
+    } else if (options.observation !== undefined) {
+      assets = observationAssets(options.observation);
+      mode = 'DIRECT_INTENT_OBSERVATION';
+    }
+    if (!assets) return stop('DOWNLOAD_OBSERVATION_INVALID');
+    if (!sameFileRef(request.source_observation, assets.screenshot) ||
+        !sameFileRef(request.mapping_evidence_ref, assets.ax)) {
+      return stop('DOWNLOAD_SOURCE_OBSERVATION_MISMATCH');
+    }
+    return ready({ source_mode: mode,
+                   source_observation: assets.screenshot });
+  }
+
+  async function persistDownload(options) {
+    const gate = checkIntent(options);
+    if (gate.status !== 'READY') return gate;
+    const source = downloadSource(options, gate);
+    if (source.status !== 'READY') return source;
+    const operationId = 'notes-download-' + gate.attempt_id;
+    try {
+      const receipt = await evidenceTools.persistGroundedDownloadClick({
+        taskDir: options.taskDir,
+        inputDir: options.inputDir,
+        operationId,
+        request: options.request,
+        source_observation_bytes: options.source_observation_bytes,
+        app: options.app,
+      });
+      const invoked = receipt.status === 'INVOKED';
+      return {
+        ...gate,
+        status: invoked ? 'INVOKED' : 'STOP',
+        reason: invoked ? null : 'DOWNLOAD_SLOT_OR_HELPER_BLOCKED',
+        blockers: invoked ? []
+          : (receipt.blockers || ['DOWNLOAD_SLOT_OR_HELPER_BLOCKED']),
+        operation_id: operationId,
+        source_mode: source.source_mode,
+        source_observation: source.source_observation,
+        receipt,
+      };
+    } catch (error) {
+      return stop('DOWNLOAD_WRAPPER_FAILED', {
+        operation_id: operationId,
+        error: evidenceTools.describeError(error),
+      });
+    }
+  }
+
+  return { persistDownload, persistReveal };
+})();
+```
+<!-- notes-intent-dispatch:end -->
+
+### 可直接複製的單一路徑
+
+先保存既有 `intent` CLI 的 JSON，並由 Agent 唯讀核對該 attempt 的事件檔後帶入 `{sequence, event_sha256}`。以下只讀取已保存的 CLI 輸出與私有原件；不掃描事件、不重驗 schema，也不保存額外狀態：
 
 ```js
-const revealApp = await cua.getApp('jp.naver.line.mac');
-const REVEAL_RUN = await persistRevealWithDirectAfter({
-  taskDir: '/ABS/TASK_PRIVATE_DIR',
-  inputDir: '/ABS/EXISTING_PRIVATE_INPUT_DIR',
-  observationDir: '/ABS/EXISTING_PRIVATE_OBSERVATION_DIR',
-  operationId: 'UNIQUE_NAVIGATION_INPUT_ID',
-  observationId: 'UNIQUE_AFTER_OBSERVATION_ID',
-  request: verifiedRevealRequest,
-  app: revealApp,
-});
-nodeRepl.write(JSON.stringify(REVEAL_RUN, null, 2));
+const fs = await import('node:fs/promises');
+const INTENT_READBACK = JSON.parse(await fs.readFile(
+  '/ABS/PRIVATE_TASK/intent-readback.json', 'utf8'));
+const asRef = asset => ({path: asset.path, bytes: asset.bytes, sha256: asset.sha256});
+const makeIntentEventRef = (sequence, eventSha256) => {
+  if (!Number.isSafeInteger(sequence) || sequence < 1 ||
+      typeof eventSha256 !== 'string' || !/^[0-9a-f]{64}$/.test(eventSha256)) {
+    throw new Error('INTENT_EVENT_REF_INVALID');
+  }
+  return {sequence, event_sha256: eventSha256};
+};
+const intentEventRef = makeIntentEventRef(
+  Number((await fs.readFile(
+    '/ABS/PRIVATE_TASK/intent-event.sequence', 'utf8')).trim()),
+  (await fs.readFile(
+    '/ABS/PRIVATE_TASK/intent-event.sha256', 'utf8')).trim(),
+);
 ```
 
-callback 原樣返回 click 的回傳值，包含頂層 `undefined`；capture 只留在 closure。helper 保存原 input request／raw／diagnostic 並讀回。只要 callback 已執行 capture（`capture_call_sequence=2`），composition 就用同一份 `afterCapture` bytes／AX 呼叫 `persistObservation`；capture 失敗也以 `captureError` 保存失敗 diagnostic。即使 input raw／diagnostic 不完整，已取得的 after 仍保留，但 `fail_closed=true`，不得把 `afterObservation.ready_for_bind` 單獨當成 input 完整、B1 資格或可建立 intent 的證明。request 未成功保存／讀回時 callback 不會執行，因此零 input、零 capture；click 本身 `ERROR` 時也沒有 capture，兩者都回 `afterObservation=null`、`fail_closed=true`。
+`intent-readback.json`、`intent-event.sequence` 與 `intent-event.sha256` 是 Agent 對既有 CLI 輸出及同一 intent 事件唯讀核對後保存的輸入；本範本不掃描事件或重算 hash。這兩個事件值不是新的 schema 或持久控制器。
 
-`fail_closed=false` 只表示同一組合的 input raw／request／diagnostic 完整、click 不是 `ERROR`、capture 沒有拋錯，且該次 after 已以 `persistObservation` 保存並本地讀回完整；它仍不是 `TOOLBAR_VISIBLE`、GUI sensor 或 intent。input 派送後，若 capture 或落檔失敗，就停止後續輸入；不得重點、不得用缺 raw／缺 after 解鎖重送，程序若中斷於 raw 落地前也保留該未解輸入。
-
-呼叫後把 `hostCalls` 原樣記入 statement：它只記錄本機 host 呼叫前後時間與相對序號；OS event 時間及 AX／截圖各自的 capture 時間仍是 `UNKNOWN`。click 與 capture 是同次 invocation 的兩個相依 API 呼叫，不是 atomic，也不保證 0–1 秒或任何延遲上限。B1 的兩候選額度、`TOOLBAR_VISIBLE`／`TOOLBAR_NOT_SHOWN`／`REVEAL_TRANSIENT` 判讀與停止條件均不變；intent 前沒有充分 after 與正面控制證據時，不建立 intent 或 outcome。B1 的唯一 intent 後延後例外仍沿用同一 composition，見下節。
-
-### intent 後延後候選的單次保留
-
-本節只把 B1 已允許的唯一 intent 後例外落成既有 composition 的可重複用法；它不自行判斷例外、不新增 event／schema／CLI／controller，也不把 request 標記說成 `NOT_SENT`。適用對象限本輪新建立、從同一 `list_key + post_key + media_key` 的候選 1 起連續可稽核、intent 已讀回、尚無 outcome、尚無任何下載控制呼叫、無 chooser／活動下載／未解輸入、同一 Session 且前景不中斷的原 `candidate_ordinal=2`。舊 UNKNOWN、舊 crash window、額度不明、已用兩次或任何無法正面核對的狀態一律停止；零 `download_control_call_count`、空 staging、缺檔或缺紀錄不能單獨證明未曾呼叫下載控制。
-
-**intent 前準備。** Agent 依 B1 先核對客觀條件：同 scope 候選 1 的 request／raw／after 已完整保存讀回、同一 scope／viewer／有效前景連續、仍有原第二候選額度，且該方法的安全作用區與映射有具體證據。條件成立時，不等待或預測工具列是否消失，應在建立 intent 前把延後候選的方法、安全作用區、原 before 引用、候選 1 receipt、計畫 `budget_before=1`／`budget_after=2`，以及既有[Reveal 導覽欄位](#可複製骨架)的 statement／request 欄位骨架保存並讀回；不建立新的持久狀態。此骨架不是 `persistSingleInput` 的真正 input request，尚無 attempt ID／intent event ref 待 intent CLI 成功與唯讀事件核對後補入；準備本身不預建 staging、不建立 event、不派送、不消耗候選額度。只有真正執行延後候選 input 才按原規則計數；timeout、error、`UNKNOWN` 或 crash 仍耗額，缺 receipt 不視為 0。符合條件而保存／讀回失敗時停在 intent 前，不得把 I/O 失敗改判成安全方法不足而繼續。條件不成立時，保存未備妥及具體原因，不為準備增加 GUI；這不阻止原本已符合全部 B1 gate 的直接下載。
-
-**canonical slot。** 延後候選與同 attempt 的其他私有 input 共用原 `taskDir`、`inputDir` 與既有 input request 路徑；`operationId` 固定由該次 intent 讀回的 `attempt_id` 導出，例如 `notes-reveal-c2-<attempt_id>`，並在輸入前確認它是當次文件允許的 ID。不得換新 operationId、taskDir、inputDir、Session 或目錄另開 slot；ID 無法形成、request 檔已存在、寫入或讀回不是 `MATCH` 時零 input、零 capture，保留既有檔與停止原因。intent CLI 成功並建立 staging 後，才補入 `attempt_id` 與由唯讀事件建立的 `intent_event_ref`；真正 request 只能在 B1 原 gate 再次成立後，依當次 fresh before／AX 重新核對方法、安全作用區、viewer／三層身分與 mapping，才可用 `persistSingleInput` 的 `wx` 寫入及同一份 bytes 讀回，不得沿用骨架中的舊座標。request 本身是輸入前的持久預留，卻不是 LINE event、未派送證明或額度以外的授權。
-
-request 重用既有欄位，至少保留 `input_phase=NAVIGATION`、`attempt_id`、由唯讀事件建立的 `intent_event_ref`、`navigation_kind`、`reveal_candidate_id`、`reveal_scope_ref`、`candidate_ordinal=2`、同一 scope 候選 1 的 `prior_candidate_refs`、`budget_before=1`、`budget_after=2`、`rearm_preconditions_ref`、`rearm_new_information_ref`、當次 before 截圖／AX 引用、`selected_state_before`、`selected_state_after`、`selected_media_ref`、`safe_zone_ref`、`mapping_id`、`mapping_valid_at`、`position_source_ref`、`prepared_target` 與適用方法安全區。`selected_state_after` 在 request 尚未派送時記 `UNKNOWN`，不可先填事後結果。`attempt_id`、`intent_event_ref`、三層身分、候選 1 ref、額度或任一 target／mapping 讀回不符時不建立 request；不可把欄位命名為新的 ledger 狀態。
-
-以下只示範沿用既有 composition；路徑、ID、數值與證據均為形狀示意，不可照抄或當成合成 fixture 以外的證據：
+**直接 capture（步驟一）。** intent 後只取一次最新 observation，先保存並在同一 invocation 呈現這份原件；此時不建立下載 request、不呼叫 click：
 
 ```js
-// CLI 不原生回傳 intent_event_ref；此形狀只由唯讀事件的 sequence／hash 建立。
-const INTENT_EVENT_REF = {
-  sequence: INTENT_EVENT_READBACK.sequence,
-  event_sha256: INTENT_EVENT_READBACK.event_sha256,
+const directCapture = await app.getAXStateAndScreenshot({emit: false, disableDiffing: true});
+const directObservation = await evidenceTools.persistObservation({
+  taskDir: '/ABS/TASK_PRIVATE_DIR',
+  observationDir: '/ABS/EXISTING_PRIVATE_OBSERVATION_DIR',
+  observationId: 'DIRECT_INTENT_AFTER_OBSERVATION_ID',
+  capture: directCapture,
+});
+if (directObservation.ready_for_bind) {
+  await nodeRepl.emitImage(directCapture.screenshot);
+  nodeRepl.write(directCapture.state);
+}
+nodeRepl.write(JSON.stringify({
+  observation_id: directObservation.observation_id,
+  ready_for_bind: directObservation.ready_for_bind,
+  screenshot: directObservation.assets.screenshot,
+  ax: directObservation.assets.ax,
+}, null, 2));
+```
+
+**直接 dispatch（步驟二）。** 只有 Agent 對上一步保存的 `directObservation` 正面判讀控制可見、歸屬、啟用與映射成立後，才以下列同一個 request 建立器明示填入該份 observation 的 window／座標 context、control region 與 target。`source_observation_bytes` 必須是同一份截圖 bytes：
+
+```js
+const makeDownloadRequest = ({
+  attemptId, intentEventRef, observation, windowBinding,
+  controlRegion, target, coordinateSpace,
+}) => {
+  const screenshot = asRef(observation.assets.screenshot);
+  return {
+    input_phase: 'DOWNLOAD_CONTROL',
+    attempt_id: attemptId,
+    intent_event_ref: intentEventRef,
+    app_window_binding: windowBinding,
+    source_observation: screenshot,
+    source_observation_ref: {...screenshot},
+    mapping_evidence_ref: asRef(observation.assets.ax),
+    mapping_status: 'MATCH',
+    observation_order: 'PRE_INPUT',
+    grounding_conclusion: 'PASS_TO_INPUT',
+    candidate_point_relation: 'INSIDE',
+    coordinate_space_match: 'MATCH',
+    control_region_coord_space: coordinateSpace,
+    target_coord_space: coordinateSpace,
+    control_region: controlRegion,
+    candidate_point: target,
+    prepared_target: target,
+  };
 };
-const deferredCandidateRequest = {
+
+async function dispatchDownload({
+  intentEventRef, observation, sourceObservationBytes, windowBinding,
+  controlRegion, target, coordinateSpace, app, revealRun,
+}) {
+  const request = makeDownloadRequest({
+    attemptId: INTENT_READBACK.attempt_id,
+    intentEventRef,
+    observation,
+    windowBinding,
+    controlRegion,
+    target,
+    coordinateSpace,
+  });
+  const source = revealRun === undefined ? {observation} : {reveal: revealRun};
+  return notesIntentDispatch.persistDownload({
+    taskDir: '/ABS/TASK_PRIVATE_DIR',
+    inputDir: '/ABS/EXISTING_PRIVATE_INPUT_DIR',
+    intent: INTENT_READBACK,
+    intentEventRef,
+    request,
+    source_observation_bytes: sourceObservationBytes,
+    app,
+    ...source,
+  });
+}
+```
+
+直接路徑呼叫時，四個判讀值必須是這份 observation 的新值，不可沿用上一個 request：
+
+```js
+const directDecision = {
+  windowBinding: DIRECT_WINDOW_BINDING_FROM_OBSERVATION,
+  controlRegion: DIRECT_CONTROL_REGION_FROM_OBSERVATION,
+  target: DIRECT_DOWNLOAD_TARGET_FROM_OBSERVATION,
+  coordinateSpace: DIRECT_COORDINATE_SPACE_FROM_OBSERVATION,
+};
+const directDownloadReceipt = await dispatchDownload({
+  intentEventRef,
+  observation: directObservation,
+  sourceObservationBytes: directCapture.screenshot,
+  ...directDecision,
+  app,
+});
+```
+
+上例的 `DIRECT_*` 符號是 Agent 判讀後填入的明確輸入，不是可重用的常數；未完成判讀時不得建立 request。`fs` 只用來讀取已保存的 intent／事件核對值與 after 截圖 bytes；直接路徑的 `sourceObservationBytes` 使用剛才保存的 `directCapture.screenshot`，沒有額外 capture。
+
+**Reveal 路徑。** 控制隱藏時，只有 B1 的當次安全區、選取、映射與額度都成立才呼叫。以下示範 `candidate_ordinal=1`、額度 `0→1`。若符合 B1 的第二候選條件，把 ordinal 改成 `2`、額度改成 `1→2`，填入前次原件的 `prior_candidate_refs`、本次條件的 `rearm_preconditions_ref` 與新證據的 `rearm_new_information_ref`。沿用同一固定 slot。
+
+```js
+const revealRequest = {
   input_phase: 'NAVIGATION',
   attempt_id: INTENT_READBACK.attempt_id,
-  intent_event_ref: INTENT_EVENT_REF,
+  intent_event_ref: intentEventRef,
   navigation_kind: 'selected-filmstrip-safe-edge',
-  reveal_candidate_id: 'SYNTHETIC_CANDIDATE_2',
-  reveal_scope_ref: 'SYNTHETIC_LIST_POST_MEDIA_SCOPE',
-  candidate_ordinal: 2,
-  prior_candidate_refs: [CANDIDATE_1_RECEIPT_REF],
-  budget_before: 1,
-  budget_after: 2,
-  rearm_preconditions_ref: CURRENT_B1_GATE_REF,
-  rearm_new_information_ref: INTENT_POST_VISIBLE_CONTROL_LOST_REF,
-  before_screenshot_ref: CURRENT_PRE_INPUT_SCREENSHOT_REF,
-  before_ax_ref: CURRENT_PRE_INPUT_AX_REF,
+  reveal_candidate_id: CURRENT_REVEAL_CANDIDATE_ID,
+  reveal_scope_ref: CURRENT_LIST_POST_MEDIA_SCOPE,
+  candidate_ordinal: 1,
+  prior_candidate_refs: 'NONE',
+  budget_before: 0,
+  budget_after: 1,
+  before_screenshot_ref: CURRENT_BEFORE_SCREENSHOT_REF,
+  before_ax_ref: CURRENT_BEFORE_AX_REF,
   selected_state_before: 'SELECTED',
   selected_state_after: 'UNKNOWN',
   selected_media_ref: CURRENT_SELECTED_MEDIA_REF,
-  safe_zone_ref: CURRENT_SAFE_ZONE_REF,
+  safe_zone_ref: CURRENT_SAFE_EDGE_REF,
   mapping_id: CURRENT_MAPPING_ID,
   mapping_valid_at: CURRENT_MAPPING_VALID_AT,
-  position_source_ref: CURRENT_PRE_INPUT_SCREENSHOT_REF,
-  prepared_target: CURRENT_VERIFIED_REVEAL_TARGET,
+  position_source_ref: CURRENT_BEFORE_SCREENSHOT_REF,
+  prepared_target: CURRENT_VERIFIED_SAFE_EDGE_TARGET,
 };
-const deferredCandidateOperationId =
-  'notes-reveal-c2-' + INTENT_READBACK.attempt_id;
-const deferredCandidateRun = await persistRevealWithDirectAfter({
-  taskDir: SAME_ATTEMPT_TASK_DIR,
-  inputDir: SAME_ATTEMPT_INPUT_DIR,
-  observationDir: SAME_ATTEMPT_OBSERVATION_DIR,
-  operationId: deferredCandidateOperationId,
-  observationId: DEFERRED_CANDIDATE_AFTER_OBSERVATION_ID,
-  request: deferredCandidateRequest,
-  app: SAME_SESSION_APP_HANDLE,
+const revealRun = await notesIntentDispatch.persistReveal({
+  taskDir: '/ABS/TASK_PRIVATE_DIR',
+  inputDir: '/ABS/EXISTING_PRIVATE_INPUT_DIR',
+  observationDir: '/ABS/EXISTING_PRIVATE_OBSERVATION_DIR',
+  intent: INTENT_READBACK,
+  intentEventRef,
+  request: revealRequest,
+  app,
+});
+const revealAfter = revealRun.afterObservation;
+const revealAfterBytes = revealRun.status === 'INVOKED' &&
+  revealAfter?.ready_for_bind
+  ? new Uint8Array(await fs.readFile(revealAfter.assets.screenshot.path))
+  : null;
+if (revealAfterBytes !== null) {
+  await nodeRepl.emitImage(revealAfterBytes);
+  nodeRepl.write(await fs.readFile(revealAfter.assets.ax.path, 'utf8'));
+}
+nodeRepl.write(JSON.stringify(revealRun, null, 2));
+```
+
+`persistReveal` 固定使用 `notes-reveal-c2-<attempt_id>` 與 `<slot>-after`，保存 request 後才在同一 callback 送一次 click 並 capture。只有 `revealRun.status=INVOKED`、`run.fail_closed=false` 且 `afterObservation.ready_for_bind=true`，Agent 才正面判讀這份 after 的控制可見、歸屬、啟用、三層身分、前景與映射。任何 input error／timeout、capture error、空 after、再消失或證據不完整都停止；已開始的 input 不得重送。
+
+**同一 after 下載。** Agent 正面通過後，以下載 request 的 `source_observation`／`source_observation_ref` 指向同一份 after 截圖，`mapping_evidence_ref` 指向同一 after AX；不可從 direct 分支展開或沿用舊座標。讀取已保存截圖只是把 bytes 交給既有 helper，不是重新 capture：
+
+```js
+const revealDownloadReceipt = await dispatchDownload({
+  intentEventRef,
+  observation: revealAfter,
+  sourceObservationBytes: revealAfterBytes,
+  windowBinding: AFTER_WINDOW_BINDING_FROM_THIS_OBSERVATION,
+  controlRegion: AFTER_CONTROL_REGION_FROM_THIS_OBSERVATION,
+  target: AFTER_DOWNLOAD_TARGET_FROM_THIS_OBSERVATION,
+  coordinateSpace: AFTER_COORDINATE_SPACE_FROM_THIS_OBSERVATION,
+  revealRun,
+  app,
 });
 ```
 
-**after 與下載交接。** `persistRevealWithDirectAfter` 的成功 request 讀回才呼叫一次已核對 input，並在同一 callback 直接保存同一份 after bytes／AX。只有 `fail_closed=false`、input raw/diagnostic 完整、after observation `ready_for_bind=true`，且 Agent 在同一 after 原件正面核對工具列、控制歸屬、啟用、三層身分與最新映射後，才可使用該份 after 作為 grounded download request 的 `source_observation`／`source_observation_ref`。下載 helper 只能取得這份原件，不得再 capture、讀取舊畫面、換 after 或改用其他 slot；同一 attempt 的 download-control request 檔仍是唯一 slot，已存在、讀回失敗或結果未知時不提供第二次呼叫。after API error、空 after、缺少 screenshot／AX、input error／timeout、`fail_closed=true`、再消失、任何身分／播放／前景漂移或證據保存不完整時，不呼叫下載 helper，停止並保留原 intent、request、raw、after 失敗 diagnostic 與 `budget_after=2`；已派送 input 時依既有交易記第一筆真實 outcome，證據不足記 `UNKNOWN`，不得稱 `NOT_SENT`、建立新 attempt 或第三候選。
+`persistDownload` 先核對 attempt、event ref，以及 request 是否指向該次 `observation`／`revealRun.afterObservation` 的同一截圖與 AX，再交給原 `persistGroundedDownloadClick`。canonical path、bytes、hash、request 幾何與 schema 仍由該既有 helper 驗證。它固定使用 `notes-download-<attempt_id>`；slot 已存在、並行競爭、讀回失敗或 observation 不符時，原 helper 不呼叫 click。直接與 reveal 兩條路徑只能選一條；direct 與 after 的決策變數不可互相展開或沿用，之後仍由 Agent 正面判讀畫面；wrapper 不是 GUI sensor、controller 或新的驗證層。
 
 ### 時序、狀態與停止
 
 前置與停止決策依 [目標與下載控制就緒](gui-inventory.md)：播放開始、索引／來源身分漂移、幾何／映射失效或輸入不明均立即停止，不以返回或 reopen 重設一次額度。
 
 - statement 記錄 `observed_at`、`input_at`、`clock_source`、`timezone`、`precision`、capture／input 的相對序號，以及 `capture_wait_semantics`／`capture_wait_source`。除非當次工具文件或實測能證明，等待能力一律 `UNKNOWN`；不得宣稱 capture 原子、立即或能捕捉點擊瞬間。截圖或 AX 範圍不足、輸入或等待狀態無法從當次原件確認時，相關觀察欄位記 `UNKNOWN`，不自行補值；只有相對序號可支持先後，不能補出點擊與截圖的未證明時間差。
-- `TOOLBAR_VISIBLE` 只在最新且充分涵蓋的 after 原件正面顯示工具列，且下載控制歸屬、啟用與映射成立時使用；它不是穩定可重播的保證。候選後充分範圍的最新觀察仍看不到 toolbar，才記 `TOOLBAR_NOT_SHOWN`；intent 前範圍不足、輸入不明或前置未核對時記觀察 `UNKNOWN` 並停止，不建立業務 `UNKNOWN`。這只表示本次 bounded observation 沒有顯示，不能推論控制不存在。若 toolbar 曾出現、之後在有效觀察中消失，記 `REVEAL_TRANSIENT`；intent 前只有 B1 的第二候選額度、新的充分觀察、同一三層身分／有效前景、無 chooser／未解輸入及決策相關新證據都成立時，才可再送一次候選；單純重拍或換點不算。intent 後則只可按[單次保留](#intent-後延後候選的單次保留)交付原第二候選，不得增加或重播候選。intent 前的 `candidate_ordinal=2` 後仍無正面控制即記 discovery blocker，不建立 intent／outcome；intent 後的延後候選已綁定原 intent，任何 input error／timeout／無正面控制或證據缺口都按既有交易記第一筆真實 outcome，證據不足記 `UNKNOWN`，不建立新 attempt 或第三候選。
-- 另記 `stop_reason`（例如 `PRECONDITION_UNPROVEN`、`MAPPING_STALE`、`CAPTURE_INCOMPLETE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT`）。`TOOLBAR_VISIBLE`／`TOOLBAR_NOT_SHOWN`／`REVEAL_TRANSIENT` 是 statement 結論，不是 Notes 六類業務狀態；在 intent 前，`REVEAL_TRANSIENT` 不會把媒體改成 `UNKNOWN`、`EXCLUDED`、`NO_MEDIA` 或 `COMPLETED`，也不會建立 intent／outcome。intent 後延後候選失敗時仍只依原 attempt 的真實結果分流；前述觀察本身不能預填 outcome。未曾派送的媒體仍按其既有投影（通常是 `PENDING`）。
+- `TOOLBAR_VISIBLE` 只在 intent 後最新、充分涵蓋的 after 原件正面顯示工具列，且下載控制歸屬、啟用與映射成立時使用；它不是穩定可重播的保證。充分範圍仍看不到 toolbar 記 `TOOLBAR_NOT_SHOWN`；只表示本次 bounded observation 沒有顯示，不能推論控制不存在。若 toolbar 曾出現後在有效觀察中消失，記 `REVEAL_TRANSIENT`。本 attempt 的 reveal 最多一次；已送出、error、timeout、capture 失敗或證據不足都不得再試，也不得跨 attempt 重用舊 after。
+- 另記 `stop_reason`（例如 `PRECONDITION_UNPROVEN`、`MAPPING_STALE`、`CAPTURE_INCOMPLETE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT`）。`TOOLBAR_VISIBLE`／`TOOLBAR_NOT_SHOWN`／`REVEAL_TRANSIENT` 是 statement 結論，不是 Notes 六類業務狀態，也不會把未派送媒體改成完成或排除。已派送 input 後依原 attempt 的真實結果分流；證據不足記 `UNKNOWN`，不得預填 outcome 或建立替代 attempt。
 
 ### 永久保存與合法附掛順序
 
-1. **新 scan 的細盤事件尚未寫入。** 先完成該 scan、post 與 media 的合法細盤；在 append 前取得 reveal before／input／after 原件，將它們封裝成 v2 bundle，再把 `bundle_path` 傳給該次 `post` 或 `media` 的 `--evidence`。`post`／`media` event context 均為 `list_key + post_key + scan_id`；`media_key` 只可寫在 statement，不能填入該事件 context。此路徑可在一次事件中保存精確細盤與當次 reveal 事實，但 statement 仍只是人工紀錄。
-2. **post／media 細盤已寫入。** 同 scan 的 `post`／`media` 各只能追加一次，沒有「再補 observation」的合法命令；此時 pre-intent blocker 原件只能留在私有 task 區，尚未進永久帳本。不得為留證另開 scan，不得改用 `bind`、`protect`、`intent` 或 `outcome` 冒充附掛，也不得改寫舊 scan／detail／completion。日後同一個實際 attempt 有合法 outcome 時，才可把仍適用的原件依該 attempt 的精確 context 重新封裝；不得把沒有 attempt context 的 before-intent bundle 直接冒用為新 attempt 或另一個 context 的證據。新 attempt 需要自己的觀察與 context，舊 blocker 只能作歷史來源引用。
+1. **新 scan 的細盤事件尚未寫入。** 先完成該 scan、post 與 media 的合法細盤，並保存細盤當時的非 reveal 盤點原件；在 append 前只把這些當時已存在的盤點證據封裝成 v2 bundle，再把 `bundle_path` 傳給該次 `post` 或 `media` 的 `--evidence`。`post`／`media` event context 均為 `list_key + post_key + scan_id`；`media_key` 只可寫在 statement，不能填入該事件 context。細盤保存後才建立 intent；本 attempt 的 reveal before／input／after 或 direct after 原件不得回填到已 append 的細盤事件，應按合法 outcome context 保存（見下一點）。
+2. **post／media 細盤已寫入。** 細盤事件只保存當時的非 reveal 盤點原件；同 scan 的 `post`／`media` 各只能追加一次，沒有「再補 observation」的合法命令。此時 intent 後的 direct／reveal／after 原件與 pre-intent blocker 原件只能留在私有 task 區，尚未進永久帳本。不得為留證另開 scan，不得改用 `bind`、`protect`、`intent` 或 `outcome` 冒充附掛，也不得改寫舊 scan／detail／completion。日後同一個實際 attempt 有合法 outcome 時，才可把仍適用的 direct／reveal／after 原件依該 attempt 的精確 context 重新封裝；不得把沒有 attempt context 的 before-intent bundle 直接冒用為新 attempt 或另一個 context 的證據。新 attempt 需要自己的觀察與 context，舊 blocker 只能作歷史來源引用。
 3. `evidence-pack` 本身只建立私有 bundle，不是永久帳本寫入；只有既有 event 成功保存並讀回其 evidence ref 後，才可聲稱已進永久帳本。若沒有可合法承載的既有事件，保留私有原件與 hash，明列「永久帳本未保存」，交回具體缺口；本方案不為補證據擴 schema、CLI 或交易。
 
 ## 必錄欄位
@@ -1340,7 +1650,7 @@ const deferredCandidateRun = await persistRevealWithDirectAfter({
 | 目的地 | `original_destination`、`destination_event_refs`、`observed_destination` | 原目的地以 intent 讀回值為準。目的地相關事件可能是 `created`（初始 root）、`destination`（追加 root）或 `intent`（attempt 目的地），各自以事件檔與讀回 hash 引用；`binding` 事件不含目的地。chooser 顯示或實際落點另記，不得反寫原目的地 |
 | 觀察來源 | `observation_id`、`source_kind`、`tool`、`api_scope`、`app_window_binding`、`role_children_ref`、`raw_return_ref`、`scope`、`capture_rect`、`raw_rect`、`image_pixels`、`window_frame`、`window_points`、`scale_factor`、`popup_covered` | 記 AX／app-bound 截圖／桌面局部截圖／Computer Use 回傳／真人觀察，並分開 AX client／API scope、app／window 綁定與 role／children 來源；範圍、原始矩形、實際像素、點數與縮放分開，來源未涵蓋 popup 時不可推論不存在。同一 viewer 的 AX 相同不得推定工具列未變，截圖與 AX 也不能互相補值 |
 | 身分與入口 | `identity_gate_id`、`viewer_title_ref`、`viewer_title_n_of_n`、`list_key`、`post_key`、`media_key`、`entry_anchor_ref`、`artifact_label`、`artifact_label_target`、`identity_match`、`accepted`、`quarantine_ref`、`entry_page_role`、`expected_return_role`、`return_result`、`input_capability_after` | gate 由 Agent 依當次原件持久核對並讀回，不是 helper 圖像辨識；label 不代替 keys。`expected_return_role` 只由當次可引用原件的實際 entry role 決定，不預填 `LIST`、`POST_DETAIL` 或其他期待值。返回後以 `post_input_observation_ref` 指向的原件記錄實際 `page_role` 與文字 basis；角色判定只依[返回契約](gui-inventory.md#返回契約與有限恢復)。角色與來源連續性相符才記 `RETURNED`；長貼文占滿 viewport、搜尋列／卡片標頭／返回控制不可見不足以判 `POST_DETAIL`，也不證明控制不存在。證據不足或矛盾時記 `page_role=UNKNOWN`、`return_result=RETURN_NOT_OBSERVED`；若正面觀察仍是 viewer，保留 `VIEWER` 並記 `RETURN_NOT_OBSERVED`；只有正面顯示角色／身分／錨點失去才記 `ENTRY_LOST`。輸入能力另記且可同時為 `UNAVAILABLE`；此列沿用既有欄位，不新增 schema |
-| Reveal 導覽 | `navigation_kind`、`reveal_candidate_id`、`reveal_scope_ref`、`candidate_ordinal`、`prior_candidate_refs`、`budget_before`、`budget_after`、`rearm_preconditions_ref`、`rearm_new_information_ref`、`selected_state_before`、`selected_media_ref`、`safe_zone_ref`、`mapping_id`、`mapping_valid_at`、`before_screenshot_ref`、`before_ax_ref`、`input_phase`、`input_receipt_ref`、`after_screenshot_ref`、`after_ax_ref`、`reveal_state`、`capture_wait_semantics`、`capture_wait_source`、`stop_reason` | 操作契約只依 `gui-inventory.md` 的 B1。每個 list/post/media 的 intent 前最多兩個已派送候選；`candidate_ordinal=1` 為初次，至多一次 `candidate_ordinal=2`。`prior_candidate_refs` 在候選 1 為 `NONE`，候選 2 必須引用同一 scope 的候選 1；`budget_before`／`budget_after` 分別為輸入前累計與輸入後累計。唯一 intent 後延後例外沿用這些欄位與同一 attempt 的既有 input request slot，見[單次保留](#intent-後延後候選的單次保留)。before／input／after 各自保存 bytes／hash；同 AX 可重複但不得合併不同畫面。`TOOLBAR_VISIBLE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT` 是 statement 結論，不是業務狀態；capture 等待能力未證實時記 `UNKNOWN`，不得據 AX 缺失推定不存在 |
+| Reveal 導覽 | `navigation_kind`、`reveal_candidate_id`、`reveal_scope_ref`、`candidate_ordinal`、`prior_candidate_refs`、`budget_before`、`budget_after`、`rearm_preconditions_ref`、`rearm_new_information_ref`、`selected_state_before`、`selected_media_ref`、`safe_zone_ref`、`mapping_id`、`mapping_valid_at`、`before_screenshot_ref`、`before_ax_ref`、`input_phase`、`input_receipt_ref`、`after_screenshot_ref`、`after_ax_ref`、`reveal_state`、`capture_wait_semantics`、`capture_wait_source`、`stop_reason` | 操作契約只依 `gui-inventory.md` 的 B1。每個 attempt 最多一次 intent 後 reveal；`candidate_ordinal=1` 對應 `prior_candidate_refs=NONE`、`budget_before=0`、`budget_after=1`，`candidate_ordinal=2` 對應完整的同一 scope 前次引用、`1`、`2`。slot 固定 `notes-reveal-c2-<attempt_id>`，c2 不因 ordinal 改名；本輪 request 以 `wx` 保存並讀回，不能跨 intent 重用舊點。before／input／after 各自保存 bytes／hash；同 AX 可重複但不得合併不同畫面。`TOOLBAR_VISIBLE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT` 是 statement 結論，不是業務狀態；capture 等待能力未證實時記 `UNKNOWN`，不得據 AX 缺失推定不存在 |
 | 時間 | `observed_at`、`input_at`、`clock_source`、`timezone`、`precision` | 每個時間都要有來源；不可取得工具時間或可信時鐘時寫 `UNKNOWN`，不以 mtime 冒充操作時間。capture label／sequence 只能支持相對先後；不能證明是否在輸入前時，`observation_order=UNKNOWN`，不得把檔名或 label 寫成已證實的 pre-click |
 | 來源與捕捉 | `capture_started_at`、`capture_returned_at`、`ax_observed_at`、`screenshot_observed_at`、`source_time_basis`、`capture_atomicity` | 分別保存 AX／截圖來源、bytes／hash 與可證明的時間；`capture_started_at`／`capture_returned_at` 只界定一次 API 呼叫，不證明兩來源同一瞬間。工具未提供個別時間就記 `UNKNOWN`，不補值；`capture_atomicity=UNVERIFIED`，不得宣稱 atomic／immediate |
 | 定位 | `page_role`、`focus_state`、`control_owner`、`control_visibility`、`enabled_state`、`position_source_ref`、`pre_input_observation_ref`、`post_input_observation_ref`、`observation_order`、`control_region`、`control_region_coord_space`、`candidate_point`、`candidate_point_relation`、`raw_coord_space`、`mapped_screen_point`、`coordinate_space_match`、`mapping_id`、`mapping_valid_at`、`grounding_conclusion` | 控制可見性只在充分範圍成立時記 `VISIBLE`／`NOT_OBSERVED`。由同一份當次原件記下控制區域及候選點，兩者使用相同座標空間並讀回；`position_source_ref` 指向截圖／AX 原件與 hash，先後不能判定時明記 `UNKNOWN`。候選點須在可辨識區域內部；區域外、邊界、控制歸屬／映射／先後／區域不明時，`grounding_conclusion=STOP`，不得輸入。`control_region` 是視覺篩選區域，不是原生 hit-test；通過只表示可送入對帳，不表示控制已命中 |
@@ -1446,7 +1756,6 @@ reveal:
   safe_zone_ref: UNKNOWN
   mapping_id: UNKNOWN
   mapping_valid_at: UNKNOWN
-  hover_primitive: UNKNOWN or NOT_AVAILABLE
   before_screenshot_ref: UNKNOWN
   before_ax_ref: UNKNOWN
   input_phase: NAVIGATION or NOT_APPLICABLE or UNKNOWN

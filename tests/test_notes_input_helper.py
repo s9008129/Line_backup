@@ -13,6 +13,8 @@ START = '<!-- cua-evidence-tools:start -->'
 END = '<!-- cua-evidence-tools:end -->'
 REVEAL_START = '<!-- notes-reveal-capture:start -->'
 REVEAL_END = '<!-- notes-reveal-capture:end -->'
+DISPATCH_START = '<!-- notes-intent-dispatch:start -->'
+DISPATCH_END = '<!-- notes-intent-dispatch:end -->'
 
 
 def documented_tools_source():
@@ -31,11 +33,112 @@ def documented_reveal_source():
     return text[code_start:code_end]
 
 
+def documented_dispatch_source():
+    text = TEMPLATE.read_text(encoding='utf-8')
+    start = text.index(DISPATCH_START) + len(DISPATCH_START)
+    code_start = text.index('```js', start) + len('```js')
+    code_end = text.index('```', code_start)
+    return text[code_start:code_end]
+
+
+DISPATCH_SETUP = r'''
+const dispatchEventSha = 'a'.repeat(64);
+const dispatchEventRef = () => ({sequence: 7, event_sha256: dispatchEventSha});
+const dispatchIntent = (attemptId, overrides = {}) => ({
+  attempt_id: attemptId,
+  status: 'UNKNOWN',
+  dispatch_authorized: false,
+  ...overrides,
+});
+const dispatchCapture = () => ({
+  state: '{"role":"AXWindow","marker":"dispatch"}',
+  screenshot: new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+});
+async function dispatchObservation(observationId) {
+  return evidenceTools.persistObservation({
+    taskDir: process.env.INPUT_TEST_ROOT,
+    observationDir: process.env.INPUT_TEST_DIR,
+    observationId,
+    capture: dispatchCapture(),
+  });
+}
+const dispatchRef = asset => ({
+  path: asset.path, bytes: asset.bytes, sha256: asset.sha256,
+});
+function dispatchDownloadRequest(attemptId, observation, target = [60, 70]) {
+  const screenshot = dispatchRef(observation.assets.screenshot);
+  return {
+    input_phase: 'DOWNLOAD_CONTROL',
+    attempt_id: attemptId,
+    intent_event_ref: dispatchEventRef(),
+    app_window_binding: {
+      app_bundle_id: 'jp.naver.line.mac',
+      window_id: 'synthetic-window',
+    },
+    source_observation: screenshot,
+    source_observation_ref: {...screenshot},
+    mapping_evidence_ref: dispatchRef(observation.assets.ax),
+    mapping_status: 'MATCH',
+    observation_order: 'PRE_INPUT',
+    grounding_conclusion: 'PASS_TO_INPUT',
+    candidate_point_relation: 'INSIDE',
+    coordinate_space_match: 'MATCH',
+    control_region_coord_space: 'SCREEN_POINTS',
+    target_coord_space: 'SCREEN_POINTS',
+    control_region: [20, 30, 80, 90],
+    candidate_point: target,
+    prepared_target: target,
+  };
+}
+function dispatchNavigationRequest(attemptId, ordinal = 1) {
+  const request = {
+    input_phase: 'NAVIGATION',
+    attempt_id: attemptId,
+    intent_event_ref: dispatchEventRef(),
+    navigation_kind: 'selected-filmstrip-safe-edge',
+    reveal_candidate_id: 'candidate-1',
+    reveal_scope_ref: 'scope-1',
+    candidate_ordinal: ordinal,
+    prepared_target: [50, 60],
+  };
+  return ordinal === 1
+    ? {...request, prior_candidate_refs: 'NONE',
+       budget_before: 0, budget_after: 1}
+    : {...request, prior_candidate_refs: ['prior-candidate-receipt'],
+       budget_before: 1, budget_after: 2};
+}
+const dispatchPaths = () => ({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  inputDir: process.env.INPUT_TEST_DIR,
+  observationDir: process.env.INPUT_TEST_DIR,
+});
+const dispatchRevealOptions = (attemptId, request, app, overrides = {}) => ({
+  ...dispatchPaths(),
+  intent: dispatchIntent(attemptId),
+  intentEventRef: dispatchEventRef(),
+  request,
+  app,
+  ...overrides,
+});
+const dispatchDownloadOptions = (attemptId, request, app, source,
+                                  overrides = {}) => ({
+  ...dispatchPaths(),
+  intent: dispatchIntent(attemptId),
+  intentEventRef: dispatchEventRef(),
+  request,
+  app,
+  ...source,
+  ...overrides,
+});
+'''
+
+
 class NotesInputHelperTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.tools_source = documented_tools_source()
         cls.reveal_source = documented_reveal_source()
+        cls.dispatch_source = documented_dispatch_source()
         TASKS.mkdir(parents=True, exist_ok=True)
 
     def run_helper(self, body, extra_source=''):
@@ -63,6 +166,10 @@ console.log(JSON.stringify(result));
 
     def run_reveal(self, body):
         return self.run_helper(body, extra_source=self.reveal_source)
+
+    def run_dispatch(self, body):
+        return self.run_helper(
+            body, extra_source=self.reveal_source + '\n' + self.dispatch_source)
 
     def test_cross_realm_error_preserves_numeric_code_full_message_and_own_fields_once(self):
         result, output_dir = self.run_helper(r'''
@@ -967,6 +1074,210 @@ return {
         self.assertEqual(observation['metadata_persistence']['write'], 'FAILED')
         self.assertEqual(observation['metadata_persistence']['readback'], 'NOT_RUN')
         self.assertEqual(result['saved'], 'keep original diagnostic')
+
+    def test_dispatch_direct_path_checks_intent_event_and_same_observation(self):
+        result, _ = self.run_dispatch(DISPATCH_SETUP + r'''
+let clicks = 0;
+const observation = await dispatchObservation('direct-observation');
+const request = dispatchDownloadRequest('attempt-direct', observation);
+const common = dispatchDownloadOptions('attempt-direct', request,
+  {async click(target) { clicks += 1; return {target}; }},
+  {observation, source_observation_bytes: dispatchCapture().screenshot});
+const invalidIntent = await notesIntentDispatch.persistDownload({
+  ...common,
+  intent: dispatchIntent('attempt-direct', {dispatch_authorized: true}),
+});
+const legacyEvent = await notesIntentDispatch.persistDownload({
+  ...common,
+  intentEventRef: {sequence: 7, sha256: dispatchEventSha},
+  request: {...request, intent_event_ref: {sequence: 7, sha256: dispatchEventSha}},
+});
+const eventMismatch = await notesIntentDispatch.persistDownload({
+  ...common,
+  intentEventRef: {sequence: 8, event_sha256: dispatchEventSha},
+});
+const attemptMismatch = await notesIntentDispatch.persistDownload({
+  ...common,
+  request: {...request, attempt_id: 'attempt-other'},
+});
+const observationMismatch = await notesIntentDispatch.persistDownload({
+  ...common,
+  observation: await dispatchObservation('old-observation'),
+});
+const valid = await notesIntentDispatch.persistDownload(common);
+return {clicks, invalidIntent, legacyEvent, eventMismatch,
+        attemptMismatch, observationMismatch, valid};
+''')
+        self.assertEqual(result['clicks'], 1)
+        for name, reason in (
+            ('invalidIntent', 'INTENT_NOT_DISPATCHABLE'),
+            ('legacyEvent', 'INTENT_EVENT_REF_INVALID'),
+            ('eventMismatch', 'INTENT_EVENT_REF_MISMATCH'),
+            ('attemptMismatch', 'INTENT_ATTEMPT_MISMATCH'),
+            ('observationMismatch', 'DOWNLOAD_SOURCE_OBSERVATION_MISMATCH'),
+        ):
+            self.assertEqual(result[name]['reason'], reason)
+        self.assertEqual(result['valid']['status'], 'INVOKED')
+        self.assertEqual(result['valid']['operation_id'],
+                         'notes-download-attempt-direct')
+        self.assertEqual(result['valid']['source_mode'],
+                         'DIRECT_INTENT_OBSERVATION')
+
+    def test_dispatch_reveal_same_after_feeds_one_download_and_fixed_slot(self):
+        result, _ = self.run_dispatch(DISPATCH_SETUP + r'''
+let revealClicks = 0, revealCaptures = 0, downloadClicks = 0;
+const app = {
+  async click(target) {
+    if (target[0] === 50 && target[1] === 60) revealClicks += 1;
+    else downloadClicks += 1;
+    return {target};
+  },
+  async getAXStateAndScreenshot() {
+    revealCaptures += 1;
+    return dispatchCapture();
+  },
+};
+const revealRun = await notesIntentDispatch.persistReveal(
+  dispatchRevealOptions('attempt-reveal',
+    dispatchNavigationRequest('attempt-reveal', 1), app));
+const after = revealRun.afterObservation;
+const afterShot = dispatchRef(after.assets.screenshot);
+const afterBytes = new Uint8Array(await fsTest.readFile(afterShot.path));
+const request = {
+  ...dispatchDownloadRequest('attempt-reveal', after),
+  source_observation: afterShot,
+  source_observation_ref: afterShot,
+  mapping_evidence_ref: dispatchRef(after.assets.ax),
+};
+const download = overrides => notesIntentDispatch.persistDownload(
+  dispatchDownloadOptions('attempt-reveal', request, app,
+    {source_observation_bytes: afterBytes}, overrides));
+const stale = await download({
+  observation: await dispatchObservation('before-observation'),
+});
+const sameAfter = await download({reveal: revealRun});
+const replay = await download({
+  reveal: revealRun,
+  request: {...request, candidate_point: [61, 71], prepared_target: [61, 71]},
+});
+return {revealClicks, revealCaptures, downloadClicks, revealRun,
+        stale, sameAfter, replay};
+''')
+        self.assertEqual(result['revealClicks'], 1)
+        self.assertEqual(result['revealCaptures'], 1)
+        self.assertEqual(result['revealRun']['status'], 'INVOKED')
+        self.assertEqual(result['revealRun']['operation_id'],
+                         'notes-reveal-c2-attempt-reveal')
+        self.assertEqual(result['stale']['reason'],
+                         'DOWNLOAD_SOURCE_OBSERVATION_MISMATCH')
+        self.assertEqual(result['sameAfter']['status'], 'INVOKED')
+        self.assertEqual(result['sameAfter']['source_mode'], 'REVEAL_SAME_AFTER')
+        self.assertEqual(result['sameAfter']['operation_id'],
+                         'notes-download-attempt-reveal')
+        self.assertEqual(result['replay']['reason'],
+                         'DOWNLOAD_SLOT_OR_HELPER_BLOCKED')
+        self.assertEqual(result['replay']['receipt']['status'],
+                         'REQUEST_PERSIST_FAILED')
+        self.assertEqual(result['downloadClicks'], 1)
+
+    def test_dispatch_reveal_rejects_budget_race_ordinal_switch_and_capture_error(self):
+        result, _ = self.run_dispatch(DISPATCH_SETUP + r'''
+let revealClicks = 0, revealCaptures = 0, downloadClicks = 0;
+const app = {
+  async click(target) { revealClicks += 1; return {target}; },
+  async getAXStateAndScreenshot() {
+    revealCaptures += 1;
+    return dispatchCapture();
+  },
+};
+const reveal = (attemptId, request, overrides = {}) =>
+  notesIntentDispatch.persistReveal(
+    dispatchRevealOptions(attemptId, request, app, overrides));
+const invalidIntent = await reveal('attempt-invalid',
+  dispatchNavigationRequest('attempt-invalid', 1),
+  {intent: dispatchIntent('attempt-invalid', {dispatch_authorized: true})});
+const legacyEvent = await reveal('attempt-legacy',
+  {...dispatchNavigationRequest('attempt-legacy', 1),
+   intent_event_ref: {sequence: 7, sha256: dispatchEventSha}},
+  {intentEventRef: {sequence: 7, sha256: dispatchEventSha}});
+const eventMismatch = await reveal('attempt-event',
+  dispatchNavigationRequest('attempt-event', 1),
+  {intentEventRef: {sequence: 8, event_sha256: dispatchEventSha}});
+const attemptMismatch = await reveal('attempt-attempt',
+  {...dispatchNavigationRequest('attempt-attempt', 1), attempt_id: 'other'});
+const badBudget = await reveal('attempt-budget',
+  {...dispatchNavigationRequest('attempt-budget', 1), budget_after: 2});
+const badOrdinal = await reveal('attempt-ordinal',
+  dispatchNavigationRequest('attempt-ordinal', 3));
+const badPrior = await reveal('attempt-prior',
+  {...dispatchNavigationRequest('attempt-prior', 2), prior_candidate_refs: []});
+const hoverKind = await reveal('attempt-hover',
+  {...dispatchNavigationRequest('attempt-hover', 1), navigation_kind: 'hover'});
+const ordinalTwo = await reveal('attempt-two',
+  dispatchNavigationRequest('attempt-two', 2));
+const raceRequest = dispatchNavigationRequest('attempt-race', 1);
+const [raceFirst, raceSecond] = await Promise.all([
+  reveal('attempt-race', raceRequest),
+  reveal('attempt-race', raceRequest),
+]);
+const ordinalSwitch = await reveal('attempt-race',
+  dispatchNavigationRequest('attempt-race', 2));
+const failedReveal = await notesIntentDispatch.persistReveal(
+  dispatchRevealOptions('attempt-capture-error',
+    dispatchNavigationRequest('attempt-capture-error', 1), {
+      async click(target) { revealClicks += 1; return {target}; },
+      async getAXStateAndScreenshot() {
+        throw new Error('synthetic dispatch capture failed');
+      },
+    }));
+const observation = await dispatchObservation('capture-error-observation');
+const failedDownload = await notesIntentDispatch.persistDownload(
+  dispatchDownloadOptions('attempt-capture-error',
+    dispatchDownloadRequest('attempt-capture-error', observation),
+    {async click(target) { downloadClicks += 1; return {target}; }},
+    {reveal: failedReveal, source_observation_bytes: dispatchCapture().screenshot}));
+return {revealClicks, revealCaptures, downloadClicks, invalidIntent, legacyEvent,
+        eventMismatch, attemptMismatch, badBudget, badOrdinal, badPrior, hoverKind,
+        ordinalTwo, raceFirst, raceSecond, ordinalSwitch, failedReveal,
+        failedDownload};
+''')
+        for name, reason in (
+            ('invalidIntent', 'INTENT_NOT_DISPATCHABLE'),
+            ('legacyEvent', 'INTENT_EVENT_REF_INVALID'),
+            ('eventMismatch', 'INTENT_EVENT_REF_MISMATCH'),
+            ('attemptMismatch', 'INTENT_ATTEMPT_MISMATCH'),
+            ('badBudget', 'REVEAL_ORDINAL_BUDGET_MISMATCH'),
+            ('badOrdinal', 'REVEAL_ORDINAL_INVALID'),
+            ('badPrior', 'REVEAL_ORDINAL_BUDGET_MISMATCH'),
+            ('hoverKind', 'REVEAL_KIND_UNSUPPORTED'),
+        ):
+            self.assertEqual(result[name]['reason'], reason)
+        self.assertEqual(result['ordinalTwo']['status'], 'INVOKED')
+        self.assertEqual(result['ordinalTwo']['candidate_ordinal'], 2)
+        self.assertEqual(result['revealClicks'], 3)
+        self.assertEqual(result['revealCaptures'], 2)
+        statuses = sorted([result['raceFirst']['status'],
+                           result['raceSecond']['status']])
+        self.assertEqual(statuses, ['STOP', 'STOP'])
+        race_receipts = sorted([
+            result['raceFirst']['run']['inputReceipt']['status'],
+            result['raceSecond']['run']['inputReceipt']['status'],
+        ])
+        self.assertEqual(race_receipts,
+                         ['INVOKED', 'REQUEST_PERSIST_FAILED'])
+        self.assertEqual(sum(1 for item in (result['raceFirst'],
+                                            result['raceSecond'])
+                             if item.get('afterObservation')), 1)
+        self.assertEqual(result['ordinalSwitch']['status'], 'STOP')
+        self.assertEqual(result['ordinalSwitch']['run']['inputReceipt']['status'],
+                         'REQUEST_PERSIST_FAILED')
+        self.assertEqual(result['failedReveal']['reason'],
+                         'REVEAL_INPUT_OR_AFTER_INCOMPLETE')
+        self.assertTrue(result['failedReveal']['run']['fail_closed'])
+        self.assertFalse(result['failedReveal']['afterObservation']['ready_for_bind'])
+        self.assertEqual(result['failedDownload']['reason'],
+                         'REVEAL_AFTER_NOT_DISPATCHABLE')
+        self.assertEqual(result['downloadClicks'], 0)
 
 
 GROUNDED_SETUP = r'''
