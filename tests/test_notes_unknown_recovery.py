@@ -468,6 +468,69 @@ class NotesUnknownRecoveryTests(unittest.TestCase):
         self.assertEqual(final['current_incomplete'], 1)
         self.assertFalse(final['all_known_media_complete'])
 
+    def test_contract_dual_media_v5_budget_and_global_unknown_stop(self):
+        fixture = self.prepare_isolated_s2('dual-media-v5-budget')
+        ledger = fixture['ledger']
+        records = ledger.records
+        session = fixture['s2_session']
+        a_key, b_key = fixture['media_keys'][:2]
+        self.assertNotEqual(a_key, b_key)
+
+        a_v5 = records.intent(session_id=session, media_key_value=a_key)
+        self.assertEqual(a_v5['schema'], notes.INTENT_V5_SCHEMA)
+        self.assertEqual(a_v5['redownload_budget'], 'CONSUMED')
+        records.outcome(
+            session_id=session,
+            attempt_id=a_v5['attempt_id'],
+            outcome='NOT_SENT',
+            evidence=ledger.evidence_for_attempt(a_v5),
+        )
+
+        b_attempt = records.intent(session_id=session, media_key_value=b_key)
+        self.assertNotEqual(b_attempt['schema'], notes.INTENT_V5_SCHEMA)
+        records.outcome(
+            session_id=session,
+            attempt_id=b_attempt['attempt_id'],
+            outcome='UNKNOWN',
+            evidence=ledger.evidence_for_attempt(b_attempt),
+        )
+        self.assertIn('UNKNOWN_ATTEMPT', records.summary()['dispatch_blockers'])
+        before_events = self.helper.event_bytes(records)
+        before_staging = self.staging_state(fixture)
+        with self.assertRaisesRegex(
+                notes.NotesError, 'ANOTHER_MEDIA_ATTEMPT_UNRESOLVED'):
+            records.intent(
+                session_id=session,
+                media_key_value=a_key,
+                recovery_evidence=ledger.evidence_for_attempt(a_v5),
+            )
+        self.assertEqual(self.helper.event_bytes(records), before_events)
+        self.assertEqual(self.staging_state(fixture), before_staging)
+
+        b_isolation = records.isolate(
+            session_id=session,
+            attempt_id=b_attempt['attempt_id'],
+            evidence=ledger.evidence_for_attempt(b_attempt),
+            expected_tip=records.summary()['expected_tip'],
+        )
+        self.assertEqual(b_isolation['disposition'], 'REDOWNLOAD_AVAILABLE')
+        self.assertEqual(b_isolation['redownload_remaining'], 1)
+        self.rescan_same_post(records, fixture, session, 'dual-media-b-rescan')
+        b_v5 = records.intent(session_id=session, media_key_value=b_key)
+        self.assertEqual(b_v5['schema'], notes.INTENT_V5_SCHEMA)
+        self.assertEqual(b_v5['redownload_budget'], 'CONSUMED')
+        self.assertEqual(b_v5['isolation_ref'], b_isolation['isolation_ref'])
+        self.assertEqual(b_v5['recovery_of'], b_attempt['attempt_id'])
+        self.assertNotIn(b_v5['destination'],
+                         (a_v5['destination'], b_attempt['destination']))
+        self.assertEqual(list(Path(b_v5['destination']).iterdir()), [])
+
+        reopened = self.helper.reopen(ledger)
+        reopened.summary()
+        stored_events = self.helper.event_bytes(reopened)
+        self.assertEqual(
+            {name: stored_events[name] for name in before_events}, before_events)
+
     def test_contract_cross_list_stale_tip_and_exact_replay(self):
         first = self.seven_media_fixture('cross-list-a')
         second = self.seven_media_fixture('cross-list-b')

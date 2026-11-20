@@ -135,7 +135,7 @@ protect      --records-root RECORDS_ROOT --media-key KEY
 
 ### 舊 UNKNOWN 的安全隔離與一次補下載
 
-本節是普通 `UNKNOWN` 的獨立單項路徑，不是 `STOPPED`／`NOT_SENT` 恢復，也不是 restart generation。尚無 outcome 時仍先用 `outcome` 保存第一筆真實結果；已有持久 `outcome=UNKNOWN` 才可用新證據 `reconcile`。若可靠證據已能證明原下載完成，接續原 attempt；不要為可收斂的結果另建補下載。
+本節是普通 `UNKNOWN` 的獨立單項路徑，不是 `STOPPED`／`NOT_SENT` 恢復，也不是 restart generation。尚無 outcome 時仍先用 `outcome` 保存第一筆真實結果；已有持久 `outcome=UNKNOWN` 才可用新證據 `reconcile`。若可靠證據已能證明原下載完成，接續原 attempt；不要為可收斂的結果另建補下載。v5 補下載額度以單一 `media_key` 為 scope，不由同貼文、列表或 Session 的其他媒體共用；另一個媒體的 B1／readiness `READY` 也不解除本項未隔離 `UNKNOWN`／no-outcome 的全域停止。
 
 1. **有限前景核對。** 隔離前只需當次同一 app 的最新 AX／截圖，核對有效前景、目標列表／viewer、舊 chooser／modal、可歸屬活動下載、來源歧義與舊 staging 空白／身分。這是對舊目標的 bounded witness，不是新完整 scan，也不能拿它宣稱列表覆蓋。證據仍用 `line-notes-evidence/v2`，context 精確綁舊 intent 的 `list_key + post_key + media_key + attempt_id + scan_id`；舊 scan id 不得填 `UNKNOWN`。bundle 的 statement 記錄上述 witness，CLI 只驗結構、bytes／hash 與引用，不感測 GUI。
 
@@ -154,13 +154,15 @@ protect      --records-root RECORDS_ROOT --media-key KEY
 
 4. **隔離後新掃描。** 隔離讀回後，舊 attempt 不再是普通 `scan start` 的全域派送 blocker，但 `destination` 仍保持嚴格原 gate。由目前綁定 Session 重新完成普通完整卡片掃描，再完成目標貼文／媒體細盤；新 scan 的 start sequence 必須大於 isolation sequence，且是目前最新完整 scan。隔離前的舊 scan、cursor 或有限前景核對都不能當成這次完整盤點。
 
-5. **v5 intent 才消耗一次。** 完成上述條件後，以既有 `intent` 為同一 media key 建立補下載；CLI 自動使用 `line-notes-intent/v5`、連結 `isolation_ref` 與 `recovery_of`，不接受 caller 自填隔離欄位或以 `recovery_evidence` 替代。只有這次 v5 intent 的單一 append 原子消耗額度；成功回應可保留 `status=UNKNOWN`，並應有 `phase=OUTCOME_REQUIRED`、`isolation_ref`、`redownload_budget=CONSUMED`、`dispatch_authorized=false`。新 attempt 仍使用新空白 staging、重新通過 B1、當次下載控制與 chooser 各最多一次；不能重用舊 viewer／chooser／路徑。
+5. **v5 intent 才消耗一次。** 完成上述條件後，先依 B1 取得當次 `checkDownloadReadiness=READY`，再以既有 `intent` 為同一 media key 建立補下載；helper `STOP` 時保留本項，不能為跳過 blocker 直接呼叫 CLI。CLI 自動使用 `line-notes-intent/v5`、連結 `isolation_ref` 與 `recovery_of`，不接受 caller 自填隔離欄位或以 `recovery_evidence` 替代。只有這次 v5 intent 的單一 append 原子消耗這個 `media_key` 的額度；A 的 v5 不消耗 B 的首次額度，B 仍須有自己的隔離、隔離後完整 scan 與 readiness。成功回應可保留 `status=UNKNOWN`，並應有 `phase=OUTCOME_REQUIRED`、`isolation_ref`、`redownload_budget=CONSUMED`、`dispatch_authorized=false`。新 attempt 仍使用新空白 staging、重新通過 B1、當次下載控制與 chooser 各最多一次；不能重用舊 viewer／chooser／路徑。
 
 6. **再次不明與用盡。** 補下載再記持久 `UNKNOWN` 且相同安全前提仍成立時，可再對新 attempt 追加一次隔離；CLI 應投影 `disposition=REDOWNLOAD_EXHAUSTED`、`redownload_remaining=0`、`next_action=RECOVERY_EXHAUSTED`。該項列 `RECOVERY_EXHAUSTED`／欠件，不計完成，不自動第三次重送；其他已核對合格項可繼續。若任何安全前提不足，停止依賴該前提的派送，不把不確定情況硬寫成用盡。
 
 7. **晚到與舊史。** 舊 attempt、outcome／reconcile、隔離、證據、路徑與可能晚到的 staging 檔全部保留。晚到檔只屬舊 attempt，不得轉成最新 completion、發布、清理、合併或覆寫新 staging；接受背景晚到仍可能發生的殘留風險。舊 attempt 的 outcome／reconcile／download-check／verify／naming 與晚到檔都不能繞過隔離歷史轉正。
 
 8. **報告與界線。** `REDOWNLOAD_REQUIRED`／`RECOVERY_EXHAUSTED` 必須列在未完成報告；前者表示合格新 scan 後尚待 v5，後者表示額度用盡，兩者都不是全域完成或全域阻擋。未隔離／無法安全處理的 `UNKNOWN`／no-outcome 仍是全域 blocker。精確 restart／reattest、`STOPPED`／`NOT_SENT` 恢復、`LOCAL_CHANGED`、批次 scope、換目的地與相簿流程各自保留原 gate，不能被本路徑替代。
+
+**v5 後 `STOPPED`／`NOT_SENT`。** v5 intent 一經有效 append 即消耗該 `media_key` 的額度且不退還。若之後有充分證據記為 `STOPPED`／`NOT_SENT`，不得再建立第二次 v5、以再隔離重置額度或改寫舊 outcome；只有在全域 blocker 為零、原檔與舊史保留、帳本已有持久 `recovery_authorized=true`、當次正式 Prompt 明示涵蓋此次恢復、前景有效且停止證據充分時，才可依既有 `intent --recovery-evidence` 精確恢復。該路徑綁定目前 v5 attempt，新 attempt 仍走新空白 staging；舊 v5 intent、outcome、隔離與 staging 不得刪除、覆寫或合併。`recovery_authorized=true` 不能代替當次正式 Prompt；未持久化／`false`、證據不足或有其他未決 attempt 時停止。
 
 ### 確認取代恢復（restart）
 

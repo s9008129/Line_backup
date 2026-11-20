@@ -130,6 +130,75 @@ const dispatchDownloadOptions = (attemptId, request, app, source,
   ...source,
   ...overrides,
 });
+const dispatchReadinessApp = (counters = {}) => ({
+  async click(target) {
+    counters.clicks = (counters.clicks || 0) + 1;
+    return {target};
+  },
+  async getAXStateAndScreenshot() {
+    counters.captures = (counters.captures || 0) + 1;
+    return dispatchCapture();
+  },
+});
+const dispatchWindowBinding = (overrides = {}) => ({
+  app_bundle_id: 'jp.naver.line.mac',
+  window_id: 'synthetic-readiness-window',
+  ...overrides,
+});
+function dispatchDirectReadinessDecision(observation, overrides = {}) {
+  const screenshot = dispatchRef(observation.assets.screenshot);
+  return {
+    control_visibility: 'VISIBLE',
+    control_owner: 'MATCH',
+    enabled_state: 'ENABLED',
+    mapping_status: 'MATCH',
+    observation_order: 'PRE_INPUT',
+    grounding_conclusion: 'PASS_TO_INPUT',
+    candidate_point_relation: 'INSIDE',
+    coordinate_space_match: 'MATCH',
+    control_region_coord_space: 'SCREEN_POINTS',
+    target_coord_space: 'SCREEN_POINTS',
+    control_region: [20, 30, 80, 90],
+    candidate_point: [60, 70],
+    prepared_target: [60, 70],
+    position_source_ref: screenshot,
+    ...overrides,
+  };
+}
+function dispatchRevealReadinessDecision(observation, ordinal = 1, overrides = {}) {
+  const screenshot = dispatchRef(observation.assets.screenshot);
+  const ax = dispatchRef(observation.assets.ax);
+  const request = {
+    navigation_kind: 'selected-filmstrip-safe-edge',
+    reveal_candidate_id: 'candidate-' + ordinal,
+    reveal_scope_ref: 'scope-synthetic-1',
+    candidate_ordinal: ordinal,
+    prior_candidate_refs: ordinal === 1 ? 'NONE' : ['prior-candidate-receipt'],
+    budget_before: ordinal === 1 ? 0 : 1,
+    budget_after: ordinal,
+    before_screenshot_ref: screenshot,
+    before_ax_ref: ax,
+    selected_state_before: 'SELECTED',
+    selected_media_ref: 'media-synthetic-1',
+    safe_zone_ref: 'safe-edge-synthetic-1',
+    safe_zone: [40, 50, 100, 110],
+    prepared_target: [70, 80],
+    mapping_id: 'mapping-synthetic-1',
+    mapping_valid_at: '2026-11-20T00:00:00Z',
+    mapping_status: 'MATCH',
+    observation_order: 'PRE_INPUT',
+    coordinate_space_match: 'MATCH',
+    control_region_coord_space: 'SCREEN_POINTS',
+    target_coord_space: 'SCREEN_POINTS',
+    position_source_ref: screenshot,
+  };
+  if (ordinal === 2) {
+    request.rearm_preconditions_ref = 'prior-candidate-after';
+    request.rearm_new_information_ref = 'current-tool-document';
+    request.rearm_new_information_conclusion = 'PASS';
+  }
+  return {...request, ...overrides};
+}
 '''
 
 
@@ -1278,6 +1347,148 @@ return {revealClicks, revealCaptures, downloadClicks, invalidIntent, legacyEvent
         self.assertEqual(result['failedDownload']['reason'],
                          'REVEAL_AFTER_NOT_DISPATCHABLE')
         self.assertEqual(result['downloadClicks'], 0)
+
+    def test_download_readiness_accepts_direct_and_reveal_without_side_effects(self):
+        """Synthetic gate fixture only; no real LINE app, CLI, or download."""
+        result, _ = self.run_dispatch(DISPATCH_SETUP + r'''
+const counters = {};
+const app = dispatchReadinessApp(counters);
+const observation = await dispatchObservation('readiness-accepted');
+const windowBinding = dispatchWindowBinding();
+const common = {app, observation, windowBinding};
+const beforeFiles = (await fsTest.readdir(process.env.INPUT_TEST_DIR)).sort();
+const direct = notesIntentDispatch.checkDownloadReadiness({
+  ...common,
+  branch: 'DIRECT',
+  decision: dispatchDirectReadinessDecision(observation),
+});
+const revealOne = notesIntentDispatch.checkDownloadReadiness({
+  ...common,
+  branch: 'REVEAL',
+  decision: dispatchRevealReadinessDecision(observation, 1),
+});
+const revealTwo = notesIntentDispatch.checkDownloadReadiness({
+  ...common,
+  branch: 'REVEAL',
+  decision: dispatchRevealReadinessDecision(observation, 2),
+});
+const afterFiles = (await fsTest.readdir(process.env.INPUT_TEST_DIR)).sort();
+return {counters, direct, revealOne, revealTwo, beforeFiles, afterFiles};
+''')
+        self.assertEqual(result['counters'].get('clicks', 0), 0)
+        self.assertEqual(result['counters'].get('captures', 0), 0)
+        self.assertEqual(result['beforeFiles'], result['afterFiles'])
+        self.assertEqual(result['direct']['status'], 'READY')
+        self.assertEqual(result['direct']['branch'], 'DIRECT')
+        self.assertEqual(result['direct']['blockers'], [])
+        self.assertEqual(result['revealOne']['status'], 'READY')
+        self.assertEqual(result['revealOne']['candidate_ordinal'], 1)
+        self.assertEqual(result['revealOne']['budget_before'], 0)
+        self.assertEqual(result['revealOne']['budget_after'], 1)
+        self.assertEqual(result['revealTwo']['status'], 'READY')
+        self.assertEqual(result['revealTwo']['candidate_ordinal'], 2)
+        self.assertEqual(result['revealTwo']['budget_before'], 1)
+        self.assertEqual(result['revealTwo']['budget_after'], 2)
+        self.assertFalse(any('notes-reveal-c2-' in name or 'notes-download-' in name
+                             for name in result['afterFiles']))
+
+    def test_download_readiness_table_drives_stops_without_side_effects(self):
+        """Synthetic blocker table only; no real LINE app, CLI, or download."""
+        result, _ = self.run_dispatch(DISPATCH_SETUP + r'''
+const counters = {};
+const app = dispatchReadinessApp(counters);
+const observation = await dispatchObservation('readiness-rejections');
+const windowBinding = dispatchWindowBinding();
+const direct = (overrides = {}) => dispatchDirectReadinessDecision(observation, overrides);
+const reveal = (ordinal = 1, overrides = {}) =>
+  dispatchRevealReadinessDecision(observation, ordinal, overrides);
+const check = (branch, overrides = {}) => notesIntentDispatch.checkDownloadReadiness({
+  app, observation, windowBinding, branch,
+  decision: branch === 'DIRECT' ? direct() : reveal(),
+  ...overrides,
+});
+const rawCase = (branch, overrides, expected) => [branch, overrides, expected];
+const directCase = (overrides, expected) =>
+  rawCase('DIRECT', {decision: direct(overrides)}, expected);
+const revealCase = (overrides, expected) =>
+  rawCase('REVEAL', {decision: reveal(1, overrides)}, expected);
+const revealTwoCase = (overrides, expected) =>
+  rawCase('REVEAL', {decision: reveal(2, overrides)}, expected);
+const cases = {
+  unknownWindow: rawCase('DIRECT', {
+    windowBinding: dispatchWindowBinding({window_id: 'UNKNOWN'}),
+  }, 'APP_WINDOW_CONTEXT_REQUIRED'),
+  wrongBundle: rawCase('DIRECT', {
+    windowBinding: dispatchWindowBinding({app_bundle_id: 'example.other.app'}),
+  }, 'APP_WINDOW_CONTEXT_REQUIRED'),
+  missingClick: rawCase('DIRECT', {
+    app: {async getAXStateAndScreenshot() { return dispatchCapture(); }},
+  }, 'APP_CLICK_UNAVAILABLE'),
+  missingCapture: rawCase('DIRECT', {
+    app: {async click() { return {target: [60, 70]}; }},
+  }, 'APP_CAPTURE_UNAVAILABLE'),
+  missingDecision: rawCase('DIRECT', {decision: undefined}, 'DOWNLOAD_DECISION_REQUIRED'),
+  missingObservation: rawCase('DIRECT', {
+    observation: undefined,
+  }, 'DOWNLOAD_OBSERVATION_INVALID'),
+  missingObservationAssets: rawCase('DIRECT', {
+    observation: {...observation, assets: undefined},
+  }, 'DOWNLOAD_OBSERVATION_INVALID'),
+  missingPositionSource: directCase(
+    {position_source_ref: undefined}, 'DOWNLOAD_CONTROL_POSITION_SOURCE_MISMATCH'),
+  boundaryPoint: directCase(
+    {candidate_point: [20, 70]}, 'DOWNLOAD_CONTROL_POINT_NOT_STRICT_INTERIOR'),
+  targetMismatch: directCase(
+    {prepared_target: [61, 71]}, 'DOWNLOAD_CONTROL_PREPARED_TARGET_MISMATCH'),
+  coordinateMismatch: directCase(
+    {target_coord_space: 'APP_BOUND_SCREENSHOT_POINTS'},
+    'DOWNLOAD_CONTROL_TARGET_COORD_SPACE_INVALID'),
+  mappingUnknown: directCase(
+    {mapping_status: 'UNKNOWN'}, 'DOWNLOAD_CONTROL_MAPPING_UNKNOWN'),
+  notVisible: directCase(
+    {control_visibility: 'NOT_OBSERVED'}, 'DOWNLOAD_CONTROL_VISIBILITY_REQUIRED'),
+  wrongOwner: directCase({control_owner: 'UNKNOWN'}, 'DOWNLOAD_CONTROL_OWNER_REQUIRED'),
+  disabled: directCase({enabled_state: 'DISABLED'}, 'DOWNLOAD_CONTROL_NOT_ENABLED'),
+  invalidBranch: rawCase('HOVER', {decision: direct()}, 'DOWNLOAD_BRANCH_INVALID'),
+  hover: revealCase({navigation_kind: 'hover'}, 'REVEAL_KIND_UNSUPPORTED'),
+  notSelected: revealCase({selected_state_before: 'UNKNOWN'}, 'REVEAL_SELECTION_REQUIRED'),
+  wrongBeforeScreenshot: revealCase(
+    {before_screenshot_ref: dispatchRef(observation.assets.ax)},
+    'REVEAL_BEFORE_SCREENSHOT_MISMATCH'),
+  wrongBeforeAx: revealCase(
+    {before_ax_ref: dispatchRef(observation.assets.screenshot)},
+    'REVEAL_BEFORE_AX_MISMATCH'),
+  invalidSafeZone: revealCase({safe_zone: [40, 50, 40, 110]}, 'REVEAL_SAFE_ZONE_INVALID'),
+  missingSafeZoneRef: revealCase(
+    {safe_zone_ref: undefined}, 'REVEAL_SAFE_ZONE_REF_REQUIRED'),
+  boundaryTarget: revealCase(
+    {prepared_target: [40, 80]}, 'REVEAL_TARGET_NOT_STRICT_INTERIOR'),
+  badBudget: revealCase({budget_after: 2}, 'REVEAL_ORDINAL_BUDGET_MISMATCH'),
+  badOrdinal: revealTwoCase({candidate_ordinal: 3}, 'REVEAL_ORDINAL_INVALID'),
+  missingMappingId: revealCase(
+    {mapping_id: 'UNKNOWN'}, 'REVEAL_MAPPING_ID_REQUIRED'),
+  missingMappingTime: revealCase(
+    {mapping_valid_at: 'UNKNOWN'}, 'REVEAL_MAPPING_TIME_REQUIRED'),
+  coordinateUnknown: revealCase(
+    {coordinate_space_match: 'UNKNOWN'}, 'REVEAL_COORDINATE_SPACE_UNKNOWN'),
+  positionMismatch: revealCase({position_source_ref: {
+    path: '/tmp/other', bytes: 1, sha256: 'f'.repeat(64),
+  }}, 'REVEAL_POSITION_SOURCE_MISMATCH'),
+  missingRearm: revealTwoCase(
+    {rearm_new_information_ref: 'UNKNOWN'}, 'REVEAL_REARM_NEW_INFORMATION_REQUIRED'),
+};
+const stopped = {};
+for (const [name, [branch, overrides, expected]] of Object.entries(cases)) {
+  stopped[name] = {...check(branch, overrides), expected};
+}
+return {counters, stopped};
+''')
+        self.assertEqual(len(result['stopped']), 30)
+        for name, item in result['stopped'].items():
+            self.assertEqual(item['status'], 'STOP', name)
+            self.assertIn(item['expected'], item['blockers'], name)
+        self.assertEqual(result['counters'].get('clicks', 0), 0)
+        self.assertEqual(result['counters'].get('captures', 0), 0)
 
 
 GROUNDED_SETUP = r'''

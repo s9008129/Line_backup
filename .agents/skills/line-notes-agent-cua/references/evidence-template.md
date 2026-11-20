@@ -38,7 +38,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes evidence-pack \
 
 ## Viewer 身分與採信 gate
 
-這個 gate 是 Agent 寫入私有 statement 前的人工核對，不是新 CLI schema、controller、GUI sensor，也不是 helper 的圖像辨識。`evidence-pack` 仍只核對 bytes、SHA-256 與命令 context；`identity_match=MATCH` 只表示 Agent 依當次原件完成核對，不表示工具看懂了截圖。
+Agent 依當次原件核對後才寫入私有 statement。這個 gate 不是新 CLI schema、controller、GUI sensor，也不是 helper 的圖像辨識。`evidence-pack` 仍只核對 bytes、SHA-256 與命令 context；`identity_match=MATCH` 只表示 Agent 依當次原件完成核對，不表示工具看懂了截圖。
 
 第一次看到 viewer 時，先用中性的唯一 `observation_id` 保存原始 AX／截圖並讀回，不先以 `post`、`media` 或推測的顯示名稱命名。之後從該原件讀出 viewer title 的目前 `n/N`，與既有 `list_key`、已確認的 `post_key`、`media_key`、進入 viewer 前的來源頁／entry anchor，以及任何已宣稱目標的 artifact label／目錄名交叉核對。只有在這些欄位都成立時，才可把後續證據、input 或 bundle 歸屬該 viewer。
 
@@ -730,47 +730,66 @@ const evidenceTools = await (async () => {
       left.sha256 === right.sha256;
   }
 
-  function groundedRequestBlockers(request) {
+  function groundedWindowBlockers(window) {
+    return isPlainObject(window) &&
+      window.app_bundle_id === 'jp.naver.line.mac' &&
+      isKnownIdentifier(window.window_id)
+      ? [] : ['APP_WINDOW_CONTEXT_REQUIRED'];
+  }
+
+  function groundedCoordinateBlockers(request, prefix = 'DOWNLOAD_CONTROL',
+                                       options = {}) {
     const blockers = [];
-    const add = code => { if (!blockers.includes(code)) blockers.push(code); };
-    if (!isPlainObject(request)) return ['DOWNLOAD_CONTROL_REQUEST_INVALID'];
-    const point = request.candidate_point;
-    const target = request.prepared_target;
-    const region = request.control_region;
+    const add = (name, invalid) => {
+      if (invalid) blockers.push(prefix + '_' + name);
+    };
+    add('MAPPING_UNKNOWN', request.mapping_status !== 'MATCH');
+    add('OBSERVATION_ORDER_UNKNOWN', request.observation_order !== 'PRE_INPUT');
+    add('GROUNDING_NOT_PASS', options.requireGrounding !== false &&
+        request.grounding_conclusion !== 'PASS_TO_INPUT');
+    add('POINT_RELATION_INVALID', options.requirePointRelation !== false &&
+        request.candidate_point_relation !== 'INSIDE');
+    add('COORDINATE_SPACE_UNKNOWN', request.coordinate_space_match !== 'MATCH');
+    add('TARGET_COORD_SPACE_INVALID',
+      !isKnownString(request.control_region_coord_space) ||
+      !isKnownString(request.target_coord_space) ||
+      request.control_region_coord_space !== request.target_coord_space);
+    return blockers;
+  }
+
+  function groundedGeometryBlockers(region, point, target, labels = {}) {
     const finitePoint = value => Array.isArray(value) && value.length === 2 &&
       value.every(Number.isFinite);
     const validRegion = Array.isArray(region) && region.length === 4 &&
       region.every(Number.isFinite) && region[2] > region[0] &&
       region[3] > region[1];
+    if (!validRegion || !finitePoint(point) || !finitePoint(target)) {
+      return [labels.missing || 'DOWNLOAD_CONTROL_GEOMETRY_MISSING_OR_NONFINITE'];
+    }
+    const blockers = [];
+    const strictInterior = point[0] > region[0] && point[0] < region[2] &&
+      point[1] > region[1] && point[1] < region[3];
+    if (!strictInterior) blockers.push(labels.interior ||
+      'DOWNLOAD_CONTROL_POINT_NOT_STRICT_INTERIOR');
+    if (labels.targetMismatch !== null &&
+        (point[0] !== target[0] || point[1] !== target[1])) {
+      blockers.push(labels.targetMismatch ||
+        'DOWNLOAD_CONTROL_PREPARED_TARGET_MISMATCH');
+    }
+    return blockers;
+  }
+
+  function groundedRequestBlockers(request) {
+    const blockers = [];
+    const add = code => { if (!blockers.includes(code)) blockers.push(code); };
+    if (!isPlainObject(request)) return ['DOWNLOAD_CONTROL_REQUEST_INVALID'];
     const source = request.source_observation;
-    const window = request.app_window_binding;
     if (request.input_phase !== 'DOWNLOAD_CONTROL') {
       add('DOWNLOAD_CONTROL_PHASE_REQUIRED');
     }
     if (!isKnownString(request.attempt_id)) add('ATTEMPT_ID_REQUIRED');
-    if (!isPlainObject(window) ||
-        window.app_bundle_id !== 'jp.naver.line.mac' ||
-        !isKnownIdentifier(window.window_id)) {
-      add('APP_WINDOW_CONTEXT_REQUIRED');
-    }
-    if (request.mapping_status !== 'MATCH') add('DOWNLOAD_CONTROL_MAPPING_UNKNOWN');
-    if (request.observation_order !== 'PRE_INPUT') {
-      add('DOWNLOAD_CONTROL_OBSERVATION_ORDER_UNKNOWN');
-    }
-    if (request.grounding_conclusion !== 'PASS_TO_INPUT') {
-      add('DOWNLOAD_CONTROL_GROUNDING_NOT_PASS');
-    }
-    if (request.candidate_point_relation !== 'INSIDE') {
-      add('DOWNLOAD_CONTROL_POINT_RELATION_INVALID');
-    }
-    if (request.coordinate_space_match !== 'MATCH') {
-      add('DOWNLOAD_CONTROL_COORDINATE_SPACE_UNKNOWN');
-    }
-    if (!isKnownString(request.control_region_coord_space) ||
-        !isKnownString(request.target_coord_space) ||
-        request.control_region_coord_space !== request.target_coord_space) {
-      add('DOWNLOAD_CONTROL_TARGET_COORD_SPACE_INVALID');
-    }
+    blockers.push(...groundedWindowBlockers(request.app_window_binding));
+    blockers.push(...groundedCoordinateBlockers(request));
     if (!isFileRef(source) ||
         !sameFileRef(source, request.source_observation_ref)) {
       add('DOWNLOAD_CONTROL_SOURCE_REF_MISMATCH');
@@ -778,17 +797,8 @@ const evidenceTools = await (async () => {
     if (!isFileRef(request.mapping_evidence_ref)) {
       add('DOWNLOAD_CONTROL_MAPPING_REF_INVALID');
     }
-    if (!validRegion || !finitePoint(point) || !finitePoint(target)) {
-      add('DOWNLOAD_CONTROL_GEOMETRY_MISSING_OR_NONFINITE');
-    } else {
-      if (!(point[0] > region[0] && point[0] < region[2] &&
-            point[1] > region[1] && point[1] < region[3])) {
-        add('DOWNLOAD_CONTROL_POINT_NOT_STRICT_INTERIOR');
-      }
-      if (point[0] !== target[0] || point[1] !== target[1]) {
-        add('DOWNLOAD_CONTROL_PREPARED_TARGET_MISMATCH');
-      }
-    }
+    blockers.push(...groundedGeometryBlockers(
+      request.control_region, request.candidate_point, request.prepared_target));
     return blockers;
   }
 
@@ -1044,6 +1054,9 @@ const evidenceTools = await (async () => {
     captureAndPersist,
     copyExactUint8Array,
     describeError,
+    groundedCoordinateBlockers,
+    groundedGeometryBlockers,
+    groundedWindowBlockers,
     persistObservation,
     persistGroundedDownloadClick,
     persistSingleInput,
@@ -1250,6 +1263,9 @@ const notesIntentDispatch = await (async () => {
     !Array.isArray(value);
   const isId = value => typeof value === 'string' &&
     /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(value);
+  const isKnownString = value => typeof value === 'string' &&
+    value.length > 0 && value !== 'UNKNOWN';
+  const isReferenceToken = value => isKnownString(value) || isFileRef(value);
   const isEventRef = value => isObject(value) &&
     Object.keys(value).sort().join(',') === 'event_sha256,sequence' &&
     Number.isSafeInteger(value.sequence) && value.sequence >= 1 &&
@@ -1268,6 +1284,17 @@ const notesIntentDispatch = await (async () => {
   const sameFileRef = (left, right) => isFileRef(left) && isFileRef(right) &&
     left.path === right.path && left.bytes === right.bytes &&
     left.sha256 === right.sha256;
+  const matchesObservationAsset = (value, assets) => {
+    const ref = fileRef(value);
+    return !!ref && (sameFileRef(ref, assets.screenshot) ||
+      sameFileRef(ref, assets.ax));
+  };
+  const appendBlockers = (blockers, checks) => {
+    for (const [code, invalid] of checks) {
+      if (invalid && !blockers.includes(code)) blockers.push(code);
+    }
+    return blockers;
+  };
 
   function checkIntent(options) {
     if (!isObject(options) || !isObject(options.intent) ||
@@ -1296,6 +1323,18 @@ const notesIntentDispatch = await (async () => {
     });
   }
 
+  function revealOrdinalBlocker(request) {
+    const ordinal = request.candidate_ordinal;
+    const budgetMismatch = ordinal === 1
+      ? request.budget_before !== 0 || request.budget_after !== 1 ||
+        request.prior_candidate_refs !== 'NONE'
+      : ordinal === 2 && (request.budget_before !== 1 ||
+        request.budget_after !== 2 || !Array.isArray(request.prior_candidate_refs) ||
+        request.prior_candidate_refs.length === 0);
+    if (budgetMismatch) return 'REVEAL_ORDINAL_BUDGET_MISMATCH';
+    return ordinal === 1 || ordinal === 2 ? null : 'REVEAL_ORDINAL_INVALID';
+  }
+
   function checkReveal(options) {
     const gate = checkIntent(options);
     if (gate.status !== 'READY') return gate;
@@ -1306,22 +1345,104 @@ const notesIntentDispatch = await (async () => {
     if (request.navigation_kind !== 'selected-filmstrip-safe-edge') {
       return stop('REVEAL_KIND_UNSUPPORTED');
     }
-    const ordinal = request.candidate_ordinal;
-    if (ordinal === 1) {
-      if (request.budget_before !== 0 || request.budget_after !== 1 ||
-          request.prior_candidate_refs !== 'NONE') {
-        return stop('REVEAL_ORDINAL_BUDGET_MISMATCH');
-      }
-    } else if (ordinal === 2) {
-      if (request.budget_before !== 1 || request.budget_after !== 2 ||
-          !Array.isArray(request.prior_candidate_refs) ||
-          request.prior_candidate_refs.length === 0) {
-        return stop('REVEAL_ORDINAL_BUDGET_MISMATCH');
-      }
-    } else {
-      return stop('REVEAL_ORDINAL_INVALID');
+    const ordinalBlocker = revealOrdinalBlocker(request);
+    if (ordinalBlocker) return stop(ordinalBlocker);
+    return ready({ ...gate, candidate_ordinal: request.candidate_ordinal });
+  }
+
+  function directReadinessBlockers(decision, assets) {
+    return appendBlockers([
+      ...evidenceTools.groundedCoordinateBlockers(decision),
+      ...evidenceTools.groundedGeometryBlockers(
+        decision.control_region, decision.candidate_point, decision.prepared_target),
+    ], [
+      ['DOWNLOAD_CONTROL_VISIBILITY_REQUIRED',
+       decision.control_visibility !== 'VISIBLE'],
+      ['DOWNLOAD_CONTROL_OWNER_REQUIRED', decision.control_owner !== 'MATCH'],
+      ['DOWNLOAD_CONTROL_NOT_ENABLED', decision.enabled_state !== 'ENABLED'],
+      ['DOWNLOAD_CONTROL_POSITION_SOURCE_MISMATCH',
+       !matchesObservationAsset(decision.position_source_ref, assets)],
+    ]);
+  }
+
+  function revealReadinessBlockers(decision, assets) {
+    const ordinalBlocker = revealOrdinalBlocker(decision);
+    return appendBlockers([
+      ...evidenceTools.groundedCoordinateBlockers(decision, 'REVEAL',
+        {requireGrounding: false, requirePointRelation: false}),
+      ...evidenceTools.groundedGeometryBlockers(
+        decision.safe_zone, decision.prepared_target, decision.prepared_target,
+        {missing: 'REVEAL_SAFE_ZONE_INVALID',
+         interior: 'REVEAL_TARGET_NOT_STRICT_INTERIOR', targetMismatch: null}),
+    ], [
+      ['REVEAL_KIND_UNSUPPORTED',
+       decision.navigation_kind !== 'selected-filmstrip-safe-edge'],
+      ['REVEAL_CANDIDATE_ID_REQUIRED', !isId(decision.reveal_candidate_id)],
+      ['REVEAL_SCOPE_REF_REQUIRED', !isReferenceToken(decision.reveal_scope_ref)],
+      ['REVEAL_SELECTION_REQUIRED', decision.selected_state_before !== 'SELECTED'],
+      ['REVEAL_SELECTED_MEDIA_REF_REQUIRED',
+       !isReferenceToken(decision.selected_media_ref)],
+      ['REVEAL_BEFORE_SCREENSHOT_MISMATCH',
+       !sameFileRef(fileRef(decision.before_screenshot_ref), assets.screenshot)],
+      ['REVEAL_BEFORE_AX_MISMATCH',
+       !sameFileRef(fileRef(decision.before_ax_ref), assets.ax)],
+      ['REVEAL_MAPPING_ID_REQUIRED', !isKnownString(decision.mapping_id)],
+      ['REVEAL_MAPPING_TIME_REQUIRED', !isKnownString(decision.mapping_valid_at)],
+      ['REVEAL_POSITION_SOURCE_MISMATCH',
+       !matchesObservationAsset(decision.position_source_ref, assets)],
+      ['REVEAL_SAFE_ZONE_REF_REQUIRED', !isReferenceToken(decision.safe_zone_ref)],
+      [ordinalBlocker, !!ordinalBlocker],
+      ['REVEAL_REARM_NEW_INFORMATION_REQUIRED',
+       decision.candidate_ordinal === 2 &&
+       (decision.rearm_new_information_conclusion !== 'PASS' ||
+        !isReferenceToken(decision.rearm_preconditions_ref) ||
+        !isReferenceToken(decision.rearm_new_information_ref))],
+    ]);
+  }
+
+  function checkDownloadReadiness(options) {
+    const input = isObject(options) ? options : {};
+    const app = isObject(input.app) ? input.app : null;
+    const assets = observationAssets(input.observation);
+    const blockers = [
+      ...(!app ? ['APP_HANDLE_REQUIRED'] : []),
+      ...(app && typeof app.click !== 'function' ? ['APP_CLICK_UNAVAILABLE'] : []),
+      ...(app && typeof app.getAXStateAndScreenshot !== 'function'
+        ? ['APP_CAPTURE_UNAVAILABLE'] : []),
+      ...evidenceTools.groundedWindowBlockers(input.windowBinding),
+      ...(!assets || !isId(input.observation.observation_id)
+        ? ['DOWNLOAD_OBSERVATION_INVALID'] : []),
+      ...(!isObject(input.decision) ? ['DOWNLOAD_DECISION_REQUIRED'] : []),
+      ...(!['DIRECT', 'REVEAL'].includes(input.branch)
+        ? ['DOWNLOAD_BRANCH_INVALID'] : []),
+    ];
+    if (blockers.length) {
+      return stop('DOWNLOAD_READINESS_BLOCKED', { blockers });
     }
-    return ready({ ...gate, candidate_ordinal: ordinal });
+    const branchBlockers = input.branch === 'DIRECT'
+      ? directReadinessBlockers(input.decision, assets)
+      : revealReadinessBlockers(input.decision, assets);
+    if (branchBlockers.length > 0) {
+      return stop('DOWNLOAD_READINESS_BLOCKED', { blockers: branchBlockers });
+    }
+    const base = {
+      branch: input.branch,
+      observation_id: input.observation.observation_id,
+      window_binding: {
+        app_bundle_id: input.windowBinding.app_bundle_id,
+        window_id: input.windowBinding.window_id,
+      },
+      before_observation: assets,
+    };
+    if (input.branch === 'DIRECT') return ready(base);
+    return ready({
+      ...base,
+      candidate_ordinal: input.decision.candidate_ordinal,
+      budget_before: input.decision.budget_before,
+      budget_after: input.decision.budget_after,
+      reveal_candidate_id: input.decision.reveal_candidate_id,
+      reveal_scope_ref: input.decision.reveal_scope_ref,
+    });
   }
 
   async function persistReveal(options) {
@@ -1431,10 +1552,69 @@ const notesIntentDispatch = await (async () => {
     }
   }
 
-  return { persistDownload, persistReveal };
+  return { checkDownloadReadiness, persistDownload, persistReveal };
 })();
 ```
 <!-- notes-intent-dispatch:end -->
+
+### Intent 前下載就緒 gate
+
+`notesIntentDispatch.checkDownloadReadiness({app, observation, windowBinding, branch, decision})` 是 intent 前的純同步檢查：只讀 Agent 已呈現、判讀並讀回的同一 `app`／`observation`，加當次 window binding 與 B1 decision；不執行 CLI、click／capture，也不建立 intent／attempt／staging 或固定 slot。輸出只有 `READY`／`STOP`，`STOP.blockers` 保留具體缺口，但不替 Agent 證明歷史、GUI sensor、控制命中或派送授權。
+
+共同條件是同一 live app handle 具備 `click` 與 `getAXStateAndScreenshot`、observation `ready_for_bind=true` 及原始截圖／AX refs，且 binding 為 `jp.naver.line.mac` 加已知非 `UNKNOWN` window id；不足即 `APP_WINDOW_CONTEXT_REQUIRED` 或對應 observation/app blocker。
+
+- `DIRECT`：`VISIBLE`、`MATCH` owner／mapping、`ENABLED`、`PRE_INPUT`、`PASS_TO_INPUT`、`INSIDE`、相同已知座標空間且 `coordinate_space_match=MATCH`；control region／候選點有限，prepared target 相同且為嚴格內點。`position_source_ref` 須是同一 observation 的截圖或 AX ref。
+- `REVEAL`：只接受既有 `selected-filmstrip-safe-edge`（其他方法為 `REVEAL_KIND_UNSUPPORTED`）；保留候選 id／scope、已選媒體、同一 before 截圖／AX refs、安全區 ref、有限嚴格內點 target、mapping id／時間／座標空間／position ref，以及 ordinal／budget／prior refs。候選 1 為 `0→1`／`NONE`；候選 2 為 `1→2`／非空 prior refs，且須有 `rearm_preconditions_ref`、`rearm_new_information_ref`、B1 判定的 `rearm_new_information_conclusion=PASS`。
+
+`READY` 只允許接既有 intent；仍須完成 B1 判斷，intent 讀回後用當次 observation 或同一 reveal after 重新核對。`STOP` 走 B1 局部停止：不建 intent、不送 reveal、不消耗該媒體 v5；無全域 blocker 且可安全返回時才接續其他合格項。
+
+**前置範例。** 以下沿用本輪已呈現並讀回的 `app`／`observation` 與當次 `windowBinding`、`branch`；不重新 `getApp`、capture 或先讀可能缺失的 asset。只將 `UNKNOWN` 與 `null` 換成同一 observation／B1 的實際值。取不到對應證據時保留缺值，讓 gate 回傳具體 blocker。候選 2 另加上述三個 rearm 欄位。
+
+```js
+const readinessRef = asset => asset && ({
+  path: asset.path, bytes: asset.bytes, sha256: asset.sha256,
+});
+const screenshot = readinessRef(observation?.assets?.screenshot);
+const ax = readinessRef(observation?.assets?.ax);
+const commonDecision = {
+  mapping_status: 'MATCH', observation_order: 'PRE_INPUT',
+  coordinate_space_match: 'MATCH',
+  control_region_coord_space: 'UNKNOWN',
+  target_coord_space: 'UNKNOWN',
+  position_source_ref: screenshot,
+};
+const decision = branch === 'DIRECT' ? {
+  ...commonDecision,
+  control_visibility: 'VISIBLE', control_owner: 'MATCH', enabled_state: 'ENABLED',
+  grounding_conclusion: 'PASS_TO_INPUT', candidate_point_relation: 'INSIDE',
+  control_region: null,
+  candidate_point: null,
+  prepared_target: null,
+} : {
+  ...commonDecision,
+  navigation_kind: 'selected-filmstrip-safe-edge',
+  reveal_candidate_id: 'UNKNOWN',
+  reveal_scope_ref: 'UNKNOWN',
+  candidate_ordinal: 1, prior_candidate_refs: 'NONE',
+  budget_before: 0, budget_after: 1,
+  before_screenshot_ref: screenshot, before_ax_ref: ax,
+  selected_state_before: 'SELECTED', selected_media_ref: 'UNKNOWN',
+  safe_zone_ref: 'UNKNOWN',
+  safe_zone: null,
+  prepared_target: null,
+  mapping_id: 'UNKNOWN', mapping_valid_at: 'UNKNOWN',
+};
+const readiness = notesIntentDispatch.checkDownloadReadiness({
+  app, observation, windowBinding, branch, decision,
+});
+nodeRepl.write(JSON.stringify({
+  next_action: readiness.status === 'READY'
+    ? 'RUN_EXISTING_NOTES_INTENT_ONCE' : 'B1_LOCAL_STOP',
+  readiness,
+}, null, 2));
+```
+
+只有 `RUN_EXISTING_NOTES_INTENT_ONCE` 才執行一次已解析的既有 notes `intent` CLI 並讀回；`B1_LOCAL_STOP` 保留該項與 blockers，不派送。
 
 ### 可直接複製的單一路徑
 
