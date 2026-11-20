@@ -1,36 +1,144 @@
-# LINE 相簿 Agent 備份
+# LINE 相簿與記事本備份
 
-人工開好 LINE 相簿列表並交接前景，由 AI Agent 使用[專案 Skill](.agents/skills/line-album-agent-cua/SKILL.md) 查明舊進度、完整盤點、逐本下載與驗證。照片預設放專案 `backup/`，永久紀錄分開放 `backup-records/<列表 UUID>/`。照片複製到外接硬碟並刪除本機 `backup/` 後，Agent 仍能查歷史、跳過已完成相簿。結果未知先查證，中斷採相簿級恢復。
+這是一套讓 AI 助理在 macOS 上幫你備份 LINE 內容的 **Agent Skill**。
 
-日常入口是[使用手冊的 Prompt](docs/LINE相簿備份_使用手冊.md)。審查文件或整理專案不會啟動 LINE；群組中文名稱不作身分依據。
+你指定一個已經開好的 LINE 相簿列表或記事本列表；AI 助理讀取專案 Skill 後，會自行盤點、逐本或逐項下載、檢查檔案並保存紀錄。下次啟動時，它會先依永久紀錄跳過已完成項目；若前次中斷，會嘗試安全接續，無法確認時則停止並保留現場。你不必操作命令列，也不必自己解讀雜湊等技術細節，但要確認回報包含列表身分、盤點結果、未解項目與驗證範圍。
 
-## 保留的工具
+> **它比較像一份給 AI 的專業工作手冊，不是一個安裝後會在背景自動執行的 App。**
 
-- `src/line_backup_batch/daily.py`：本地列表、事件、完成與中斷紀錄。
-- `src/line_backup_batch/image_decode.swift`：逐檔 SHA-256 與 ImageIO 完整解碼。
-- `scripts/agent_resume/modern_ocr.swift`：選用的離線影像 OCR，不截圖或操作 GUI。
-- `tests/test_daily_records.py`：記錄、資料保護、恢復與真實 ImageIO fixture 回歸。
+## 你只需要做三件事
+
+1. 在 LINE 打開正確的**一個**列表：相簿列表或記事本列表。
+2. 把 LINE 開在正確列表，不要關閉或最小化；切到你使用的 AI 助理對話框，貼上對應的正式啟動指令。**不要貼到 LINE 聊天室。**
+3. 送出後由 Agent 重新帶出 LINE 並接手操作；備份期間不要接管滑鼠或鍵盤。
+
+提交正式啟動指令，同時代表**只授權 Prompt 指定的這一個列表與本次備份範圍**，並**交接當下的 LINE 前景**。不包含其他列表、其他流程或整個 LINE 帳號；也不需要再補一句「開始下載」。
+
+完整步驟與可直接複製的指令在[使用手冊](docs/LINE相簿備份_使用手冊.md)。
+
+## 先選一條流程
+
+| 你要備份的內容 | 先打開的 LINE 畫面 | 會保存什麼 | 預設位置 | 永久紀錄 |
+|---|---|---|---|---|
+| 群組相簿裡的相片 | 群組相簿列表 | 指定列表內合格相簿的照片 | `backup/<相簿目錄>/` | `backup-records/` |
+| 記事本貼文裡的媒體 | 單一記事本列表 | 貼文內照片與影片；不含其他附件 | `backup/記事本/` | `notes-backup-records/` |
+
+兩條流程彼此獨立。相簿與記事本的 Skill、啟動指令、下載入口、目的地與永久紀錄都不能互換，也不能把同一次任務的狀態套到另一條流程。
+
+### 相簿備份
+
+- 入口：[使用手冊的相簿章節](docs/LINE相簿備份_使用手冊.md#情境-a備份-line-相簿)與[相簿正式啟動指令](docs/LINE相簿備份_使用手冊.md#附錄-b相簿正式-prompt)。
+- Agent 會從相簿列表頂端盤點到底端，逐本核對身分、新空白目的地、下載結果與照片完整性。
+- 相簿流程只使用 LINE 相簿詳細頁的 `⋯ → 儲存全部` 作為整本下載入口；不會改用單張或逐張下載代替。
+- 更完整的 Skill 導覽：[LINE 相簿備份 Skill 說明](docs/Skill說明_LINE相簿備份.md)。
+
+### 記事本照片與影片備份
+
+- 入口：[使用手冊的記事本章節](docs/LINE相簿備份_使用手冊.md#情境-b備份-line-記事本)與[記事本正式啟動指令](docs/LINE相簿備份_使用手冊.md#附錄-c記事本正式-prompt)。
+- Agent 會盤點整個記事本列表，辨識貼文中的照片、影片與沒有媒體的純文字貼文，再逐項下載與驗證。
+- 只備份貼文內的照片與影片；留言、貼圖、連結、PDF、Word、網頁文件及其他附件不納入。
+- 更完整的 Skill 導覽：[LINE 記事本備份 Skill 說明](docs/Skill說明_LINE記事本備份.md)。
+
+## 它是怎麼運作的？
+
+可以把整套流程想成一次受託整理與搬運：
+
+| 角色 | 白話工作 |
+|---|---|
+| **Skill** | 給 AI 的專業工作手冊，說明怎麼看畫面、怎麼判斷、何時停止，以及哪些資料不能碰。 |
+| **Agent** | 現場領班。讀 Skill、理解你的目標、判斷目前畫面與下一步，並在授權內自主完成整份列表。 |
+| **Computer Use** | Agent 的眼睛與手。用來觀察 macOS 上的 LINE 畫面、捲動、點擊與輸入。 |
+| **小工具** | 倉管與驗貨員。只負責保存交易紀錄、避免重複下載、計算雜湊、解碼檔案與核對結果，不會自己操作 LINE。 |
+| **永久紀錄** | 只追加的出貨簿。照片可以被搬走，但完成、排除、未知與保護歷史不會因此消失。 |
+
+一條典型流程如下：
+
+```text
+你開好一個列表並貼上啟動指令
+        ↓
+Agent 讀 Skill、查永久紀錄、核對目前畫面
+        ↓
+Agent 完整盤點，逐本或逐項操作 LINE 下載
+        ↓
+小工具保存交易、驗證檔案、讀回完成紀錄
+        ↓
+Agent 用白話回報已完成、未完成與需要你處理的事
+```
+
+## 這個專案不是什麼
+
+- 不是 LINE 官方提供的雲端備份，也不是整個 LINE 帳號的匯出工具。
+- 不是安裝後會常駐背景自動工作的服務，不會自行監看 LINE 或替你建立授權。
+- 不會自動備份聊天文字、留言、貼圖、連結或其他聊天內容。
+- 不會把記事本中的 PDF、Word、網頁文件等非照片／影片附件當成下載目標。
+- 不會因為照片目錄消失就重新下載；也不會宣稱你的外接硬碟副本已經被本流程驗證。
+- 檔案驗證通過只代表指定本機檔案在該次驗證範圍內完整可讀，**不保證與 LINE 伺服器上的原始位元完全相同**。
+
+## 保護資料的三條紅線
+
+1. **一次只處理一個列表。** 不要同時跑相簿與記事本，也不要同時備份兩個列表。
+2. **結果不明時不要重試。** 不要自己再按一次「儲存全部」、換新資料夾、重設紀錄或要求 Agent「再下載一次」。請它先查證。
+3. **媒體子目錄可以搬，整個 `backup/` 與永久紀錄不可刪。** `backup/` 是相簿與記事本共用的媒體父目錄；請只在確認某個特定相簿或貼文的子目錄已有可讀副本後整理它。`backup-records/`、`notes-backup-records/` 與 `.local/line-backup/` 保存的是歷史與接續依據，不隨媒體刪除。
+
+本次備份**不授權** Agent 發訊息、刪除相簿、分享內容或覆寫舊照片。若它提出這些動作，請拒絕並停止；若授權、畫面、身分或下載結果不清楚，它應保留原狀，而不是換一個入口繞過。
+
+## 資料放在哪裡？
+
+```text
+Line_backup/
+├── backup/                      媒體父目錄（不要整個刪除）
+│   ├── <相簿目錄>/              相簿照片（依特定子目錄整理）
+│   └── 記事本/                  記事本媒體父目錄
+│       └── <列表>/<貼文>/        記事本照片與影片（依特定子目錄整理）
+├── backup-records/              相簿永久紀錄（不要刪）
+├── notes-backup-records/        記事本永久紀錄（不要刪）
+└── .local/line-backup/          最近任務書籤與私有證據（不要刪）
+```
+
+`backup/` 不是單一相簿資料夾，而是兩條流程共用的媒體父目錄。不要用「清空 `backup/`」的方式整理，否則可能同時刪掉另一條流程的媒體。
+
+`index.json` 只登錄帳本位置，`active-task.json` 與 `active-notes-task.json` 只協助找回最近任務；真正的事實來源是各帳本內追加式的事件紀錄。即使索引或最近任務檔不見，也不代表沒有歷史，Agent 會重新查全部帳本。
+
+## 工具與驗證
+
+| 工具 | 用途 |
+|---|---|
+| `src/line_backup_batch/daily.py` | 相簿清單、交易、狀態、完成與中斷紀錄；不操作 LINE。 |
+| `src/line_backup_batch/notes.py` | 記事本獨立帳本、三層身分、下載交易與恢復入口；不操作 LINE。 |
+| `src/line_backup_batch/image_decode.swift` | 逐檔計算 SHA-256，並以 macOS ImageIO 做完整像素解碼。 |
+| `src/line_backup_batch/media_verify.py` | 照片解碼與影片驗證；影片固定使用成對的 Homebrew `ffmpeg`／`ffprobe`。 |
+| `scripts/agent_resume/modern_ocr.swift` | 選用的離線 OCR，只輔助讀取已保存影像，不會截圖或操作 GUI。 |
+
+工具輸出的 `dispatch_authorized=false` 是「工具沒有授予 GUI 權限」的簿記欄位，不是下載成功、使用者同意或實機驗收。工具摘要 PASS、離線測試通過與真實 LINE 操作，是三種不同層級的證據。
+
+## 目前狀態
+
+- 專案位於 `feature/line-notes-media`；Owner 實機測試通過並明示同意合併前，不會合併到 `master`。
+- 相簿流程曾有一次特定 macOS Computer Use Session 的實機操作紀錄（`OBSERVED`）：4 本相簿、141 張照片，涵蓋重新觀察 popup、座標映射、chooser、命名與完成紀錄。這是特定 Session 的觀察事實，不是獨立 E2E 驗收；也不代表所有 macOS、縮放、多螢幕或模型環境都已通過。
+- 相簿的跨 Session 恢復、名稱校正與跨模型遵循率仍未普遍驗證；未實際執行的情境維持 `NOT_RUN`。
+- 記事本已有個別照片與小型照片列表的完成紀錄，但完整列表 GUI E2E、影片、混合照片／影片附件、即時 chooser、跨 Session 接續與恢復仍為 `NOT_RUN`，不能宣稱整體功能已全面通過。
+- 已知實作落差仍待程式修正：記事本精確 restart 的 active candidate 若單檔消失、但上層版本目錄仍在，目前可能被投影成 `LOCAL_MISSING`；部分系統／子程序錯誤也可能回傳退出碼 4。遇到這類情況先停止、保留證據，不要重試或宣稱全部完成；詳見[記事本 Skill 說明](docs/Skill說明_LINE記事本備份.md)。
+- 本專案不提供 OS sandbox、網路隔離或「恰好一次」的作業系統級點擊稽核；文件與工具邊界不能被說成平台層強制保證。
+
+## 文件導覽
+
+| 想知道什麼 | 先讀哪一份 |
+|---|---|
+| 我現在該怎麼開始？ | [LINE 相簿與記事本備份使用手冊](docs/LINE相簿備份_使用手冊.md) |
+| 相簿 Skill 的意圖、工具與技術是什麼？ | [LINE 相簿備份 Skill 說明](docs/Skill說明_LINE相簿備份.md) |
+| 記事本 Skill 的意圖、工具與技術是什麼？ | [LINE 記事本備份 Skill 說明](docs/Skill說明_LINE記事本備份.md) |
+| 永久紀錄的目錄與匯入限制是什麼？ | [日常備份的結構化記憶](docs/結構化備份記憶.md) |
+| 相簿 Save All 的歷史根因與 E2E 證據是什麼？ | [Save All 決策根因與 E2E 修正紀錄](docs/LINE相簿SaveAll決策根因與E2E修正紀錄.md) |
+
+## 維護者快速入口
+
+以下是唯讀查詢或離線檢查，不會操作 LINE，也不授予 GUI 權限：
 
 ```sh
 PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.daily --help
+PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes --help
 PYTHONPATH=src /usr/bin/python3 -B -m unittest discover -s tests -p test_daily_records.py
+PYTHONPATH=src /usr/bin/python3 -B -m unittest discover -s tests -p 'test_notes*.py'
 ```
 
-工具不操作 LINE、不簽發下載授權，也不獨立證明畫面內容真實。summary 的 PASS 只代表 Agent 提交資料的簿記結果；`sensor_verified=false`、`real_line_e2e=NOT_TESTED`，不能升格為正式 AUTO 或獨立 E2E。
-
-## 唯一核心目錄與備份記憶
-
-`Line_backup` 是唯一核心目錄。`backup-records/` 是跨列表永久紀錄區，`index.json` 僅登錄帳本位置；相簿身分、完成／排除／未知操作與歷史提示，以各列表 UUID 目錄的追加式事件為準。`.local/line-backup/active-task.json` 只定位最近任務，遺失它不等於沒有歷史。日常啟動不查封存、外層舊資料或 Git 歷史。
-
-```sh
-PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.daily groups
-PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.daily memory --records-root "$RECORDS_ROOT"
-```
-
-`RECORDS_ROOT` 由 Agent 從 `groups` 及已核對列表取得，不由 Owner 填 UUID。`memory`／`summary` 不要求照片 root 存在；整本目錄缺席仍保留完成，另報本機不可用。仍存在的目錄若部分缺檔、內容或身分異常，停止新派送，不重下補帳。外接硬碟不必在線，也不要求另做歸檔登記；外部副本是否完整未經本流程驗證。
-
-保留 `backup-records/` 及專案 `.local/line-backup/` 私有證據，不隨照片刪除。舊照片樹內的帳本需先以 `daily migrate-records` 安全複製並讀回，原件保留、舊入口拒絕寫入；新一批目的地使用 `daily destination` 追加綁定，不改寫歷史。操作方法見[備份與恢復](.agents/skills/line-album-agent-cua/references/backup-and-resume.md)。這項分離保障刪除照片區後仍保留紀錄，無法保證整個專案或磁碟遺失後仍可還原。
-
-舊 Harness、交易程式與專屬測試已退役。穩定操作方法在 Skill／程式中，開發歷程在 Git 中；都不需要啟動舊程式。結構化記憶與轉入限制見[紀錄工具](.agents/skills/line-album-agent-cua/references/daily-backup.md)。
-
-記憶位置、轉入結果與驗證界限見[結構化備份記憶](docs/結構化備份記憶.md)。離線測試不表示新的 LINE 實機或跨 Session 恢復驗收已通過。
+文件只負責讓人理解與啟動任務；真正的 Agent 操作規則在 `.agents/skills/line-album-agent-cua/SKILL.md` 與 `.agents/skills/line-notes-agent-cua/SKILL.md`。若日常試用出現落差，應先區分是 Skill 指示、工具能力、Agent 遵循或來源環境問題，再考慮最小修改。

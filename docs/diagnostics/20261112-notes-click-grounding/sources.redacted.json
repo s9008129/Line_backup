@@ -1,0 +1,231 @@
+{
+  "schema": "notes-click-grounding-review-sources/v1",
+  "candidate_head": "0d85dfa6564fcaebbc7b49bd001dac5bd8682a01",
+  "incident_product_head_reported": "65e93d51fc3fc8bb6b1aa58136cd862bf39600ee",
+  "sources": [
+    {
+      "label": "media3_pre_download",
+      "path": ".local/line-backup/tasks/notes-daily-20261112-knowledge-files-d8120e29/observations/p0-media-3-reveal-toolbar-20261112T164402p0800/p0-media-3-reveal-toolbar-20261112T164402p0800.screenshot.bin",
+      "bytes": 217625,
+      "sha256": "476423c9a25d8d4d1bc208da5627a603e0ccdce51edac3833795b6f9a6356f5c"
+    },
+    {
+      "label": "media4_pre_download",
+      "path": ".local/line-backup/tasks/notes-daily-20261112-knowledge-files-d8120e29/observations/p0-media-4-reveal-toolbar-20261112T165115p0800/p0-media-4-reveal-toolbar-20261112T165115p0800.screenshot.bin",
+      "bytes": 240763,
+      "sha256": "dd67b45d7cae536fcb88f81d38a8651f9bfec776ae14f28980171cb35e37e8c6"
+    },
+    {
+      "label": "media3_input",
+      "path": ".local/line-backup/tasks/notes-daily-20261112-knowledge-files-d8120e29/observations/p0-media-3-download-control-20261112T164541p0800/p0-media-3-download-control-20261112T164541p0800.input.json",
+      "bytes": 579,
+      "sha256": "c03f0baa3f12f4b2317e83025fa923e37e144df4b5ac6ee8d260808eacf8c214"
+    },
+    {
+      "label": "media4_input",
+      "path": ".local/line-backup/tasks/notes-daily-20261112-knowledge-files-d8120e29/observations/p0-media-4-download-control-20261112T165144p0800/p0-media-4-download-control-20261112T165144p0800.input.json",
+      "bytes": 579,
+      "sha256": "aa15841e20a61f5538017d3617b20ec7d852b0d9a7d2d89cbc850bb21f688b65"
+    },
+    {
+      "label": "media4_immediate_after_input",
+      "path": ".local/line-backup/tasks/notes-daily-20261112-knowledge-files-d8120e29/observations/p0-media-4-download-control-20261112T165144p0800/p0-media-4-download-control-20261112T165144p0800.screenshot.bin",
+      "bytes": 239632,
+      "sha256": "f539965ef5046b51b8c844fcdf028a9af6f7f3c547089a94e2551fecc5b8e67c"
+    },
+    {
+      "label": "media4_late_after_input",
+      "path": ".local/line-backup/tasks/notes-daily-20261112-knowledge-files-d8120e29/observations/p0-media-4-post-control-late-20261112T165158p0800/p0-media-4-post-control-late-20261112T165158p0800.screenshot.bin",
+      "bytes": 226796,
+      "sha256": "1d426962fe3a2e12a6b01f0fd4e1d10f85eadc2f6c7c3058c73430e8c7f19e91"
+    },
+    {
+      "label": "media4_bundle",
+      "path": ".local/line-backup/tasks/notes-daily-20261112-knowledge-files-d8120e29/evidence/p0-media-4-outcome-r1-20261112T1653+0800/bundle.json",
+      "bytes": 5519,
+      "sha256": "d16d143511f2792c8d21992402d4fd931e3c8520fa112230c85e683f4957ef7e"
+    },
+    {
+      "label": "historical_final_summary",
+      "path": ".local/line-backup/tasks/notes-daily-20261112-knowledge-files-d8120e29/captures/notes-capture-9b932f7597104c8aa2dc267992876ba2/stdout.bin",
+      "bytes": 13352,
+      "sha256": "cf5819b1da4c878e81c2ee889b2d4f78179bcf251b56efa4b3cd5ef959b7437f"
+    },
+    {
+      "label": "input_issue_report",
+      "path": "問題提報單.md",
+      "bytes": 15831,
+      "sha256": "a6096ef71f62c828602489f972b4c5b3a0010a37b1249d919cdfda5ac2f4b562"
+    },
+    {
+      "label": "notes_module",
+      "path": "src/line_backup_batch/notes.py",
+      "bytes": 374311,
+      "sha256": "75bf2f7663fbd21106ea61da3c50da66262f962a9a36fe0a3b021a89909654aa"
+    }
+  ],
+  "measurement": {
+    "method": "sips BMP derivative; fixed analyst ROI; bright-pixel bounding box only, NOT native hit area",
+    "results": [
+      {
+        "derived": "media3-derived.bmp",
+        "dimensions": [
+          1280,
+          960
+        ],
+        "bits_per_pixel": 24,
+        "compression": 0,
+        "analyst_roi_half_open": [
+          1215,
+          96,
+          1258,
+          139
+        ],
+        "threshold_rgb_each_min": 180,
+        "visible_bright_pixels_bbox_inclusive": [
+          1220,
+          103,
+          1251,
+          134
+        ],
+        "bright_pixel_count": 181,
+        "bbox_midpoint": [
+          1235.5,
+          118.5
+        ],
+        "point_1226_119_inside_bbox": true,
+        "point_1226_158_inside_bbox": false
+      },
+      {
+        "derived": "media4-derived.bmp",
+        "dimensions": [
+          1280,
+          960
+        ],
+        "bits_per_pixel": 24,
+        "compression": 0,
+        "analyst_roi_half_open": [
+          1215,
+          96,
+          1258,
+          139
+        ],
+        "threshold_rgb_each_min": 180,
+        "visible_bright_pixels_bbox_inclusive": [
+          1220,
+          103,
+          1251,
+          135
+        ],
+        "bright_pixel_count": 209,
+        "bbox_midpoint": [
+          1235.5,
+          119.0
+        ],
+        "point_1226_119_inside_bbox": true,
+        "point_1226_158_inside_bbox": false
+      }
+    ]
+  },
+  "bundle_audit": {
+    "bundle_sha256": "d16d143511f2792c8d21992402d4fd931e3c8520fa112230c85e683f4957ef7e",
+    "assets_checked": 15,
+    "checks": [
+      {
+        "role": "screenshot",
+        "sha256": "7cf561cd3395365795d63c3ec3518c173d27ad6bef3b39103f6dc7d177a18157",
+        "hash_match": true,
+        "bytes_match": true
+      },
+      {
+        "role": "ax",
+        "sha256": "eb07d941fc18faa828681bc486afcc89b4452bde1f995f96e6690dfb24d41ee6",
+        "hash_match": true,
+        "bytes_match": true
+      },
+      {
+        "role": "input_receipt",
+        "sha256": "5e627043598de1ea943b6aed7a5cb67067a3ecbc083c6f27381879eb8efd2738",
+        "hash_match": true,
+        "bytes_match": true
+      },
+      {
+        "role": "screenshot",
+        "sha256": "b019cdd34029c5d90a6c9d4210d4a70a9ffc39c295b5eedfded980ee89982cfb",
+        "hash_match": true,
+        "bytes_match": true
+      },
+      {
+        "role": "ax",
+        "sha256": "eb07d941fc18faa828681bc486afcc89b4452bde1f995f96e6690dfb24d41ee6",
+        "hash_match": true,
+        "bytes_match": true
+      },
+      {
+        "role": "screenshot",
+        "sha256": "dd67b45d7cae536fcb88f81d38a8651f9bfec776ae14f28980171cb35e37e8c6",
+        "hash_match": true,
+        "bytes_match": true
+      },
+      {
+        "role": "ax",
+        "sha256": "725a22e348162468755ad19eaf3b947157811595a45dd13cf65e961ab6d9e9f3",
+        "hash_match": true,
+        "bytes_match": true
+      },
+      {
+        "role": "input_receipt",
+        "sha256": "ba4e743e2f5a6241d0b5eecf1e95faf531e35d4d51645547175c3bfbf88c074a",
+        "hash_match": true,
+        "bytes_match": true
+      },
+      {
+        "role": "screenshot",
+        "sha256": "f539965ef5046b51b8c844fcdf028a9af6f7f3c547089a94e2551fecc5b8e67c",
+        "hash_match": true,
+        "bytes_match": true
+      },
+      {
+        "role": "ax",
+        "sha256": "725a22e348162468755ad19eaf3b947157811595a45dd13cf65e961ab6d9e9f3",
+        "hash_match": true,
+        "bytes_match": true
+      },
+      {
+        "role": "input_receipt",
+        "sha256": "aa15841e20a61f5538017d3617b20ec7d852b0d9a7d2d89cbc850bb21f688b65",
+        "hash_match": true,
+        "bytes_match": true
+      },
+      {
+        "role": "screenshot",
+        "sha256": "1d426962fe3a2e12a6b01f0fd4e1d10f85eadc2f6c7c3058c73430e8c7f19e91",
+        "hash_match": true,
+        "bytes_match": true
+      },
+      {
+        "role": "ax",
+        "sha256": "725a22e348162468755ad19eaf3b947157811595a45dd13cf65e961ab6d9e9f3",
+        "hash_match": true,
+        "bytes_match": true
+      },
+      {
+        "role": "observation",
+        "sha256": "45a87cfbfa8fdb4a53a655cc5be2d9658b4cac9dcd4f18916d0c0a3472713e6d",
+        "hash_match": true,
+        "bytes_match": true
+      },
+      {
+        "role": "statement",
+        "sha256": "1fe751cb4e5686ef191159c7c5ee90db87dc5f1324343c17652a7e8494f09bef",
+        "hash_match": true,
+        "bytes_match": true
+      }
+    ]
+  },
+  "native_hit_test": "UNKNOWN",
+  "cua_tool_build": "UNKNOWN",
+  "raw_native_tool_arguments": "NOT_AVAILABLE_IN_PACKET",
+  "measurement_is_native_hit_area": false,
+  "private_manifest_path": ".local/line-backup/tasks/notes-daily-20261112-knowledge-files-d8120e29/diagnostics/click-grounding-review-20261112/source-manifest.before.json"
+}
