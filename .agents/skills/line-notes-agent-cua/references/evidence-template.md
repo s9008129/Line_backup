@@ -1628,7 +1628,7 @@ const revealDownloadReceipt = await dispatchDownload({
 
 ### 時序、狀態與停止
 
-前置與停止決策依 [目標與下載控制就緒](gui-inventory.md)：播放開始、索引／來源身分漂移、幾何／映射失效或輸入不明均立即停止，不以返回或 reopen 重設一次額度。
+前置與停止決策依 [目標與下載控制就緒（B1）](gui-inventory.md#目標與下載控制就緒b1) 的連結摘要：Agent 播放輸入恆為 `NONE`；來源播放狀態與任何來源／選取／幾何／映射漂移分開記錄，是否繼續或停止仍以 B1 為準。索引／來源身分漂移、幾何／映射失效、控制遮蔽或輸入不明時依 B1 停止，且不以返回或 reopen 重設一次額度。
 
 - statement 記錄 `observed_at`、`input_at`、`clock_source`、`timezone`、`precision`、capture／input 的相對序號，以及 `capture_wait_semantics`／`capture_wait_source`。除非當次工具文件或實測能證明，等待能力一律 `UNKNOWN`；不得宣稱 capture 原子、立即或能捕捉點擊瞬間。截圖或 AX 範圍不足、輸入或等待狀態無法從當次原件確認時，相關觀察欄位記 `UNKNOWN`，不自行補值；只有相對序號可支持先後，不能補出點擊與截圖的未證明時間差。
 - `TOOLBAR_VISIBLE` 只在 intent 後最新、充分涵蓋的 after 原件正面顯示工具列，且下載控制歸屬、啟用與映射成立時使用；它不是穩定可重播的保證。充分範圍仍看不到 toolbar 記 `TOOLBAR_NOT_SHOWN`；只表示本次 bounded observation 沒有顯示，不能推論控制不存在。若 toolbar 曾出現後在有效觀察中消失，記 `REVEAL_TRANSIENT`。本 attempt 的 reveal 最多一次；已送出、error、timeout、capture 失敗或證據不足都不得再試，也不得跨 attempt 重用舊 after。

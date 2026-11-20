@@ -1,6 +1,6 @@
 # 驗證、狀態與恢復
 
-本文件中 ImageIO／ffmpeg／ffprobe、完整解碼、來源媒體種類取證與 PHOTO／VIDEO 對帳的細節只供既有帳本與舊 `verify` 相容，不是日常下載步驟或完成條件。日常流程依 [下載與 notes CLI](download-and-ledger.md) 使用 `download-check`，完成 assurance 為 `DOWNLOAD_ONLY`：只檢查 magic MIME 與 suffix 分類、非空穩定檔案、SHA-256、防覆寫及身分一致性；不解碼，也不證明來源原件或內容完整。Agent 不播放／暫停、拖時間、調倍速或為種類取證；不點媒體內容切換播放控制。完整卡片覆蓋仍是全列表派送前置；普通 intent 的細盤資格只看目標貼文及媒體。未知種類用 `identity.kind=UNCLASSIFIED`，不改 key 來重認或避開歷史。
+本文件中 ImageIO／ffmpeg／ffprobe、完整解碼、來源媒體種類取證與 PHOTO／VIDEO 對帳的細節只供既有帳本與舊 `verify` 相容，不是日常下載步驟或完成條件。日常流程依 [下載與 notes CLI](download-and-ledger.md) 使用 `download-check`，完成 assurance 為 `DOWNLOAD_ONLY`：只檢查 magic MIME 與 suffix 分類、非空穩定檔案、SHA-256、防覆寫及身分一致性；不解碼，也不證明來源原件或內容完整。Agent 播放輸入恆為 `NONE`，不播放／暫停、拖曳、調倍速、點內容切換控制或為種類取證；來源自行播放時，只依 [B1](gui-inventory.md#目標與下載控制就緒b1) 的連結摘要記錄狀態，不為確認狀態新增輸入，任何漂移或控制遮蔽仍依 B1 停止。完整卡片覆蓋仍是全列表派送前置；普通 intent 的細盤資格只看目標貼文及媒體。未知種類用 `identity.kind=UNCLASSIFIED`，不改 key 來重認或避開歷史。
 
 以下以 ImageIO／ffmpeg 為主題的舊程序只在 legacy 相容情境適用；不得將其視為日常流程必做項。
 

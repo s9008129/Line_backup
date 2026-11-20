@@ -15,9 +15,9 @@ LINE 記事本與相簿是不同的產品物件、畫面入口與操作流程。
 
 日常任務只做：核對指定目標 → 找到下載控制 → 下載一次 → 基本檔案檢查 → 保存結果 → 下一項。Agent 不自行擴充成播放、內容檢視、來源種類取證或完整解碼任務。
 
-允許列表導覽、展開貼文、開啟目標 viewer、切換目標媒體、使用明確工具列控制顯示下載工具列、下載／chooser 確認、返回及觀察下載結果。任何 reveal 都只依 B1 在既有 intent 讀回後、以同一新 attempt 送出一次；不得在 intent 前先 hover／pointer move／click 探索。click 候選僅限已選 filmstrip 縮圖的非播放安全邊緣；hover 候選則要有該 hover 自身的可歸屬作用區、非播放安全區與映射，不要求 filmstrip 或同一邊緣。同一 `list_key + post_key + media_key` 最多兩次已派送 reveal 候選，跨 viewer、reopen、Session 與 restart 累計；工具列隱藏時，intent 前必須已有可歸屬的當次安全方法及完整可核對的 `0`／`1` 額度，否則停止。任一前置不足、額度不可核對或沒有該方法的安全證據就停止，不點主內容、播放／暫停、時間軸或其他控制。禁止播放／暫停、拖曳時間軸、切換倍速、點媒體內容切換播放控制、分析媒體畫面內容，或為證明種類而反覆操作 viewer。找不到可靠下載控制就記具體阻塞，不自行嘗試播放或另一下載方式。
+允許列表導覽、展開貼文、開啟目標 viewer、切換目標媒體、使用明確工具列控制顯示下載工具列、下載／chooser 確認、返回及觀察下載結果。任何 reveal 都只依 B1 在既有 intent 讀回後、以同一新 attempt 送出一次；不得在 intent 前先 hover／pointer move／click 探索。click 候選僅限已選 filmstrip 縮圖的非播放安全邊緣；hover 候選則要有該 hover 自身的可歸屬作用區、非播放安全區與映射，不要求 filmstrip 或同一邊緣。同一 `list_key + post_key + media_key` 最多兩次已派送 reveal 候選，跨 viewer、reopen、Session 與 restart 累計；工具列隱藏時，intent 前必須已有可歸屬的當次安全方法及完整可核對的 `0`／`1` 額度，否則停止該項輸入。任一前置不足、額度不可核對或沒有該方法的安全證據就停止該項輸入，不點主內容、播放／暫停、時間軸或其他控制。Agent 播放輸入恆為 `NONE`：不播放／暫停、不拖曳時間軸、不切換倍速、不點媒體內容切換播放控制、不分析畫面內容，也不為種類或播放狀態取證而操作 viewer。來源播放狀態只從既有當次觀察正面記 `NOT_PLAYING`／`AUTOPLAYING`／`UNKNOWN`，不為確認另加操作，且不得把 `UNKNOWN` 當 `NOT_PLAYING`；`AUTOPLAYING` 本身不是獨立 blocker，但來源／選取／幾何／映射仍須可正面核對且無漂移，控制被遮住或證據不足仍停止，不追認舊 attempt。找不到可靠下載控制就記具體阻塞，不自行嘗試播放或另一下載方式。
 
-Reveal 的 intent 前方法與額度 gate、固定 slot、intent 後直接定位或同一新 attempt 一次 reveal、同次 input → after、狀態判讀、幾何界限與停止，只依 [B1](references/gui-inventory.md#目標與下載控制就緒b1)。工具列不需在 intent 前可見；隱藏時，只有當次安全方法可歸屬、B1 的 ordinal／前次引用／新證據條件與額度均成立，才可建立既有 intent，intent 前不得送出 reveal，intent 後也只可走直接或一次 reveal 其中一條。舊 `UNKNOWN`、舊無 outcome、crash、額度不明、前景中斷與 exact restart 限制照 B1；兩次 reveal 總額不因新 Session 或 restart 增加。兩個相依 API 不是 atomic，也不保證固定時間；可執行 composition 與固定 slot 見 [單次輸入與直接 after 觀察](references/evidence-template.md#單次輸入與直接-after-觀察)。
+Reveal 的 intent 前方法與額度 gate、固定 slot、intent 後直接定位或同一新 attempt 一次 reveal、同次 input → after、狀態判讀、幾何界限與停止，只依 [B1](references/gui-inventory.md#目標與下載控制就緒b1)。充分當次視覺映射不要求 AX 節點，AX 缺節點也不否決充分視覺；但截圖不得補成 AX 節點，viewer 涵蓋、控制可見／歸屬／啟用、選取、幾何與完整座標映射仍須全部成立。工具列不需在 intent 前可見；隱藏時，只有當次安全方法可歸屬、B1 的 ordinal／前次引用／新證據條件與額度均成立，才可建立既有 intent，intent 前不得送出 reveal，intent 後也只可走直接或一次 reveal 其中一條。舊 `UNKNOWN`、舊無 outcome、crash、額度不明、前景中斷與 exact restart 限制照 B1；兩次 reveal 總額不因新 Session 或 restart 增加。兩個相依 API 不是 atomic，也不保證固定時間；可執行 composition 與固定 slot 見 [單次輸入與直接 after 觀察](references/evidence-template.md#單次輸入與直接-after-觀察)。
 
 新媒體來源種類不明時使用 `identity.kind=UNCLASSIFIED`；已有媒體一律沿用原 key／identity，不為改種類重建媒體或去重。`UNCLASSIFIED` 是種類尚未分類，不是派送結果 `UNKNOWN`。下載後由 `download-check` 辨識實際檔案種類，不要求 Agent 證明來源原先是照片或影片。
 
@@ -42,7 +42,7 @@ Agent 的任務是完成整份列表，而不是等 Owner 逐步操作：
 
 若 Owner 明確更新同一日常任務的授權狀態（例如由診斷改為指定備份、解除明示的「不下載」限制，或接受目前版本），只更新明確涵蓋的範圍與被取代限制，保留較窄目標（如指定五張）。依當次畫面與帳本判斷下一個安全步驟；在授權、前景與來源身分支持的範圍內，可繼續唯讀查證、卡片盤點及開啟已核對的目標 viewer，不必先證明下載控制。若授權／前景／身分不明，只停止依賴該前提的輸入，仍可做安全的唯讀查證並回報具體缺口。
 
-下載派送前先依 B1 判斷：控制可直接定位，或工具列隱藏但同一 viewer／選中項的當次安全 reveal 方法、ordinal／前次引用／新證據條件與完整可核對的 `0`／`1` 額度均成立；兩者皆無、額度不明或任何未決就停在 `intent` 前。隱藏分支只代表可建立既有 intent，`intent` 前不得送出 reveal。`bind`／`scan` 等前序步驟仍各自遵守原有 gate。一般「繼續」不解除未明示取消的限制；接受版本只處理版本差異，不解除資料異常、UNKNOWN、活動下載或未完成命名交易。日常授權更新不取代正式角色的當次人工交接，Planner／Reviewer 不因引用歷史下載授權而轉為下載角色。詳見[啟動與帳本對帳](references/download-and-ledger.md#啟動與帳本對帳)。
+下載派送前先依 B1 判斷：控制可直接定位，或工具列隱藏但同一 viewer／選中項的當次安全 reveal 方法、ordinal／前次引用／新證據條件與完整可核對的 `0`／`1` 額度均成立；兩者皆無、額度不明或任何未決時，只在該項 `intent` 前停止輸入並保留未完成。若可靠返回契約（實際 entry anchor、`expected_return_role`、一次一層、可歸屬返回控制）成立且無全域 blocker，可返回已核對列表後一次一項處理其他合格項。未隔離 `UNKNOWN`／無 outcome、活動下載、pending naming、`LOCAL_CHANGED`、列表覆蓋或身分不明、前景／返回歧義仍是停止所有新派送的條件，不藉排程跳過；既有 `UNKNOWN` 不改寫成 `NOT_SENT`。隱藏分支只代表可建立既有 intent，`intent` 前不得送出 reveal。`bind`／`scan` 等前序步驟仍各自遵守原有 gate。一般「繼續」不解除未明示取消的限制；接受版本只處理版本差異，不解除資料異常、UNKNOWN、活動下載或未完成命名交易。日常授權更新不取代正式角色的當次人工交接，Planner／Reviewer 不因引用歷史下載授權而轉為下載角色。詳見[啟動與帳本對帳](references/download-and-ledger.md#啟動與帳本對帳)。
 
 ## 結果不明的單次恢復
 
