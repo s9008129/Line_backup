@@ -1465,6 +1465,8 @@ const cases = {
     {prepared_target: [40, 80]}, 'REVEAL_TARGET_NOT_STRICT_INTERIOR'),
   badBudget: revealCase({budget_after: 2}, 'REVEAL_ORDINAL_BUDGET_MISMATCH'),
   badOrdinal: revealTwoCase({candidate_ordinal: 3}, 'REVEAL_ORDINAL_INVALID'),
+  unknownCandidateId: revealTwoCase(
+    {reveal_candidate_id: 'UNKNOWN'}, 'REVEAL_CANDIDATE_ID_REQUIRED'),
   missingMappingId: revealCase(
     {mapping_id: 'UNKNOWN'}, 'REVEAL_MAPPING_ID_REQUIRED'),
   missingMappingTime: revealCase(
@@ -1483,12 +1485,48 @@ for (const [name, [branch, overrides, expected]] of Object.entries(cases)) {
 }
 return {counters, stopped};
 ''')
-        self.assertEqual(len(result['stopped']), 30)
+        self.assertEqual(len(result['stopped']), 31)
         for name, item in result['stopped'].items():
             self.assertEqual(item['status'], 'STOP', name)
             self.assertIn(item['expected'], item['blockers'], name)
         self.assertEqual(result['counters'].get('clicks', 0), 0)
         self.assertEqual(result['counters'].get('captures', 0), 0)
+
+    def test_invalid_second_reveal_refs_stop_before_intent_and_input(self):
+        result, _ = self.run_dispatch(DISPATCH_SETUP + r'''
+const counters = {};
+const app = dispatchReadinessApp(counters);
+const observation = await dispatchObservation('review-second-reveal');
+const windowBinding = dispatchWindowBinding();
+const invalidRefs = [[null], ['UNKNOWN'], ['NONE'], [''], Array(1), [{}]];
+const beforeFiles = (await fsTest.readdir(process.env.INPUT_TEST_DIR)).sort();
+const results = [];
+for (const [index, refs] of invalidRefs.entries()) {
+  const attemptId = 'attempt-review-' + index;
+  const overrides = {prior_candidate_refs: refs};
+  const readiness = notesIntentDispatch.checkDownloadReadiness({
+    app, observation, windowBinding, branch: 'REVEAL',
+    decision: dispatchRevealReadinessDecision(observation, 2, overrides),
+  });
+  const request = {...dispatchNavigationRequest(attemptId, 2), ...overrides};
+  const reveal = await notesIntentDispatch.persistReveal(
+    dispatchRevealOptions(attemptId, request, app));
+  results.push({readiness, reveal});
+}
+const afterFiles = (await fsTest.readdir(process.env.INPUT_TEST_DIR)).sort();
+return {counters, beforeFiles, afterFiles, results};
+''')
+        for index, case in enumerate(result['results']):
+            with self.subTest(index=index):
+                self.assertEqual(case['readiness']['status'], 'STOP')
+                self.assertIn('REVEAL_ORDINAL_BUDGET_MISMATCH',
+                              case['readiness']['blockers'])
+                self.assertEqual(case['reveal']['status'], 'STOP')
+                self.assertEqual(case['reveal']['reason'],
+                                 'REVEAL_ORDINAL_BUDGET_MISMATCH')
+        self.assertEqual(result['counters'].get('clicks', 0), 0)
+        self.assertEqual(result['counters'].get('captures', 0), 0)
+        self.assertEqual(result['beforeFiles'], result['afterFiles'])
 
 
 GROUNDED_SETUP = r'''

@@ -1264,8 +1264,9 @@ const notesIntentDispatch = await (async () => {
   const isId = value => typeof value === 'string' &&
     /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(value);
   const isKnownString = value => typeof value === 'string' &&
-    value.length > 0 && value !== 'UNKNOWN';
-  const isReferenceToken = value => isKnownString(value) || isFileRef(value);
+    value.trim().length > 0 && !['UNKNOWN', 'NONE'].includes(value.trim());
+  const isReferenceToken = value => isKnownString(value) ||
+    (isFileRef(value) && isKnownString(value.path));
   const isEventRef = value => isObject(value) &&
     Object.keys(value).sort().join(',') === 'event_sha256,sequence' &&
     Number.isSafeInteger(value.sequence) && value.sequence >= 1 &&
@@ -1330,7 +1331,8 @@ const notesIntentDispatch = await (async () => {
         request.prior_candidate_refs !== 'NONE'
       : ordinal === 2 && (request.budget_before !== 1 ||
         request.budget_after !== 2 || !Array.isArray(request.prior_candidate_refs) ||
-        request.prior_candidate_refs.length === 0);
+        request.prior_candidate_refs.length === 0 ||
+        !Array.from(request.prior_candidate_refs).every(isReferenceToken));
     if (budgetMismatch) return 'REVEAL_ORDINAL_BUDGET_MISMATCH';
     return ordinal === 1 || ordinal === 2 ? null : 'REVEAL_ORDINAL_INVALID';
   }
@@ -1377,7 +1379,8 @@ const notesIntentDispatch = await (async () => {
     ], [
       ['REVEAL_KIND_UNSUPPORTED',
        decision.navigation_kind !== 'selected-filmstrip-safe-edge'],
-      ['REVEAL_CANDIDATE_ID_REQUIRED', !isId(decision.reveal_candidate_id)],
+      ['REVEAL_CANDIDATE_ID_REQUIRED',
+       !isId(decision.reveal_candidate_id) || !isKnownString(decision.reveal_candidate_id)],
       ['REVEAL_SCOPE_REF_REQUIRED', !isReferenceToken(decision.reveal_scope_ref)],
       ['REVEAL_SELECTION_REQUIRED', decision.selected_state_before !== 'SELECTED'],
       ['REVEAL_SELECTED_MEDIA_REF_REQUIRED',
@@ -1564,7 +1567,7 @@ const notesIntentDispatch = await (async () => {
 共同條件是同一 live app handle 具備 `click` 與 `getAXStateAndScreenshot`、observation `ready_for_bind=true` 及原始截圖／AX refs，且 binding 為 `jp.naver.line.mac` 加已知非 `UNKNOWN` window id；不足即 `APP_WINDOW_CONTEXT_REQUIRED` 或對應 observation/app blocker。
 
 - `DIRECT`：`VISIBLE`、`MATCH` owner／mapping、`ENABLED`、`PRE_INPUT`、`PASS_TO_INPUT`、`INSIDE`、相同已知座標空間且 `coordinate_space_match=MATCH`；control region／候選點有限，prepared target 相同且為嚴格內點。`position_source_ref` 須是同一 observation 的截圖或 AX ref。
-- `REVEAL`：只接受既有 `selected-filmstrip-safe-edge`（其他方法為 `REVEAL_KIND_UNSUPPORTED`）；保留候選 id／scope、已選媒體、同一 before 截圖／AX refs、安全區 ref、有限嚴格內點 target、mapping id／時間／座標空間／position ref，以及 ordinal／budget／prior refs。候選 1 為 `0→1`／`NONE`；候選 2 為 `1→2`／非空 prior refs，且須有 `rearm_preconditions_ref`、`rearm_new_information_ref`、B1 判定的 `rearm_new_information_conclusion=PASS`。
+- `REVEAL`：只接受既有 `selected-filmstrip-safe-edge`（其他方法為 `REVEAL_KIND_UNSUPPORTED`）；保留候選 id／scope、已選媒體、同一 before 截圖／AX refs、安全區 ref、有限嚴格內點 target、mapping id／時間／座標空間／position ref，以及 ordinal／budget／prior refs。候選 1 為 `0→1`／`NONE`。候選 2 為 `1→2`，每個 prior ref 都須有實際值。intent 前還須有 `rearm_preconditions_ref`、`rearm_new_information_ref` 與 B1 判定的 `rearm_new_information_conclusion=PASS`。原因、同一媒體連續性及前次 request／raw／after 的完整性由 Agent 依 B1 核對。
 
 `READY` 只允許接既有 intent；仍須完成 B1 判斷，intent 讀回後用當次 observation 或同一 reveal after 重新核對。`STOP` 走 B1 局部停止：不建 intent、不送 reveal、不消耗該媒體 v5；無全域 blocker 且可安全返回時才接續其他合格項。
 
