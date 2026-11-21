@@ -3,6 +3,7 @@
 The fixtures use only generated ledgers and local files. They do not observe
 LINE, operate a GUI, or claim real-device acceptance.
 """
+import hashlib
 import json
 from pathlib import Path
 import threading
@@ -724,3 +725,117 @@ class NotesUnknownRecoveryTests(unittest.TestCase):
             )
         self.assertEqual(self.helper.event_bytes(records), before_events)
         self.assertEqual(self.staging_state(fixture), before_staging)
+
+    def test_contract_s1_partial_s2_video_and_photo_complete_after_reopen(self):
+        """Resume a partly completed three-media post using only one v5."""
+        label = 's1-partial-s2-complete'
+        ledger = self.helper.new_ledger(label)
+        kinds = (notes.PHOTO, notes.VIDEO, notes.PHOTO)
+        identities = [notes.media_identity(
+            kind=kind, visual_key='%s-media-%d' % (label, index))
+            for index, kind in enumerate(kinds)]
+        post_identity, post_key_value = self.helper.observe_post(
+            ledger, label + '-post', identities)
+        media_keys = [self.helper.media_key(
+            ledger, post_key_value, identity) for identity in identities]
+        first_key, video_key, last_key = media_keys
+        fixture = dict(ledger=ledger, identities=identities,
+                       post_identity=post_identity, post_key=post_key_value,
+                       media_keys=media_keys)
+        records = ledger.records
+        first_png = media_fixtures.png((0, 255, 0))
+        first_attempt = records.intent(session_id=ledger.session,
+                                       media_key_value=first_key)
+        first_completion = self.complete_download(
+            fixture, first_attempt, color=(0, 255, 0))
+        first_event = '%08d.json' % first_completion['sequence']
+        first_event_bytes = self.helper.event_bytes(records)[first_event]
+        video_attempt = records.intent(session_id=ledger.session,
+                                       media_key_value=video_key)
+        partial = records.summary()
+        self.assertEqual(tuple(partial['status_counts'][name] for name in
+                               ('COMPLETED', 'UNKNOWN', 'PENDING')) +
+                         (partial['current_incomplete'],), (1, 1, 1, 2))
+        self.assertFalse(partial['all_known_media_complete'])
+        reopened = self.helper.reopen(ledger)
+        ledger.records = reopened
+        session2 = label + '-s2'
+        self.bind_session(reopened, fixture, session2, session2)
+        ledger.session = session2
+        video_evidence = ledger.evidence_for_attempt(video_attempt)
+        unknown = reopened.outcome(session_id=session2, evidence=video_evidence,
+                                   attempt_id=video_attempt['attempt_id'],
+                                   outcome='UNKNOWN')
+        self.assertEqual(unknown['outcome'], 'UNKNOWN')
+        isolation = reopened.isolate(
+            session_id=session2, attempt_id=video_attempt['attempt_id'],
+            evidence=video_evidence,
+            expected_tip=reopened.summary()['expected_tip'])
+        self.assertEqual((isolation['disposition'],
+                          isolation['redownload_remaining'],
+                          isolation['next_action']),
+                         ('REDOWNLOAD_AVAILABLE', 1,
+                          'RECOVERY_SCAN_REQUIRED'))
+        self.rescan_same_post(reopened, fixture, session2, session2)
+        v5 = reopened.intent(session_id=session2, media_key_value=video_key)
+        self.assertEqual(v5['schema'], notes.INTENT_V5_SCHEMA)
+        self.assertEqual(v5['recovery_of'], video_attempt['attempt_id'])
+        self.assertEqual(v5['isolation_ref'], isolation['isolation_ref'])
+        self.assertEqual(v5['redownload_budget'], 'CONSUMED')
+        self.assertNotEqual(v5['destination'], video_attempt['destination'])
+        mp4 = b'\x00\x00\x00\x18ftypmp42\x00\x00\x00\x00mp42isom'
+        def finish(attempt, name, content):
+            (Path(attempt['destination']) / name).write_bytes(content)
+            reopened.outcome(session_id=session2, attempt_id=attempt['attempt_id'],
+                             outcome='DOWNLOAD_FINISHED',
+                             evidence=ledger.evidence_for_attempt(attempt))
+            return reopened.download_check(session_id=session2,
+                                           attempt_id=attempt['attempt_id'],
+                                           stability_interval=0)
+
+        video_completion = finish(v5, 'video.mp4', mp4)
+        signature = video_completion['data']['verification']['signature']
+        self.assertIn(signature['mime_type'], ('video/mp4', 'application/mp4'))
+        last_png = media_fixtures.png((0, 0, 255))
+        last_attempt = reopened.intent(session_id=session2,
+                                       media_key_value=last_key)
+        self.assertNotEqual(last_attempt['schema'], notes.INTENT_V5_SCHEMA)
+        self.assertIsNone(last_attempt.get('recovery_of'))
+        finish(last_attempt, 'photo-2.png', last_png)
+        final_records = self.helper.reopen(ledger)
+        final_summary = final_records.summary()
+        completions = [event for event in final_records.events
+                       if event['kind'] == 'completion']
+        by_key = {event['data']['media_key']: event for event in completions}
+        self.assertEqual((len(completions), set(by_key)),
+                         (3, set(media_keys)))
+        expected = ((first_key, notes.PHOTO, first_png),
+                    (video_key, notes.VIDEO, mp4),
+                    (last_key, notes.PHOTO, last_png))
+        for key, kind, content in expected:
+            row = self.media_row(final_summary, key)
+            self.assertEqual((row['status'], row['kind'], row['effective_kind'],
+                              row['local_files']), ('COMPLETED', kind, kind,
+                                                    notes.LOCAL_VERIFIED))
+            data = by_key[key]['data']
+            target = Path(data['destination']) / data['target_file']['name']
+            source_digest = hashlib.sha256(content).hexdigest()
+            digest = hashlib.sha256(target.read_bytes()).hexdigest()
+            self.assertEqual((data['target_file']['sha256'], digest),
+                             (source_digest, source_digest))
+            self.assertEqual(data['verification']['kind'], kind)
+        self.assertEqual((final_summary['status_counts']['COMPLETED'],
+                          final_summary['current_incomplete'],
+                          final_summary['all_known_media_complete'],
+                          final_summary['local_counts'][notes.LOCAL_VERIFIED]),
+                         (3, 0, True, 3))
+        final_events = self.helper.event_bytes(final_records)
+        self.assertEqual(final_events[first_event], first_event_bytes)
+        self.assertEqual(sum(
+            event['kind'] == 'intent' and
+            event['data']['media_key'] == first_key
+            for event in final_records.events), 1)
+        self.assertEqual(sum(
+            event['kind'] == 'intent' and
+            event['data']['schema'] == notes.INTENT_V5_SCHEMA
+            for event in final_records.events), 1)
