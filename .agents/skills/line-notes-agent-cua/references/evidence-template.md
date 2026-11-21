@@ -1285,6 +1285,13 @@ const notesIntentDispatch = await (async () => {
   const sameFileRef = (left, right) => isFileRef(left) && isFileRef(right) &&
     left.path === right.path && left.bytes === right.bytes &&
     left.sha256 === right.sha256;
+  const sameReferenceToken = (left, right) => left === right ||
+    sameFileRef(left, right);
+  const samePriorCandidateRefs = (left, right) => left === right ||
+    (Array.isArray(left) && Array.isArray(right) &&
+     left.length === right.length &&
+     left.every((item, index) => sameReferenceToken(item, right[index])));
+  const copyReferenceToken = value => isFileRef(value) ? fileRef(value) : value;
   const matchesObservationAsset = (value, assets) => {
     const ref = fileRef(value);
     return !!ref && (sameFileRef(ref, assets.screenshot) ||
@@ -1296,6 +1303,8 @@ const notesIntentDispatch = await (async () => {
     }
     return blockers;
   };
+  const sameWindowBinding = (left, right) => isObject(left) && isObject(right) &&
+    left.app_bundle_id === right.app_bundle_id && left.window_id === right.window_id;
 
   function checkIntent(options) {
     if (!isObject(options) || !isObject(options.intent) ||
@@ -1444,13 +1453,83 @@ const notesIntentDispatch = await (async () => {
       budget_before: input.decision.budget_before,
       budget_after: input.decision.budget_after,
       reveal_candidate_id: input.decision.reveal_candidate_id,
-      reveal_scope_ref: input.decision.reveal_scope_ref,
+      reveal_scope_ref: copyReferenceToken(input.decision.reveal_scope_ref),
+      prior_candidate_refs: Array.isArray(input.decision.prior_candidate_refs)
+        ? input.decision.prior_candidate_refs.map(copyReferenceToken)
+        : input.decision.prior_candidate_refs,
     });
+  }
+
+  function checkPreIntentReveal(preIntentReveal) {
+    if (!isObject(preIntentReveal) ||
+        preIntentReveal.status !== 'READY' ||
+        preIntentReveal.branch !== 'REVEAL' ||
+        !Array.isArray(preIntentReveal.blockers) ||
+        preIntentReveal.blockers.length !== 0 ||
+        !isId(preIntentReveal.observation_id) ||
+        !isObject(preIntentReveal.before_observation) ||
+        !isFileRef(preIntentReveal.before_observation.screenshot) ||
+        !isFileRef(preIntentReveal.before_observation.ax) ||
+        evidenceTools.groundedWindowBlockers(preIntentReveal.window_binding).length) {
+      return null;
+    }
+    const ordinalBlocker = revealOrdinalBlocker(preIntentReveal);
+    if (ordinalBlocker ||
+        !isId(preIntentReveal.reveal_candidate_id) ||
+        !isReferenceToken(preIntentReveal.reveal_scope_ref)) return null;
+    return preIntentReveal;
+  }
+
+  function checkRevealBefore(options) {
+    const preIntentReveal = checkPreIntentReveal(options.preIntentReveal);
+    if (!preIntentReveal) return stop('REVEAL_PREFLIGHT_REQUIRED');
+    const beforeAssets = observationAssets(options.beforeObservation);
+    if (!beforeAssets || !isId(options.beforeObservation.observation_id)) {
+      return stop('REVEAL_BEFORE_OBSERVATION_INVALID');
+    }
+    if (options.beforeObservation.observation_id === preIntentReveal.observation_id ||
+        (sameFileRef(beforeAssets.screenshot,
+                     preIntentReveal.before_observation.screenshot) &&
+         sameFileRef(beforeAssets.ax, preIntentReveal.before_observation.ax))) {
+      return stop('REVEAL_BEFORE_OBSERVATION_NOT_FRESH');
+    }
+    const windowBlockers = evidenceTools.groundedWindowBlockers(options.windowBinding);
+    if (windowBlockers.length) {
+      return stop('REVEAL_WINDOW_BINDING_INVALID', { blockers: windowBlockers });
+    }
+    if (!sameWindowBinding(options.windowBinding, preIntentReveal.window_binding)) {
+      return stop('REVEAL_WINDOW_BINDING_CHANGED');
+    }
+    if (options.request.reveal_candidate_id !== preIntentReveal.reveal_candidate_id ||
+        !sameReferenceToken(options.request.reveal_scope_ref,
+                            preIntentReveal.reveal_scope_ref) ||
+        options.request.candidate_ordinal !== preIntentReveal.candidate_ordinal ||
+        options.request.budget_before !== preIntentReveal.budget_before ||
+        options.request.budget_after !== preIntentReveal.budget_after ||
+        !samePriorCandidateRefs(options.request.prior_candidate_refs,
+                                preIntentReveal.prior_candidate_refs)) {
+      return stop('REVEAL_REQUEST_DRIFT');
+    }
+    const fresh = checkDownloadReadiness({
+      app: options.app,
+      observation: options.beforeObservation,
+      windowBinding: options.windowBinding,
+      branch: 'REVEAL',
+      decision: options.request,
+    });
+    if (fresh.status !== 'READY') {
+      return stop('REVEAL_BEFORE_OBSERVATION_BLOCKED', {
+        blockers: fresh.blockers || ['REVEAL_BEFORE_OBSERVATION_BLOCKED'],
+      });
+    }
+    return fresh;
   }
 
   async function persistReveal(options) {
     const gate = checkReveal(options);
     if (gate.status !== 'READY') return gate;
+    const freshGate = checkRevealBefore(options);
+    if (freshGate.status !== 'READY') return freshGate;
     const operationId = 'notes-reveal-c2-' + gate.attempt_id;
     try {
       const run = await persistRevealWithDirectAfter({
@@ -1465,11 +1544,14 @@ const notesIntentDispatch = await (async () => {
       const invoked = run.fail_closed === false;
       return {
         ...gate,
+        ...freshGate,
         status: invoked ? 'INVOKED' : 'STOP',
         reason: invoked ? null : 'REVEAL_INPUT_OR_AFTER_INCOMPLETE',
         blockers: invoked ? [] : ['REVEAL_INPUT_OR_AFTER_INCOMPLETE'],
         operation_id: operationId,
         candidate_ordinal: options.request.candidate_ordinal,
+        pre_intent_observation_id: options.preIntentReveal.observation_id,
+        before_observation_id: options.beforeObservation.observation_id,
         run,
         afterObservation: run.afterObservation,
       };
@@ -1504,6 +1586,9 @@ const notesIntentDispatch = await (async () => {
           reveal.operation_id !== 'notes-reveal-c2-' + gate.attempt_id ||
           !isObject(reveal.run) || reveal.run.fail_closed !== false) {
         return stop('REVEAL_AFTER_NOT_DISPATCHABLE');
+      }
+      if (!sameWindowBinding(request.app_window_binding, reveal.window_binding)) {
+        return stop('DOWNLOAD_REVEAL_WINDOW_BINDING_MISMATCH');
       }
       assets = observationAssets(reveal.run.afterObservation);
       mode = 'REVEAL_SAME_AFTER';
@@ -1571,53 +1656,72 @@ const notesIntentDispatch = await (async () => {
 
 `READY` 只允許接既有 intent；仍須完成 B1 判斷，intent 讀回後用當次 observation 或同一 reveal after 重新核對。`STOP` 走 B1 局部停止：不建 intent、不送 reveal、不消耗該媒體 v5；無全域 blocker 且可安全返回時才接續其他合格項。
 
-**前置範例。** 以下沿用本輪已呈現並讀回的 `app`／`observation` 與當次 `windowBinding`、`branch`；不重新 `getApp`、capture 或先讀可能缺失的 asset。只將 `UNKNOWN` 與 `null` 換成同一 observation／B1 的實際值。取不到對應證據時保留缺值，讓 gate 回傳具體 blocker。候選 2 另加上述三個 rearm 欄位。
+控制可見時，Agent 先以當次 observation 呼叫一次 `DIRECT` gate；若另有可獨立稽核的 reveal 方法，再以同一 observation 呼叫一次 `REVEAL` gate 並保留其 `READY`。備選 `REVEAL` 的 `STOP` 不抹除合格 `DIRECT`。控制未見時只有 `REVEAL READY` 可進 intent。兩者即使都 `READY`，仍只建立一次 intent；intent 前不得送出 preflight input、capture 或建立 slot。
+
+**前置範例。** 沿用本輪已呈現並讀回的 `app`／`observation` 和當次 `windowBinding`。只在充分原件支持控制可見或未見時，將 `controlVisible` 設為 `true` 或 `false`。可見性未明時用 `null`。安全 reveal 方法獨立成立時才把 `revealMethodIndependentlyAuditable` 設為 `true`。`CURRENT_*` 只填由該原件支持的值。控制與 target 使用同一已知座標空間。控制區與安全區須有限，target 須為嚴格內點。候選 2 另加三個 rearm 欄位，由當次新證據得出 `rearm_new_information_conclusion='PASS'`。
 
 ```js
 const readinessRef = asset => asset && ({
   path: asset.path, bytes: asset.bytes, sha256: asset.sha256,
 });
+const controlVisible = B1_CONTROL_VISIBLE;
+const revealMethodIndependentlyAuditable =
+  B1_REVEAL_METHOD_INDEPENDENTLY_AUDITABLE;
 const screenshot = readinessRef(observation?.assets?.screenshot);
 const ax = readinessRef(observation?.assets?.ax);
 const commonDecision = {
   mapping_status: 'MATCH', observation_order: 'PRE_INPUT',
   coordinate_space_match: 'MATCH',
-  control_region_coord_space: 'UNKNOWN',
-  target_coord_space: 'UNKNOWN',
+  control_region_coord_space: CURRENT_CONTROL_COORDINATE_SPACE,
+  target_coord_space: CURRENT_TARGET_COORDINATE_SPACE,
   position_source_ref: screenshot,
 };
-const decision = branch === 'DIRECT' ? {
+const directDecision = {
   ...commonDecision,
   control_visibility: 'VISIBLE', control_owner: 'MATCH', enabled_state: 'ENABLED',
   grounding_conclusion: 'PASS_TO_INPUT', candidate_point_relation: 'INSIDE',
-  control_region: null,
-  candidate_point: null,
-  prepared_target: null,
-} : {
+  control_region: CURRENT_CONTROL_REGION,
+  candidate_point: CURRENT_CANDIDATE_POINT,
+  prepared_target: CURRENT_VERIFIED_DOWNLOAD_TARGET,
+};
+const revealDecision = {
   ...commonDecision,
   navigation_kind: 'selected-filmstrip-safe-edge',
-  reveal_candidate_id: 'UNKNOWN',
-  reveal_scope_ref: 'UNKNOWN',
+  reveal_candidate_id: CURRENT_REVEAL_CANDIDATE_ID,
+  reveal_scope_ref: CURRENT_LIST_POST_MEDIA_SCOPE,
   candidate_ordinal: 1, prior_candidate_refs: 'NONE',
   budget_before: 0, budget_after: 1,
   before_screenshot_ref: screenshot, before_ax_ref: ax,
-  selected_state_before: 'SELECTED', selected_media_ref: 'UNKNOWN',
-  safe_zone_ref: 'UNKNOWN',
-  safe_zone: null,
-  prepared_target: null,
-  mapping_id: 'UNKNOWN', mapping_valid_at: 'UNKNOWN',
+  selected_state_before: 'SELECTED',
+  selected_media_ref: CURRENT_SELECTED_MEDIA_REF,
+  safe_zone_ref: CURRENT_SAFE_EDGE_REF,
+  safe_zone: CURRENT_VERIFIED_SAFE_EDGE_REGION,
+  prepared_target: CURRENT_VERIFIED_SAFE_EDGE_TARGET,
+  mapping_id: CURRENT_MAPPING_ID, mapping_valid_at: CURRENT_MAPPING_VALID_AT,
 };
-const readiness = notesIntentDispatch.checkDownloadReadiness({
-  app, observation, windowBinding, branch, decision,
-});
+const common = {app, observation, windowBinding};
+const directReadiness = controlVisible === true
+  ? notesIntentDispatch.checkDownloadReadiness({
+      ...common, branch: 'DIRECT', decision: directDecision,
+    })
+  : null;
+const preIntentReveal = revealMethodIndependentlyAuditable === true &&
+    (controlVisible === true || controlVisible === false)
+  ? notesIntentDispatch.checkDownloadReadiness({
+      ...common, branch: 'REVEAL', decision: revealDecision,
+    })
+  : null;
+const retainedReveal = preIntentReveal?.status === 'READY'
+  ? preIntentReveal : null;
+const intentReadiness = controlVisible === false ? retainedReveal : directReadiness;
 nodeRepl.write(JSON.stringify({
-  next_action: readiness.status === 'READY'
+  next_action: intentReadiness?.status === 'READY'
     ? 'RUN_EXISTING_NOTES_INTENT_ONCE' : 'B1_LOCAL_STOP',
-  readiness,
+  directReadiness, preIntentReveal, retainedReveal,
 }, null, 2));
 ```
 
-只有 `RUN_EXISTING_NOTES_INTENT_ONCE` 才執行一次已解析的既有 notes `intent` CLI 並讀回；`B1_LOCAL_STOP` 保留該項與 blockers，不派送。
+只有 `RUN_EXISTING_NOTES_INTENT_ONCE` 才執行一次已解析的既有 notes `intent` CLI 並讀回；`B1_LOCAL_STOP` 保留該項與 blockers，不派送。`DIRECT READY` 不因 `preIntentReveal STOP` 失效；兩者都 READY 時仍選一次 DIRECT，但把 `preIntentReveal` 帶到 intent 後備用。控制轉為隱藏時才改走 REVEAL。
 
 ### 可直接複製的單一路徑
 
@@ -1743,9 +1847,13 @@ const directDownloadReceipt = await dispatchDownload({
 
 上例的 `DIRECT_*` 符號是 Agent 判讀後填入的明確輸入，不是可重用的常數；未完成判讀時不得建立 request。`fs` 只用來讀取已保存的 intent／事件核對值與 after 截圖 bytes；直接路徑的 `sourceObservationBytes` 使用剛才保存的 `directCapture.screenshot`，沒有額外 capture。
 
-**Reveal 路徑。** 控制隱藏時，只有 B1 的當次安全區、選取、映射與額度都成立才呼叫。以下示範 `candidate_ordinal=1`、額度 `0→1`。若符合 B1 的第二候選條件，把 ordinal 改成 `2`、額度改成 `1→2`，填入前次原件的 `prior_candidate_refs`、本次條件的 `rearm_preconditions_ref` 與新證據的 `rearm_new_information_ref`。沿用同一固定 slot。
+**Reveal 路徑。** 控制隱藏時，只有 B1 的當次安全區、選取、映射與額度都成立才呼叫。以下示範 `candidate_ordinal=1`、額度 `0→1`，且 request 已帶齊 fresh gate 的映射、先後、座標空間與安全區欄位。若符合 B1 的第二候選條件，才把 ordinal／額度改成 `2`／`1→2`，填入前次原件的 `prior_candidate_refs`、本次條件的 `rearm_preconditions_ref`、新證據的 `rearm_new_information_ref`，並以這次 B1 正面判讀得到 `rearm_new_information_conclusion='PASS'`；此值不可沿用舊值或預填。沿用同一固定 slot。
 
 ```js
+const beforeObservation = FRESH_INTENT_OBSERVATION;
+const beforeWindowBinding = FRESH_WINDOW_BINDING_FROM_THIS_OBSERVATION;
+const beforeScreenshotRef = asRef(beforeObservation.assets.screenshot);
+const beforeAxRef = asRef(beforeObservation.assets.ax);
 const revealRequest = {
   input_phase: 'NAVIGATION',
   attempt_id: INTENT_READBACK.attempt_id,
@@ -1757,15 +1865,21 @@ const revealRequest = {
   prior_candidate_refs: 'NONE',
   budget_before: 0,
   budget_after: 1,
-  before_screenshot_ref: CURRENT_BEFORE_SCREENSHOT_REF,
-  before_ax_ref: CURRENT_BEFORE_AX_REF,
+  before_screenshot_ref: beforeScreenshotRef,
+  before_ax_ref: beforeAxRef,
   selected_state_before: 'SELECTED',
   selected_state_after: 'UNKNOWN',
   selected_media_ref: CURRENT_SELECTED_MEDIA_REF,
   safe_zone_ref: CURRENT_SAFE_EDGE_REF,
+  safe_zone: CURRENT_FRESH_VERIFIED_SAFE_EDGE_REGION,
+  mapping_status: 'MATCH',
+  observation_order: 'PRE_INPUT',
+  coordinate_space_match: 'MATCH',
+  control_region_coord_space: CURRENT_FRESH_CONTROL_COORDINATE_SPACE,
+  target_coord_space: CURRENT_FRESH_TARGET_COORDINATE_SPACE,
   mapping_id: CURRENT_MAPPING_ID,
   mapping_valid_at: CURRENT_MAPPING_VALID_AT,
-  position_source_ref: CURRENT_BEFORE_SCREENSHOT_REF,
+  position_source_ref: beforeScreenshotRef,
   prepared_target: CURRENT_VERIFIED_SAFE_EDGE_TARGET,
 };
 const revealRun = await notesIntentDispatch.persistReveal({
@@ -1775,6 +1889,9 @@ const revealRun = await notesIntentDispatch.persistReveal({
   intent: INTENT_READBACK,
   intentEventRef,
   request: revealRequest,
+  preIntentReveal: retainedReveal,
+  beforeObservation,
+  windowBinding: beforeWindowBinding,
   app,
 });
 const revealAfter = revealRun.afterObservation;
@@ -1789,9 +1906,24 @@ if (revealAfterBytes !== null) {
 nodeRepl.write(JSON.stringify(revealRun, null, 2));
 ```
 
-`persistReveal` 固定使用 `notes-reveal-c2-<attempt_id>` 與 `<slot>-after`，保存 request 後才在同一 callback 送一次 click 並 capture。只有 `revealRun.status=INVOKED`、`run.fail_closed=false` 且 `afterObservation.ready_for_bind=true`，Agent 才正面判讀這份 after 的控制可見、歸屬、啟用、三層身分、前景與映射。任何 input error／timeout、capture error、空 after、再消失或證據不完整都停止；已開始的 input 不得重送。
+候選 2 不能只把 ordinal／額度／prior refs 改成 2／`1→2`／非空陣列；還要把下列完整 arm 併入同一個 request。`rearm_new_information_conclusion` 的實際值必須來自當次 B1 對新方法或新映射的正面證據，只有等於 `'PASS'` 才能通過原 gate：
 
-**同一 after 下載。** Agent 正面通過後，以下載 request 的 `source_observation`／`source_observation_ref` 指向同一份 after 截圖，`mapping_evidence_ref` 指向同一 after AX；不可從 direct 分支展開或沿用舊座標。讀取已保存截圖只是把 bytes 交給既有 helper，不是重新 capture：
+```js
+const revealCandidate2Arm = {
+  candidate_ordinal: 2,
+  prior_candidate_refs: CURRENT_PRIOR_CANDIDATE_REFS,
+  budget_before: 1,
+  budget_after: 2,
+  rearm_preconditions_ref: CURRENT_REARM_PRECONDITIONS_REF,
+  rearm_new_information_ref: CURRENT_REARM_NEW_INFORMATION_REF,
+  rearm_new_information_conclusion:
+    CURRENT_B1_REARM_NEW_INFORMATION_CONCLUSION,
+};
+```
+
+`preIntentReveal` 只接受 intent 前 `REVEAL READY` 的結果；`beforeObservation` 是 intent 後唯一 fresh 原件，`beforeWindowBinding` 必須屬於同一原件，且 window binding 仍與事前相同。fresh 的位置、安全區與選取證據 ref 理應是新的，helper 不要求它們等於 pre-intent 原件；它只比較不變的 scope／候選 id／ordinal／budget／prior refs，再以原 gate 檢查 fresh refs。選取、三層身分、前景及新資訊真實性仍由 Agent 依當次原件正面判讀。`persistReveal` 固定使用 `notes-reveal-c2-<attempt_id>` 與 `<slot>-after`，保存 request 後才在同一 callback 送一次 click 並 capture。只有 `revealRun.status=INVOKED`、`run.fail_closed=false` 且 `afterObservation.ready_for_bind=true`，Agent 才正面判讀這份 after 的控制可見、歸屬、啟用、三層身分、前景與映射。任何 input error／timeout、capture error、空 after、再消失或證據不完整都停止；已開始的 input 不得重送。
+
+**同一 after 下載。** Agent 正面核對後，以下載 request 的 `source_observation`／`source_observation_ref` 指向同一份 after 截圖，`mapping_evidence_ref` 指向同一 after AX。該原件的 window binding 須與這次 reveal 一致。只使用同一份 after 上重新判定的座標。以已保存的截圖 bytes 呼叫既有 helper。
 
 ```js
 const revealDownloadReceipt = await dispatchDownload({
@@ -1845,7 +1977,7 @@ const revealDownloadReceipt = await dispatchDownload({
 | 目的地 | `original_destination`、`destination_event_refs`、`observed_destination` | 原目的地以 intent 讀回值為準。目的地相關事件可能是 `created`（初始 root）、`destination`（追加 root）或 `intent`（attempt 目的地），各自以事件檔與讀回 hash 引用；`binding` 事件不含目的地。chooser 顯示或實際落點另記，不得反寫原目的地 |
 | 觀察來源 | `observation_id`、`source_kind`、`tool`、`api_scope`、`app_window_binding`、`role_children_ref`、`raw_return_ref`、`scope`、`capture_rect`、`raw_rect`、`image_pixels`、`window_frame`、`window_points`、`scale_factor`、`popup_covered` | 記 AX／app-bound 截圖／桌面局部截圖／Computer Use 回傳／真人觀察，並分開 AX client／API scope、app／window 綁定與 role／children 來源；範圍、原始矩形、實際像素、點數與縮放分開，來源未涵蓋 popup 時不可推論不存在。同一 viewer 的 AX 相同不得推定工具列未變，截圖與 AX 也不能互相補值 |
 | 身分與入口 | `identity_gate_id`、`viewer_title_ref`、`viewer_title_n_of_n`、`list_key`、`post_key`、`media_key`、`entry_anchor_ref`、`artifact_label`、`artifact_label_target`、`identity_match`、`accepted`、`quarantine_ref`、`entry_page_role`、`expected_return_role`、`return_result`、`input_capability_after` | gate 由 Agent 依當次原件持久核對並讀回，不是 helper 圖像辨識；label 不代替 keys。`expected_return_role` 只由當次可引用原件的實際 entry role 決定，不預填 `LIST`、`POST_DETAIL` 或其他期待值。返回後以 `post_input_observation_ref` 指向的原件記錄實際 `page_role` 與文字 basis；角色判定只依[返回契約](gui-inventory.md#返回契約與有限恢復)。角色與來源連續性相符才記 `RETURNED`；長貼文占滿 viewport、搜尋列／卡片標頭／返回控制不可見不足以判 `POST_DETAIL`，也不證明控制不存在。證據不足或矛盾時記 `page_role=UNKNOWN`、`return_result=RETURN_NOT_OBSERVED`；若正面觀察仍是 viewer，保留 `VIEWER` 並記 `RETURN_NOT_OBSERVED`；只有正面顯示角色／身分／錨點失去才記 `ENTRY_LOST`。輸入能力另記且可同時為 `UNAVAILABLE`；此列沿用既有欄位，不新增 schema |
-| Reveal 導覽 | `navigation_kind`、`reveal_candidate_id`、`reveal_scope_ref`、`candidate_ordinal`、`prior_candidate_refs`、`budget_before`、`budget_after`、`rearm_preconditions_ref`、`rearm_new_information_ref`、`selected_state_before`、`selected_media_ref`、`safe_zone_ref`、`mapping_id`、`mapping_valid_at`、`before_screenshot_ref`、`before_ax_ref`、`input_phase`、`input_receipt_ref`、`after_screenshot_ref`、`after_ax_ref`、`reveal_state`、`capture_wait_semantics`、`capture_wait_source`、`stop_reason` | 操作契約只依 `gui-inventory.md` 的 B1。每個 attempt 最多一次 intent 後 reveal；`candidate_ordinal=1` 對應 `prior_candidate_refs=NONE`、`budget_before=0`、`budget_after=1`，`candidate_ordinal=2` 對應完整的同一 scope 前次引用、`1`、`2`。slot 固定 `notes-reveal-c2-<attempt_id>`，c2 不因 ordinal 改名；本輪 request 以 `wx` 保存並讀回，不能跨 intent 重用舊點。before／input／after 各自保存 bytes／hash；同 AX 可重複但不得合併不同畫面。`TOOLBAR_VISIBLE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT` 是 statement 結論，不是業務狀態；capture 等待能力未證實時記 `UNKNOWN`，不得據 AX 缺失推定不存在 |
+| Reveal 導覽 | `navigation_kind`、`reveal_candidate_id`、`reveal_scope_ref`、`candidate_ordinal`、`prior_candidate_refs`、`budget_before`、`budget_after`、`rearm_preconditions_ref`、`rearm_new_information_ref`、`rearm_new_information_conclusion`、`selected_state_before`、`selected_media_ref`、`safe_zone_ref`、`safe_zone`、`mapping_status`、`observation_order`、`coordinate_space_match`、`control_region_coord_space`、`target_coord_space`、`mapping_id`、`mapping_valid_at`、`before_screenshot_ref`、`before_ax_ref`、`input_phase`、`input_receipt_ref`、`after_screenshot_ref`、`after_ax_ref`、`reveal_state`、`capture_wait_semantics`、`capture_wait_source`、`stop_reason` | 操作契約只依 `gui-inventory.md` 的 B1。每個 attempt 最多一次 intent 後 reveal；`candidate_ordinal=1` 對應 `prior_candidate_refs=NONE`、`budget_before=0`、`budget_after=1`，`candidate_ordinal=2` 對應完整的同一 scope 前次引用、`1`、`2`；候選 2 的 `rearm_new_information_conclusion` 只能由當次 B1 證據得到 `PASS`。`safe_zone`、映射狀態、先後、座標空間與 target 座標空間屬於 fresh gate，必須由同一 before 原件讀回，兩座標空間已知且相同，target 嚴格位於有限安全區內。slot 固定 `notes-reveal-c2-<attempt_id>`，c2 不因 ordinal 改名；本輪 request 以 `wx` 保存並讀回，不能跨 intent 重用舊點。before／input／after 各自保存 bytes／hash；同 AX 可重複但不得合併不同畫面。`TOOLBAR_VISIBLE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT` 是 statement 結論，不是業務狀態；capture 等待能力未證實時記 `UNKNOWN`，不得據 AX 缺失推定不存在 |
 | 時間 | `observed_at`、`input_at`、`clock_source`、`timezone`、`precision` | 每個時間都要有來源；不可取得工具時間或可信時鐘時寫 `UNKNOWN`，不以 mtime 冒充操作時間。capture label／sequence 只能支持相對先後；不能證明是否在輸入前時，`observation_order=UNKNOWN`，不得把檔名或 label 寫成已證實的 pre-click |
 | 來源與捕捉 | `capture_started_at`、`capture_returned_at`、`ax_observed_at`、`screenshot_observed_at`、`source_time_basis`、`capture_atomicity` | 分別保存 AX／截圖來源、bytes／hash 與可證明的時間；`capture_started_at`／`capture_returned_at` 只界定一次 API 呼叫，不證明兩來源同一瞬間。工具未提供個別時間就記 `UNKNOWN`，不補值；`capture_atomicity=UNVERIFIED`，不得宣稱 atomic／immediate |
 | 定位 | `page_role`、`focus_state`、`control_owner`、`control_visibility`、`enabled_state`、`position_source_ref`、`pre_input_observation_ref`、`post_input_observation_ref`、`observation_order`、`control_region`、`control_region_coord_space`、`candidate_point`、`candidate_point_relation`、`raw_coord_space`、`mapped_screen_point`、`coordinate_space_match`、`mapping_id`、`mapping_valid_at`、`grounding_conclusion` | 控制可見性只在充分範圍成立時記 `VISIBLE`／`NOT_OBSERVED`。由同一份當次原件記下控制區域及候選點，兩者使用相同座標空間並讀回；`position_source_ref` 指向截圖／AX 原件與 hash，先後不能判定時明記 `UNKNOWN`。候選點須在可辨識區域內部；區域外、邊界、控制歸屬／映射／先後／區域不明時，`grounding_conclusion=STOP`，不得輸入。`control_region` 是視覺篩選區域，不是原生 hit-test；通過只表示可送入對帳，不表示控制已命中 |
@@ -1949,8 +2081,15 @@ reveal:
   selected_state_after: UNKNOWN
   selected_media_ref: UNKNOWN
   safe_zone_ref: UNKNOWN
+  safe_zone: UNKNOWN
+  mapping_status: UNKNOWN
+  observation_order: UNKNOWN
+  coordinate_space_match: UNKNOWN
+  control_region_coord_space: UNKNOWN
+  target_coord_space: UNKNOWN
   mapping_id: UNKNOWN
   mapping_valid_at: UNKNOWN
+  rearm_new_information_conclusion: UNKNOWN
   before_screenshot_ref: UNKNOWN
   before_ax_ref: UNKNOWN
   input_phase: NAVIGATION or NOT_APPLICABLE or UNKNOWN
