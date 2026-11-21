@@ -54,12 +54,16 @@ const dispatchCapture = () => ({
   state: '{"role":"AXWindow","marker":"dispatch"}',
   screenshot: new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
 });
-async function dispatchObservation(observationId) {
+const dispatchFreshCapture = label => ({
+  state: JSON.stringify({role: 'AXWindow', marker: label}),
+  screenshot: new TextEncoder().encode('SYNTHETIC_CAPTURE:' + label),
+});
+async function dispatchObservation(observationId, capture = dispatchCapture()) {
   return evidenceTools.persistObservation({
     taskDir: process.env.INPUT_TEST_ROOT,
     observationDir: process.env.INPUT_TEST_DIR,
     observationId,
-    capture: dispatchCapture(),
+    capture,
   });
 }
 const dispatchRef = asset => ({
@@ -118,6 +122,17 @@ const dispatchRevealOptions = (attemptId, request, app, overrides = {}) => ({
   intentEventRef: dispatchEventRef(),
   request,
   app,
+  ...overrides,
+});
+const dispatchGatedRevealOptions = (stage, app, overrides = {}) => ({
+  ...dispatchPaths(),
+  intent: dispatchIntent(stage.request.attempt_id),
+  intentEventRef: dispatchEventRef(),
+  request: stage.request,
+  app,
+  preIntentReveal: stage.preIntentReveal,
+  beforeObservation: stage.beforeObservation,
+  windowBinding: stage.windowBinding,
   ...overrides,
 });
 const dispatchDownloadOptions = (attemptId, request, app, source,
@@ -198,6 +213,40 @@ function dispatchRevealReadinessDecision(observation, ordinal = 1, overrides = {
     request.rearm_new_information_conclusion = 'PASS';
   }
   return {...request, ...overrides};
+}
+function dispatchRevealRequest(attemptId, observation, ordinal = 1, overrides = {}) {
+  return {
+    input_phase: 'NAVIGATION',
+    attempt_id: attemptId,
+    intent_event_ref: dispatchEventRef(),
+    ...dispatchRevealReadinessDecision(observation, ordinal, overrides),
+  };
+}
+async function dispatchRevealStage(
+  attemptId, ordinal = 1, windowBinding = dispatchWindowBinding(), overrides = {},
+  stageLabel = attemptId,
+) {
+  const app = dispatchReadinessApp();
+  const preObservation = await dispatchObservation(
+    stageLabel + '-pre', dispatchFreshCapture(stageLabel + '-pre'));
+  const preIntentReveal = notesIntentDispatch.checkDownloadReadiness({
+    app,
+    observation: preObservation,
+    windowBinding,
+    branch: 'REVEAL',
+    decision: dispatchRevealReadinessDecision(preObservation, ordinal, overrides),
+  });
+  const beforeObservation = await dispatchObservation(
+    stageLabel + '-before', dispatchFreshCapture(stageLabel + '-before'));
+  const request = dispatchRevealRequest(
+    attemptId, beforeObservation, ordinal, overrides);
+  return {
+    preObservation,
+    beforeObservation,
+    preIntentReveal,
+    request,
+    windowBinding,
+  };
 }
 '''
 
@@ -1192,12 +1241,135 @@ return {clicks, invalidIntent, legacyEvent, eventMismatch,
         self.assertEqual(result['valid']['source_mode'],
                          'DIRECT_INTENT_OBSERVATION')
 
+    def test_two_stage_visible_direct_does_not_consume_reveal(self):
+        result, _ = self.run_dispatch(DISPATCH_SETUP + r'''
+let revealClicks = 0, downloadClicks = 0, captures = 0;
+const app = {
+  async click(target) {
+    if (target[0] === 70 && target[1] === 80) revealClicks += 1;
+    else downloadClicks += 1;
+    return {target};
+  },
+  async getAXStateAndScreenshot() {
+    captures += 1;
+    return dispatchCapture();
+  },
+};
+const windowBinding = dispatchWindowBinding({window_id: 4242});
+const preObservation = await dispatchObservation(
+  'visible-pre', dispatchFreshCapture('visible-pre'));
+const direct = notesIntentDispatch.checkDownloadReadiness({
+  app, observation: preObservation, windowBinding, branch: 'DIRECT',
+  decision: dispatchDirectReadinessDecision(preObservation),
+});
+const preIntentReveal = notesIntentDispatch.checkDownloadReadiness({
+  app, observation: preObservation, windowBinding, branch: 'REVEAL',
+  decision: dispatchRevealReadinessDecision(preObservation),
+});
+const freshObservation = await dispatchObservation(
+  'visible-fresh', dispatchFreshCapture('visible-fresh'));
+const request = dispatchDownloadRequest('attempt-visible-direct', freshObservation);
+const sourceBytes = new Uint8Array(
+  await fsTest.readFile(freshObservation.assets.screenshot.path));
+const download = await notesIntentDispatch.persistDownload(
+  dispatchDownloadOptions('attempt-visible-direct', request, app,
+    {observation: freshObservation, source_observation_bytes: sourceBytes}));
+return {direct, preIntentReveal, download,
+        revealClicks, downloadClicks, captures};
+''')
+        self.assertEqual(result['direct']['status'], 'READY')
+        self.assertEqual(result['preIntentReveal']['status'], 'READY')
+        self.assertEqual(result['preIntentReveal']['window_binding']['window_id'], 4242)
+        self.assertEqual(result['download']['status'], 'INVOKED')
+        self.assertEqual(result['download']['source_mode'],
+                         'DIRECT_INTENT_OBSERVATION')
+        self.assertEqual(result['revealClicks'], 0)
+        self.assertEqual(result['captures'], 0)
+        self.assertEqual(result['downloadClicks'], 1)
+
+    def test_two_stage_visible_to_hidden_uses_fresh_before_and_same_after_once(self):
+        result, _ = self.run_dispatch(DISPATCH_SETUP + r'''
+let revealClicks = 0, downloadClicks = 0, captureCalls = 0;
+const app = {
+  async click(target) {
+    if (target[0] === 70 && target[1] === 80) revealClicks += 1;
+    else downloadClicks += 1;
+    return {target};
+  },
+  async getAXStateAndScreenshot() {
+    captureCalls += 1;
+    return dispatchCapture();
+  },
+};
+const windowBinding = dispatchWindowBinding({window_id: 4242});
+const preObservation = await dispatchObservation(
+  'transition-pre', dispatchFreshCapture('transition-pre'));
+const preDirect = notesIntentDispatch.checkDownloadReadiness({
+  app, observation: preObservation, windowBinding, branch: 'DIRECT',
+  decision: dispatchDirectReadinessDecision(preObservation),
+});
+const preIntentReveal = notesIntentDispatch.checkDownloadReadiness({
+  app, observation: preObservation, windowBinding, branch: 'REVEAL',
+  decision: dispatchRevealReadinessDecision(preObservation),
+});
+const beforeObservation = await dispatchObservation(
+  'transition-before', dispatchFreshCapture('transition-before'));
+const freshDirect = notesIntentDispatch.checkDownloadReadiness({
+  app, observation: beforeObservation, windowBinding, branch: 'DIRECT',
+  decision: dispatchDirectReadinessDecision(
+    beforeObservation, {control_visibility: 'NOT_OBSERVED'}),
+});
+const request = dispatchRevealRequest(
+  'attempt-visible-hidden', beforeObservation);
+const revealRun = await notesIntentDispatch.persistReveal({
+  ...dispatchPaths(),
+  intent: dispatchIntent('attempt-visible-hidden'),
+  intentEventRef: dispatchEventRef(),
+  request,
+  preIntentReveal,
+  beforeObservation,
+  windowBinding,
+  app,
+});
+const after = revealRun.afterObservation;
+const afterShot = dispatchRef(after.assets.screenshot);
+const afterBytes = new Uint8Array(await fsTest.readFile(afterShot.path));
+const downloadRequest = {
+  ...dispatchDownloadRequest('attempt-visible-hidden', after),
+  app_window_binding: windowBinding,
+  source_observation: afterShot,
+  source_observation_ref: afterShot,
+  mapping_evidence_ref: dispatchRef(after.assets.ax),
+};
+const download = await notesIntentDispatch.persistDownload(
+  dispatchDownloadOptions('attempt-visible-hidden', downloadRequest, app,
+    {reveal: revealRun, source_observation_bytes: afterBytes}));
+return {preDirect, preIntentReveal, preObservationId: preObservation.observation_id,
+        beforeObservationId: beforeObservation.observation_id, freshDirect,
+        revealRun, download, revealClicks, downloadClicks, captureCalls};
+''')
+        self.assertEqual(result['preDirect']['status'], 'READY')
+        self.assertEqual(result['preIntentReveal']['status'], 'READY')
+        self.assertEqual(result['freshDirect']['status'], 'STOP')
+        self.assertIn('DOWNLOAD_CONTROL_VISIBILITY_REQUIRED',
+                      result['freshDirect']['blockers'])
+        self.assertNotEqual(result['preObservationId'],
+                            result['beforeObservationId'])
+        self.assertEqual(result['revealRun']['status'], 'INVOKED')
+        self.assertEqual(result['revealRun']['operation_id'],
+                         'notes-reveal-c2-attempt-visible-hidden')
+        self.assertEqual(result['download']['status'], 'INVOKED')
+        self.assertEqual(result['download']['source_mode'], 'REVEAL_SAME_AFTER')
+        self.assertEqual(result['revealClicks'], 1)
+        self.assertEqual(result['captureCalls'], 1)
+        self.assertEqual(result['downloadClicks'], 1)
+
     def test_dispatch_reveal_same_after_feeds_one_download_and_fixed_slot(self):
         result, _ = self.run_dispatch(DISPATCH_SETUP + r'''
 let revealClicks = 0, revealCaptures = 0, downloadClicks = 0;
 const app = {
   async click(target) {
-    if (target[0] === 50 && target[1] === 60) revealClicks += 1;
+    if (target[0] === 70 && target[1] === 80) revealClicks += 1;
     else downloadClicks += 1;
     return {target};
   },
@@ -1206,14 +1378,16 @@ const app = {
     return dispatchCapture();
   },
 };
+const stage = await dispatchRevealStage(
+  'attempt-reveal', 1, dispatchWindowBinding({window_id: 4242}));
 const revealRun = await notesIntentDispatch.persistReveal(
-  dispatchRevealOptions('attempt-reveal',
-    dispatchNavigationRequest('attempt-reveal', 1), app));
+  dispatchGatedRevealOptions(stage, app));
 const after = revealRun.afterObservation;
 const afterShot = dispatchRef(after.assets.screenshot);
 const afterBytes = new Uint8Array(await fsTest.readFile(afterShot.path));
 const request = {
   ...dispatchDownloadRequest('attempt-reveal', after),
+  app_window_binding: stage.windowBinding,
   source_observation: afterShot,
   source_observation_ref: afterShot,
   mapping_evidence_ref: dispatchRef(after.assets.ax),
@@ -1224,21 +1398,28 @@ const download = overrides => notesIntentDispatch.persistDownload(
 const stale = await download({
   observation: await dispatchObservation('before-observation'),
 });
+const wrongWindow = await download({
+  reveal: revealRun,
+  request: {...request, app_window_binding: dispatchWindowBinding({window_id: 4243})},
+});
 const sameAfter = await download({reveal: revealRun});
 const replay = await download({
   reveal: revealRun,
   request: {...request, candidate_point: [61, 71], prepared_target: [61, 71]},
 });
 return {revealClicks, revealCaptures, downloadClicks, revealRun,
-        stale, sameAfter, replay};
+        stale, wrongWindow, sameAfter, replay};
 ''')
         self.assertEqual(result['revealClicks'], 1)
         self.assertEqual(result['revealCaptures'], 1)
         self.assertEqual(result['revealRun']['status'], 'INVOKED')
         self.assertEqual(result['revealRun']['operation_id'],
                          'notes-reveal-c2-attempt-reveal')
+        self.assertEqual(result['revealRun']['window_binding']['window_id'], 4242)
         self.assertEqual(result['stale']['reason'],
                          'DOWNLOAD_SOURCE_OBSERVATION_MISMATCH')
+        self.assertEqual(result['wrongWindow']['reason'],
+                         'DOWNLOAD_REVEAL_WINDOW_BINDING_MISMATCH')
         self.assertEqual(result['sameAfter']['status'], 'INVOKED')
         self.assertEqual(result['sameAfter']['source_mode'], 'REVEAL_SAME_AFTER')
         self.assertEqual(result['sameAfter']['operation_id'],
@@ -1282,18 +1463,21 @@ const badPrior = await reveal('attempt-prior',
   {...dispatchNavigationRequest('attempt-prior', 2), prior_candidate_refs: []});
 const hoverKind = await reveal('attempt-hover',
   {...dispatchNavigationRequest('attempt-hover', 1), navigation_kind: 'hover'});
-const ordinalTwo = await reveal('attempt-two',
-  dispatchNavigationRequest('attempt-two', 2));
-const raceRequest = dispatchNavigationRequest('attempt-race', 1);
+const ordinalTwoStage = await dispatchRevealStage('attempt-two', 2);
+const ordinalTwo = await notesIntentDispatch.persistReveal(
+  dispatchGatedRevealOptions(ordinalTwoStage, app));
+const raceStage = await dispatchRevealStage('attempt-race', 1);
 const [raceFirst, raceSecond] = await Promise.all([
-  reveal('attempt-race', raceRequest),
-  reveal('attempt-race', raceRequest),
+  notesIntentDispatch.persistReveal(dispatchGatedRevealOptions(raceStage, app)),
+  notesIntentDispatch.persistReveal(dispatchGatedRevealOptions(raceStage, app)),
 ]);
-const ordinalSwitch = await reveal('attempt-race',
-  dispatchNavigationRequest('attempt-race', 2));
+const ordinalSwitchStage = await dispatchRevealStage(
+  'attempt-race', 2, dispatchWindowBinding(), {}, 'attempt-race-switch');
+const ordinalSwitch = await notesIntentDispatch.persistReveal(
+  dispatchGatedRevealOptions(ordinalSwitchStage, app));
+const failedRevealStage = await dispatchRevealStage('attempt-capture-error', 1);
 const failedReveal = await notesIntentDispatch.persistReveal(
-  dispatchRevealOptions('attempt-capture-error',
-    dispatchNavigationRequest('attempt-capture-error', 1), {
+  dispatchGatedRevealOptions(failedRevealStage, {
       async click(target) { revealClicks += 1; return {target}; },
       async getAXStateAndScreenshot() {
         throw new Error('synthetic dispatch capture failed');
@@ -1391,6 +1575,68 @@ return {counters, direct, revealOne, revealTwo, beforeFiles, afterFiles};
         self.assertEqual(result['revealTwo']['budget_after'], 2)
         self.assertFalse(any('notes-reveal-c2-' in name or 'notes-download-' in name
                              for name in result['afterFiles']))
+
+    def test_reveal_preflight_errors_and_slot_collision_make_zero_input(self):
+        result, _ = self.run_dispatch(DISPATCH_SETUP + r'''
+let clicks = 0, captures = 0;
+const app = {
+  async click(target) { clicks += 1; return {target}; },
+  async getAXStateAndScreenshot() {
+    captures += 1;
+    return dispatchCapture();
+  },
+};
+const windowBinding = dispatchWindowBinding({window_id: 4242});
+const stage = await dispatchRevealStage(
+  'attempt-zero-input', 1, windowBinding);
+const base = dispatchGatedRevealOptions(stage, app);
+const cases = [
+  ['missingPreflight', {...base, preIntentReveal: undefined},
+   'REVEAL_PREFLIGHT_REQUIRED'],
+  ['staleBefore', {...base, beforeObservation: stage.preObservation},
+   'REVEAL_BEFORE_OBSERVATION_NOT_FRESH'],
+  ['windowChanged', {
+    ...base, windowBinding: dispatchWindowBinding({window_id: 4243}),
+  }, 'REVEAL_WINDOW_BINDING_CHANGED'],
+  ['candidateChanged', {
+    ...base,
+    request: {...stage.request, reveal_candidate_id: 'candidate-other'},
+  }, 'REVEAL_REQUEST_DRIFT'],
+  ['scopeChanged', {
+    ...base,
+    request: {...stage.request, reveal_scope_ref: 'scope-other'},
+  }, 'REVEAL_REQUEST_DRIFT'],
+  ['notStrictInterior', {
+    ...base,
+    request: {...stage.request, safe_zone: [70, 80, 100, 110]},
+  }, 'REVEAL_BEFORE_OBSERVATION_BLOCKED'],
+];
+const results = [];
+for (const [name, options, expected] of cases) {
+  results.push([name, expected, await notesIntentDispatch.persistReveal(options)]);
+}
+const slotPath = process.env.INPUT_TEST_DIR +
+  '/notes-reveal-c2-attempt-zero-input.input.request.json';
+await fsTest.writeFile(slotPath, 'keep reveal slot sentinel', {flag: 'wx'});
+const duplicate = await notesIntentDispatch.persistReveal(base);
+return {
+  clicks, captures, results, duplicate,
+  slot: await fsTest.readFile(slotPath, 'utf8'),
+};
+''')
+        for name, expected, outcome in result['results']:
+            with self.subTest(case=name):
+                self.assertEqual(outcome['status'], 'STOP')
+                self.assertEqual(outcome['reason'], expected)
+        self.assertEqual(result['clicks'], 0)
+        self.assertEqual(result['captures'], 0)
+        self.assertEqual(result['duplicate']['status'], 'STOP')
+        self.assertEqual(result['duplicate']['reason'],
+                         'REVEAL_INPUT_OR_AFTER_INCOMPLETE')
+        self.assertEqual(result['duplicate']['run']['inputReceipt']['status'],
+                         'REQUEST_PERSIST_FAILED')
+        self.assertIsNone(result['duplicate']['afterObservation'])
+        self.assertEqual(result['slot'], 'keep reveal slot sentinel')
 
     def test_download_readiness_table_drives_stops_without_side_effects(self):
         """Synthetic blocker table only; no real LINE app, CLI, or download."""
