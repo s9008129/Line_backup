@@ -94,6 +94,18 @@ const evidenceTools = await (async () => {
     }
   }
 
+  function normalizeHostCalls(hostCalls, timeKeys) {
+    const value = hostCalls !== null && typeof hostCalls === 'object' ? hostCalls : {};
+    const normalized = {};
+    for (const key of timeKeys) {
+      normalized[key] = typeof value[key] === 'string' ? value[key] : 'NOT_RUN';
+    }
+    normalized.clock_source = 'HOST_JS_DATE';
+    normalized.precision = 'CALL_BOUNDARY_ONLY';
+    normalized.os_event_time = 'UNKNOWN';
+    return normalized;
+  }
+
   async function writeExclusive(filePath, bytes) {
     try {
       await fs.writeFile(filePath, bytes, { flag: 'wx', mode: 0o600 });
@@ -187,6 +199,9 @@ const evidenceTools = await (async () => {
       },
       stages: {},
       assets: {},
+      hostCalls: normalizeHostCalls(options.hostCalls, [
+        'capture_call_started_at', 'capture_call_returned_at',
+      ]),
       ready_for_bind: false,
       blockers: [],
     };
@@ -476,6 +491,11 @@ const evidenceTools = await (async () => {
       output.mapping_evidence_readback =
         dispatchContext.mappingEvidenceReadback;
     }
+    if (dispatchContext.hostCalls) {
+      output.hostCalls = normalizeHostCalls(dispatchContext.hostCalls, [
+        'dispatch_call_started_at', 'dispatch_call_returned_at',
+      ]);
+    }
   }
 
   async function persistSingleInput(options) {
@@ -694,6 +714,9 @@ const evidenceTools = await (async () => {
       receipt_target_match: 'UNKNOWN',
       receipt_is_os_event_trace: false,
       native_return_type: 'NOT_APPLICABLE',
+      hostCalls: normalizeHostCalls(null, [
+        'dispatch_call_started_at', 'dispatch_call_returned_at',
+      ]),
     };
   }
 
@@ -946,6 +969,10 @@ const evidenceTools = await (async () => {
       return output;
     }
 
+    const hostCalls = {
+      dispatch_call_started_at: 'NOT_RUN',
+      dispatch_call_returned_at: 'NOT_RUN',
+    };
     const dispatch = {
       call_target: 'NOT_SENT',
       return_type: 'NOT_APPLICABLE',
@@ -960,17 +987,21 @@ const evidenceTools = await (async () => {
         const target = [savedPoint[0], savedPoint[1]];
         dispatch.call_target = target;
         try {
+          hostCalls.dispatch_call_started_at = new Date().toISOString();
           const returned = await click(target);
           dispatch.return_type = returned === undefined ? 'UNDEFINED' : 'VALUE';
           return returned;
         } catch (error) {
           dispatch.return_type = 'ERROR';
           throw error;
+        } finally {
+          hostCalls.dispatch_call_returned_at = new Date().toISOString();
         }
       },
     }, {
       token: groundedDispatchToken,
       dispatch,
+      hostCalls,
       sourceObservationReadback: sourceReadback,
       mappingEvidenceReadback: mappingReadback,
     });
@@ -996,6 +1027,7 @@ const evidenceTools = await (async () => {
       'native_dispatched_target',
       'receipt_target_match',
       'native_return_type',
+      'hostCalls',
     ]) {
       if (Object.prototype.hasOwnProperty.call(output, key)) {
         diagnostic[key] = output[key];
@@ -1038,16 +1070,26 @@ const evidenceTools = await (async () => {
   async function captureAndPersist(options) {
     let capture = null;
     let captureError = null;
+    const hostCalls = {
+      capture_call_started_at: 'NOT_RUN',
+      capture_call_returned_at: 'NOT_RUN',
+    };
     try {
       const app = await cua.getApp('jp.naver.line.mac');
-      capture = await app.getAXStateAndScreenshot({
-        disableDiffing: true,
-        emit: false,
-      });
+      hostCalls.capture_call_started_at = new Date().toISOString();
+      try {
+        capture = await app.getAXStateAndScreenshot({
+          disableDiffing: true,
+          emit: false,
+        });
+      } finally {
+        hostCalls.capture_call_returned_at = new Date().toISOString();
+      }
     } catch (error) {
       captureError = describeError(error);
     }
-    return persistObservation(Object.assign({}, options, { capture, captureError }));
+    return persistObservation(
+      Object.assign({}, options, { capture, captureError, hostCalls }));
   }
 
   return {
@@ -1062,6 +1104,7 @@ const evidenceTools = await (async () => {
     persistSingleInput,
     readbackExact,
     sha256,
+    snapshotJsonValue,
     writeExclusive,
   };
 })();
@@ -1083,6 +1126,8 @@ if (!OBSERVATION.ready_for_bind) {
 `stages` 會分別留下 `CAPTURE`、`CAPTURE_SHAPE`、`AX`、`SCREENSHOT_TYPE`、`SCREENSHOT_LENGTH` 與各 asset 的 `*_PERSISTENCE`；`assets` 另記實際路徑、長度、SHA-256、寫入與讀回，`metadata_persistence` 則記 diagnostic 的寫入與讀回。寫入 diagnostic 前，helper 先以當次 capture／asset 結果定稿 `metadata.ready_for_bind` 與 `metadata.blockers`；diagnostic 自身的寫入／讀回是外層結果，不要求它記錄自己尚未產生的最終 hash。只有 AX 與非空截圖都存在、兩者都以 `wx` 寫入並逐 bytes 讀回 MATCH，且 diagnostic 的寫入／讀回也 MATCH，runtime 輸出與落地 diagnostic 的 readiness／blockers 才可一致為 `true`／空陣列。若 diagnostic 寫入或讀回失敗，runtime 一律回 `ready_for_bind=false` 並保留 `DIAGNOSTIC_PERSISTENCE:FAILED`，不得消費未驗證的 diagnostic；原檔碰撞時也不覆寫。AX 合格但截圖型別錯、空值或寫入失敗時，合格 AX 仍會保存；反向情況亦同。這些部分原件可用於唯讀診斷，但 blocker 未消除前不得 bind。
 
 日後讀取落地 diagnostic 時仍要核對其 bytes／SHA-256／原 asset 讀回與適用的 helper `metadata_persistence`，不能只因檔案內寫 `ready_for_bind=true` 就宣稱 bind 成功。這個欄位只表示本地 observation 保存所需檔案完整，不是 GUI 權限、畫面真實、viewer 身分、control 命中或下載成功的證明。
+
+`metadata`、runtime 輸出與落地 diagnostic 另含 `hostCalls`：intent 後唯一 capture 的 `capture_call_started_at`／`capture_call_returned_at`，固定 `clock_source=HOST_JS_DATE`、`precision=CALL_BOUNDARY_ONLY`、`os_event_time=UNKNOWN`。未執行、gate 在呼叫前拒絕或 `getApp` 失敗時，尚未發生的時間維持 `NOT_RUN`；capture 拋錯仍記結束時間。grounded download click 的 receipt／diagnostic 以同一形狀記 `dispatch_call_started_at`／`dispatch_call_returned_at`，只在實際呼叫 `click` 時填入。
 
 ### 單次 CUA 輸入保存 helper
 
@@ -1166,7 +1211,7 @@ nodeRepl.write(JSON.stringify(receipt, null, 2));
 
 - intent 前只依 [GUI 導覽與盤點](gui-inventory.md) 的〈目標與下載控制就緒（B1）〉核對本輪前置：若控制正面可定位，保留直接下載的可能；若控制隱藏，另須有當次可歸屬的 `selected-filmstrip-safe-edge` 安全區、選取狀態、三層身分、映射與明確額度。方法、歸屬或額度任一不足就停在 intent 前，不先送 reveal。
 - 每個 attempt 只執行一次既有 `intent` 並讀回 JSON。`attempt_id` 以讀回值為準；`intent_event_ref` 只由 Agent 以唯讀方式核對該 intent 事件檔後記成 `{sequence, event_sha256}`。這個範本不掃描帳本、不重算 event hash、不重驗 schema，也不建立新的持久狀態。
-- intent 後取得一次最新 observation。控制正面可見且歸屬、啟用、映射成立時走直接路徑，以這份 observation 準備下載；控制不可見時，才可使用一次固定 `notes-reveal-c2-<attempt_id>` 的本輪 reveal。兩條路徑互斥，且共用唯一的 `notes-download-<attempt_id>` 下載 slot。
+- intent 後只取得一次最新 observation（Block 9 的 `intentObservation`）。控制正面可見且歸屬、啟用、映射成立時走直接路徑，以這份 observation 的定位與截圖 bytes 準備下載；控制不可見時，REVEAL 直接以同一變數作 `beforeObservation`，才可使用一次固定 `notes-reveal-c2-<attempt_id>` 的本輪 reveal。不得再取第二份 intent 後 capture，after 失效也不得重拍。兩條路徑互斥，且共用唯一的 `notes-download-<attempt_id>` 下載 slot。
 - 本範本的可執行 reveal 範例只用當次畫面可證的 `selected-filmstrip-safe-edge` click。若當次工具文件沒有明確支持無點擊 hover，不得以 click 冒充 hover，也不得猜測未提供的 API。候選 `candidate_ordinal=1` 對應額度 `0→1`，且 `prior_candidate_refs` 為 `NONE`；只有同一 scope 前一候選 request／raw／after 完整、連續性與相關新證據成立時，才可用 `candidate_ordinal=2` 與額度 `1→2`。已用滿、舊 UNKNOWN、缺 receipt 或額度不明時沒有 reveal 路徑。
 - 保存 before 截圖與完整 AX、輸入 request／raw receipt、after 截圖與完整 AX；同一次 observation 的相同 AX bytes 可以被重複引用，但每個 `--asset` ref 與順序都要保留。相同 AX 不代表 toolbar 狀態相同；AX 缺失、未變或沒有該 node 都不是「控制不存在」或「toolbar 未顯示」的反向證明。截圖與 AX 必須分開記錄各自來源、範圍、時間與 hash。
 
@@ -1238,6 +1283,7 @@ async function persistRevealWithDirectAfter({
       ...(afterCaptureError
         ? { captureError: afterCaptureError }
         : { capture: afterCapture }),
+      hostCalls,
     });
   }
   const failClosed = !(inputPersisted &&
@@ -1487,10 +1533,14 @@ const notesIntentDispatch = await (async () => {
     if (!beforeAssets || !isId(options.beforeObservation.observation_id)) {
       return stop('REVEAL_BEFORE_OBSERVATION_INVALID');
     }
+    // A reused path is stale even when its bytes changed; only new files prove
+    // that this observation belongs after the intent.
+    const reusedAsset = (fresh, prior) => isFileRef(fresh) && isFileRef(prior) &&
+      (fresh.path === prior.path || sameFileRef(fresh, prior));
+    const priorAssets = preIntentReveal.before_observation;
     if (options.beforeObservation.observation_id === preIntentReveal.observation_id ||
-        (sameFileRef(beforeAssets.screenshot,
-                     preIntentReveal.before_observation.screenshot) &&
-         sameFileRef(beforeAssets.ax, preIntentReveal.before_observation.ax))) {
+        reusedAsset(beforeAssets.screenshot, priorAssets.screenshot) ||
+        reusedAsset(beforeAssets.ax, priorAssets.ax)) {
       return stop('REVEAL_BEFORE_OBSERVATION_NOT_FRESH');
     }
     const windowBlockers = evidenceTools.groundedWindowBlockers(options.windowBinding);
@@ -1526,10 +1576,28 @@ const notesIntentDispatch = await (async () => {
   }
 
   async function persistReveal(options) {
-    const gate = checkReveal(options);
+    if (!isObject(options) || !isObject(options.request)) {
+      return stop('REVEAL_REQUEST_REQUIRED');
+    }
+    const requestSnapshot = evidenceTools.snapshotJsonValue(options.request);
+    if (!requestSnapshot.ok) {
+      return stop('REVEAL_REQUEST_SERIALIZATION_FAILED', {
+        error: requestSnapshot.error || {
+          name: 'TypeError',
+          message: requestSnapshot.code + (requestSnapshot.detail
+            ? ':' + requestSnapshot.detail : ''),
+        },
+      });
+    }
+    const request = requestSnapshot.value;
+    const gate = checkReveal({ ...options, request });
     if (gate.status !== 'READY') return gate;
-    const freshGate = checkRevealBefore(options);
+    const validatedPreIntentReveal = checkPreIntentReveal(options.preIntentReveal);
+    const freshGate = checkRevealBefore({ ...options, request });
     if (freshGate.status !== 'READY') return freshGate;
+    const candidateOrdinal = request.candidate_ordinal;
+    const preIntentObservationId = validatedPreIntentReveal.observation_id;
+    const beforeObservationId = options.beforeObservation.observation_id;
     const operationId = 'notes-reveal-c2-' + gate.attempt_id;
     try {
       const run = await persistRevealWithDirectAfter({
@@ -1538,7 +1606,7 @@ const notesIntentDispatch = await (async () => {
         observationDir: options.observationDir,
         operationId,
         observationId: operationId + '-after',
-        request: options.request,
+        request,
         app: options.app,
       });
       const invoked = run.fail_closed === false;
@@ -1549,9 +1617,9 @@ const notesIntentDispatch = await (async () => {
         reason: invoked ? null : 'REVEAL_INPUT_OR_AFTER_INCOMPLETE',
         blockers: invoked ? [] : ['REVEAL_INPUT_OR_AFTER_INCOMPLETE'],
         operation_id: operationId,
-        candidate_ordinal: options.request.candidate_ordinal,
-        pre_intent_observation_id: options.preIntentReveal.observation_id,
-        before_observation_id: options.beforeObservation.observation_id,
+        candidate_ordinal: candidateOrdinal,
+        pre_intent_observation_id: preIntentObservationId,
+        before_observation_id: beforeObservationId,
         run,
         afterObservation: run.afterObservation,
       };
@@ -1656,10 +1724,11 @@ const notesIntentDispatch = await (async () => {
 
 `READY` 只允許接既有 intent；仍須完成 B1 判斷，intent 讀回後用當次 observation 或同一 reveal after 重新核對。`STOP` 走 B1 局部停止：不建 intent、不送 reveal、不消耗該媒體 v5；無全域 blocker 且可安全返回時才接續其他合格項。
 
-控制可見時，Agent 先以當次 observation 呼叫一次 `DIRECT` gate；若另有可獨立稽核的 reveal 方法，再以同一 observation 呼叫一次 `REVEAL` gate 並保留其 `READY`。備選 `REVEAL` 的 `STOP` 不抹除合格 `DIRECT`。控制未見時只有 `REVEAL READY` 可進 intent。兩者即使都 `READY`，仍只建立一次 intent；intent 前不得送出 preflight input、capture 或建立 slot。
+控制可見時，只有 `controlVisible === true` 才建立 `DIRECT` decision 並求值其欄位；若另有可獨立稽核的 reveal 方法，才在同一 observation 上再建立 `REVEAL` decision 並保留其 `READY`。未啟用分支的 decision 與其 `CURRENT_*` 佔位符保持未宣告、不求值。可見但 `DIRECT` 非 `READY` 時，即使備選 `REVEAL READY` 也停在 intent 前，不先送 reveal。備選 `REVEAL` 的 `STOP` 不抹除合格 `DIRECT`。控制未見時只有 `REVEAL READY` 可進 intent；可見性未明時兩條路徑都不成立。兩者即使都 `READY`，仍只建立一次 intent，選 `DIRECT` 並保留同次備選 `READY`；控制轉為隱藏時才改走 REVEAL。intent 前不得送出 preflight capture、GUI 輸入或建立固定 slot（三者均為零）。
 
-**前置範例。** 沿用本輪已呈現並讀回的 `app`／`observation` 和當次 `windowBinding`。只在充分原件支持控制可見或未見時，將 `controlVisible` 設為 `true` 或 `false`。可見性未明時用 `null`。安全 reveal 方法獨立成立時才把 `revealMethodIndependentlyAuditable` 設為 `true`。`CURRENT_*` 只填由該原件支持的值。控制與 target 使用同一已知座標空間。控制區與安全區須有限，target 須為嚴格內點。候選 2 另加三個 rearm 欄位，由當次新證據得出 `rearm_new_information_conclusion='PASS'`。
+**前置範例。** 沿用本輪已呈現並讀回的 `app`／`observation` 和當次 `windowBinding`。只在充分原件支持控制可見或未見時，將 `controlVisible` 設為 `true` 或 `false`；可見性未明時用 `null`。安全 reveal 方法獨立成立時才把 `revealMethodIndependentlyAuditable` 設為 `true`。`CURRENT_*` 只填由該原件支持的值，且只實例化實際啟用的分支；未啟用分支的 decision 與其佔位符保持未宣告、不求值。控制與 target 使用同一已知座標空間；控制區與安全區須有限，target 須為嚴格內點。reveal 預檢依 `REVEAL_CANDIDATE_ORDINAL` 建立候選 1 或候選 2 的完整 arm；候選 2 的 `prior_candidate_refs` 與三個 rearm 欄位只在 ordinal 2 時求值，intent 後 reveal 路徑沿用同一 ordinal。
 
+<!-- notes-intent-preflight:start -->
 ```js
 const readinessRef = asset => asset && ({
   path: asset.path, bytes: asset.bytes, sha256: asset.sha256,
@@ -1669,48 +1738,64 @@ const revealMethodIndependentlyAuditable =
   B1_REVEAL_METHOD_INDEPENDENTLY_AUDITABLE;
 const screenshot = readinessRef(observation?.assets?.screenshot);
 const ax = readinessRef(observation?.assets?.ax);
-const commonDecision = {
+const makeCommonDecision = () => ({
   mapping_status: 'MATCH', observation_order: 'PRE_INPUT',
   coordinate_space_match: 'MATCH',
   control_region_coord_space: CURRENT_CONTROL_COORDINATE_SPACE,
   target_coord_space: CURRENT_TARGET_COORDINATE_SPACE,
   position_source_ref: screenshot,
-};
-const directDecision = {
-  ...commonDecision,
-  control_visibility: 'VISIBLE', control_owner: 'MATCH', enabled_state: 'ENABLED',
-  grounding_conclusion: 'PASS_TO_INPUT', candidate_point_relation: 'INSIDE',
-  control_region: CURRENT_CONTROL_REGION,
-  candidate_point: CURRENT_CANDIDATE_POINT,
-  prepared_target: CURRENT_VERIFIED_DOWNLOAD_TARGET,
-};
-const revealDecision = {
-  ...commonDecision,
-  navigation_kind: 'selected-filmstrip-safe-edge',
-  reveal_candidate_id: CURRENT_REVEAL_CANDIDATE_ID,
-  reveal_scope_ref: CURRENT_LIST_POST_MEDIA_SCOPE,
-  candidate_ordinal: 1, prior_candidate_refs: 'NONE',
-  budget_before: 0, budget_after: 1,
-  before_screenshot_ref: screenshot, before_ax_ref: ax,
-  selected_state_before: 'SELECTED',
-  selected_media_ref: CURRENT_SELECTED_MEDIA_REF,
-  safe_zone_ref: CURRENT_SAFE_EDGE_REF,
-  safe_zone: CURRENT_VERIFIED_SAFE_EDGE_REGION,
-  prepared_target: CURRENT_VERIFIED_SAFE_EDGE_TARGET,
-  mapping_id: CURRENT_MAPPING_ID, mapping_valid_at: CURRENT_MAPPING_VALID_AT,
-};
+});
 const common = {app, observation, windowBinding};
-const directReadiness = controlVisible === true
-  ? notesIntentDispatch.checkDownloadReadiness({
-      ...common, branch: 'DIRECT', decision: directDecision,
-    })
-  : null;
-const preIntentReveal = revealMethodIndependentlyAuditable === true &&
-    (controlVisible === true || controlVisible === false)
-  ? notesIntentDispatch.checkDownloadReadiness({
-      ...common, branch: 'REVEAL', decision: revealDecision,
-    })
-  : null;
+let directReadiness = null;
+if (controlVisible === true) {
+  const directDecision = {
+    ...makeCommonDecision(),
+    control_visibility: 'VISIBLE', control_owner: 'MATCH', enabled_state: 'ENABLED',
+    grounding_conclusion: 'PASS_TO_INPUT', candidate_point_relation: 'INSIDE',
+    control_region: CURRENT_CONTROL_REGION,
+    candidate_point: CURRENT_CANDIDATE_POINT,
+    prepared_target: CURRENT_VERIFIED_DOWNLOAD_TARGET,
+  };
+  directReadiness = notesIntentDispatch.checkDownloadReadiness({
+    ...common, branch: 'DIRECT', decision: directDecision,
+  });
+}
+let preIntentReveal = null;
+if (revealMethodIndependentlyAuditable === true &&
+    (controlVisible === true || controlVisible === false)) {
+  const revealPreviewArm = REVEAL_CANDIDATE_ORDINAL === 1
+    ? {
+        candidate_ordinal: 1, prior_candidate_refs: 'NONE',
+        budget_before: 0, budget_after: 1,
+      }
+    : REVEAL_CANDIDATE_ORDINAL === 2
+      ? {
+          candidate_ordinal: 2, prior_candidate_refs: CURRENT_PRIOR_CANDIDATE_REFS,
+          budget_before: 1, budget_after: 2,
+          rearm_preconditions_ref: CURRENT_REARM_PRECONDITIONS_REF,
+          rearm_new_information_ref: CURRENT_REARM_NEW_INFORMATION_REF,
+          rearm_new_information_conclusion:
+            CURRENT_B1_REARM_NEW_INFORMATION_CONCLUSION,
+        }
+      : { candidate_ordinal: REVEAL_CANDIDATE_ORDINAL };
+  const revealDecision = {
+    ...makeCommonDecision(),
+    navigation_kind: 'selected-filmstrip-safe-edge',
+    reveal_candidate_id: CURRENT_REVEAL_CANDIDATE_ID,
+    reveal_scope_ref: CURRENT_LIST_POST_MEDIA_SCOPE,
+    ...revealPreviewArm,
+    before_screenshot_ref: screenshot, before_ax_ref: ax,
+    selected_state_before: 'SELECTED',
+    selected_media_ref: CURRENT_SELECTED_MEDIA_REF,
+    safe_zone_ref: CURRENT_SAFE_EDGE_REF,
+    safe_zone: CURRENT_VERIFIED_SAFE_EDGE_REGION,
+    prepared_target: CURRENT_VERIFIED_SAFE_EDGE_TARGET,
+    mapping_id: CURRENT_MAPPING_ID, mapping_valid_at: CURRENT_MAPPING_VALID_AT,
+  };
+  preIntentReveal = notesIntentDispatch.checkDownloadReadiness({
+    ...common, branch: 'REVEAL', decision: revealDecision,
+  });
+}
 const retainedReveal = preIntentReveal?.status === 'READY'
   ? preIntentReveal : null;
 const intentReadiness = controlVisible === false ? retainedReveal : directReadiness;
@@ -1720,13 +1805,15 @@ nodeRepl.write(JSON.stringify({
   directReadiness, preIntentReveal, retainedReveal,
 }, null, 2));
 ```
+<!-- notes-intent-preflight:end -->
 
-只有 `RUN_EXISTING_NOTES_INTENT_ONCE` 才執行一次已解析的既有 notes `intent` CLI 並讀回；`B1_LOCAL_STOP` 保留該項與 blockers，不派送。`DIRECT READY` 不因 `preIntentReveal STOP` 失效；兩者都 READY 時仍選一次 DIRECT，但把 `preIntentReveal` 帶到 intent 後備用。控制轉為隱藏時才改走 REVEAL。
+只有 `RUN_EXISTING_NOTES_INTENT_ONCE` 才執行一次已解析的既有 notes `intent` CLI 並讀回；`B1_LOCAL_STOP` 保留該項與 blockers，不派送。`next_action` 只依目前可見分支決定：可見時看 `directReadiness`，隱藏時看 `retainedReveal`，所以可見但 `DIRECT` 非 `READY` 時不會被備選 `REVEAL READY` 解鎖。`DIRECT READY` 不因 `preIntentReveal STOP` 失效；`retainedReveal` 只保留同次 `REVEAL READY`，兩者都 READY 時仍選一次 DIRECT，並把備選帶到 intent 後備用。控制轉為隱藏時才改走 REVEAL。本預檢不 capture、不輸入、不建立 slot，也不消耗額度。
 
 ### 可直接複製的單一路徑
 
 先保存既有 `intent` CLI 的 JSON，並由 Agent 唯讀核對該 attempt 的事件檔後帶入 `{sequence, event_sha256}`。以下只讀取已保存的 CLI 輸出與私有原件；不掃描事件、不重驗 schema，也不保存額外狀態：
 
+<!-- notes-intent-readback:start -->
 ```js
 const fs = await import('node:fs/promises');
 const INTENT_READBACK = JSON.parse(await fs.readFile(
@@ -1746,33 +1833,52 @@ const intentEventRef = makeIntentEventRef(
     '/ABS/PRIVATE_TASK/intent-event.sha256', 'utf8')).trim(),
 );
 ```
+<!-- notes-intent-readback:end -->
 
 `intent-readback.json`、`intent-event.sequence` 與 `intent-event.sha256` 是 Agent 對既有 CLI 輸出及同一 intent 事件唯讀核對後保存的輸入；本範本不掃描事件或重算 hash。這兩個事件值不是新的 schema 或持久控制器。
 
-**直接 capture（步驟一）。** intent 後只取一次最新 observation，先保存並在同一 invocation 呈現這份原件；此時不建立下載 request、不呼叫 click：
+**intent 後唯一 capture。** intent 讀回後只取一次最新觀察（計畫所稱 Block 9）；DIRECT 從這份 `intentObservation` 取得定位與截圖 bytes，REVEAL 也直接以同一變數作 `beforeObservation`。不得再拍第二份 intent 後 capture，after 失敗也不得重拍。先保存並在同一 invocation 呈現這份原件；此時不建立下載 request、不呼叫 click：
 
+<!-- notes-intent-capture:start -->
 ```js
-const directCapture = await app.getAXStateAndScreenshot({emit: false, disableDiffing: true});
-const directObservation = await evidenceTools.persistObservation({
+let intentCapture = null;
+let intentCaptureError = null;
+const intentCaptureStartedAt = new Date().toISOString();
+let intentCaptureReturnedAt = 'NOT_RUN';
+try {
+  intentCapture = await app.getAXStateAndScreenshot({emit: false, disableDiffing: true});
+} catch (error) {
+  intentCaptureError = evidenceTools.describeError(error);
+} finally {
+  intentCaptureReturnedAt = new Date().toISOString();
+}
+const intentObservation = await evidenceTools.persistObservation({
   taskDir: '/ABS/TASK_PRIVATE_DIR',
   observationDir: '/ABS/EXISTING_PRIVATE_OBSERVATION_DIR',
-  observationId: 'DIRECT_INTENT_AFTER_OBSERVATION_ID',
-  capture: directCapture,
+  observationId: 'INTENT_AFTER_OBSERVATION_ID',
+  ...(intentCaptureError
+    ? { captureError: intentCaptureError }
+    : { capture: intentCapture }),
+  hostCalls: {
+    capture_call_started_at: intentCaptureStartedAt,
+    capture_call_returned_at: intentCaptureReturnedAt,
+  },
 });
-if (directObservation.ready_for_bind) {
-  await nodeRepl.emitImage(directCapture.screenshot);
-  nodeRepl.write(directCapture.state);
+if (intentObservation.ready_for_bind && intentCapture) {
+  await nodeRepl.emitImage(intentCapture.screenshot);
+  nodeRepl.write(intentCapture.state);
 }
 nodeRepl.write(JSON.stringify({
-  observation_id: directObservation.observation_id,
-  ready_for_bind: directObservation.ready_for_bind,
-  screenshot: directObservation.assets.screenshot,
-  ax: directObservation.assets.ax,
+  observation_id: intentObservation.observation_id,
+  ready_for_bind: intentObservation.ready_for_bind,
+  assets: intentObservation.assets,
 }, null, 2));
 ```
+<!-- notes-intent-capture:end -->
 
-**直接 dispatch（步驟二）。** 只有 Agent 對上一步保存的 `directObservation` 正面判讀控制可見、歸屬、啟用與映射成立後，才以下列同一個 request 建立器明示填入該份 observation 的 window／座標 context、control region 與 target。`source_observation_bytes` 必須是同一份截圖 bytes：
+下列 request 建立器與派送函式同時供 DIRECT 與 REVEAL 兩條路徑使用；未選中的路徑不得執行，呼叫端只能傳入該路徑已核對的 observation 與截圖 bytes。
 
+<!-- notes-download-builder:start -->
 ```js
 const makeDownloadRequest = ({
   attemptId, intentEventRef, observation, windowBinding,
@@ -1826,11 +1932,13 @@ async function dispatchDownload({
   });
 }
 ```
+<!-- notes-download-builder:end -->
 
-直接路徑呼叫時，四個判讀值必須是這份 observation 的新值，不可沿用上一個 request：
+**直接派送（步驟二）。** 只有 Agent 對 `intentObservation` 正面判讀控制可見、歸屬、啟用與映射成立後，才以下列四個判讀值呼叫同一個 `dispatchDownload`。`source_observation_bytes` 必須是同一份 `intentCapture.screenshot`；這是共用 capture，不再另拍：
 
+<!-- notes-direct-dispatch:start -->
 ```js
-const directDecision = {
+const directDispatchDecision = {
   windowBinding: DIRECT_WINDOW_BINDING_FROM_OBSERVATION,
   controlRegion: DIRECT_CONTROL_REGION_FROM_OBSERVATION,
   target: DIRECT_DOWNLOAD_TARGET_FROM_OBSERVATION,
@@ -1838,22 +1946,37 @@ const directDecision = {
 };
 const directDownloadReceipt = await dispatchDownload({
   intentEventRef,
-  observation: directObservation,
-  sourceObservationBytes: directCapture.screenshot,
-  ...directDecision,
+  observation: intentObservation,
+  sourceObservationBytes: intentCapture.screenshot,
+  ...directDispatchDecision,
   app,
 });
 ```
+<!-- notes-direct-dispatch:end -->
 
-上例的 `DIRECT_*` 符號是 Agent 判讀後填入的明確輸入，不是可重用的常數；未完成判讀時不得建立 request。`fs` 只用來讀取已保存的 intent／事件核對值與 after 截圖 bytes；直接路徑的 `sourceObservationBytes` 使用剛才保存的 `directCapture.screenshot`，沒有額外 capture。
+上例的 `DIRECT_*` 符號是 Agent 判讀後填入的明確輸入，不是可重用的常數；未完成判讀時不得建立 request。`fs` 只用來讀取已保存的 intent／事件核對值與 after 截圖 bytes；直接路徑的 `observation` 是 intent 後唯一 capture 的 `intentObservation`，`sourceObservationBytes` 使用同一份 `intentCapture.screenshot`，沒有額外 capture。
 
-**Reveal 路徑。** 控制隱藏時，只有 B1 的當次安全區、選取、映射與額度都成立才呼叫。以下示範 `candidate_ordinal=1`、額度 `0→1`，且 request 已帶齊 fresh gate 的映射、先後、座標空間與安全區欄位。若符合 B1 的第二候選條件，才把 ordinal／額度改成 `2`／`1→2`，填入前次原件的 `prior_candidate_refs`、本次條件的 `rearm_preconditions_ref`、新證據的 `rearm_new_information_ref`，並以這次 B1 正面判讀得到 `rearm_new_information_conclusion='PASS'`；此值不可沿用舊值或預填。沿用同一固定 slot。
+**Reveal 路徑。** 控制隱藏時，只有 B1 的當次安全區、選取、映射與額度都成立才呼叫。REVEAL 仍要求同一 viewer／window、有效前景、選取與三層身分一致、無 chooser／可歸屬活動下載／未決輸入、保留的 `READY` 與原額度；任一不足即沿用原停止規則。`beforeObservation` 直接承接上節唯一的 `intentObservation`，不取得第二份 intent 後 capture；`beforeWindowBinding` 必須屬於該同一原件。`revealCandidateArm` 依 `REVEAL_CANDIDATE_ORDINAL` 只建立一個完整 arm：`1` 為 `prior_candidate_refs='NONE'`、`0→1`；`2` 才填入前次原件的 `prior_candidate_refs`、本次條件的 `rearm_preconditions_ref`、新證據的 `rearm_new_information_ref`，並以這次 B1 正面判讀得到 `rearm_new_information_conclusion='PASS'`，不可沿用舊值或預填。未選中 arm 的 `CURRENT_*` 保持未宣告、不求值。request 帶齊 fresh gate 的映射、先後、座標空間與安全區欄位，並沿用同一固定 slot。
 
+<!-- notes-reveal-path:start -->
 ```js
-const beforeObservation = FRESH_INTENT_OBSERVATION;
+const beforeObservation = intentObservation;
 const beforeWindowBinding = FRESH_WINDOW_BINDING_FROM_THIS_OBSERVATION;
 const beforeScreenshotRef = asRef(beforeObservation.assets.screenshot);
 const beforeAxRef = asRef(beforeObservation.assets.ax);
+const revealCandidateArm = REVEAL_CANDIDATE_ORDINAL === 1
+  ? {
+      candidate_ordinal: 1, prior_candidate_refs: 'NONE',
+      budget_before: 0, budget_after: 1,
+    }
+  : {
+      candidate_ordinal: 2, prior_candidate_refs: CURRENT_PRIOR_CANDIDATE_REFS,
+      budget_before: 1, budget_after: 2,
+      rearm_preconditions_ref: CURRENT_REARM_PRECONDITIONS_REF,
+      rearm_new_information_ref: CURRENT_REARM_NEW_INFORMATION_REF,
+      rearm_new_information_conclusion:
+        CURRENT_B1_REARM_NEW_INFORMATION_CONCLUSION,
+    };
 const revealRequest = {
   input_phase: 'NAVIGATION',
   attempt_id: INTENT_READBACK.attempt_id,
@@ -1861,10 +1984,7 @@ const revealRequest = {
   navigation_kind: 'selected-filmstrip-safe-edge',
   reveal_candidate_id: CURRENT_REVEAL_CANDIDATE_ID,
   reveal_scope_ref: CURRENT_LIST_POST_MEDIA_SCOPE,
-  candidate_ordinal: 1,
-  prior_candidate_refs: 'NONE',
-  budget_before: 0,
-  budget_after: 1,
+  ...revealCandidateArm,
   before_screenshot_ref: beforeScreenshotRef,
   before_ax_ref: beforeAxRef,
   selected_state_before: 'SELECTED',
@@ -1905,26 +2025,17 @@ if (revealAfterBytes !== null) {
 }
 nodeRepl.write(JSON.stringify(revealRun, null, 2));
 ```
+<!-- notes-reveal-path:end -->
 
-候選 2 不能只把 ordinal／額度／prior refs 改成 2／`1→2`／非空陣列；還要把下列完整 arm 併入同一個 request。`rearm_new_information_conclusion` 的實際值必須來自當次 B1 對新方法或新映射的正面證據，只有等於 `'PASS'` 才能通過原 gate：
+候選 2 不能只改 ordinal／額度／prior refs；必須讓 `REVEAL_CANDIDATE_ORDINAL=2` 建立完整 arm，`rearm_new_information_conclusion` 只有等於 `'PASS'` 才能通過原 gate。
 
-```js
-const revealCandidate2Arm = {
-  candidate_ordinal: 2,
-  prior_candidate_refs: CURRENT_PRIOR_CANDIDATE_REFS,
-  budget_before: 1,
-  budget_after: 2,
-  rearm_preconditions_ref: CURRENT_REARM_PRECONDITIONS_REF,
-  rearm_new_information_ref: CURRENT_REARM_NEW_INFORMATION_REF,
-  rearm_new_information_conclusion:
-    CURRENT_B1_REARM_NEW_INFORMATION_CONCLUSION,
-};
-```
+`preIntentReveal` 只接受 intent 前 `REVEAL READY` 的結果；`beforeObservation` 是 intent 後唯一 fresh 原件，`beforeWindowBinding` 必須屬於同一原件，且 window binding 仍與事前相同。fresh 判定同時比對 observation ID 與截圖／AX 各自的 path 或完整 file ref：任一重複即 `REVEAL_BEFORE_OBSERVATION_NOT_FRESH`，即使同一 path 的 bytes／hash 已改變；兩個新 path 可有相同內容 SHA-256。helper 不要求 fresh 的位置、安全區與選取證據 ref 等於 pre-intent 原件；它只比較不變的 scope／候選 id／ordinal／budget／prior refs，再以原 gate 檢查 fresh refs 與 request／observed assets 的配對。選取、三層身分、前景及新資訊真實性仍由 Agent 依當次原件正面判讀。
 
-`preIntentReveal` 只接受 intent 前 `REVEAL READY` 的結果；`beforeObservation` 是 intent 後唯一 fresh 原件，`beforeWindowBinding` 必須屬於同一原件，且 window binding 仍與事前相同。fresh 的位置、安全區與選取證據 ref 理應是新的，helper 不要求它們等於 pre-intent 原件；它只比較不變的 scope／候選 id／ordinal／budget／prior refs，再以原 gate 檢查 fresh refs。選取、三層身分、前景及新資訊真實性仍由 Agent 依當次原件正面判讀。`persistReveal` 固定使用 `notes-reveal-c2-<attempt_id>` 與 `<slot>-after`，保存 request 後才在同一 callback 送一次 click 並 capture。只有 `revealRun.status=INVOKED`、`run.fail_closed=false` 且 `afterObservation.ready_for_bind=true`，Agent 才正面判讀這份 after 的控制可見、歸屬、啟用、三層身分、前景與映射。任何 input error／timeout、capture error、空 after、再消失或證據不完整都停止；已開始的 input 不得重送。
+`persistReveal` 在第一個 `await` 前先要求 request 為物件，缺值回 `REVEAL_REQUEST_REQUIRED`；再以 `evidenceTools.snapshotJsonValue` 建立與呼叫端巢狀物件脫離的私有 JSON 快照，不可完整序列化回 `REVEAL_REQUEST_SERIALIZATION_FAILED`，兩者都在 slot、click 與 after capture 前停止。`checkReveal`、`checkRevealBefore` 與 `persistRevealWithDirectAfter` 都只用該快照；回報的 `candidate_ordinal`、`pre_intent_observation_id` 與 `before_observation_id` 也在同步階段定稿。固定使用 `notes-reveal-c2-<attempt_id>` 與 `<slot>-after`；request 先以 `wx` 保存並讀回，再由讀回值的 `prepared_target` 於同一 callback 送一次 click 並 capture，app handle 的方法接收者不拆開。只有 `revealRun.status=INVOKED`、`run.fail_closed=false` 且 `afterObservation.ready_for_bind=true`，Agent 才正面判讀這份 after 的控制可見、歸屬、啟用、三層身分、前景與映射。任何 input error／timeout、capture error、空 after、再消失或證據不完整都停止；已開始的 input 不得重送，也不得重拍 after。證據不足、已有下載呼叫或 outcome 時沿用原停止規則，不因共用 capture 放寬。
 
-**同一 after 下載。** Agent 正面核對後，以下載 request 的 `source_observation`／`source_observation_ref` 指向同一份 after 截圖，`mapping_evidence_ref` 指向同一 after AX。該原件的 window binding 須與這次 reveal 一致。只使用同一份 after 上重新判定的座標。以已保存的截圖 bytes 呼叫既有 helper。
+**同一 after 下載。** Agent 正面核對後，以下載 request 的 `source_observation`／`source_observation_ref` 指向同一份 after 截圖，`mapping_evidence_ref` 指向同一 after AX。該原件的 window binding 須與這次 reveal 一致。只使用同一份 after 上重新判定的座標。以已保存的截圖 bytes 呼叫既有 helper；同一份 after 的 capture 邊界留在 `afterObservation.hostCalls`，不另拍。
 
+<!-- notes-reveal-download:start -->
 ```js
 const revealDownloadReceipt = await dispatchDownload({
   intentEventRef,
@@ -1938,8 +2049,11 @@ const revealDownloadReceipt = await dispatchDownload({
   app,
 });
 ```
+<!-- notes-reveal-download:end -->
 
 `persistDownload` 先核對 attempt、event ref，以及 request 是否指向該次 `observation`／`revealRun.afterObservation` 的同一截圖與 AX，再交給原 `persistGroundedDownloadClick`。canonical path、bytes、hash、request 幾何與 schema 仍由該既有 helper 驗證。它固定使用 `notes-download-<attempt_id>`；slot 已存在、並行競爭、讀回失敗或 observation 不符時，原 helper 不呼叫 click。直接與 reveal 兩條路徑只能選一條；direct 與 after 的決策變數不可互相展開或沿用，之後仍由 Agent 正面判讀畫面；wrapper 不是 GUI sensor、controller 或新的驗證層。
+
+每 attempt 仍只有一次 intent、一次 reveal、每媒體兩次 reveal 額度、候選 2 的新證據、固定 slot，以及下載與 chooser 最終確認各一次；這條共用 capture 與 host 邊界記錄不增加 capture、click 或 retry 次數。
 
 ### 時序、狀態與停止
 
@@ -1948,6 +2062,7 @@ const revealDownloadReceipt = await dispatchDownload({
 - statement 記錄 `observed_at`、`input_at`、`clock_source`、`timezone`、`precision`、capture／input 的相對序號，以及 `capture_wait_semantics`／`capture_wait_source`。除非當次工具文件或實測能證明，等待能力一律 `UNKNOWN`；不得宣稱 capture 原子、立即或能捕捉點擊瞬間。截圖或 AX 範圍不足、輸入或等待狀態無法從當次原件確認時，相關觀察欄位記 `UNKNOWN`，不自行補值；只有相對序號可支持先後，不能補出點擊與截圖的未證明時間差。
 - `TOOLBAR_VISIBLE` 只在 intent 後最新、充分涵蓋的 after 原件正面顯示工具列，且下載控制歸屬、啟用與映射成立時使用；它不是穩定可重播的保證。充分範圍仍看不到 toolbar 記 `TOOLBAR_NOT_SHOWN`；只表示本次 bounded observation 沒有顯示，不能推論控制不存在。若 toolbar 曾出現後在有效觀察中消失，記 `REVEAL_TRANSIENT`。本 attempt 的 reveal 最多一次；已送出、error、timeout、capture 失敗或證據不足都不得再試，也不得跨 attempt 重用舊 after。
 - 另記 `stop_reason`（例如 `PRECONDITION_UNPROVEN`、`MAPPING_STALE`、`CAPTURE_INCOMPLETE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT`）。`TOOLBAR_VISIBLE`／`TOOLBAR_NOT_SHOWN`／`REVEAL_TRANSIENT` 是 statement 結論，不是 Notes 六類業務狀態，也不會把未派送媒體改成完成或排除。已派送 input 後依原 attempt 的真實結果分流；證據不足記 `UNKNOWN`，不得預填 outcome 或建立替代 attempt。
+- `observation.hostCalls.capture_call_returned_at` 只配對 `receipt.hostCalls.dispatch_call_started_at`：DIRECT 用共用 `intentObservation` 的 capture，REVEAL 用同一次 after capture。gate、request 或 slot 在呼叫前拒絕時，對應時間維持 `NOT_RUN`；缺值、時間來源不可比或時鐘倒退時，延遲記為不可判定。這組證據只界定 host API 呼叫邊界（`HOST_JS_DATE`／`CALL_BOUNDARY_ONLY`），不證明工具列壽命、OS hit-test 或下載結果。
 
 ### 永久保存與合法附掛順序
 
@@ -1979,7 +2094,7 @@ const revealDownloadReceipt = await dispatchDownload({
 | 身分與入口 | `identity_gate_id`、`viewer_title_ref`、`viewer_title_n_of_n`、`list_key`、`post_key`、`media_key`、`entry_anchor_ref`、`artifact_label`、`artifact_label_target`、`identity_match`、`accepted`、`quarantine_ref`、`entry_page_role`、`expected_return_role`、`return_result`、`input_capability_after` | gate 由 Agent 依當次原件持久核對並讀回，不是 helper 圖像辨識；label 不代替 keys。`expected_return_role` 只由當次可引用原件的實際 entry role 決定，不預填 `LIST`、`POST_DETAIL` 或其他期待值。返回後以 `post_input_observation_ref` 指向的原件記錄實際 `page_role` 與文字 basis；角色判定只依[返回契約](gui-inventory.md#返回契約與有限恢復)。角色與來源連續性相符才記 `RETURNED`；長貼文占滿 viewport、搜尋列／卡片標頭／返回控制不可見不足以判 `POST_DETAIL`，也不證明控制不存在。證據不足或矛盾時記 `page_role=UNKNOWN`、`return_result=RETURN_NOT_OBSERVED`；若正面觀察仍是 viewer，保留 `VIEWER` 並記 `RETURN_NOT_OBSERVED`；只有正面顯示角色／身分／錨點失去才記 `ENTRY_LOST`。輸入能力另記且可同時為 `UNAVAILABLE`；此列沿用既有欄位，不新增 schema |
 | Reveal 導覽 | `navigation_kind`、`reveal_candidate_id`、`reveal_scope_ref`、`candidate_ordinal`、`prior_candidate_refs`、`budget_before`、`budget_after`、`rearm_preconditions_ref`、`rearm_new_information_ref`、`rearm_new_information_conclusion`、`selected_state_before`、`selected_media_ref`、`safe_zone_ref`、`safe_zone`、`mapping_status`、`observation_order`、`coordinate_space_match`、`control_region_coord_space`、`target_coord_space`、`mapping_id`、`mapping_valid_at`、`before_screenshot_ref`、`before_ax_ref`、`input_phase`、`input_receipt_ref`、`after_screenshot_ref`、`after_ax_ref`、`reveal_state`、`capture_wait_semantics`、`capture_wait_source`、`stop_reason` | 操作契約只依 `gui-inventory.md` 的 B1。每個 attempt 最多一次 intent 後 reveal；`candidate_ordinal=1` 對應 `prior_candidate_refs=NONE`、`budget_before=0`、`budget_after=1`，`candidate_ordinal=2` 對應完整的同一 scope 前次引用、`1`、`2`；候選 2 的 `rearm_new_information_conclusion` 只能由當次 B1 證據得到 `PASS`。`safe_zone`、映射狀態、先後、座標空間與 target 座標空間屬於 fresh gate，必須由同一 before 原件讀回，兩座標空間已知且相同，target 嚴格位於有限安全區內。slot 固定 `notes-reveal-c2-<attempt_id>`，c2 不因 ordinal 改名；本輪 request 以 `wx` 保存並讀回，不能跨 intent 重用舊點。before／input／after 各自保存 bytes／hash；同 AX 可重複但不得合併不同畫面。`TOOLBAR_VISIBLE`、`TOOLBAR_NOT_SHOWN`、`REVEAL_TRANSIENT` 是 statement 結論，不是業務狀態；capture 等待能力未證實時記 `UNKNOWN`，不得據 AX 缺失推定不存在 |
 | 時間 | `observed_at`、`input_at`、`clock_source`、`timezone`、`precision` | 每個時間都要有來源；不可取得工具時間或可信時鐘時寫 `UNKNOWN`，不以 mtime 冒充操作時間。capture label／sequence 只能支持相對先後；不能證明是否在輸入前時，`observation_order=UNKNOWN`，不得把檔名或 label 寫成已證實的 pre-click |
-| 來源與捕捉 | `capture_started_at`、`capture_returned_at`、`ax_observed_at`、`screenshot_observed_at`、`source_time_basis`、`capture_atomicity` | 分別保存 AX／截圖來源、bytes／hash 與可證明的時間；`capture_started_at`／`capture_returned_at` 只界定一次 API 呼叫，不證明兩來源同一瞬間。工具未提供個別時間就記 `UNKNOWN`，不補值；`capture_atomicity=UNVERIFIED`，不得宣稱 atomic／immediate |
+| 來源與捕捉 | `capture_started_at`、`capture_returned_at`、`ax_observed_at`、`screenshot_observed_at`、`source_time_basis`、`capture_atomicity` | 分別保存 AX／截圖來源、bytes／hash 與可證明的時間；`capture_started_at`／`capture_returned_at` 只界定一次 API 呼叫，不證明兩來源同一瞬間。helper 的 observation diagnostic／下載 receipt 另以 `hostCalls` 記 host API 呼叫邊界，未執行或呼叫前拒絕為 `NOT_RUN`；它不代表工具列壽命、OS hit-test 或下載結果。工具未提供個別時間就記 `UNKNOWN`，不補值；`capture_atomicity=UNVERIFIED`，不得宣稱 atomic／immediate |
 | 定位 | `page_role`、`focus_state`、`control_owner`、`control_visibility`、`enabled_state`、`position_source_ref`、`pre_input_observation_ref`、`post_input_observation_ref`、`observation_order`、`control_region`、`control_region_coord_space`、`candidate_point`、`candidate_point_relation`、`raw_coord_space`、`mapped_screen_point`、`coordinate_space_match`、`mapping_id`、`mapping_valid_at`、`grounding_conclusion` | 控制可見性只在充分範圍成立時記 `VISIBLE`／`NOT_OBSERVED`。由同一份當次原件記下控制區域及候選點，兩者使用相同座標空間並讀回；`position_source_ref` 指向截圖／AX 原件與 hash，先後不能判定時明記 `UNKNOWN`。候選點須在可辨識區域內部；區域外、邊界、控制歸屬／映射／先後／區域不明時，`grounding_conclusion=STOP`，不得輸入。`control_region` 是視覺篩選區域，不是原生 hit-test；通過只表示可送入對帳，不表示控制已命中 |
 | 輸入 | `input_phase`、`action`、`target_ref`、`prepared_target`、`prepared_target_readback_ref`、`candidate_target_match`、`dispatched_target`、`receipt_target_match`、`input_tool`、`input_api`、`input_receipt_ref`、`raw_tool_return`、`error_raw`、`download_control_call_count`、`chooser_confirm_call_count` | `input_phase` 至少區分 `DOWNLOAD_CONTROL`、`CHOOSER_PATH`、`CHOOSER_CONFIRM`；記工具／API 及原始成功／錯誤／逾時，並分別累計兩個至多一次的呼叫。失敗、逾時與未知也計入。`prepared_target` 是真正要送出的值，須先寫入並讀回，且與 `candidate_point` 比對；不符或無法讀回時不得呼叫。`dispatched_target` 取自實際 input receipt，再與 `prepared_target` 比對；receipt 不符或無法讀回時記 `MISMATCH`／`UNKNOWN`，不得追認為正確定位，也不得據此改寫 `NOT_SENT`。receipt 只證明保存的工具參數，不是 OS event trace 或 LINE hit-test |
 | Chooser | `appeared`、`attribution_basis`、`chooser_window_process`、`source_viewer_ref`、`attempt_link`、`path_field_readback`、`panel_current_directory`、`where_value`、`intent_staging_destination`、`destination_agreement`、`destination_check`、`confirm_raw_return` | PathTextField、panel current directory 與 intent staging 分開記錄；只有來源 viewer／attempt、視窗／process 與三者一致的新空白目的地能唯一對應才可確認；延遲出現仍不是下載完成 |

@@ -41,6 +41,34 @@ def documented_dispatch_source():
     return text[code_start:code_end]
 
 
+BLOCK_MARKERS = (
+    'notes-intent-preflight',
+    'notes-intent-readback',
+    'notes-intent-capture',
+    'notes-download-builder',
+    'notes-direct-dispatch',
+    'notes-reveal-path',
+    'notes-reveal-download',
+)
+
+
+def documented_blocks():
+    text = TEMPLATE.read_text(encoding='utf-8')
+    blocks = {}
+    for name in BLOCK_MARKERS:
+        start_marker = '<!-- %s:start -->' % name
+        end_marker = '<!-- %s:end -->' % name
+        start = text.index(start_marker) + len(start_marker)
+        end = text.index(end_marker, start)
+        section = text[start:end]
+        code_start = section.index('```js') + len('```js')
+        code_end = section.index('```', code_start)
+        if section[code_end + 3:].strip():
+            raise AssertionError('unexpected content after js block: ' + name)
+        blocks[name] = section[code_start:code_end]
+    return blocks
+
+
 DISPATCH_SETUP = r'''
 const dispatchEventSha = 'a'.repeat(64);
 const dispatchEventRef = () => ({sequence: 7, event_sha256: dispatchEventSha});
@@ -251,7 +279,7 @@ async function dispatchRevealStage(
 '''
 
 
-class NotesInputHelperTests(unittest.TestCase):
+class NodeHelperRunner(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.tools_source = documented_tools_source()
@@ -259,13 +287,27 @@ class NotesInputHelperTests(unittest.TestCase):
         cls.dispatch_source = documented_dispatch_source()
         TASKS.mkdir(parents=True, exist_ok=True)
 
-    def run_helper(self, body, extra_source=''):
+    def run_helper(self, body, extra_source='',
+                   observation_id='INTENT_AFTER_OBSERVATION_ID'):
         with tempfile.TemporaryDirectory(prefix='.notes-input-helper-', dir=TASKS) as temp:
             root = Path(temp).resolve()
             output_dir = root / 'observations'
             output_dir.mkdir()
+            for old, new in (
+                ('/ABS/PRIVATE_TASK', str(root)),
+                ('/ABS/TASK_PRIVATE_DIR', str(root)),
+                ('/ABS/EXISTING_PRIVATE_OBSERVATION_DIR', str(output_dir)),
+                ('/ABS/EXISTING_PRIVATE_INPUT_DIR', str(output_dir)),
+                ('INTENT_AFTER_OBSERVATION_ID', observation_id),
+            ):
+                body = body.replace(old, new)
             script = self.tools_source + '\n' + r'''
 const fsTest = await import('node:fs/promises');
+const nodeRepl = {
+  writes: [],
+  write(value) { this.writes.push(String(value)); },
+  async emitImage() {},
+};
 const result = await (async () => {
 ''' + extra_source + '\n' + body + r'''
 })();
@@ -282,6 +324,8 @@ console.log(JSON.stringify(result));
                               completed.stderr))
             return json.loads(completed.stdout), output_dir
 
+
+class NotesInputHelperTests(NodeHelperRunner):
     def run_reveal(self, body):
         return self.run_helper(body, extra_source=self.reveal_source)
 
@@ -1744,11 +1788,19 @@ const counters = {};
 const app = dispatchReadinessApp(counters);
 const observation = await dispatchObservation('review-second-reveal');
 const windowBinding = dispatchWindowBinding();
-const invalidRefs = [[null], ['UNKNOWN'], ['NONE'], [''], Array(1), [{}]];
+const invalidCases = [
+  ['null', [null], 'REVEAL_ORDINAL_BUDGET_MISMATCH'],
+  ['UNKNOWN', ['UNKNOWN'], 'REVEAL_ORDINAL_BUDGET_MISMATCH'],
+  ['NONE', ['NONE'], 'REVEAL_ORDINAL_BUDGET_MISMATCH'],
+  ['empty', [''], 'REVEAL_ORDINAL_BUDGET_MISMATCH'],
+  ['sparse', Array(1), 'REVEAL_REQUEST_SERIALIZATION_FAILED'],
+  ['number', [42], 'REVEAL_ORDINAL_BUDGET_MISMATCH'],
+  ['object', [{}], 'REVEAL_ORDINAL_BUDGET_MISMATCH'],
+];
 const beforeFiles = (await fsTest.readdir(process.env.INPUT_TEST_DIR)).sort();
 const results = [];
-for (const [index, refs] of invalidRefs.entries()) {
-  const attemptId = 'attempt-review-' + index;
+for (const [label, refs, expectedRevealReason] of invalidCases) {
+  const attemptId = 'attempt-review-' + label;
   const overrides = {prior_candidate_refs: refs};
   const readiness = notesIntentDispatch.checkDownloadReadiness({
     app, observation, windowBinding, branch: 'REVEAL',
@@ -1757,19 +1809,23 @@ for (const [index, refs] of invalidRefs.entries()) {
   const request = {...dispatchNavigationRequest(attemptId, 2), ...overrides};
   const reveal = await notesIntentDispatch.persistReveal(
     dispatchRevealOptions(attemptId, request, app));
-  results.push({readiness, reveal});
+  results.push({label, expectedRevealReason, readiness, reveal});
 }
 const afterFiles = (await fsTest.readdir(process.env.INPUT_TEST_DIR)).sort();
 return {counters, beforeFiles, afterFiles, results};
 ''')
-        for index, case in enumerate(result['results']):
-            with self.subTest(index=index):
+        for case in result['results']:
+            with self.subTest(case=case['label']):
                 self.assertEqual(case['readiness']['status'], 'STOP')
                 self.assertIn('REVEAL_ORDINAL_BUDGET_MISMATCH',
                               case['readiness']['blockers'])
                 self.assertEqual(case['reveal']['status'], 'STOP')
                 self.assertEqual(case['reveal']['reason'],
-                                 'REVEAL_ORDINAL_BUDGET_MISMATCH')
+                                 case['expectedRevealReason'])
+        sparse = next(item for item in result['results']
+                      if item['label'] == 'sparse')
+        self.assertEqual(sparse['reveal']['reason'],
+                         'REVEAL_REQUEST_SERIALIZATION_FAILED')
         self.assertEqual(result['counters'].get('clicks', 0), 0)
         self.assertEqual(result['counters'].get('captures', 0), 0)
         self.assertEqual(result['beforeFiles'], result['afterFiles'])
@@ -1824,35 +1880,7 @@ async function readJson(file) {
 '''
 
 
-class NotesGroundedDownloadHelperTests(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.tools_source = documented_tools_source()
-        TASKS.mkdir(parents=True, exist_ok=True)
-
-    def run_helper(self, body):
-        with tempfile.TemporaryDirectory(prefix='.notes-input-helper-', dir=TASKS) as temp:
-            root = Path(temp).resolve()
-            output_dir = root / 'observations'
-            output_dir.mkdir()
-            script = self.tools_source + '\n' + r'''
-const fsTest = await import('node:fs/promises');
-const result = await (async () => {
-''' + body + r'''
-})();
-console.log(JSON.stringify(result));
-'''
-            env = dict(os.environ, INPUT_TEST_ROOT=str(root),
-                       INPUT_TEST_DIR=str(output_dir))
-            completed = subprocess.run(
-                ['node', '--input-type=module', '-e', script],
-                cwd=ROOT, env=env, text=True, capture_output=True, check=False)
-            self.assertEqual(completed.returncode, 0,
-                             msg='node exit=%s\nstdout:\n%s\nstderr:\n%s' %
-                             (completed.returncode, completed.stdout,
-                              completed.stderr))
-            return json.loads(completed.stdout), output_dir
-
+class NotesGroundedDownloadHelperTests(NodeHelperRunner):
     def test_grounded_request_validation_stops_before_click(self):
         result, _ = self.run_helper(GROUNDED_SETUP + r'''
 const cases = [
@@ -2047,6 +2075,1172 @@ return {throwClicks, throwReceipt, throwRaw, undefinedClicks,
         self.assertEqual(result['undefinedReceipt']['dispatch_call_target'], [60, 70])
         self.assertEqual(result['undefinedReceipt']['native_dispatched_target'], 'UNKNOWN')
         self.assertEqual(result['undefinedReceipt']['native_return_type'], 'UNDEFINED')
+
+
+class NotesTransientToolbarBlockTests(NodeHelperRunner):
+    """Execute the copyable routing blocks in one Node scope per case."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        try:
+            cls.blocks = documented_blocks()
+        except ValueError:
+            cls.blocks = {}
+
+    PREFLIGHT_PRELUDE = r'''
+const caseCounters = {captures: 0, clicks: 0, clickTargets: []};
+const app = {
+  async click(target) {
+    caseCounters.clicks += 1;
+    caseCounters.clickTargets.push(target);
+    return {accepted: true, native_code: 0, target};
+  },
+  async getAXStateAndScreenshot() {
+    caseCounters.captures += 1;
+    return {
+      state: JSON.stringify({role: 'AXWindow',
+                             marker: 'block-capture-' + caseCounters.captures}),
+      screenshot: new TextEncoder().encode(
+        'SYNTHETIC_BLOCK_CAPTURE:' + caseCounters.captures),
+    };
+  },
+};
+const windowBinding = {app_bundle_id: 'jp.naver.line.mac', window_id: 4242};
+const observation = await evidenceTools.persistObservation({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  observationDir: process.env.INPUT_TEST_DIR,
+  observationId: 'preflight-observation',
+  capture: {
+    state: '{"role":"AXWindow","marker":"preflight"}',
+    screenshot: new TextEncoder().encode('SYNTHETIC_PREFLIGHT_CAPTURE'),
+  },
+  hostCalls: {
+    capture_call_started_at: '2026-11-22T00:00:00.000Z',
+    capture_call_returned_at: '2026-11-22T00:00:00.010Z',
+  },
+});
+const filesBefore = (await fsTest.readdir(process.env.INPUT_TEST_DIR)).sort();
+const B1_CONTROL_VISIBLE = @@CONTROL_VISIBLE@@;
+const B1_REVEAL_METHOD_INDEPENDENTLY_AUDITABLE = @@REVEAL_METHOD@@;
+'''
+
+    DIRECT_PLACEHOLDERS = r'''
+const CURRENT_CONTROL_REGION = @@REGION@@;
+const CURRENT_CANDIDATE_POINT = @@POINT@@;
+const CURRENT_VERIFIED_DOWNLOAD_TARGET = @@TARGET@@;
+'''
+
+    REVEAL_PLACEHOLDERS = r'''
+const CURRENT_REVEAL_CANDIDATE_ID = '@@CANDIDATE_ID@@';
+const CURRENT_LIST_POST_MEDIA_SCOPE = 'scope-synthetic-1';
+const CURRENT_SELECTED_MEDIA_REF = 'media-synthetic-1';
+const CURRENT_SAFE_EDGE_REF = 'safe-edge-synthetic-1';
+const CURRENT_VERIFIED_SAFE_EDGE_REGION = @@SAFE_ZONE@@;
+const CURRENT_VERIFIED_SAFE_EDGE_TARGET = [70, 80];
+const CURRENT_MAPPING_ID = 'mapping-synthetic-1';
+const CURRENT_MAPPING_VALID_AT = '2026-11-22T00:00:00Z';
+'''
+
+    PREFLIGHT_RESULT = r'''
+const filesAfter = (await fsTest.readdir(process.env.INPUT_TEST_DIR)).sort();
+return {
+  nextAction: intentReadiness?.status === 'READY'
+    ? 'RUN_EXISTING_NOTES_INTENT_ONCE' : 'B1_LOCAL_STOP',
+  directStatus: directReadiness?.status ?? null,
+  directReason: directReadiness?.reason ?? null,
+  directBlockers: directReadiness?.blockers ?? null,
+  revealStatus: preIntentReveal?.status ?? null,
+  revealReason: preIntentReveal?.reason ?? null,
+  revealBlockers: preIntentReveal?.blockers ?? null,
+  retainedStatus: retainedReveal?.status ?? null,
+  retainedOrdinal: retainedReveal?.candidate_ordinal ?? null,
+  retainedObservationId: retainedReveal?.observation_id ?? null,
+  revealOrdinalDeclared: typeof REVEAL_CANDIDATE_ORDINAL !== 'undefined',
+  preObservationId: observation.observation_id,
+  captureCalls: caseCounters.captures,
+  clickCalls: caseCounters.clicks,
+  clickTargets: caseCounters.clickTargets,
+  filesBefore,
+  filesAfter,
+};
+'''
+
+    DIRECT_INPUTS = r'''
+const DIRECT_WINDOW_BINDING_FROM_OBSERVATION = windowBinding;
+const DIRECT_CONTROL_REGION_FROM_OBSERVATION = [20, 30, 80, 90];
+const DIRECT_DOWNLOAD_TARGET_FROM_OBSERVATION = [60, 70];
+const DIRECT_COORDINATE_SPACE_FROM_OBSERVATION = 'SCREEN_POINTS';
+'''
+
+    DIRECT_EPILOGUE = r'''
+const filesAfter = (await fsTest.readdir(process.env.INPUT_TEST_DIR)).sort();
+const downloadDiagnostic = directDownloadReceipt.receipt
+  ? JSON.parse(await fsTest.readFile(
+      directDownloadReceipt.receipt.files.diagnostic, 'utf8'))
+  : null;
+return {
+  nextAction: intentReadiness?.status === 'READY'
+    ? 'RUN_EXISTING_NOTES_INTENT_ONCE' : 'B1_LOCAL_STOP',
+  directStatus: directReadiness?.status ?? null,
+  directReason: directReadiness?.reason ?? null,
+  revealStatus: preIntentReveal?.status ?? null,
+  revealReason: preIntentReveal?.reason ?? null,
+  revealBlockers: preIntentReveal?.blockers ?? null,
+  retainedStatus: retainedReveal?.status ?? null,
+  retainedOrdinal: retainedReveal?.candidate_ordinal ?? null,
+  revealOrdinalDeclared: typeof REVEAL_CANDIDATE_ORDINAL !== 'undefined',
+  preObservationId: observation.observation_id,
+  intentObservation: {
+    observation_id: intentObservation.observation_id,
+    ready_for_bind: intentObservation.ready_for_bind,
+    assets: intentObservation.assets,
+    hostCalls: intentObservation.hostCalls,
+  },
+  intentCaptureBytes: Array.from(intentCapture.screenshot),
+  directDownloadReceipt,
+  downloadDiagnostic,
+  captureCalls: caseCounters.captures,
+  clickCalls: caseCounters.clicks,
+  clickTargets: caseCounters.clickTargets,
+  filesBefore,
+  filesAfter,
+};
+'''
+
+    REVEAL_PATH_INPUTS = r'''
+const FRESH_WINDOW_BINDING_FROM_THIS_OBSERVATION = windowBinding;
+const CURRENT_FRESH_VERIFIED_SAFE_EDGE_REGION = [40, 50, 100, 110];
+const CURRENT_FRESH_CONTROL_COORDINATE_SPACE = 'SCREEN_POINTS';
+const CURRENT_FRESH_TARGET_COORDINATE_SPACE = 'SCREEN_POINTS';
+'''
+
+    AFTER_INPUTS = r'''
+const AFTER_WINDOW_BINDING_FROM_THIS_OBSERVATION = windowBinding;
+const AFTER_CONTROL_REGION_FROM_THIS_OBSERVATION = [20, 30, 80, 90];
+const AFTER_DOWNLOAD_TARGET_FROM_THIS_OBSERVATION = [60, 70];
+const AFTER_COORDINATE_SPACE_FROM_THIS_OBSERVATION = 'SCREEN_POINTS';
+'''
+
+    REVEAL_EPILOGUE = r'''
+const filesAfter = (await fsTest.readdir(process.env.INPUT_TEST_DIR)).sort();
+const afterDiagnostic = revealAfter
+  ? JSON.parse(await fsTest.readFile(revealAfter.files.diagnostic, 'utf8'))
+  : null;
+const downloadDiagnostic = revealDownloadReceipt.receipt
+  ? JSON.parse(await fsTest.readFile(
+      revealDownloadReceipt.receipt.files.diagnostic, 'utf8'))
+  : null;
+const revealSavedRequest = revealRun?.run?.inputReceipt?.files?.request
+  ? JSON.parse(await fsTest.readFile(
+      revealRun.run.inputReceipt.files.request, 'utf8')).request
+  : null;
+return {
+  nextAction: intentReadiness?.status === 'READY'
+    ? 'RUN_EXISTING_NOTES_INTENT_ONCE' : 'B1_LOCAL_STOP',
+  directStatus: directReadiness?.status ?? null,
+  revealStatus: preIntentReveal?.status ?? null,
+  retainedStatus: retainedReveal?.status ?? null,
+  retainedOrdinal: retainedReveal?.candidate_ordinal ?? null,
+  retainedPriorRefs: retainedReveal?.prior_candidate_refs ?? null,
+  retainedBudgetBefore: retainedReveal?.budget_before ?? null,
+  retainedBudgetAfter: retainedReveal?.budget_after ?? null,
+  revealOrdinalDeclared: typeof REVEAL_CANDIDATE_ORDINAL !== 'undefined',
+  revealSavedRequest,
+  preObservationId: observation.observation_id,
+  intentObservation: {
+    observation_id: intentObservation.observation_id,
+    ready_for_bind: intentObservation.ready_for_bind,
+    assets: intentObservation.assets,
+    hostCalls: intentObservation.hostCalls,
+  },
+  intentCaptureBytes: Array.from(intentCapture.screenshot),
+  revealRun: {
+    status: revealRun.status,
+    reason: revealRun.reason,
+    operation_id: revealRun.operation_id,
+    candidate_ordinal: revealRun.candidate_ordinal,
+    pre_intent_observation_id: revealRun.pre_intent_observation_id,
+    before_observation_id: revealRun.before_observation_id,
+    fail_closed: revealRun.fail_closed,
+    hostCalls: revealRun.run?.hostCalls ?? null,
+    inputStatus: revealRun.run?.inputReceipt?.status ?? null,
+  },
+  revealAfter: revealAfter && {
+    observation_id: revealAfter.observation_id,
+    ready_for_bind: revealAfter.ready_for_bind,
+    blockers: revealAfter.blockers,
+    assets: revealAfter.assets,
+    hostCalls: revealAfter.hostCalls,
+  },
+  revealAfterBytes: revealAfterBytes ? Array.from(revealAfterBytes) : null,
+  afterDiagnostic,
+  revealDownloadReceipt,
+  downloadDiagnostic,
+  captureCalls: caseCounters.captures,
+  clickCalls: caseCounters.clicks,
+  clickTargets: caseCounters.clickTargets,
+  filesBefore,
+  filesAfter,
+};
+'''
+
+    SHARED_CAPTURE_EPILOGUE = r'''
+const filesAfter = (await fsTest.readdir(process.env.INPUT_TEST_DIR)).sort();
+return {
+  nextAction: intentReadiness?.status === 'READY'
+    ? 'RUN_EXISTING_NOTES_INTENT_ONCE' : 'B1_LOCAL_STOP',
+  directStatus: directReadiness?.status ?? null,
+  revealStatus: preIntentReveal?.status ?? null,
+  retainedStatus: retainedReveal?.status ?? null,
+  retainedOrdinal: retainedReveal?.candidate_ordinal ?? null,
+  intentObservation: {
+    observation_id: intentObservation.observation_id,
+    ready_for_bind: intentObservation.ready_for_bind,
+    assets: intentObservation.assets,
+  },
+  intentCaptureBytes: Array.from(intentCapture.screenshot),
+  captureCalls: caseCounters.captures,
+  clickCalls: caseCounters.clicks,
+  clickTargets: caseCounters.clickTargets,
+  filesBefore,
+  filesAfter,
+};
+'''
+
+    CANDIDATE_TWO_ARM_PLACEHOLDERS = r'''
+const CURRENT_PRIOR_CANDIDATE_REFS = ['prior-candidate-receipt'];
+const CURRENT_REARM_PRECONDITIONS_REF = 'prior-candidate-after';
+const CURRENT_REARM_NEW_INFORMATION_REF = 'current-tool-document';
+const CURRENT_B1_REARM_NEW_INFORMATION_CONCLUSION = 'PASS';
+'''
+
+    def run_sections(self, sections, observation_id='intent-after-observation'):
+        result, _ = self.run_helper(
+            '\n'.join(sections),
+            extra_source=self.reveal_source + '\n' + self.dispatch_source,
+            observation_id=observation_id)
+        return result
+
+    def preflight_prelude(self, *, control_visible, reveal_method,
+                          direct=None, reveal=None, ordinal=1,
+                          reveal_candidate_id=None):
+        source = (self.PREFLIGHT_PRELUDE
+                  .replace('@@CONTROL_VISIBLE@@', control_visible)
+                  .replace('@@REVEAL_METHOD@@', reveal_method))
+        if direct is not None or reveal is not None:
+            source += (
+                "const CURRENT_CONTROL_COORDINATE_SPACE = 'SCREEN_POINTS';\n"
+                "const CURRENT_TARGET_COORDINATE_SPACE = 'SCREEN_POINTS';\n")
+        if direct is not None:
+            region, point, target = direct
+            source += (self.DIRECT_PLACEHOLDERS
+                       .replace('@@REGION@@', region)
+                       .replace('@@POINT@@', point)
+                       .replace('@@TARGET@@', target))
+        if reveal is not None:
+            source += 'const REVEAL_CANDIDATE_ORDINAL = %d;\n' % ordinal
+            source += (self.REVEAL_PLACEHOLDERS
+                       .replace('@@SAFE_ZONE@@', reveal)
+                       .replace('@@CANDIDATE_ID@@',
+                                reveal_candidate_id or 'candidate-%d' % ordinal))
+            if ordinal == 2:
+                source += self.CANDIDATE_TWO_ARM_PLACEHOLDERS
+        return source
+
+    @staticmethod
+    def intent_readback_inputs(attempt_id):
+        return r'''
+const intentReadback = {attempt_id: '%s', status: 'UNKNOWN',
+                        dispatch_authorized: false};
+await fsTest.writeFile(process.env.INPUT_TEST_ROOT + '/intent-readback.json',
+  JSON.stringify(intentReadback) + '\n');
+await fsTest.writeFile(process.env.INPUT_TEST_ROOT + '/intent-event.sequence',
+  '7\n');
+await fsTest.writeFile(process.env.INPUT_TEST_ROOT + '/intent-event.sha256',
+  'a'.repeat(64) + '\n');
+''' % attempt_id
+
+    def run_preflight_case(self, **kwargs):
+        sections = [
+            self.preflight_prelude(**kwargs),
+            self.blocks['notes-intent-preflight'],
+            self.PREFLIGHT_RESULT,
+        ]
+        return self.run_sections(sections)
+
+    def run_direct_route(self, *, attempt_id, **kwargs):
+        sections = [
+            self.preflight_prelude(**kwargs),
+            self.blocks['notes-intent-preflight'],
+            self.intent_readback_inputs(attempt_id),
+            self.blocks['notes-intent-readback'],
+            self.blocks['notes-intent-capture'],
+            self.blocks['notes-download-builder'],
+            self.DIRECT_INPUTS,
+            self.blocks['notes-direct-dispatch'],
+            self.DIRECT_EPILOGUE,
+        ]
+        return self.run_sections(
+            sections, observation_id='intent-capture-' + attempt_id)
+
+    def run_reveal_route(self, *, attempt_id, ordinal=1, **kwargs):
+        sections = [
+            self.preflight_prelude(ordinal=ordinal, **kwargs),
+            self.blocks['notes-intent-preflight'],
+            self.intent_readback_inputs(attempt_id),
+            self.blocks['notes-intent-readback'],
+            self.blocks['notes-intent-capture'],
+            self.blocks['notes-download-builder'],
+            self.REVEAL_PATH_INPUTS,
+            self.blocks['notes-reveal-path'],
+            self.AFTER_INPUTS,
+            self.blocks['notes-reveal-download'],
+            self.REVEAL_EPILOGUE,
+        ]
+        return self.run_sections(
+            sections, observation_id='intent-capture-' + attempt_id)
+
+    def run_shared_capture_stop(self, *, attempt_id, **kwargs):
+        sections = [
+            self.preflight_prelude(**kwargs),
+            self.blocks['notes-intent-preflight'],
+            self.intent_readback_inputs(attempt_id),
+            self.blocks['notes-intent-readback'],
+            self.blocks['notes-intent-capture'],
+            self.SHARED_CAPTURE_EPILOGUE,
+        ]
+        return self.run_sections(
+            sections, observation_id='intent-capture-' + attempt_id)
+
+    def run_candidate_two_route(self, *, attempt_id):
+        return self.run_reveal_route(
+            attempt_id=attempt_id, ordinal=2, control_visible='false',
+            reveal_method='true', reveal='[40, 50, 100, 110]',
+            reveal_candidate_id='candidate-2')
+
+    def assert_no_files(self, names, *prefixes):
+        for prefix in prefixes:
+            matching = [name for name in names if name.startswith(prefix)]
+            self.assertEqual(matching, [], msg=prefix)
+
+    def test_a1_each_marker_encloses_one_js_block_in_document_order(self):
+        text = TEMPLATE.read_text(encoding='utf-8')
+        cursor = -1
+        for name in BLOCK_MARKERS:
+            start_marker = '<!-- %s:start -->' % name
+            end_marker = '<!-- %s:end -->' % name
+            start = text.index(start_marker)
+            end = text.index(end_marker, start)
+            self.assertGreater(start, cursor, name)
+            cursor = end
+            section = text[start:end]
+            self.assertEqual(section.count('```js'), 1, name)
+            self.assertEqual(section.count('```'), 2, name)
+            code_start = section.index('```js') + len('```js')
+            code_end = section.index('```', code_start)
+            self.assertEqual(section[code_end + 3:].strip(), '', name)
+        self.assertIn('let directReadiness = null',
+                      self.blocks['notes-intent-preflight'])
+        self.assertIn('let preIntentReveal = null',
+                      self.blocks['notes-intent-preflight'])
+        self.assertIn('const retainedReveal = preIntentReveal?.status',
+                      self.blocks['notes-intent-preflight'])
+        self.assertIn('const INTENT_READBACK = JSON.parse',
+                      self.blocks['notes-intent-readback'])
+        self.assertIn('const intentObservation', self.blocks['notes-intent-capture'])
+        self.assertIn('async function dispatchDownload',
+                      self.blocks['notes-download-builder'])
+        self.assertIn('const directDispatchDecision',
+                      self.blocks['notes-direct-dispatch'])
+        self.assertIn('const beforeObservation = intentObservation',
+                      self.blocks['notes-reveal-path'])
+        self.assertIn('const revealCandidateArm = REVEAL_CANDIDATE_ORDINAL',
+                      self.blocks['notes-reveal-path'])
+        self.assertIn('const revealDownloadReceipt = await dispatchDownload',
+                      self.blocks['notes-reveal-download'])
+
+    def test_a1_visible_direct_ready_with_ready_alternate_selects_direct(self):
+        result = self.run_direct_route(
+            attempt_id='a1-case1', control_visible='true', reveal_method='true',
+            direct=('[20, 30, 80, 90]', '[60, 70]', '[60, 70]'),
+            reveal='[40, 50, 100, 110]')
+        self.assertEqual(result['nextAction'], 'RUN_EXISTING_NOTES_INTENT_ONCE')
+        self.assertEqual(result['directStatus'], 'READY')
+        self.assertEqual(result['revealStatus'], 'READY')
+        self.assertEqual(result['retainedStatus'], 'READY')
+        self.assertEqual(result['retainedOrdinal'], 1)
+        self.assertEqual(result['captureCalls'], 1)
+        self.assertEqual(result['clickCalls'], 1)
+        self.assertEqual(result['clickTargets'], [[60, 70]])
+        self.assertEqual(result['directDownloadReceipt']['status'], 'INVOKED')
+        self.assertEqual(result['directDownloadReceipt']['source_mode'],
+                         'DIRECT_INTENT_OBSERVATION')
+        self.assertEqual(result['directDownloadReceipt']['operation_id'],
+                         'notes-download-a1-case1')
+        self.assertEqual(result['intentCaptureBytes'],
+                         list(b'SYNTHETIC_BLOCK_CAPTURE:1'))
+        self.assertEqual(result['downloadDiagnostic']['dispatch_call_target'],
+                         [60, 70])
+        self.assertEqual(
+            result['directDownloadReceipt']['source_observation']['path'],
+            result['intentObservation']['assets']['screenshot']['path'])
+        self.assertEqual(
+            result['directDownloadReceipt']['receipt']['hostCalls'],
+            result['downloadDiagnostic']['hostCalls'])
+        self.assertLessEqual(
+            result['intentObservation']['hostCalls']['capture_call_returned_at'],
+            result['directDownloadReceipt']['receipt']['hostCalls']
+                  ['dispatch_call_started_at'])
+        self.assertNotEqual(result['intentObservation']['hostCalls']
+                            ['capture_call_started_at'], 'NOT_RUN')
+        self.assert_no_files(result['filesAfter'], 'notes-reveal-c2-')
+        self.assertEqual(
+            sorted(name for name in result['filesAfter']
+                   if name.startswith('notes-download-a1-case1.')),
+            ['notes-download-a1-case1.input.diagnostic.json',
+             'notes-download-a1-case1.input.raw.json',
+             'notes-download-a1-case1.input.request.json'])
+
+    def test_a1_visible_direct_without_reveal_method_never_evaluates_reveal(self):
+        result = self.run_direct_route(
+            attempt_id='a1-case2', control_visible='true', reveal_method='false',
+            direct=('[20, 30, 80, 90]', '[60, 70]', '[60, 70]'))
+        self.assertEqual(result['nextAction'], 'RUN_EXISTING_NOTES_INTENT_ONCE')
+        self.assertEqual(result['directStatus'], 'READY')
+        self.assertIsNone(result['revealStatus'])
+        self.assertIsNone(result['retainedStatus'])
+        self.assertFalse(result['revealOrdinalDeclared'])
+        self.assertEqual(result['captureCalls'], 1)
+        self.assertEqual(result['clickCalls'], 1)
+        self.assertEqual(result['clickTargets'], [[60, 70]])
+        self.assertEqual(result['directDownloadReceipt']['status'], 'INVOKED')
+        self.assert_no_files(result['filesAfter'], 'notes-reveal-c2-')
+
+    def test_a1_visible_direct_with_reveal_stop_keeps_direct_and_null_retainer(self):
+        result = self.run_direct_route(
+            attempt_id='a1-case3', control_visible='true', reveal_method='true',
+            direct=('[20, 30, 80, 90]', '[60, 70]', '[60, 70]'),
+            reveal='[70, 80, 70, 90]')
+        self.assertEqual(result['nextAction'], 'RUN_EXISTING_NOTES_INTENT_ONCE')
+        self.assertEqual(result['directStatus'], 'READY')
+        self.assertEqual(result['revealStatus'], 'STOP')
+        self.assertEqual(result['revealReason'], 'DOWNLOAD_READINESS_BLOCKED')
+        self.assertIn('REVEAL_SAFE_ZONE_INVALID',
+                      result.get('revealBlockers') or [])
+        self.assertIsNone(result['retainedStatus'])
+        self.assertEqual(result['directDownloadReceipt']['status'], 'INVOKED')
+        self.assertEqual(result['captureCalls'], 1)
+        self.assertEqual(result['clickCalls'], 1)
+        self.assert_no_files(result['filesAfter'], 'notes-reveal-c2-')
+
+    def test_a1_initial_hidden_reveal_ready_uses_capture_reveal_and_same_after(self):
+        result = self.run_reveal_route(
+            attempt_id='a1-case4', control_visible='false', reveal_method='true',
+            reveal='[40, 50, 100, 110]')
+        self.assertEqual(result['nextAction'], 'RUN_EXISTING_NOTES_INTENT_ONCE')
+        self.assertIsNone(result['directStatus'])
+        self.assertEqual(result['revealStatus'], 'READY')
+        self.assertEqual(result['retainedStatus'], 'READY')
+        self.assertEqual(result['captureCalls'], 2)
+        self.assertEqual(result['clickCalls'], 2)
+        self.assertEqual(result['clickTargets'], [[70, 80], [60, 70]])
+        self.assertEqual(result['revealRun']['status'], 'INVOKED')
+        self.assertEqual(result['revealRun']['before_observation_id'],
+                         result['intentObservation']['observation_id'])
+        self.assertEqual(result['revealRun']['pre_intent_observation_id'],
+                         result['preObservationId'])
+        self.assertEqual(result['revealAfterBytes'],
+                         list(b'SYNTHETIC_BLOCK_CAPTURE:2'))
+        self.assertEqual(result['revealDownloadReceipt']['status'], 'INVOKED')
+        self.assertEqual(result['revealDownloadReceipt']['source_mode'],
+                         'REVEAL_SAME_AFTER')
+        self.assertEqual(
+            result['revealDownloadReceipt']['source_observation']['path'],
+            result['revealAfter']['assets']['screenshot']['path'])
+        self.assertNotEqual(result['revealAfter']['hostCalls']
+                            ['capture_call_started_at'], 'UNKNOWN')
+        self.assertEqual(result['afterDiagnostic']['hostCalls'],
+                         result['revealAfter']['hostCalls'])
+        self.assertEqual(
+            result['revealDownloadReceipt']['receipt']['hostCalls'],
+            result['downloadDiagnostic']['hostCalls'])
+        self.assertLessEqual(
+            result['revealAfter']['hostCalls']['capture_call_returned_at'],
+            result['revealDownloadReceipt']['receipt']['hostCalls']
+                  ['dispatch_call_started_at'])
+        self.assertTrue(any(name.startswith('notes-reveal-c2-a1-case4')
+                            for name in result['filesAfter']))
+        self.assertEqual(
+            sorted(name for name in result['filesAfter']
+                   if name.startswith('notes-download-a1-case4.')),
+            ['notes-download-a1-case4.input.diagnostic.json',
+             'notes-download-a1-case4.input.raw.json',
+             'notes-download-a1-case4.input.request.json'])
+
+    def test_a1_unknown_visibility_and_hidden_without_reveal_stop_before_intent(self):
+        for label, visible in (('unknown', 'null'), ('hidden-no-reveal', 'false')):
+            with self.subTest(case=label):
+                result = self.run_preflight_case(
+                    control_visible=visible, reveal_method='false')
+                self.assertEqual(result['nextAction'], 'B1_LOCAL_STOP')
+                self.assertIsNone(result['directStatus'])
+                self.assertIsNone(result['revealStatus'])
+                self.assertIsNone(result['retainedStatus'])
+                self.assertFalse(result['revealOrdinalDeclared'])
+                self.assertEqual(result['captureCalls'], 0)
+                self.assertEqual(result['clickCalls'], 0)
+                self.assertEqual(result['filesAfter'], result['filesBefore'])
+
+    def test_a1_visible_direct_stop_with_reveal_ready_stops_before_intent(self):
+        result = self.run_preflight_case(
+            control_visible='true', reveal_method='true',
+            direct=('[20, 30, 80, 90]', '[20, 70]', '[20, 70]'),
+            reveal='[40, 50, 100, 110]')
+        self.assertEqual(result['nextAction'], 'B1_LOCAL_STOP')
+        self.assertEqual(result['directStatus'], 'STOP')
+        self.assertIn('DOWNLOAD_CONTROL_POINT_NOT_STRICT_INTERIOR',
+                      result['directBlockers'])
+        self.assertEqual(result['revealStatus'], 'READY')
+        self.assertEqual(result['retainedStatus'], 'READY')
+        self.assertEqual(result['captureCalls'], 0)
+        self.assertEqual(result['clickCalls'], 0)
+        self.assertEqual(result['filesAfter'], result['filesBefore'])
+
+    def test_a1_visible_to_hidden_uses_shared_capture_then_reveal_after(self):
+        result = self.run_reveal_route(
+            attempt_id='a1-visible-hidden', control_visible='true',
+            reveal_method='true',
+            direct=('[20, 30, 80, 90]', '[60, 70]', '[60, 70]'),
+            reveal='[40, 50, 100, 110]')
+        self.assertEqual(result['nextAction'], 'RUN_EXISTING_NOTES_INTENT_ONCE')
+        self.assertEqual(result['directStatus'], 'READY')
+        self.assertEqual(result['retainedStatus'], 'READY')
+        self.assertEqual(result['captureCalls'], 2)
+        self.assertEqual(result['clickCalls'], 2)
+        self.assertEqual(result['clickTargets'], [[70, 80], [60, 70]])
+        self.assertEqual(result['revealRun']['status'], 'INVOKED')
+        self.assertEqual(result['revealRun']['before_observation_id'],
+                         result['intentObservation']['observation_id'])
+        self.assertEqual(result['revealAfterBytes'],
+                         list(b'SYNTHETIC_BLOCK_CAPTURE:2'))
+        self.assertEqual(result['revealDownloadReceipt']['source_mode'],
+                         'REVEAL_SAME_AFTER')
+        self.assertEqual(
+            result['revealDownloadReceipt']['source_observation']['path'],
+            result['revealAfter']['assets']['screenshot']['path'])
+
+    def test_a1_direct_ready_reveal_stop_then_hidden_keeps_only_shared_capture(self):
+        result = self.run_shared_capture_stop(
+            attempt_id='a1-hidden-stop', control_visible='true',
+            reveal_method='true',
+            direct=('[20, 30, 80, 90]', '[60, 70]', '[60, 70]'),
+            reveal='[70, 80, 70, 90]')
+        self.assertEqual(result['nextAction'], 'RUN_EXISTING_NOTES_INTENT_ONCE')
+        self.assertEqual(result['directStatus'], 'READY')
+        self.assertEqual(result['revealStatus'], 'STOP')
+        self.assertIsNone(result['retainedStatus'])
+        self.assertEqual(result['captureCalls'], 1)
+        self.assertEqual(result['clickCalls'], 0)
+        self.assertEqual(result['intentCaptureBytes'],
+                         list(b'SYNTHETIC_BLOCK_CAPTURE:1'))
+        self.assert_no_files(result['filesAfter'], 'notes-reveal-c2-')
+        self.assert_no_files(result['filesAfter'], 'notes-download-')
+
+    def test_a1_invalid_reveal_ordinal_stops_before_intent(self):
+        result = self.run_preflight_case(
+            control_visible='false', reveal_method='true',
+            reveal='[40, 50, 100, 110]', ordinal=3,
+            reveal_candidate_id='candidate-3')
+        self.assertEqual(result['nextAction'], 'B1_LOCAL_STOP')
+        self.assertEqual(result['revealStatus'], 'STOP')
+        self.assertIn('REVEAL_ORDINAL_INVALID', result['revealBlockers'])
+        self.assertIsNone(result['retainedStatus'])
+        self.assertEqual(result['captureCalls'], 0)
+        self.assertEqual(result['clickCalls'], 0)
+        self.assertEqual(result['filesAfter'], result['filesBefore'])
+
+    def test_a1_candidate_two_reveal_uses_ordinal_two_arm(self):
+        result = self.run_candidate_two_route(attempt_id='a1-candidate-two')
+        self.assertEqual(result['nextAction'], 'RUN_EXISTING_NOTES_INTENT_ONCE')
+        self.assertEqual(result['revealStatus'], 'READY')
+        self.assertEqual(result['retainedStatus'], 'READY')
+        self.assertEqual(result['retainedOrdinal'], 2)
+        self.assertEqual(result['revealRun']['status'], 'INVOKED')
+        self.assertEqual(result['revealRun']['candidate_ordinal'], 2)
+        self.assertEqual(result['revealRun']['pre_intent_observation_id'],
+                         result['preObservationId'])
+        self.assertEqual(result['revealRun']['before_observation_id'],
+                         result['intentObservation']['observation_id'])
+        self.assertEqual(result['revealSavedRequest']['candidate_ordinal'], 2)
+        self.assertEqual(result['revealSavedRequest']['prior_candidate_refs'],
+                         result['retainedPriorRefs'])
+        self.assertEqual(result['revealSavedRequest']['budget_before'],
+                         result['retainedBudgetBefore'])
+        self.assertEqual(result['revealSavedRequest']['budget_after'],
+                         result['retainedBudgetAfter'])
+        self.assertEqual(result['revealRun']['operation_id'],
+                         'notes-reveal-c2-a1-candidate-two')
+        self.assertEqual(result['revealRun']['inputStatus'], 'INVOKED')
+        self.assertEqual(result['captureCalls'], 2)
+        self.assertEqual(result['clickCalls'], 2)
+        self.assertEqual(result['clickTargets'], [[70, 80], [60, 70]])
+        self.assertEqual(result['revealAfterBytes'],
+                         list(b'SYNTHETIC_BLOCK_CAPTURE:2'))
+        self.assertEqual(result['revealDownloadReceipt']['source_mode'],
+                         'REVEAL_SAME_AFTER')
+        self.assertEqual(
+            result['revealDownloadReceipt']['source_observation']['path'],
+            result['revealAfter']['assets']['screenshot']['path'])
+        self.assertIn('notes-reveal-c2-a1-candidate-two.input.request.json',
+                      result['filesAfter'])
+        self.assertIn('notes-download-a1-candidate-two.input.request.json',
+                      result['filesAfter'])
+
+    def test_a2_stale_assets_reused_path_and_reused_id_reject_before_input(self):
+        result = self.run_sections([DISPATCH_SETUP, r'''
+const counters = {clicks: 0, captures: 0};
+const app = {
+  async click(target) { counters.clicks += 1; return {target}; },
+  async getAXStateAndScreenshot() {
+    counters.captures += 1;
+    return {state: '{"role":"AXWindow"}',
+            screenshot: new TextEncoder().encode('A2-AFTER')};
+  },
+};
+const windowBinding = dispatchWindowBinding({window_id: 4242});
+const pre = await dispatchObservation('a2-pre', dispatchFreshCapture('a2-pre'));
+const preIntentReveal = notesIntentDispatch.checkDownloadReadiness({
+  app, observation: pre, windowBinding, branch: 'REVEAL',
+  decision: dispatchRevealReadinessDecision(pre, 1),
+});
+const before = await dispatchObservation(
+  'a2-before', dispatchFreshCapture('a2-before'));
+const acceptBefore = await dispatchObservation(
+  'a2-accept-before', dispatchFreshCapture('a2-pre'));
+const options = (attemptId, beforeObservation, request) => ({
+  ...dispatchPaths(),
+  intent: dispatchIntent(attemptId),
+  intentEventRef: dispatchEventRef(),
+  request,
+  app,
+  preIntentReveal,
+  beforeObservation,
+  windowBinding,
+});
+const rejectionCases = [
+  ['screenshot-stale',
+   {...before, assets: {...before.assets, screenshot: pre.assets.screenshot}}],
+  ['ax-stale',
+   {...before, assets: {...before.assets, ax: pre.assets.ax}}],
+  ['path-reused-changed-refs',
+   {...before, assets: {...before.assets, screenshot: {
+     ...pre.assets.screenshot,
+     bytes: pre.assets.screenshot.bytes + 9,
+     sha256: 'f'.repeat(64),
+   }}}],
+  ['observation-id-reused', {...before, observation_id: pre.observation_id}],
+];
+const beforeFiles = (await fsTest.readdir(process.env.INPUT_TEST_DIR)).sort();
+const rejected = [];
+for (const [label, beforeObservation] of rejectionCases) {
+  const attemptId = 'attempt-a2-' + label;
+  rejected.push([label, await notesIntentDispatch.persistReveal(
+    options(attemptId, beforeObservation,
+            dispatchRevealRequest(attemptId, before)))]);
+}
+const acceptRequest = dispatchRevealRequest('attempt-a2-accept', acceptBefore);
+const acceptReadiness = notesIntentDispatch.checkDownloadReadiness({
+  app, observation: acceptBefore, windowBinding, branch: 'REVEAL',
+  decision: acceptRequest,
+});
+const accepted = await notesIntentDispatch.persistReveal(
+  options('attempt-a2-accept', acceptBefore, acceptRequest));
+const filesAfter = (await fsTest.readdir(process.env.INPUT_TEST_DIR)).sort();
+return {
+  rejected: rejected.map(([label, outcome]) => ({
+    label, status: outcome.status, reason: outcome.reason,
+  })),
+  acceptReadiness,
+  accepted,
+  counters,
+  beforeFiles,
+  filesAfter,
+  preScreenshot: pre.assets.screenshot,
+  acceptScreenshot: acceptBefore.assets.screenshot,
+};
+'''])
+        for item in result['rejected']:
+            with self.subTest(case=item['label']):
+                self.assertEqual(item['status'], 'STOP')
+                self.assertEqual(item['reason'],
+                                 'REVEAL_BEFORE_OBSERVATION_NOT_FRESH')
+        self.assertEqual(result['acceptReadiness']['status'], 'READY')
+        self.assertEqual(result['accepted']['status'], 'INVOKED')
+        self.assertEqual(result['accepted']['reason'], None)
+        self.assertEqual(result['counters'], {'clicks': 1, 'captures': 1})
+        self.assertNotEqual(result['preScreenshot']['path'],
+                            result['acceptScreenshot']['path'])
+        self.assertEqual(result['preScreenshot']['sha256'],
+                         result['acceptScreenshot']['sha256'])
+        for label in ('screenshot-stale', 'ax-stale',
+                      'path-reused-changed-refs', 'observation-id-reused'):
+            self.assert_no_files(result['filesAfter'],
+                                 'notes-reveal-c2-attempt-a2-' + label)
+        self.assertTrue(any(name.startswith('notes-reveal-c2-attempt-a2-accept')
+                            for name in result['filesAfter']))
+
+    def test_a3_reveal_snapshot_survives_deferred_caller_mutation_once(self):
+        result = self.run_sections([DISPATCH_SETUP, r'''
+const fsNative = await import('node:fs');
+const counters = {clicks: 0, captures: 0, targets: []};
+const gate = new Promise(resolve => setTimeout(resolve, 0));
+const app = {
+  async click(target) {
+    counters.clicks += 1;
+    counters.targets.push(target);
+    await gate;
+    return {target};
+  },
+  async getAXStateAndScreenshot() {
+    counters.captures += 1;
+    await gate;
+    return dispatchFreshCapture('a3-after');
+  },
+};
+const windowBinding = dispatchWindowBinding({window_id: 4242});
+const stage = await dispatchRevealStage(
+  'attempt-a3-mutate', 1, windowBinding);
+const options = dispatchGatedRevealOptions(stage, app);
+const original = {
+  candidateOrdinal: stage.request.candidate_ordinal,
+  priorCandidateRefs: stage.request.prior_candidate_refs,
+  safeZone: [...stage.request.safe_zone],
+  preparedTarget: [...stage.request.prepared_target],
+  preIntentObservationId: stage.preObservation.observation_id,
+  beforeObservationId: stage.beforeObservation.observation_id,
+  beforeScreenshotPath: stage.beforeObservation.assets.screenshot.path,
+};
+const pending = notesIntentDispatch.persistReveal(options);
+options.request.prepared_target = [9999, 9999];
+options.request.safe_zone = [-1000, -1000, -1, -1];
+options.request.candidate_ordinal = 99;
+options.request.before_screenshot_ref.path = '/ABS/MUTATED_SCREENSHOT';
+options.preIntentReveal.observation_id = 'mutated-pre';
+options.beforeObservation.observation_id = 'mutated-before';
+const requestExistedAtMutation = fsNative.existsSync(
+  process.env.INPUT_TEST_DIR +
+  '/notes-reveal-c2-attempt-a3-mutate.input.request.json');
+const run = await pending;
+const saved = JSON.parse(await fsTest.readFile(
+  run.run.inputReceipt.files.request, 'utf8'));
+const filesAfter = (await fsTest.readdir(process.env.INPUT_TEST_DIR)).sort();
+return {
+  run,
+  savedRequest: saved.request,
+  counters,
+  original,
+  requestExistedAtMutation,
+  filesAfter,
+};
+'''])
+        self.assertEqual(result['run']['status'], 'INVOKED')
+        self.assertEqual(result['run']['reason'], None)
+        self.assertEqual(result['run']['candidate_ordinal'], 1)
+        self.assertEqual(result['run']['pre_intent_observation_id'],
+                         result['original']['preIntentObservationId'])
+        self.assertEqual(result['run']['before_observation_id'],
+                         result['original']['beforeObservationId'])
+        self.assertEqual(result['run']['run']['inputReceipt']['status'],
+                         'INVOKED')
+        self.assertEqual(result['savedRequest']['candidate_ordinal'], 1)
+        self.assertEqual(result['savedRequest']['safe_zone'], [40, 50, 100, 110])
+        self.assertEqual(result['savedRequest']['prepared_target'], [70, 80])
+        self.assertEqual(result['savedRequest']['before_screenshot_ref']['path'],
+                         result['original']['beforeScreenshotPath'])
+        self.assertEqual(result['counters']['clicks'], 1)
+        self.assertEqual(result['counters']['captures'], 1)
+        self.assertEqual(result['counters']['targets'], [[70, 80]])
+        self.assertFalse(result['requestExistedAtMutation'])
+        self.assertTrue(any(
+            name.startswith('notes-reveal-c2-attempt-a3-mutate.input.request')
+            for name in result['filesAfter']))
+
+    def test_a3_missing_or_unserializable_request_stops_before_slot_and_input(self):
+        result = self.run_sections([DISPATCH_SETUP, r'''
+const counters = {clicks: 0, captures: 0};
+const app = {
+  async click(target) { counters.clicks += 1; return {target}; },
+  async getAXStateAndScreenshot() {
+    counters.captures += 1;
+    return dispatchFreshCapture('a3-stop-after');
+  },
+};
+const windowBinding = dispatchWindowBinding({window_id: 4242});
+const missingStage = await dispatchRevealStage(
+  'attempt-a3-missing-request', 1, windowBinding);
+const missing = await notesIntentDispatch.persistReveal({
+  ...dispatchGatedRevealOptions(missingStage, app),
+  request: undefined,
+});
+const badStage = await dispatchRevealStage(
+  'attempt-a3-unserializable', 1, windowBinding);
+const circular = {...badStage.request};
+circular.self = circular;
+const unserializable = await notesIntentDispatch.persistReveal({
+  ...dispatchGatedRevealOptions(badStage, app),
+  request: circular,
+});
+const filesAfter = (await fsTest.readdir(process.env.INPUT_TEST_DIR)).sort();
+return {counters, missing, unserializable, filesAfter};
+'''])
+        self.assertEqual(result['missing']['status'], 'STOP')
+        self.assertEqual(result['missing']['reason'], 'REVEAL_REQUEST_REQUIRED')
+        self.assertEqual(result['unserializable']['status'], 'STOP')
+        self.assertEqual(result['unserializable']['reason'],
+                         'REVEAL_REQUEST_SERIALIZATION_FAILED')
+        self.assertIn('REVEAL_REQUEST_SERIALIZATION_FAILED',
+                      result['unserializable']['blockers'])
+        self.assertEqual(result['counters'], {'clicks': 0, 'captures': 0})
+        for attempt in ('attempt-a3-missing-request',
+                        'attempt-a3-unserializable'):
+            self.assert_no_files(result['filesAfter'],
+                                 'notes-reveal-c2-' + attempt)
+            self.assert_no_files(result['filesAfter'],
+                                 'notes-reveal-c2-' + attempt + '-after')
+
+    def test_a4_observation_host_calls_success_throw_and_pre_call_rejection(self):
+        result = self.run_sections([r'''
+const fsTest = await import('node:fs/promises');
+const paths = () => ({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  observationDir: process.env.INPUT_TEST_DIR,
+});
+globalThis.cua = {
+  getApp: async () => ({
+    getAXStateAndScreenshot: async () => ({
+      state: '{"role":"AXWindow"}',
+      screenshot: new TextEncoder().encode('OBSERVATION-OK'),
+    }),
+  }),
+};
+const ok = await evidenceTools.captureAndPersist({
+  ...paths(), observationId: 'a4-observation-ok'});
+const okDiagnostic = JSON.parse(await fsTest.readFile(
+  ok.files.diagnostic, 'utf8'));
+globalThis.cua = {
+  getApp: async () => ({
+    getAXStateAndScreenshot: async () => {
+      throw new Error('synthetic capture throw');
+    },
+  }),
+};
+const thrown = await evidenceTools.captureAndPersist({
+  ...paths(), observationId: 'a4-observation-throw'});
+const thrownDiagnostic = JSON.parse(await fsTest.readFile(
+  thrown.files.diagnostic, 'utf8'));
+globalThis.cua = {
+  getApp: async () => {
+    throw new Error('synthetic pre-call rejection');
+  },
+};
+const preCall = await evidenceTools.captureAndPersist({
+  ...paths(), observationId: 'a4-observation-pre-call'});
+const preCallDiagnostic = JSON.parse(await fsTest.readFile(
+  preCall.files.diagnostic, 'utf8'));
+const bare = await evidenceTools.persistObservation({
+  ...paths(), observationId: 'a4-observation-bare',
+  capture: {state: '{"role":"AXWindow"}',
+            screenshot: new TextEncoder().encode('BARE')},
+});
+return {ok, okDiagnostic, thrown, thrownDiagnostic,
+        preCall, preCallDiagnostic, bare};
+'''])
+        ok_calls = result['ok']['hostCalls']
+        thrown_calls = result['thrown']['hostCalls']
+        pre_calls = result['preCall']['hostCalls']
+        self.assertTrue(result['ok']['ready_for_bind'])
+        self.assertEqual(ok_calls['clock_source'], 'HOST_JS_DATE')
+        self.assertEqual(ok_calls['precision'], 'CALL_BOUNDARY_ONLY')
+        self.assertEqual(ok_calls['os_event_time'], 'UNKNOWN')
+        self.assertNotEqual(ok_calls['capture_call_started_at'], 'NOT_RUN')
+        self.assertNotEqual(ok_calls['capture_call_returned_at'], 'NOT_RUN')
+        self.assertLessEqual(ok_calls['capture_call_started_at'],
+                             ok_calls['capture_call_returned_at'])
+        self.assertEqual(result['okDiagnostic']['hostCalls'], ok_calls)
+
+        self.assertFalse(result['thrown']['ready_for_bind'])
+        self.assertEqual(result['thrown']['blockers'], ['CAPTURE:FAILED'])
+        self.assertNotEqual(thrown_calls['capture_call_started_at'], 'NOT_RUN')
+        self.assertNotEqual(thrown_calls['capture_call_returned_at'], 'NOT_RUN')
+        self.assertLessEqual(thrown_calls['capture_call_started_at'],
+                             thrown_calls['capture_call_returned_at'])
+        self.assertEqual(result['thrownDiagnostic']['hostCalls'], thrown_calls)
+
+        self.assertFalse(result['preCall']['ready_for_bind'])
+        self.assertEqual(result['preCall']['blockers'], ['CAPTURE:FAILED'])
+        for key in ('capture_call_started_at', 'capture_call_returned_at'):
+            self.assertEqual(pre_calls[key], 'NOT_RUN')
+            self.assertEqual(result['preCallDiagnostic']['hostCalls'][key],
+                             'NOT_RUN')
+        self.assertEqual(result['bare']['hostCalls'], pre_calls)
+
+    def test_a4_grounded_dispatch_host_calls_success_throw_and_pre_call_rejection(self):
+        result = self.run_sections([GROUNDED_SETUP, r'''
+let successClicks = 0;
+const success = await evidenceTools.persistGroundedDownloadClick(
+  makeGroundedOptions('a4-dispatch-success', async target => {
+    successClicks += 1;
+    return {native_code: 0, target};
+  }));
+const successDiagnostic = await readJson(success.files.diagnostic);
+let throwClicks = 0;
+const throwError = Object.assign(new Error('synthetic native throw'), {code: 91});
+const thrown = await evidenceTools.persistGroundedDownloadClick(
+  makeGroundedOptions('a4-dispatch-throw', async () => {
+    throwClicks += 1;
+    throw throwError;
+  }));
+const thrownDiagnostic = await readJson(thrown.files.diagnostic);
+let gateClicks = 0;
+const gateOptions = makeGroundedOptions('a4-dispatch-gate', async () => {
+  gateClicks += 1;
+  return {ok: true};
+});
+gateOptions.request.mapping_status = 'UNKNOWN';
+const gate = await evidenceTools.persistGroundedDownloadClick(gateOptions);
+const gateDiagnostic = await readJson(gate.files.diagnostic);
+let slotClicks = 0;
+const slotOptions = makeGroundedOptions('a4-dispatch-slot', async target => {
+  slotClicks += 1;
+  return {target};
+});
+await fsTest.writeFile(
+  process.env.INPUT_TEST_DIR + '/a4-dispatch-slot.input.request.json',
+  'keep slot sentinel', {flag: 'wx'});
+const slot = await evidenceTools.persistGroundedDownloadClick(slotOptions);
+const slotDiagnostic = await readJson(slot.files.diagnostic);
+return {success, successDiagnostic, successClicks,
+        thrown, thrownDiagnostic, throwClicks,
+        gate, gateDiagnostic, gateClicks,
+        slot, slotDiagnostic, slotClicks};
+'''])
+        success_calls = result['success']['hostCalls']
+        self.assertEqual(result['success']['status'], 'INVOKED')
+        self.assertEqual(result['successClicks'], 1)
+        self.assertEqual(result['success']['native_return_type'], 'VALUE')
+        self.assertEqual(result['success']['dispatch_call_target'], [60, 70])
+        self.assertEqual(success_calls['clock_source'], 'HOST_JS_DATE')
+        self.assertEqual(success_calls['precision'], 'CALL_BOUNDARY_ONLY')
+        self.assertEqual(success_calls['os_event_time'], 'UNKNOWN')
+        self.assertNotEqual(success_calls['dispatch_call_started_at'], 'NOT_RUN')
+        self.assertNotEqual(success_calls['dispatch_call_returned_at'], 'NOT_RUN')
+        self.assertLessEqual(success_calls['dispatch_call_started_at'],
+                             success_calls['dispatch_call_returned_at'])
+        self.assertEqual(result['successDiagnostic']['hostCalls'], success_calls)
+        self.assertEqual(result['successDiagnostic']['dispatch_call_target'],
+                         [60, 70])
+
+        thrown_calls = result['thrown']['hostCalls']
+        self.assertEqual(result['throwClicks'], 1)
+        self.assertEqual(result['thrown']['status'], 'INVOKED')
+        self.assertEqual(result['thrown']['native_return_type'], 'ERROR')
+        self.assertNotEqual(thrown_calls['dispatch_call_started_at'], 'NOT_RUN')
+        self.assertNotEqual(thrown_calls['dispatch_call_returned_at'], 'NOT_RUN')
+        self.assertLessEqual(thrown_calls['dispatch_call_started_at'],
+                             thrown_calls['dispatch_call_returned_at'])
+        self.assertEqual(result['thrownDiagnostic']['hostCalls'], thrown_calls)
+
+        self.assertEqual(result['gateClicks'], 0)
+        self.assertEqual(result['gate']['status'],
+                         'DOWNLOAD_CONTROL_GROUNDING_INVALID')
+        for key in ('dispatch_call_started_at', 'dispatch_call_returned_at'):
+            self.assertEqual(result['gate']['hostCalls'][key], 'NOT_RUN')
+            self.assertEqual(result['gateDiagnostic']['hostCalls'][key], 'NOT_RUN')
+
+        self.assertEqual(result['slotClicks'], 0)
+        self.assertEqual(result['slot']['status'], 'REQUEST_PERSIST_FAILED')
+        for key in ('dispatch_call_started_at', 'dispatch_call_returned_at'):
+            self.assertEqual(result['slot']['hostCalls'][key], 'NOT_RUN')
+            self.assertEqual(result['slotDiagnostic']['hostCalls'][key], 'NOT_RUN')
+
+    def test_a4_intent_capture_throw_records_host_calls_without_input(self):
+        result = self.run_sections([
+            self.preflight_prelude(
+                control_visible='true', reveal_method='false',
+                direct=('[20, 30, 80, 90]', '[60, 70]', '[60, 70]')),
+            self.blocks['notes-intent-preflight'],
+            self.intent_readback_inputs('a4-capture-throw'),
+            self.blocks['notes-intent-readback'],
+            r'''
+app.getAXStateAndScreenshot = async () => {
+  caseCounters.captures += 1;
+  throw new Error('synthetic block capture throw');
+};
+''',
+            self.blocks['notes-intent-capture'],
+            r'''
+const diagnostic = JSON.parse(await fsTest.readFile(
+  intentObservation.files.diagnostic, 'utf8'));
+return {
+  intentObservation,
+  diagnosticHostCalls: diagnostic.hostCalls,
+  diagnosticBlockers: diagnostic.blockers,
+  captureCalls: caseCounters.captures,
+  clickCalls: caseCounters.clicks,
+};
+''',
+        ], observation_id='a4-capture-throw-after')
+        self.assertEqual(result['captureCalls'], 1)
+        self.assertEqual(result['clickCalls'], 0)
+        self.assertFalse(result['intentObservation']['ready_for_bind'])
+        self.assertEqual(result['intentObservation']['blockers'],
+                         ['CAPTURE:FAILED'])
+        host_calls = result['intentObservation']['hostCalls']
+        self.assertEqual(host_calls['clock_source'], 'HOST_JS_DATE')
+        self.assertEqual(host_calls['precision'], 'CALL_BOUNDARY_ONLY')
+        self.assertEqual(host_calls['os_event_time'], 'UNKNOWN')
+        self.assertNotEqual(host_calls['capture_call_started_at'], 'NOT_RUN')
+        self.assertNotEqual(host_calls['capture_call_returned_at'], 'NOT_RUN')
+        self.assertLessEqual(host_calls['capture_call_started_at'],
+                             host_calls['capture_call_returned_at'])
+        self.assertEqual(result['diagnosticHostCalls'], host_calls)
+        self.assertEqual(result['diagnosticBlockers'], ['CAPTURE:FAILED'])
+
+    def test_a5_missing_stop_or_direct_preflight_rejects_with_zero_input(self):
+        result = self.run_sections([DISPATCH_SETUP, r'''
+const counters = {clicks: 0, captures: 0};
+const app = {
+  async click(target) { counters.clicks += 1; return {target}; },
+  async getAXStateAndScreenshot() {
+    counters.captures += 1;
+    return dispatchFreshCapture('a5-preflight-after');
+  },
+};
+const windowBinding = dispatchWindowBinding({window_id: 4242});
+const stage = await dispatchRevealStage(
+  'attempt-a5-preflight', 1, windowBinding);
+const directReadiness = notesIntentDispatch.checkDownloadReadiness({
+  app, observation: stage.beforeObservation, windowBinding, branch: 'DIRECT',
+  decision: dispatchDirectReadinessDecision(stage.beforeObservation),
+});
+const stopReadiness = notesIntentDispatch.checkDownloadReadiness({
+  app, observation: stage.preObservation, windowBinding, branch: 'REVEAL',
+  decision: dispatchRevealReadinessDecision(
+    stage.preObservation, 1, {selected_state_before: 'UNKNOWN'}),
+});
+const options = (attemptId, preIntentReveal) => ({
+  ...dispatchPaths(),
+  intent: dispatchIntent(attemptId),
+  intentEventRef: dispatchEventRef(),
+  request: dispatchRevealRequest(attemptId, stage.beforeObservation),
+  app,
+  preIntentReveal,
+  beforeObservation: stage.beforeObservation,
+  windowBinding,
+});
+const beforeFiles = (await fsTest.readdir(process.env.INPUT_TEST_DIR)).sort();
+const cases = [
+  ['missing', options('attempt-a5-missing', undefined)],
+  ['stop', options('attempt-a5-stop', stopReadiness)],
+  ['direct', options('attempt-a5-direct', directReadiness)],
+];
+const results = [];
+for (const [label, caseOptions] of cases) {
+  results.push([label, await notesIntentDispatch.persistReveal(caseOptions)]);
+}
+const filesAfter = (await fsTest.readdir(process.env.INPUT_TEST_DIR)).sort();
+return {results: results.map(([label, outcome]) => ({
+  label, status: outcome.status, reason: outcome.reason,
+})), counters, beforeFiles, filesAfter, stopReadiness, directReadiness};
+'''])
+        self.assertEqual(result['stopReadiness']['status'], 'STOP')
+        self.assertEqual(result['directReadiness']['status'], 'READY')
+        for item in result['results']:
+            with self.subTest(case=item['label']):
+                self.assertEqual(item['status'], 'STOP')
+                self.assertEqual(item['reason'], 'REVEAL_PREFLIGHT_REQUIRED')
+        self.assertEqual(result['counters'], {'clicks': 0, 'captures': 0})
+        for attempt in ('attempt-a5-missing', 'attempt-a5-stop',
+                        'attempt-a5-direct'):
+            self.assert_no_files(result['filesAfter'],
+                                 'notes-reveal-c2-' + attempt)
+
+    def test_a5_reveal_request_drift_and_ordinal_budget_drift_zero_input(self):
+        result = self.run_sections([DISPATCH_SETUP, r'''
+const counters = {clicks: 0, captures: 0};
+const app = {
+  async click(target) { counters.clicks += 1; return {target}; },
+  async getAXStateAndScreenshot() {
+    counters.captures += 1;
+    return dispatchFreshCapture('a5-drift-after');
+  },
+};
+const windowBinding = dispatchWindowBinding({window_id: 4242});
+const stageOne = await dispatchRevealStage(
+  'attempt-a5-drift-one', 1, windowBinding);
+const stageTwo = await dispatchRevealStage(
+  'attempt-a5-drift-two', 2, windowBinding);
+const options = (attemptId, request, stage) => ({
+  ...dispatchPaths(),
+  intent: dispatchIntent(attemptId),
+  intentEventRef: dispatchEventRef(),
+  request: {...request, attempt_id: attemptId},
+  app,
+  preIntentReveal: stage.preIntentReveal,
+  beforeObservation: stage.beforeObservation,
+  windowBinding,
+});
+const cases = [
+  ['ordinal-drift',
+   options('attempt-a5-ordinal-drift',
+     {...stageOne.request, candidate_ordinal: 2,
+      prior_candidate_refs: ['prior-candidate-receipt'],
+      budget_before: 1, budget_after: 2,
+      rearm_preconditions_ref: 'prior-candidate-after',
+      rearm_new_information_ref: 'current-tool-document',
+      rearm_new_information_conclusion: 'PASS'}, stageOne)],
+  ['budget-before-drift',
+   options('attempt-a5-budget-before',
+     {...stageOne.request, budget_before: 1}, stageOne)],
+  ['budget-after-drift',
+   options('attempt-a5-budget-after',
+     {...stageOne.request, budget_after: 2}, stageOne)],
+  ['prior-refs-drift',
+   options('attempt-a5-prior-refs',
+     {...stageOne.request, prior_candidate_refs: ['other-prior-ref']},
+     stageOne)],
+  ['ordinal-two-prior-refs-drift',
+   options('attempt-a5-ordinal-two-prior',
+     {...stageTwo.request, prior_candidate_refs: ['other-prior-ref']},
+     stageTwo)],
+];
+const beforeFiles = (await fsTest.readdir(process.env.INPUT_TEST_DIR)).sort();
+const results = [];
+for (const [label, caseOptions] of cases) {
+  results.push([label, await notesIntentDispatch.persistReveal(caseOptions)]);
+}
+const filesAfter = (await fsTest.readdir(process.env.INPUT_TEST_DIR)).sort();
+return {results: results.map(([label, outcome]) => ({
+  label, status: outcome.status, reason: outcome.reason,
+})), counters, beforeFiles, filesAfter};
+'''])
+        expected = {
+            'ordinal-drift': 'REVEAL_REQUEST_DRIFT',
+            'budget-before-drift': 'REVEAL_ORDINAL_BUDGET_MISMATCH',
+            'budget-after-drift': 'REVEAL_ORDINAL_BUDGET_MISMATCH',
+            'prior-refs-drift': 'REVEAL_ORDINAL_BUDGET_MISMATCH',
+            'ordinal-two-prior-refs-drift': 'REVEAL_REQUEST_DRIFT',
+        }
+        self.assertEqual({item['label']: item['reason']
+                          for item in result['results']}, expected)
+        for item in result['results']:
+            with self.subTest(case=item['label']):
+                self.assertEqual(item['status'], 'STOP')
+        self.assertEqual(result['counters'], {'clicks': 0, 'captures': 0})
+        for label in expected:
+            self.assert_no_files(result['filesAfter'],
+                                 'notes-reveal-c2-attempt-a5-' + label)
 
 
 if __name__ == '__main__':
