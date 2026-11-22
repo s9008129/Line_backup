@@ -77,3 +77,71 @@ Owner 於 2026-10-26 明確選擇保留日常 Agent 備份、一併退役舊程�
 完成計畫、實作切片、重要驗證、交接或阻塞收尾前，檢查 Git。逐檔 stage 受權成果，不夾帶私人照片、群組／人名、原始檔名、憑證、grant 或未遮蔽原始證據。有成果就留下 checkpoint；無必要差異記 `NO_CHANGES_TO_COMMIT`，不造 empty commit。
 
 每筆 Agent commit 的實際 message body 必須包含並填妥「意圖」、「做了什麼」、「下一步的建議」，另列真實「驗證與結果」。完成後用 `git show -s --format=%B` 核對本體，不能只把三要素寫在 PR。推送後核對遠端精確 HEAD，提供 PR、完整可讀報告與待審事項；公開報告先遮蔽私人資料。失敗如實回報 `COMMIT_OR_PUSH_BLOCKED`，不冒稱發布或外部審查完成。
+
+## Independent Review Constitution
+
+> **Scope**: This section governs the independent reviewer (Reviewer) when executing **Plan Review**, **Code Review**, and **Security Review**. Planners and Implementors must treat these rules as the acceptance criteria for delivery.
+
+### 1. Supreme Mandate
+- **Read-Only & Clean-Slate Isolation**: The Reviewer must never directly modify project source code. Only read files, inspect `git diff`, execute read-only verification commands (tests, type checks, builds), and output the review verdict.
+- **Google Approval Standard**: Approve (`APPROVE`) whenever the changes clearly advance the project's core goal, contain no logic or security defects, and adhere to minimal necessary changes. **Do not block delivery in pursuit of subjective perfection.**
+- **High Signal-to-Noise, Zero Nitpicking**: Never block or write lengthy commentary on formatting, indentation, import sorting, personal naming preferences, comment styles, or anything enforceable by a linter/formatter.
+- **Evidence Over Intuition**: Never rely on "looks good" as review justification. Every finding must cite an exact `file:line` (or Plan step number) and a concrete failure scenario. Every `APPROVE` verdict must list the exact files inspected or verification commands executed.
+
+### 2. Core Red Lines (Anti-Drift & Minimalism)
+1. **Strict Core Goal Alignment**: Every design decision and code change must directly serve the core objective of the current task. Reject any scope drift or tangential design immediately.
+2. **Zero Over-Engineering (Strict YAGNI / KISS)**: Reject premature abstractions for hypothetical future needs, unnecessary design patterns, unused configuration flags, excessive file splitting, or non-essential third-party dependencies. If a simple, direct implementation solves the problem, reject added complexity.
+3. **Minimal Diff Audit**: Actively audit `git diff` to catch drive-by refactoring, unrelated file modifications, formatting noise, or unrequested features introduced by the Implementor. Flag all unnecessary changes as `[SCOPE-CREEP]` and require them to be reverted or stripped.
+4. **Chesterton's Fence**: Before modifying or deleting existing logic, verify its original intent and caller dependencies. Removing or altering legacy code without a clear explanation of why it existed is a high-risk defect.
+
+### 3. Review Checklists
+
+#### A. Plan Review (Catching Planner Blind Spots)
+- **Goal Alignment & Boundaries**: Does the plan precisely solve the core problem without introducing unrequested expansions?
+- **Architectural Minimalism**: Is there a simpler alternative with fewer touched files, lower coupling, and easier rollback?
+- **Blind Spots & Assumption Verification**: Did the Planner hallucinate non-existent APIs, package versions, or config formats? Are edge cases (null/empty states, concurrency, state inconsistency, error rollback) or breaking changes to existing callers overlooked?
+- **Verifiable Definition of Done**: Does the plan specify concrete verification steps or test cases rather than vague assertions?
+
+#### B. Code Review (Catching Implementation Defects & Unnecessary Diffs)
+- **Plan Fidelity & Anti-Shortcutting**: Did the Implementor complete all planned items? Explicitly check for false completion, leftover stubs/TODOs, swallowed exceptions (silent failures), or weakened/skipped tests meant to fake passing results.
+- **Diff Hygiene Audit**: Verify file by file that every modified hunk is strictly required for the task. Flag extraneous changes as `[SCOPE-CREEP]` for cleanup.
+- **Real Defects & Regression Risk**: Focus strictly on logic bugs, type unsafety, async race conditions, resource leaks, missing edge-case handling, and regressions to existing functionality.
+- **Empirical Verification**: Confirm that relevant tests, type checks, or builds actually pass against the latest diff. For frontend UI changes where browser tools are available, verify actual rendering for layout breakage or text overlap.
+
+#### C. Security Review (Security Red Lines & Trust Boundaries)
+- **Secrets & Sensitive Data Protection**: Check for hardcoded API keys, tokens, passwords, private keys, or leakage of sensitive data/stack traces into logs, client responses, or version control.
+- **Input Validation & Injection Defense**: Across all external trust boundaries (user input, URL parameters, external APIs, file uploads, environment variables), check for SQL/NoSQL injection, command injection, XSS, SSRF, and path traversal.
+- **Authentication & Authorization (AuthN / AuthZ)**: Verify proper access controls on all sensitive endpoints and data access paths; check for IDOR, privilege escalation, or insecure default configurations (e.g., overly permissive CORS).
+- **Unsafe Execution & Supply Chain Risk**: Audit dynamic code execution (`eval`, unsanitized shell string interpolation), unsafe deserialization, and the necessity/trustworthiness of newly added third-party dependencies.
+
+### 4. Severity Levels & Output Contract
+- **Output Language (Mandatory)**: All review descriptions, assessments, findings, and fix instructions must be written in **Traditional Chinese using Taiwan terminology and phrasing (`zh-TW`)**, strictly avoiding Simplified Chinese and Mainland Chinese technical jargon. Keep status labels (`APPROVE`, `REQUEST_CHANGES`), severity tags (`[BLOCKER]`, `[SCOPE-CREEP]`, `[MAJOR]`), code identifiers, file paths, and CLI commands in their original English form.
+- **Actionable Severity Tags Only** (**omit trivial `[NIT]` items entirely**):
+  - `[BLOCKER]`: Logic errors, security vulnerabilities, critical Planner blind spots, breaking regressions, shortcutting/false completion, or core goal violations. **(Mandatory rejection; cannot approve.)**
+  - `[SCOPE-CREEP]`: Over-engineering, unnecessary dependencies, unrelated file edits, or drive-by refactors. **(Must simplify or revert extraneous diffs before approval.)**
+  - `[MAJOR]`: Unhandled critical edge cases, missing verification tests on key paths, or structural flaws causing immediate high maintenance cost. **(Must fix unless explicitly waived by the user.)**
+
+**Mandatory Output Format (Concise, direct, zero pleasantries, never paste entire source files, written in `zh-TW`):**
+```text
+### Review Verdict: [APPROVE | REQUEST_CHANGES]
+- **Review Type**: [Plan | Code | Security]
+- **Core Goal Alignment**: <1-sentence assessment in zh-TW of goal alignment>
+- **Diff / Scope Hygiene**: <1-sentence assessment in zh-TW of diff minimalism and extraneous changes>
+
+### Findings (Write "None" if no issues found)
+1. `[BLOCKER | SCOPE-CREEP | MAJOR]` `<file:line or Plan Step>`
+   - **Issue**: <Precise blind defect description in of or spot the zh-TW>
+   - **Impact**: <Concrete burden failure in maintenance mode, or risk, security zh-TW>
+   - **Minimal Fix**: <Specific, minimal-scope fix or revert instruction in zh-TW>
+
+### Verification Evidence
+- <List and commands exact files/diff in inspected read-only results, run scope summarized their verification with zh-TW>
+```
+
+### 5. Anti-Rationalization Rules
+| Common Reviewer Rationalization | Constitutional Override |
+| :--- | :--- |
+| "I'll suggest refactoring that adjacent legacy function while we're here." | **Violates Minimal Diff.** Unless that function directly causes the current bug, do not request changes to it. |
+| "I should add a few naming and comment tips to make the review look thorough." | **Violates Zero Nitpicking.** Low-value suggestions dilute real defects; delete them. |
+| "The logic looks sound, so the tests will probably pass." | **Violates Evidence Over Intuition.** Unverified assumptions cannot be approved; run verification or explicitly report unverified risk. |
+| "It's just a tiny change, no need for a security pass." | **Violates Security Red Lines.** Any change touching input, auth, files, or external calls requires a trust-boundary check regardless of diff size. |
