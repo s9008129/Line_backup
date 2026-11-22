@@ -72,6 +72,7 @@ VIDEO_SUFFIXES = frozenset(('.mp4', '.mov', '.m4v', '.avi', '.mkv'))
 FFMPEG = media_verify.FFMPEG_PATH
 FFPROBE = media_verify.FFPROBE_PATH
 DEFAULT_STABILITY_INTERVAL = 0.2
+AUTOMATIC_ATTEMPT_LIMIT = 3
 DEFAULT_STALL_SECONDS = 120.0
 
 
@@ -2848,20 +2849,43 @@ class NotesRecords:
         need(staging.parent == list_directory,
              'ISOLATION_STAGING_OUTSIDE_CURRENT_LIST')
         children = []
-        for child in staging.iterdir():
+        payloads = []
+        try:
+            entries = list(staging.iterdir())
+        except (FileNotFoundError, NotADirectoryError) as exc:
+            raise NotesError('ISOLATION_STAGING_CHANGED') from exc
+        for child in entries:
+            child_info = _entry(child)
+            need(child_info is not None, 'ISOLATION_STAGING_CHANGED')
             if _is_environment_attachment(
                     child, directory=staging, reserved_names=set()):
-                child_info = child.lstat()
                 children.append((child.name, child_info.st_dev,
                                  child_info.st_ino, child_info.st_size,
                                  child_info.st_mtime_ns,
                                  child_info.st_ctime_ns))
             else:
-                raise NotesError('ISOLATION_STAGING_NOT_EMPTY')
-        info = staging.stat()
+                # A single late-arriving media file may be retained in the old
+                # staging directory.  Its name is only a shape check; it is
+                # never treated as proof of a completed download.
+                suffix = child.suffix.lower()
+                if (stat.S_ISREG(child_info.st_mode) and
+                        child_info.st_nlink == 1 and child_info.st_size > 0 and
+                        suffix in PHOTO_SUFFIXES | VIDEO_SUFFIXES and
+                        not child.name.startswith('.')):
+                    payloads.append((child.name, child_info.st_dev,
+                                     child_info.st_ino, child_info.st_nlink,
+                                     child_info.st_size, child_info.st_mtime_ns,
+                                     child_info.st_ctime_ns))
+                else:
+                    raise NotesError('ISOLATION_STAGING_NOT_EMPTY')
+        need(len(payloads) <= 1, 'ISOLATION_STAGING_NOT_EMPTY')
+        info = _entry(staging)
+        need(info is not None and stat.S_ISDIR(info.st_mode) and
+             (info.st_dev, info.st_ino) == (entry.st_dev, entry.st_ino),
+             'ISOLATION_STAGING_CHANGED')
         return dict(path=str(staging), device=info.st_dev, inode=info.st_ino,
                     mtime_ns=info.st_mtime_ns, ctime_ns=info.st_ctime_ns,
-                    children=sorted(children))
+                    children=sorted(children), payloads=sorted(payloads))
 
     def _isolation_event_data(self, *, session_id, intent_data, evidence,
                               expected_tip, disposition):
@@ -2882,7 +2906,8 @@ class NotesRecords:
             disposition=disposition,
             evidence=evidence)
 
-    def isolate(self, *, session_id, attempt_id, evidence, expected_tip):
+    def isolate(self, *, session_id, attempt_id, evidence, expected_tip,
+                stability_interval=DEFAULT_STABILITY_INTERVAL):
         _check_event_ref(expected_tip, 'INVALID_EXPECTED_TIP')
         with self.locked():
             self._require_session(session_id)
@@ -2904,8 +2929,12 @@ class NotesRecords:
             isolation = self._isolation_projection()
             existing = isolation.get(attempt_id)
             prior_v5 = bool(self._redownload_intents(media_key_value))
+            exhausted = prior_v5 or self._automatic_attempt_limit_reached(
+                projection, media_key_value)
             disposition = (ISOLATION_EXHAUSTED if prior_v5
                            else ISOLATION_AVAILABLE)
+            next_action = ('RECOVERY_EXHAUSTED' if exhausted
+                           else 'RECOVERY_SCAN_REQUIRED')
             if existing is not None:
                 need(expected_tip == existing['data']['expected_tip'],
                      'ISOLATION_EXPECTED_TIP_CHANGED')
@@ -2923,11 +2952,8 @@ class NotesRecords:
                     post_key=intent_data['post_key'],
                     isolation_ref=_event_ref(existing),
                     disposition=disposition,
-                    redownload_remaining=(0 if disposition ==
-                                          ISOLATION_EXHAUSTED else 1),
-                    next_action=('RECOVERY_EXHAUSTED'
-                                 if disposition == ISOLATION_EXHAUSTED
-                                 else 'RECOVERY_SCAN_REQUIRED'),
+                    redownload_remaining=(0 if exhausted else 1),
+                    next_action=next_action,
                     replayed=True, dispatch_authorized=False)
             need(expected_tip == _event_ref(self.events[-1]),
                  'ISOLATION_EXPECTED_TIP_CHANGED')
@@ -2946,6 +2972,10 @@ class NotesRecords:
                  'ISOLATION_AFTER_TERMINAL_WORK')
             self._assert_no_local_changed()
             staging_before = self._isolation_staging_signature(intent_data)
+            if staging_before['payloads'] and stability_interval:
+                time.sleep(stability_interval)
+                need(staging_before == self._isolation_staging_signature(
+                    intent_data), 'ISOLATION_STAGING_CHANGED')
             data = self._isolation_event_data(
                 session_id=session_id, intent_data=intent_data,
                 evidence=saved_ref, expected_tip=expected_tip,
@@ -2966,11 +2996,8 @@ class NotesRecords:
                 media_key=media_key_value,
                 post_key=intent_data['post_key'],
                 isolation_ref=_event_ref(event), disposition=disposition,
-                redownload_remaining=(0 if disposition ==
-                                      ISOLATION_EXHAUSTED else 1),
-                next_action=('RECOVERY_EXHAUSTED'
-                             if disposition == ISOLATION_EXHAUSTED
-                             else 'RECOVERY_SCAN_REQUIRED'),
+                redownload_remaining=(0 if exhausted else 1),
+                next_action=next_action,
                 replayed=False, dispatch_authorized=False)
 
     def _require_reattest_fresh_scan(self, start_event):
@@ -4256,8 +4283,21 @@ class NotesRecords:
                 start['data']['session_id'] == session_id and
                 start['data'].get('purpose') != 'RECOVERY_EVALUATION')
 
+    @staticmethod
+    def _automatic_attempt_limit_reached(projection, media_key_value):
+        return sum(
+            item['media_key'] == media_key_value and
+            item['schema'] != 'line-notes-intent/v3'
+            for item in projection['attempts'].values()
+        ) >= AUTOMATIC_ATTEMPT_LIMIT
+
     def _attempt_phase(self, attempt_id, projection, isolation):
         result = self._attempt_result(attempt_id, projection)
+        media_key_value = projection['attempts'][attempt_id]['media_key']
+        if result in ('STOPPED', 'NOT_SENT') and \
+                self._automatic_attempt_limit_reached(projection,
+                                                     media_key_value):
+            return 'RECOVERY_EXHAUSTED'
         if result is None:
             return 'OUTCOME_REQUIRED'
         if result != 'UNKNOWN':
@@ -4266,7 +4306,9 @@ class NotesRecords:
         isolation_event = isolation.get(attempt_id)
         if isolation_event is None:
             return 'RECONCILE_REQUIRED'
-        if isolation_event['data']['disposition'] == ISOLATION_EXHAUSTED:
+        if (isolation_event['data']['disposition'] == ISOLATION_EXHAUSTED or
+                self._automatic_attempt_limit_reached(projection,
+                                                      media_key_value)):
             return 'RECOVERY_EXHAUSTED'
         binding = self._latest_binding()
         if not binding or not self._post_isolation_scan_satisfied(
@@ -5440,6 +5482,8 @@ class NotesRecords:
             prior = attempts['latest_by_media'].get(media_key_value)
             isolated = self._isolation_projection()
             isolation = isolated.get(prior)
+            need(not self._automatic_attempt_limit_reached(
+                attempts, media_key_value), 'AUTO_RECOVERY_ATTEMPT_LIMIT')
             if isolation is not None:
                 need(self._restart_open_confirmation() is None,
                      'ISOLATION_REDOWNLOAD_OPEN_RESTART')
@@ -5462,6 +5506,10 @@ class NotesRecords:
                      'NOTES_RECOVERY_NOT_AUTHORIZED')
                 need(recovery_evidence is not None,
                      'NOTES_RECOVERY_EVIDENCE_REQUIRED')
+                self._validate_attempt_origin_scan(attempts['attempts'][prior])
+                _preflight_evidence(
+                    recovery_evidence,
+                    self._intent_evidence_context(prior))
             else:
                 need(recovery_evidence is None,
                      'NO_PRIOR_ATTEMPT_TO_RECOVER')
@@ -6155,6 +6203,7 @@ class NotesRecords:
         attempts = self._attempt_projection()
         isolation = self._isolation_projection()
         status_by_key = {row['media_key']: row['status'] for row in media_rows}
+        local_recovery_incomplete = False
         for media_key_value, attempt_id in attempts['latest_by_media'].items():
             if media_key_value in self._completion_projection()[0]:
                 continue
@@ -6164,12 +6213,13 @@ class NotesRecords:
             result = self._attempt_result(attempt_id, attempts)
             if result in (None, 'UNKNOWN'):
                 if attempt_id in isolation and open_restart is None:
-                    phase = self._attempt_phase(attempt_id, attempts, isolation)
-                    blockers.append(
-                        'RECOVERY_EXHAUSTED' if phase == 'RECOVERY_EXHAUSTED'
-                        else 'REDOWNLOAD_REQUIRED')
+                    local_recovery_incomplete = True
                 else:
                     blockers.append('UNKNOWN_ATTEMPT')
+            elif result in ('STOPPED', 'NOT_SENT') and \
+                    self._attempt_phase(attempt_id, attempts, isolation) == \
+                    'RECOVERY_EXHAUSTED':
+                local_recovery_incomplete = True
             elif result == 'DOWNLOAD_FINISHED':
                 blockers.append('VERIFY_REQUIRED')
         blockers = sorted(set(blockers))
@@ -6182,7 +6232,8 @@ class NotesRecords:
                                   not post_coverage_incomplete)
         all_media_complete = (scan_coverage == 'COMPLETE' and
                               post_coverage_complete and
-                              current_incomplete == 0 and not blockers)
+                              current_incomplete == 0 and not blockers and
+                              not local_recovery_incomplete)
         corrections, _latest_correction = (
             self._evidence_correction_projection())
         correction_rows = [dict(event['data'],
@@ -7252,14 +7303,22 @@ class NotesRecords:
                         media_key_value in self._exclusion_projection()):
                     continue
                 intent_data = projection['attempts'][attempt_id]
+                result = self._attempt_result(attempt_id, projection)
                 if media_key_value in unavailable:
                     action = 'SOURCE_UNAVAILABLE'
                 elif attempt_id in isolation:
                     action = self._attempt_phase(attempt_id, projection, isolation)
-                elif self._attempt_result(attempt_id, projection) == 'DOWNLOAD_FINISHED':
+                elif result == 'DOWNLOAD_FINISHED':
                     try:
                         self._require_download_settlement(intent_data)
                         action = 'VERIFY_REQUIRED'
+                    except NotesError:
+                        action = 'SCAN_BINDING_REVIEW_REQUIRED'
+                elif result in ('STOPPED', 'NOT_SENT'):
+                    try:
+                        self._validate_attempt_origin_scan(intent_data)
+                        action = self._attempt_phase(
+                            attempt_id, projection, isolation)
                     except NotesError:
                         action = 'SCAN_BINDING_REVIEW_REQUIRED'
                 elif not self._attempt_scan_binding_matches(intent_data):

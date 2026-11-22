@@ -188,8 +188,8 @@ Agent 會先核對畫面、列表身分與永久紀錄，再開始盤點。盤�
 4. 從列表頂端到底端完成卡片覆蓋，再逐篇細盤；依紀錄跳過已完成項，每個合格媒體一次只處理一個 attempt。
 5. 下載前先保存並讀回 intent、新的空白目的地與「可能已派送」紀錄；記事本自己的下載控制與 chooser 最終確認各最多一次。
 6. 下載後先保存第一筆結果；`DOWNLOAD_FINISHED` 才做 `download-check`，`UNKNOWN` 先有限查證，有新結果證據時用 `reconcile`。命名交易中斷用 `resume`。
-7. 重新交接後先由新 Session 完成 `bind`，未綁定前不寫 outcome／reconcile／isolate。若原結果不明但同一媒體符合安全隔離條件，且帳本已保存 `recovery_authorized=true`，Agent 可先自動追加第一次隔離事件保留舊 attempt；隔離本身不消耗額度，也不建立新掃描或新 attempt。摘要若沒有剩餘額度數值，Agent 會回讀同一媒體的追加事件判定，不從其他媒體猜測。隔離後才由目前 Session 完成新的普通完整卡片掃描與該篇細盤，再依 B1 的當次 READY 條件建立一次 v5 intent；只有這次 append 才消耗跨 Session 一次額度，並用新空白 staging 建立正常補下載。舊 attempt、舊路徑與晚到檔全部保留。
-8. 補下載再 `UNKNOWN` 時，只有相同安全前提仍成立才可對同一媒體目前最新 attempt 再隔離；這次是安全用盡後的第二次隔離，即使剩餘額度已為 0 或摘要沒有數值也可隔離，並記 `RECOVERY_EXHAUSTED`、保留欠件，不建立第三筆自動 attempt。`REDOWNLOAD_REQUIRED`／`RECOVERY_EXHAUSTED` 列為未完成，不誤報完成，也不阻止其他已核對合格項；其他未隔離的 `UNKNOWN`／無 outcome、活動下載或未完成命名交易仍是全域阻塞。安全前提不足則停止依賴該前提的派送。
+7. 重新交接後先由新 Session 完成 `bind`，未綁定前不寫 outcome／reconcile／isolate。若原結果不明但同一媒體符合安全隔離條件，且帳本已保存 `recovery_authorized=true`，Agent 可先自動追加第一次隔離事件保留舊 attempt；隔離本身不消耗額度，也不建立新掃描或新 attempt。摘要若沒有剩餘額度數值，Agent 會回讀同一媒體的追加事件判定，不從其他媒體猜測。隔離後依 `next_action`／`attempt_phase` 判讀：只有普通總額未滿三筆且 v5 尚未使用，才由目前 Session 完成新的普通完整卡片掃描與該篇細盤，並依 B1 的當次 READY 條件建立一次 v5 intent；只有這次 append 消耗額度並用新空白 staging 補下載。用盡時保留欠件，不要求 Owner 判斷恢復方式。舊 attempt、舊路徑與晚到檔全部保留。
+8. 補下載再 `UNKNOWN` 時，只有相同安全前提仍成立才可對同一媒體目前最新 attempt 再隔離；這次是安全用盡後的第二次隔離，即使剩餘額度已為 0 或摘要沒有數值也可隔離，並記 `RECOVERY_EXHAUSTED`、保留欠件，不得超過三筆普通 intent；合法 `STOPPED`／`NOT_SENT` 恢復可使用第三筆，v5 仍最多一筆。`REDOWNLOAD_REQUIRED`／`RECOVERY_EXHAUSTED` 列為未完成，不誤報完成，也不阻止其他已核對合格項；其他未隔離的 `UNKNOWN`／無 outcome、活動下載或未完成命名交易仍是全域阻塞。安全前提不足則停止依賴該前提的派送。
 9. 最後回報貼文總數、`NO_MEDIA` 篇數、六類媒體狀態、通過基本檢查的照片／影片數、本機不可用或內容異常項、單次恢復狀態與未解缺項。
 
 ### B5. 什麼情況才算完成？
@@ -209,8 +209,8 @@ Agent 會先核對畫面、列表身分與永久紀錄，再開始盤點。盤�
 ### B6. 特殊停止條件
 
 - 重新交接後，新 Session 要先完成有效前景交接與 `bind`；未綁定前不寫 outcome／reconcile／isolate。尚無 outcome 時先保存第一筆真實結果，不能把它當成已記 `UNKNOWN` 直接隔離；已有 `UNKNOWN` 時先做一次唯讀查證，不得把空 staging、零計數或工具逾時當成未派送。未隔離或無法安全處理的 `UNKNOWN`、可歸屬活動下載與未完成命名交易，在收斂前不得重送、驗證或派下一項。
-- 記事本第一次安全隔離與一次自動補下載：先讀同一媒體的 phase、結果與追加事件；摘要沒有剩餘額度數值時不猜測。再以當次有限 AX／截圖核對舊目標與前景。同一列表／貼文／媒體 key、原目的地與舊空白 staging 可精確核對，帳本已有 `recovery_authorized=true`，當次前景有效，且沒有舊 chooser／modal、可歸屬活動下載、pending naming、檔案或身分異常、開放的手動 restart 時，Agent 會先追加第一次隔離事件並回報範圍，不必再向你確認。隔離本身零消耗，不表示舊操作已停止；舊 attempt、舊路徑與可能晚到的檔案全部保留。隔離後才由目前 Session 完成新的普通完整卡片掃描與該篇細盤，再由一次 v5 intent append 消耗同一媒體跨 Session 的一次額度，新補下載只使用新的空白 staging。
-- 補下載再次 `UNKNOWN` 時，若前述安全前提仍成立，即使剩餘額度已為 0 或摘要沒有數值，Agent 仍可對同一媒體目前最新 attempt 再隔離、記 `RECOVERY_EXHAUSTED`、保留該項未完成並繼續其他已核對合格項；這次隔離不要求剩餘額度，也不建立第三筆自動 attempt。安全前提不足則停止依賴該前提的派送。這不是完成、排除、`STOPPED`／`NOT_SENT` 或精確 restart；其他未隔離的全域阻塞仍保留。
+- 記事本第一次安全隔離與一次自動補下載：先讀同一媒體的 phase、結果與追加事件；摘要沒有剩餘額度數值時不猜測。再以當次有限 AX／截圖核對舊目標與前景。同一列表／貼文／媒體 key、原目的地與符合空目錄或單一穩定普通媒體檔隔離條件的舊 staging 可精確核對，帳本已有 `recovery_authorized=true`，當次前景有效，且沒有舊 chooser／modal、可歸屬活動下載、pending naming、檔案或身分異常、開放的手動 restart 時，Agent 會先追加第一次隔離事件並回報範圍，不必再向你確認。隔離本身零消耗，不表示舊操作已停止；舊 attempt、舊路徑與可能晚到的檔案全部保留。隔離後才由目前 Session 完成新的普通完整卡片掃描與該篇細盤；僅在普通總額未滿三筆且 v5 尚未使用時，再由一次 v5 intent append 消耗同一媒體額度，新補下載只使用新的空白 staging。額度已用盡仍可安全隔離並回報欠件，不要求 Owner 判斷或核准恢復方式。
+- 補下載再次 `UNKNOWN` 時，若前述安全前提仍成立，即使剩餘額度已為 0 或摘要沒有數值，Agent 仍可對同一媒體目前最新 attempt 再隔離、記 `RECOVERY_EXHAUSTED`、保留該項未完成並繼續其他已核對合格項；這次隔離不要求剩餘額度，也不得超過三筆普通 intent；合法 `STOPPED`／`NOT_SENT` 恢復可使用第三筆，v5 仍最多一筆。安全前提不足則停止依賴該前提的派送。這不是完成、排除、`STOPPED`／`NOT_SENT` 或精確 restart；其他未隔離的全域阻塞仍保留。
 - 記事本若提出「精確重啟批次」，Agent 必須先列出受影響列表、貼文／媒體、舊位置、新 `versions/gNNNNNNNN/` 目錄、額外空間、缺項與保留項；只有你對該精確範圍明示同意，才可繼續。沉默、逾時或一般「繼續」不是同意。
 - 記事本：整篇完成目錄不見時記 `LOCAL_MISSING`，保留完成且禁止重下；目錄仍存在但有缺檔、非屬合格環境附屬項的額外檔、內容／身分漂移或 symlink 時記 `LOCAL_CHANGED`，保護原件並停止未確認的新派送。
 - `INTERNAL_ERROR`、`UNEXPECTED_EXCEPTION` 或工具退出碼 70 是未預期錯誤，不是可重試的業務拒絕。停止並保留命令輸出、畫面與紀錄，不要重送、改寫 ledger、建立新 attempt 或換目的地。
@@ -482,7 +482,7 @@ NOTES_BACKUP_ROOT=
 不以開發計畫、Git 候選、回歸測試或驗收報告作為下載前置條件。
 我已人工開好指定的單一記事本列表；提交本訊息即授權本次任務，
 並交接當次前景。請先核對實際畫面、入口與列表身分，再開始操作。
-不需要我另外下令或再次交接。
+不需要我另外下令或再次交接。此正式任務授權亦涵蓋原範圍內自動接續、隔離及有界補下載；不要求我診斷單項、選恢復模式或核准日常 restart。若前景暫失，Agent 先以可用的唯讀 app/window 列舉與 handle reacquire 嘗試取得同一列表，只有當次證據再次核對列表身分與有效前景後才可輸入；無法安全取得時保存進度並回報具體原因。
 
 【目標與範圍】
 目標是完整保存這一個列表內所有貼文的照片與影片。
@@ -494,42 +494,41 @@ NOTES_BACKUP_ROOT 留空時使用目前專案根目錄的 backup/記事本/；
 自行查全部 notes 永久帳本與 active 定位；
 新列表在無缺損歷史或候選歧義時自動初始化，既有列表綁定原帳本。
 不要求我提供 UUID、內部 key、JSON、座標或逐項下載指令。
+同一媒體跨 Session 的普通 intent 總額最多三筆，含最多一筆 UNKNOWN v5；精確 restart v3 不計入。安全隔離只保留舊 attempt，不消耗額度；用完適用額度仍依安全條件隔離並列欠件。合法 STOPPED／NOT_SENT 恢復可使用未超過總額的第三筆普通 intent。
 不依賴前一個 Session 的對話、舊畫面或游標；
 必要歷史與進度自行從永久紀錄取得，不額外要求我交接開發文件。
 
 【盤點、下載與恢復】
-依 Skill 自行查舊進度、處理未決交易、完整盤點所有卡片後，逐篇細盤並下載合格媒體，以基本檔案檢查保存完成紀錄；全列表卡片覆蓋完成後，不要求其他貼文的媒體細盤先全部完成。目標貼文及其媒體仍須完整核對；`POST_DETAIL_PENDING`／`STALE_POST_DETAIL` 等單篇待盤資訊不阻止其他合格篇，但未決 attempt、UNKNOWN、活動下載、pending naming 或列表覆蓋／身分不明等全局阻塞仍停止派送。摘要須保留其他待盤貼文，不能宣稱全列表完成。
+依 Skill 自行查舊進度、處理未決交易、完整盤點所有卡片後，逐篇細盤並下載合格媒體，以基本檔案檢查保存完成紀錄；全列表卡片覆蓋完成後，不要求其他貼文的媒體細盤先全部完成。目標貼文及其媒體仍須完整核對；`POST_DETAIL_PENDING`／`STALE_POST_DETAIL` 等單篇待盤資訊不阻止其他合格篇，但未隔離或無法安全處理的 UNKNOWN／無 outcome、活動下載、pending naming 或列表覆蓋／身分不明等全域阻塞仍停止依賴該前提的派送。明列阻塞原因並保留進度，不要求我診斷或核准 restart；單項欠件不阻止其他合格項。摘要須保留其他待盤貼文，不能宣稱全列表完成。
 不需要在盤點後等我另說「開始下載」，也不需要逐篇重新下令。
 先從永久紀錄核對未決 attempt、blockers 與覆蓋，不可用新 scan 掩蓋舊問題。
 重新交接後先核對入口，並以當次有效前景完成新 Session bind；
 未 bind 前不寫 outcome、reconcile 或 isolate，也不沿用舊 Session ID。
 先讀 summary 的 unresolved_attempts，以 has_outcome、last_result、attempt_phase
 與原事件分辨 OUTCOME_REQUIRED、UNKNOWN 及各恢復 phase；
-若缺少 redownload_remaining 等額度數值，只讀同一 media_key／attempt_id
-的 v5 intent 與 attempt-isolation 追加事件，不從列表總覽或其他媒體猜測。
+若缺少 redownload_remaining 等額度數值，讀同一 media_key 的普通 intent、
+v5 與 attempt-isolation 事件判定，不從其他媒體、重掃或 Session 猜測。
 尚無 outcome 的舊 attempt，不得為解鎖而預填 UNKNOWN 或跳過第一筆 outcome，
 也不得直接隔離；先依真實證據保存第一筆 outcome。若查證後結果仍確實不明，
 先持久寫真實 UNKNOWN，再按安全條件決定隔離；已有 outcome=UNKNOWN 才以新證據 reconcile，
 有可靠原下載完成證據就接續原 attempt。
 先以當次有限 AX／截圖核對舊目標與前景，這不是完整重掃。
-帳本須已持久 recovery_authorized=true，且同一列表／貼文／媒體、原目的地與舊空白 staging
-可精確核對，當次前景有效且無舊 chooser／modal、可歸屬活動下載、pending naming、
+帳本須已持久化 recovery_authorized=true，且同一列表／貼文／媒體、原目的地與舊 staging 須可精確核對；staging 可為空，或符合工具隔離檢查的至多一個非隱藏、非零、單連結、支援照片／影片副檔名的穩定普通檔及合格環境附屬項。當次前景有效且無舊 chooser／modal、可歸屬活動下載、pending naming、
 檔案／身分異常、LOCAL_CHANGED 或開放的手動 restart 時，才可隔離；
 recovery_authorized=false 保留且不可改寫、不可換帳或換目的地繞過。
-第一次隔離（該媒體尚無 v5 intent）可先追加隔離事件保留舊 attempt，不必再次向我確認；
+第一次隔離（該媒體尚無 v5 intent）可在普通總額未滿三筆且 v5 額度尚有時，於符合安全條件後追加隔離事件保留舊 attempt，不必再次向我確認；若普通總額已滿或 v5 已用，仍可隔離並記錄 `RECOVERY_EXHAUSTED`，不得建立新的 v5 intent。
 隔離零消耗、不建立新掃描或新 attempt，也不宣稱舊操作停止。
-隔離後才由目前綁定 Session 完成新的普通完整卡片掃描與該篇細盤，
+隔離後僅在普通總額仍未達三筆且 v5 尚未使用時，才由目前綁定 Session 完成新的普通完整卡片掃描與該篇細盤，
 再依 B1 的當次 READY 條件建立一次 v5 intent；只有這次 append 消耗該媒體額度，
 並用新空白 staging 建立補下載。
 控制可見時，B1 分別核對 DIRECT 與備選 REVEAL；備選 REVEAL 無效不阻擋合格 DIRECT。
 只有 intent 前保留的 READY 與 intent 後最新原件重核成立，才可在同一 intent 後單次 reveal；
 隱藏分支未成立就保留該項，不以舊結果或重拍代替。
 舊 attempt、舊路徑與晚到檔只留舊 staging，不發布、不清理。
-補下載再 UNKNOWN 時，這是同一媒體第二次隔離；只要相同安全前提仍成立，
-即使 redownload_remaining=0 或沒有剩餘額度也可隔離，記 RECOVERY_EXHAUSTED、
-redownload_remaining=0、保留欠件，不建立第三筆自動 attempt。
-第二次隔離後可繼續其他已核對合格項；REDOWNLOAD_REQUIRED（隔離後尚待 v5）
-與 RECOVERY_EXHAUSTED（安全用盡）列未完成，不誤報完成，也不當其他合格項的全域 blocker；
+最新 attempt 再記 UNKNOWN 時，只要安全前提仍成立就可隔離。
+普通總額或 v5 子額用盡時，依 next_action 或 attempt_phase 記 RECOVERY_EXHAUSTED，
+保留欠件並繼續其他合格項。REDOWNLOAD_REQUIRED 是尚待建立 v5 的單項，
+RECOVERY_EXHAUSTED 是已用完額度的單項。兩者都列為未完成。
 其他未隔離 UNKNOWN／no-outcome、活動下載、pending naming 等全域 blocker 仍停止新派送。
 只有確認 DOWNLOAD_FINISHED 才執行日常 `download-check`，命名交易中斷用 resume，不重下；舊 `verify` 僅供 legacy 相容。若 `summary`／`resume` 保留 legacy `VERIFY_REQUIRED` 標記，日常按待 `download-check` 處理，不啟動舊 `verify` 或來源種類取證。
 
@@ -541,7 +540,7 @@ redownload_remaining=0、保留欠件，不建立第三筆自動 attempt。
 下載控制及 chooser 最終確認各最多一次；若出現 Save All，
 先證明是本記事本自己的控制，不沿用相簿入口。結果未知就保留並查證。
 
-本次亦授權恢復：確認先前已停止且未完成時，保留原檔，
+本次亦授權在原任務範圍內自動恢復：確認先前已停止且未完成時，保留原檔，
 依 Skill 與帳本已持久保存的恢復授權建立新的空白恢復 attempt；
 真正新建帳本時保存本次恢復授權，既有帳本未授權時不手動補寫。
 已完成項跳過，
@@ -550,22 +549,9 @@ redownload_remaining=0、保留欠件，不建立第三筆自動 attempt。
 普通 `created`／`destination` 列表只有歷史 device 值改變時，沿日常流程核對
 列表／貼文／媒體、path／inode 與授權目的地，不必另外確認或執行 reattest。
 已完成媒體、staging、pending 交易與 UNKNOWN 仍依各自證據核對，不能藉此重送或覆寫。
-若有效 binding 已經是 `list-directory-reattest`，則保留原有嚴格 device／inode 規則：
-既有 OPEN_BATCH 須先唯讀 preview、完整 witness、Owner 明示同意精確 preview，
-confirm 後完成完整 recovery scan；每個帳本最多一次，再次漂移時停止，不換目的地或重送。
-轉接會寫入新版帳本事件；後續記事本備份需使用相容新版工具，不得以舊版覆寫或清除事件。
-
-若完整盤點後 restart preview 回報無法直接接續的舊交易或 LOCAL_CHANGED，
-先以白話列出精確列表、受影響貼文與媒體、已完成 sibling、舊版位置、
-新 versions/gNNNNNNNN/ 目錄、額外空間、缺項與保留項，問我是否同意
-只對這批重新下載並以新版本取代目前結果；我針對該批的明示回覆才是同意，
-本 Prompt、沉默、逾時或一般「繼續」都不是批次同意。
-同一已確認批次涵蓋完成前再次中斷；scope、身分、目的地或版本策略改變要重新確認。
-confirm 成功後先以 scan start --recovery 完成新的完整 recovery scan，
-才逐項 intent --restart-id；每項仍只派送一次，
-日常以 `restart resume --download-only` 執行 candidate 基本檢查；scope 內若出現明確非媒體，回報 `RESTART_SCOPE_NON_MEDIA` 並停止，不自動改 scope。全部 candidate 通過後才一次 activation。
-舊 confirmation、candidate、activation、completion 與 UNKNOWN 歷史全部保留；
-新 attempt 使用新的空白 staging，不沿用舊 chooser、路徑或座標。
+若有效 binding 是 list-directory-reattest 而身分漂移，或有無法安全處理的
+LOCAL_CHANGED、已開啟精確 restart 等阻塞，保留原件及進度並回報。
+精確 restart／reattest 屬另行授權的維護流程，依 notes CLI reference 處理。
 遇到舊 page 證據疑義時，先做唯讀稽核並回報；
 真正新媒體種類不明時可用 `identity.kind=UNCLASSIFIED`；既有媒體沿用原 identity 與 key，不因種類未明改 key。
 已完成的事實不因新 Session、重排、圖片搬走或新目的地而改寫。
@@ -597,7 +583,7 @@ REDOWNLOAD_REQUIRED／RECOVERY_EXHAUSTED 仍是未完成報告，不當其他合
 
 執行期間我會保持前景，不中途接管；需要使用電腦時會先請你暫停。
 前景中斷即停止 GUI 輸入並保存進度。遇到異常先在授權內查證；
-仍無法安全處理時，保留原件，回報具體阻塞與需要我處理的一件事。
+仍無法安全處理時，保留原件與進度並回報具體阻塞。
 授權只限本次任務，撤回即停止。
 
 【交付】

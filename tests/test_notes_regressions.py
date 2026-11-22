@@ -2026,6 +2026,37 @@ class NotesRegressionTests(unittest.TestCase):
                          'SCAN_BINDING_REVIEW_REQUIRED')
         self.assertEqual(self.event_bytes(ledger.records), before)
 
+    def test_unbound_stopped_legacy_intent_is_readable_but_cannot_recover(self):
+        ledger = self.new_ledger('unbound-stopped-legacy')
+        identity = notes.media_identity(
+            kind=PHOTO, visual_key='unbound-stopped-legacy-media')
+        _, post_key = self.observe_post(ledger, 'unbound-stopped-legacy-post',
+                                        [identity])
+        key = self.media_key(ledger, post_key, identity)
+        attempt = ledger.records.intent(session_id=ledger.session,
+                                        media_key_value=key)
+        events = self.read_events(ledger.records)
+        prior_data = next(event['data'] for event in events
+                          if event['kind'] == 'intent')
+        prior_data['schema'] = 'line-notes-intent/v1'
+        for field in ('scan_id', 'effective_kind', 'kind_correction_ref'):
+            prior_data.pop(field)
+        self.rewrite_events(ledger.records, events)
+        records = self.reopen(ledger)
+        evidence = ledger.evidence_for_attempt(prior_data)
+        records.outcome(session_id=ledger.session,
+                        attempt_id=attempt['attempt_id'],
+                        outcome='STOPPED', evidence=evidence)
+        self.assertEqual(records.resume()['pending'][0]['action'],
+                         'SCAN_BINDING_REVIEW_REQUIRED')
+        before = self.event_bytes(records)
+        before_paths = set(Path(ledger.photo_root).rglob('*'))
+        with self.assertRaisesRegex(NotesError, '^INTENT_SCAN_BINDING_REQUIRED$'):
+            records.intent(session_id=ledger.session, media_key_value=key,
+                           recovery_evidence=evidence)
+        self.assertEqual(self.event_bytes(records), before)
+        self.assertEqual(set(Path(ledger.photo_root).rglob('*')), before_paths)
+
     def test_verify_and_pending_resume_reject_attempt_after_new_scan(self):
         ledger = self.new_ledger('cross-scan-attempt')
         identity = notes.media_identity(

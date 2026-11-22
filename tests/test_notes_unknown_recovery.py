@@ -5,6 +5,7 @@ LINE, operate a GUI, or claim real-device acceptance.
 """
 import hashlib
 import json
+import os
 from pathlib import Path
 import threading
 import unittest
@@ -315,7 +316,8 @@ class NotesUnknownRecoveryTests(unittest.TestCase):
         row = self.media_row(summary, fixture['attempt']['media_key'])
         self.assertIn('attempt_phase', row)
         self.assertEqual(row['attempt_phase'], 'REDOWNLOAD_REQUIRED')
-        self.assertIn('REDOWNLOAD_REQUIRED', summary['dispatch_blockers'])
+        self.assertNotIn('REDOWNLOAD_REQUIRED', summary['dispatch_blockers'])
+        self.assertFalse(summary['all_known_media_complete'])
         self.assertNotIn('UNKNOWN_ATTEMPT', summary['dispatch_blockers'])
         self.assertEqual(summary['expected_tip'],
                          notes._event_ref(records.events[-1]))
@@ -434,7 +436,8 @@ class NotesUnknownRecoveryTests(unittest.TestCase):
         self.assertEqual(
             self.media_row(summary, fixture['attempt']['media_key'])
             ['attempt_phase'], 'RECOVERY_EXHAUSTED')
-        self.assertIn('RECOVERY_EXHAUSTED', summary['dispatch_blockers'])
+        self.assertNotIn('RECOVERY_EXHAUSTED', summary['dispatch_blockers'])
+        self.assertFalse(summary['all_known_media_complete'])
         self.assertEqual(summary['status_counts']['UNKNOWN'], 1)
         self.assertEqual(summary['current_incomplete'], 7)
         before = self.helper.event_bytes(records)
@@ -687,25 +690,352 @@ class NotesUnknownRecoveryTests(unittest.TestCase):
         self.assertIsNotNone(scans[scan_id]['complete'])
         self.assertFalse(summary['all_known_media_complete'])
 
-    def test_contract_isolation_rejects_nonempty_old_staging(self):
+    def test_contract_isolation_preserves_single_stable_media_in_old_staging(self):
         fixture = self.seven_media_fixture('isolation-nonempty-staging')
-        records = fixture['ledger'].records
+        ledger = fixture['ledger']
+        records = ledger.records
+        old_attempt = fixture['attempt']
+        late_file = Path(old_attempt['destination']) / 'late.png'
+        late_bytes = media_fixtures.png()
+        late_file.write_bytes(late_bytes)
         tip = records.summary()['expected_tip']
-        (Path(fixture['attempt']['destination']) / 'late.png').write_bytes(
-            media_fixtures.png())
         before_events = self.helper.event_bytes(records)
         before_staging = self.staging_state(fixture)
-        with self.assertRaisesRegex(
-                notes.NotesError, 'ISOLATION_STAGING_NOT_EMPTY'):
-            records.isolate(
-                session_id=fixture['ledger'].session,
-                attempt_id=fixture['attempt']['attempt_id'],
-                evidence=fixture['ledger'].evidence_for_attempt(
-                    fixture['attempt']),
-                expected_tip=tip,
-            )
-        self.assertEqual(self.helper.event_bytes(records), before_events)
+        result = records.isolate(
+            session_id=ledger.session,
+            attempt_id=old_attempt['attempt_id'],
+            evidence=ledger.evidence_for_attempt(old_attempt),
+            expected_tip=tip,
+        )
+        self.assertEqual(result['status'], 'ISOLATED')
+        self.assertNotEqual(self.helper.event_bytes(records), before_events)
         self.assertEqual(self.staging_state(fixture), before_staging)
+
+        session = ledger.session + '-resume'
+        records = self.helper.reopen(ledger)
+        self.bind_session(records, fixture, session, session)
+        before_rejected = self.helper.event_bytes(records)
+        with self.assertRaisesRegex(notes.NotesError,
+                                    '^ISOLATED_ATTEMPT_IMMUTABLE$'):
+            records.reconcile(
+                session_id=session,
+                attempt_id=old_attempt['attempt_id'],
+                result='DOWNLOAD_FINISHED',
+                evidence=ledger.evidence_for_attempt(old_attempt))
+        with self.assertRaisesRegex(notes.NotesError,
+                                    '^ISOLATED_ATTEMPT_IMMUTABLE$'):
+            records.download_check(session_id=session,
+                                   attempt_id=old_attempt['attempt_id'])
+        self.assertEqual(self.helper.event_bytes(records), before_rejected)
+        scan_id = self.rescan_same_post(records, fixture, session, session)
+        new_attempt = records.intent(
+            session_id=session, media_key_value=old_attempt['media_key'])
+        self.assertEqual(new_attempt['schema'], notes.INTENT_V5_SCHEMA)
+        self.assertNotEqual(new_attempt['destination'], old_attempt['destination'])
+        self.assertEqual(list(Path(new_attempt['destination']).iterdir()), [])
+        self.assertEqual(new_attempt['scan_id'], scan_id)
+        fixture.update(s2_session=session)
+        ledger.records = records
+        completion = self.complete_download(fixture, new_attempt)
+        self.assertEqual(completion['kind'], 'completion')
+        self.assertEqual(late_file.read_bytes(), late_bytes)
+        self.assertEqual(records._attempt_result(old_attempt['attempt_id']),
+                         'UNKNOWN')
+        completion_events = [event for event in records.events
+                             if event['kind'] == 'completion']
+        self.assertEqual(len(completion_events), 1)
+        self.assertEqual(completion_events[0]['data']['attempt_id'],
+                         new_attempt['attempt_id'])
+
+    def test_isolation_rejects_unsafe_staging_shapes_without_writes(self):
+        def zero(root):
+            (root / 'empty.jpg').write_bytes(b'')
+
+        def suffix(root):
+            (root / 'partial.part').write_bytes(b'x')
+
+        def document(root):
+            (root / 'document.pdf').write_bytes(b'%PDF')
+
+        def hidden(root):
+            (root / '.hidden.jpg').write_bytes(media_fixtures.png())
+
+        def multiple(root):
+            (root / 'one.jpg').write_bytes(media_fixtures.png())
+            (root / 'two.jpg').write_bytes(media_fixtures.png())
+
+        def symlink(root):
+            source = root.parent / 'outside.jpg'
+            source.write_bytes(media_fixtures.png())
+            (root / 'link.jpg').symlink_to(source)
+
+        def hardlink(root):
+            source = root.parent / 'outside.jpg'
+            source.write_bytes(media_fixtures.png())
+            os.link(source, root / 'link.jpg')
+
+        def child_directory(root):
+            (root / 'nested').mkdir()
+
+        cases = (zero, suffix, document, hidden, multiple, symlink, hardlink,
+                 child_directory)
+        for index, make_invalid in enumerate(cases):
+            with self.subTest(case=make_invalid.__name__):
+                fixture = self.seven_media_fixture(
+                    'unsafe-isolation-%d' % index)
+                records = fixture['ledger'].records
+                staging = Path(fixture['attempt']['destination'])
+                make_invalid(staging)
+                before_staging = self.staging_state(fixture)
+                before_events = self.helper.event_bytes(records)
+                evidence_dir = records.records / 'evidence'
+                before_evidence = {
+                    path.name: path.read_bytes() for path in evidence_dir.iterdir()
+                }
+                with self.assertRaisesRegex(
+                        notes.NotesError,
+                        '^ISOLATION_STAGING_NOT_EMPTY$'):
+                    records.isolate(
+                        session_id=fixture['ledger'].session,
+                        attempt_id=fixture['attempt']['attempt_id'],
+                        evidence=fixture['ledger'].evidence_for_attempt(
+                            fixture['attempt']),
+                        expected_tip=records.summary()['expected_tip'],
+                        stability_interval=0)
+                self.assertEqual(self.helper.event_bytes(records), before_events)
+                self.assertEqual(self.staging_state(fixture), before_staging)
+                self.assertEqual({
+                    path.name: path.read_bytes() for path in evidence_dir.iterdir()
+                }, before_evidence)
+
+    def test_isolated_missing_post_stays_incomplete_when_latest_scan_omits_it(self):
+        for exhausted in (False, True):
+            with self.subTest(exhausted=exhausted):
+                fixture = self.prepare_isolated_s2(
+                    'omitted-exhausted' if exhausted else 'omitted-available')
+                ledger = fixture['ledger']
+                records = ledger.records
+                key = fixture['attempt']['media_key']
+                if exhausted:
+                    v5 = records.intent(session_id=fixture['s2_session'],
+                                        media_key_value=key)
+                    records.outcome(
+                        session_id=fixture['s2_session'],
+                        attempt_id=v5['attempt_id'], outcome='UNKNOWN',
+                        evidence=ledger.evidence_for_attempt(v5))
+                    records.isolate(
+                        session_id=fixture['s2_session'],
+                        attempt_id=v5['attempt_id'],
+                        evidence=ledger.evidence_for_attempt(v5),
+                        expected_tip=records.summary()['expected_tip'])
+                new_session = fixture['s2_session'] + '-omitting'
+                self.bind_session(records, fixture, new_session, new_session)
+                ledger.records = records
+                ledger.session = new_session
+                self.helper.observe_post(ledger, 'only-new-no-media', [],
+                                         no_media=True)
+                summary = records.summary()
+                self.assertEqual(summary['current_incomplete'], 0)
+                self.assertEqual(summary['dispatch_blockers'], [])
+                self.assertFalse(summary['all_known_media_complete'])
+                self.assertIn(key, [row['media_key'] for row in
+                                    summary['unresolved_attempts']])
+
+    def test_third_ordinary_attempt_can_finish_and_download_check(self):
+        fixture = self.seven_media_fixture('third-attempt-settlement',
+                                           mark_unknown=False)
+        ledger = fixture['ledger']
+        records = ledger.records
+        attempt = fixture['attempt']
+        for _ in range(2):
+            records.outcome(
+                session_id=ledger.session, attempt_id=attempt['attempt_id'],
+                outcome='STOPPED', evidence=ledger.evidence_for_attempt(attempt))
+            attempt = records.intent(
+                session_id=ledger.session,
+                media_key_value=fixture['media_keys'][0],
+                recovery_evidence=ledger.evidence_for_attempt(attempt))
+        self.assertEqual(len([event for event in records.events
+                              if event['kind'] == 'intent' and
+                              event['data']['media_key'] ==
+                              fixture['media_keys'][0]]), 3)
+        completion = self.complete_download(fixture, attempt)
+        self.assertEqual(completion['kind'], 'completion')
+        self.assertEqual(self.media_row(records.summary(),
+                                        fixture['media_keys'][0])['status'],
+                         'COMPLETED')
+
+    def test_over_limit_legacy_history_remains_readable_but_not_extendable(self):
+        fixture = self.seven_media_fixture('legacy-over-limit',
+                                           mark_unknown=False)
+        ledger = fixture['ledger']
+        records = ledger.records
+        key = fixture['media_keys'][0]
+        attempt = fixture['attempt']
+        for _ in range(2):
+            records.outcome(
+                session_id=ledger.session, attempt_id=attempt['attempt_id'],
+                outcome='STOPPED', evidence=ledger.evidence_for_attempt(attempt))
+            attempt = records.intent(
+                session_id=ledger.session, media_key_value=key,
+                recovery_evidence=ledger.evidence_for_attempt(attempt))
+        records.outcome(
+            session_id=ledger.session, attempt_id=attempt['attempt_id'],
+            outcome='STOPPED', evidence=ledger.evidence_for_attempt(attempt))
+
+        original_need = notes.need
+        with mock.patch.object(
+                notes, 'need',
+                side_effect=lambda condition, code: (
+                    None if code == 'AUTO_RECOVERY_ATTEMPT_LIMIT'
+                    else original_need(condition, code))):
+            fourth = records.intent(
+                session_id=ledger.session, media_key_value=key,
+                recovery_evidence=ledger.evidence_for_attempt(attempt))
+        records.outcome(
+            session_id=ledger.session, attempt_id=fourth['attempt_id'],
+            outcome='STOPPED', evidence=ledger.evidence_for_attempt(fourth))
+        reopened = self.helper.reopen(ledger)
+        reopened.summary()
+        self.assertEqual(len([event for event in reopened.events
+                              if event['kind'] == 'intent' and
+                              event['data']['media_key'] == key]), 4)
+        with self.assertRaisesRegex(
+                notes.NotesError, '^AUTO_RECOVERY_ATTEMPT_LIMIT$'):
+            reopened.intent(
+                session_id=ledger.session, media_key_value=key,
+                recovery_evidence=ledger.evidence_for_attempt(fourth))
+
+    def test_nonempty_isolation_rechecks_before_evidence_and_before_append(self):
+        for change_during_evidence in (False, True):
+            with self.subTest(change_during_evidence=change_during_evidence):
+                label = 'staging-change-%s' % change_during_evidence
+                fixture = self.seven_media_fixture(label)
+                ledger = fixture['ledger']
+                records = ledger.records
+                attempt = fixture['attempt']
+                payload = Path(attempt['destination']) / 'late.png'
+                payload.write_bytes(media_fixtures.png())
+                evidence = ledger.evidence_for_attempt(attempt)
+                tip = records.summary()['expected_tip']
+                before_events = self.helper.event_bytes(records)
+                evidence_dir = records.records / 'evidence'
+                before_evidence = set(evidence_dir.iterdir())
+                preserve = notes._preserve_evidence
+
+                def change_payload():
+                    payload.write_bytes(b'new bytes written by another process')
+
+                def preserve_and_change(*args, **kwargs):
+                    ref = preserve(*args, **kwargs)
+                    change_payload()
+                    return ref
+
+                patch = (mock.patch.object(
+                    notes, '_preserve_evidence', side_effect=preserve_and_change)
+                    if change_during_evidence else mock.patch.object(
+                        notes.time, 'sleep', side_effect=lambda _: change_payload()))
+                with patch, self.assertRaisesRegex(
+                        notes.NotesError, '^ISOLATION_STAGING_CHANGED$'):
+                    records.isolate(
+                        session_id=ledger.session,
+                        attempt_id=attempt['attempt_id'],
+                        evidence=evidence,
+                        expected_tip=tip,
+                    )
+                self.assertEqual(self.helper.event_bytes(records), before_events)
+                if not change_during_evidence:
+                    self.assertEqual(set(evidence_dir.iterdir()), before_evidence)
+
+    def test_budget_survives_new_session_and_uses_historical_context(self):
+        fixture = self.prepare_isolated_s2('automatic-budget')
+        ledger = fixture['ledger']
+        records = ledger.records
+        session = fixture['s2_session']
+        key, other_key = fixture['media_keys'][:2]
+        second = records.intent(session_id=session, media_key_value=key)
+        self.assertEqual(second['schema'], notes.INTENT_V5_SCHEMA)
+        records.outcome(
+            session_id=session, attempt_id=second['attempt_id'],
+            outcome='NOT_SENT', evidence=ledger.evidence_for_attempt(second))
+
+        records = self.helper.reopen(ledger)
+        session = 'automatic-budget-s3'
+        self.bind_session(records, fixture, session, session)
+        new_scan = self.rescan_same_post(records, fixture, session, session)
+        self.assertIn(
+            'RECOVERY_REVIEW_REQUIRED',
+            [row['action'] for row in records.resume()['pending']])
+        before = self.helper.event_bytes(records), self.staging_state(fixture)
+        with self.assertRaisesRegex(notes.NotesError, '^EVIDENCE_CONTEXT_MISMATCH$'):
+            records.intent(
+                session_id=session, media_key_value=key,
+                recovery_evidence=ledger.evidence_for_attempt(
+                    dict(second, scan_id=new_scan)))
+        self.assertEqual(
+            (self.helper.event_bytes(records), self.staging_state(fixture)), before)
+        third = records.intent(
+            session_id=session, media_key_value=key,
+            recovery_evidence=ledger.evidence_for_attempt(second))
+        self.assertEqual(third['scan_id'], new_scan)
+        records.outcome(
+            session_id=session, attempt_id=third['attempt_id'],
+            outcome='STOPPED', evidence=ledger.evidence_for_attempt(third))
+
+        records = self.helper.reopen(ledger)
+        session = 'automatic-budget-s4'
+        self.bind_session(records, fixture, session, session)
+        self.rescan_same_post(records, fixture, session, session)
+        actions = {row['media_key']: row['action']
+                   for row in records.resume()['pending']}
+        self.assertEqual(actions[key], 'RECOVERY_EXHAUSTED')
+        before = self.helper.event_bytes(records), self.staging_state(fixture)
+        with self.assertRaisesRegex(notes.NotesError, '^AUTO_RECOVERY_ATTEMPT_LIMIT$'):
+            records.intent(
+                session_id=session, media_key_value=key,
+                recovery_evidence=ledger.evidence_for_attempt(third))
+        self.assertEqual(
+            (self.helper.event_bytes(records), self.staging_state(fixture)), before)
+        other = records.intent(session_id=session, media_key_value=other_key)
+        fixture.update(s2_session=session)
+        ledger.records = records
+        self.complete_download(fixture, other)
+        self.assertEqual(self.media_row(records.summary(), other_key)['status'],
+                         'COMPLETED')
+
+    def test_third_unknown_isolates_without_changing_v1_disposition(self):
+        fixture = self.seven_media_fixture('third-unknown', mark_unknown=False)
+        ledger = fixture['ledger']
+        records = ledger.records
+        attempt = fixture['attempt']
+        key, other_key = fixture['media_keys'][:2]
+        for _ in range(2):
+            evidence = ledger.evidence_for_attempt(attempt)
+            records.outcome(session_id=ledger.session,
+                            attempt_id=attempt['attempt_id'],
+                            outcome='NOT_SENT', evidence=evidence)
+            attempt = records.intent(
+                session_id=ledger.session, media_key_value=key,
+                recovery_evidence=evidence)
+        evidence = ledger.evidence_for_attempt(attempt)
+        records.outcome(session_id=ledger.session, attempt_id=attempt['attempt_id'],
+                        outcome='UNKNOWN', evidence=evidence)
+        tip = records.summary()['expected_tip']
+        for replayed in (False, True):
+            result = records.isolate(
+                session_id=ledger.session, attempt_id=attempt['attempt_id'],
+                evidence=evidence, expected_tip=tip)
+            self.assertEqual(result['replayed'], replayed)
+            self.assertEqual(result['disposition'], 'REDOWNLOAD_AVAILABLE')
+            self.assertEqual(result['next_action'], 'RECOVERY_EXHAUSTED')
+            self.assertEqual(result['redownload_remaining'], 0)
+        summary = records.summary()
+        self.assertEqual(self.media_row(summary, key)['attempt_phase'],
+                         'RECOVERY_EXHAUSTED')
+        self.assertFalse(summary['all_known_media_complete'])
+        self.assertNotIn('UNKNOWN_ATTEMPT', summary['dispatch_blockers'])
+        other = records.intent(session_id=ledger.session, media_key_value=other_key)
+        self.complete_download(fixture, other)
 
     def test_contract_isolation_requires_recovery_authorization(self):
         fixture = self.seven_media_fixture(
