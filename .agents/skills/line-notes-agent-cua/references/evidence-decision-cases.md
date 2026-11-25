@@ -297,18 +297,18 @@
 
 ## D6 多候選帳本、已註冊他帳本 active_hint 與 AX 標題空白
 
-- **前提：** 完整 `lists` capture 已 exit 0、receipt `COMPLETE` 且 `stdout.bin` 無截斷；同次 CUA 截圖與完整 AX 已落地並讀回。`lists` 有多份名稱相近的已註冊候選，macOS AX Window title 為空字串、列表節點泛用，`active_hint` 的 `records_root` 與 `local_list_id` 精確指向其中另一份已註冊帳本。
-- **觀察（假設）：** 全部 N 份候選的 `identity` 與前 5 篇 `posts` 錨點已展開；當次首屏卡片順序、日期、摘要脈絡與媒體縮圖排列只與其中一份吻合；`active_hint` 命中的是另一份帳本，且沒有任何 hint 指向未註冊位置。
+- **前提：** 完整 `lists` capture 已 exit 0、receipt `COMPLETE` 且 `stdout.bin` 無截斷；同次 CUA 截圖與完整 AX 已落地並讀回。`lists` 有多份名稱相近的已註冊候選，或畫面顯示標題在 `lists` 中零同名候選（`display_name` 完全相符為 0）；macOS AX Window title 為空字串、列表節點泛用，`active_hint` 的 `records_root` 與 `local_list_id` 精確指向其中另一份已註冊帳本，或 `active_hint` 為 `none`。
+- **觀察（假設）：** 全部 N 份候選的 `identity` 與前 5 篇 `posts` 錨點已展開；當次首屏卡片順序、日期、摘要脈絡與媒體縮圖排列恰與其中一份吻合，或全部 N 份均以具體差異正面排除；`active_hint` 命中的是另一份帳本或為 `none`，且沒有任何 hint 指向未註冊位置。
 - **可支持命題：** `active_hint` 只證明前次曾操作該已註冊帳本，是切換列表的日常常態，不是缺損歷史阻塞；AX 標題空白只表示可存取性資訊有限，不是工具錯誤，也不阻止以同次截圖＋AX 與帳本 `identity`／`posts` 錨點交叉核對。單一中文名稱、OCR、單一日期或單一張數仍不足以認領列表。
-- **允許動作：** 依[啟動與帳本對帳](download-and-ledger.md#啟動與帳本對帳)的三路契約處理：A 恰有一份交叉吻合且其餘 N−1 份有具體差異 → `bind`；B 全部 N 份均以具體差異正面排除、hint 已核對且無未註冊／損壞歷史 → `list-key` → `evidence-pack`（statement 明列全部 N 份排除依據）→ `init`（正式日常 Prompt 涵蓋恢復授權時加 `--recovery-authorized`）→ 讀回 `list_key` → `bind`；C 完成全核對仍有 `>= 2` 份無法區分或歷史異常 → 停在 `init`／`bind` 前，零寫入零輸入，保留已落地原件與 capture receipt，回報去識別化摘要與單一具體釐清動作。
-- **禁止推論：** `lists` 終端截斷或名稱相近可以作為提前停在 `bind` 前的理由；已註冊他帳本的 `active_hint` 等於歷史缺損；AX 標題空白等於工具故障或無法核對；中文標題、OCR、單一日期、單一張數或 hint 可以單獨認領列表或改綁他帳本。
+- **允許動作：** 依[啟動與帳本對帳](download-and-ledger.md#啟動與帳本對帳)的三路契約處理：A 恰有一份交叉吻合且其餘 N−1 份有具體差異 → `bind`；B 全部 N 份均以具體差異正面排除、hint 已核對且無未註冊／損壞歷史 → `list-key` → `evidence-pack`（statement 明列全部 N 份排除依據）→ `init`（正式日常 Prompt 涵蓋恢復授權時加 `--recovery-authorized`）→ 讀回 `list_key` → `bind`；C 完成全核對仍有 `>= 2` 份無法區分或歷史異常 → 停在 `init`／`bind` 前，零寫入零輸入，保留已落地原件與 capture receipt，回報去識別化摘要與單一具體釐清動作（須附具體未成立的身分證據、衝突候選之去識別化 ID 與 `identity`／`posts` 差異；不得以「名稱不符」代替）。
+- **禁止推論：** `lists` 終端截斷或名稱相近可以作為提前停在 `bind` 前的理由；以 `display_name == 畫面標題` 過濾候選；把「零同名候選」（`matches: []`）升格為身分不符／候選歧義或直接認定新列表；Route C 僅憑「名稱不符」要求重新交接；已註冊他帳本的 `active_hint` 等於歷史缺損；AX 標題空白等於工具故障或無法核對；中文標題、OCR、單一日期、單一張數或 hint 可以單獨認領列表或改綁他帳本。
 - **缺少證據：** 真實 LINE GUI 的多候選消歧、`bind` 與後續下載均 `NOT_RUN`；本案例是假設文件案例，不引用真實列表、key 或交易結果。
 
 ## D7 CUA 原件落地：未執行 helper、真實失敗與工具撤除
 
 - **前提：** 新 Session 需在 `bind` 前把同次截圖與完整 AX 落地；canonical `TASK_PRIVATE_DIR` 與 `OBSERVATION_DIR` 已建立，尚未或剛要於 CUA Node runtime 呼叫 `evidenceTools.captureAndPersist`。
-- **觀察（假設）：** 三種互斥情境之一：(a) Agent 只在對話介面看到截圖／AX 就判定無法寫入檔案系統；(b) 實際呼叫 helper 後回傳 `ready_for_bind=false`，或拋出含 `error`、`stages`、`blockers` 的失敗；(c) 任務中途 CUA 工具 namespace 被撤除。
-- **可支持命題：** (a) 屬 `NOT_RUN`／Agent 未執行，不是環境或工具不支援，也不證明 helper 無法落地；(b) 才是實證阻塞，須保留真實 `error`（`name`／`code`／`message`）與 `stages`／`blockers`；(c) 只證明工具可用性變動，應停止且不得以對話摘要重建 AX 或截圖原件。
-- **允許動作：** (a) 先建好私有目錄，於同一個 Node runtime 實際呼叫 helper，讀回同一份 bytes 並核對後才封裝 bundle／`bind`；(b) 保留完整失敗輸出，只修正可歸因的路徑或權限問題後重跑一次，仍失敗就停在 `bind` 前；(c) 保存已落地原件與進度，停止依賴 CUA 的步驟並回報工具不可用。
-- **禁止推論：** 對話介面可見截圖等於已落地；未執行 helper 等於環境不支援；改跑裸 `lineApp.getAXStateAndScreenshot()` 後可宣稱 helper 不可用；工具撤除後可用對話摘要補造 AX／截圖；helper 失敗可用檔案名稱或猜測補值。
+- **觀察（假設）：** 三種互斥情境之一：(a) Agent 只在對話介面看到截圖／AX 就判定無法寫入檔案系統，或未先載入 `cua-evidence-tools` 定義區塊而僅測得 `typeof evidenceTools === "undefined"`（或直接觸發 `CUA_EVIDENCE_TOOLS_NOT_LOADED`）即宣稱 runtime 缺少 `captureAndPersist`；(b) 實際呼叫 helper 後回傳 `ready_for_bind=false`，或拋出含 `error`、`stages`、`blockers` 的失敗；(c) 任務中途 CUA 工具 namespace 被撤除。
+- **可支持命題：** (a) 屬 `NOT_RUN`／Agent 未執行或 helper 未載入，不是環境或工具不支援，也不證明 helper 無法落地；(b) 才是實證阻塞，須保留真實 `error`（`name`／`code`／`message`）與 `stages`／`blockers`；(c) 只證明工具可用性變動，應停止且不得以對話摘要重建 AX 或截圖原件。
+- **允許動作：** (a) 先建好私有目錄，先於同一個 Node runtime 載入 `cua-evidence-tools` 定義區塊，再實際呼叫 `evidenceTools.captureAndPersist`，讀回同一份 bytes 並核對後才封裝 bundle／`bind`；(b) 保留完整失敗輸出，只修正可歸因的路徑或權限問題後重跑一次，仍失敗就停在 `bind` 前；(c) 保存已落地原件與進度，停止依賴 CUA 的步驟並回報工具不可用。
+- **禁止推論：** 對話介面可見截圖等於已落地；未執行 helper 或只測得 `typeof evidenceTools === "undefined"`／觸發 `CUA_EVIDENCE_TOOLS_NOT_LOADED` 等於環境不支援或 runtime 缺少 `captureAndPersist`；改跑裸 `lineApp.getAXStateAndScreenshot()` 後可宣稱 helper 不可用；工具撤除後可用對話摘要補造 AX／截圖；helper 失敗可用檔案名稱或猜測補值。
 - **缺少證據：** 真實 CUA runtime 的落地讀回、namespace 撤除情境與 LINE E2E 均 `NOT_RUN`；本案例是假設文件案例。

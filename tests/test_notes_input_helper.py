@@ -3356,7 +3356,7 @@ console.log(JSON.stringify({
 
     def run_initial_observation(self, *, capture_body,
                                 create_observation_dir=True, tamper=None,
-                                epilogue=''):
+                                epilogue='', tools_mode='tools'):
         with tempfile.TemporaryDirectory(
                 prefix='.notes-initial-observation-', dir=TASKS) as temp:
             root = Path(temp).resolve()
@@ -3371,8 +3371,16 @@ console.log(JSON.stringify({
                       .replace('/ABS/TASK_PRIVATE_DIR', str(root))
                       .replace('/ABS/OBSERVATION_DIR', str(observation_dir))
                       .replace('UNIQUE_OBSERVATION_ID', observation_id))
+            if tools_mode == 'tools':
+                preload = self.tools_source
+            elif tools_mode == 'none':
+                preload = ''
+            elif tools_mode == 'empty':
+                preload = 'const evidenceTools = {};'
+            else:
+                raise AssertionError('unknown tools_mode: %r' % (tools_mode,))
             script = '\n'.join([
-                self.tools_source,
+                preload,
                 self.INITIAL_HARNESS.replace('@@CAPTURE_BODY@@', capture_body),
                 source,
                 epilogue,
@@ -3433,12 +3441,27 @@ console.log(JSON.stringify({
         self.assertIn('const OBSERVATION = await evidenceTools.captureAndPersist',
                       source)
         self.assertIn('CUA_RAW_OBSERVATION_INCOMPLETE', source)
+        self.assertIn('CUA_EVIDENCE_TOOLS_NOT_LOADED', source)
         self.assertIn('CUA_OBSERVATION_EMIT_READBACK_MISMATCH', source)
         self.assertIn("const fs = await import('node:fs/promises');", source)
         self.assertIn('await nodeRepl.emitImage(new Uint8Array(savedScreenshot));',
                       source)
         self.assertIn("nodeRepl.write(savedAx.toString('utf8'));", source)
         self.assertEqual(section.count('nodeRepl.emitImage'), 1)
+
+    def test_initial_observation_unloaded_tools_fails_closed_without_capture_or_emit(self):
+        for tools_mode in ('none', 'empty'):
+            with self.subTest(tools_mode=tools_mode):
+                run = self.run_initial_observation(
+                    capture_body=self.CAPTURE_OK, tools_mode=tools_mode)
+                self.assertNotEqual(run['returncode'], 0)
+                self.assertIn('CUA_EVIDENCE_TOOLS_NOT_LOADED', run['stderr'])
+                self.assertNotIn('ReferenceError', run['stderr'])
+                self.assertEqual(run['captureCalls'], 0)
+                self.assertEqual(run['emits'], [])
+                self.assertEqual(run['writes'], [])
+                self.assertTrue(run['observationDirExists'])
+                self.assertEqual(run['fileNames'], [])
 
     def test_initial_observation_success_emits_landed_bytes_once(self):
         run = self.run_initial_observation(
