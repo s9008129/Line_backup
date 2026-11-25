@@ -264,42 +264,156 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
 
 ## 啟動與帳本對帳
 
-1. 以本節前述既有 `notes_capture` 用法執行並保存一次 `lists` 的完整 request、stdout、stderr、exit code 與 capture receipt；先確認 exit 0 且輸出完整可解析，不能以截斷畫面、`head` 或不完整摘要當成全部結果。
+`bind` 前（Pre-Bind）固定五步，不得跳步、調換或提前停止：
 
-   為每一個候選列出內部短表，保留可用的 `local_list_id`、`records_root`、`list_key`、identity／context、覆蓋、六類計數、未決交易及 blockers 等辨識資訊，再讀 `.local/line-backup/active-notes-task.json` 作定位提示。hint 的 root＋ID 必須分別精確對應候選列的 `records_root` 與 `local_list_id`，仍須以本次連續入口及當次畫面核對列表身分與 context；hint 缺席或不符時保留並核對全部候選，不能因此推論新列表或建立空帳。
+1. **完整 `lists` capture。** 以 `notes_capture --output-root "$CAPTURE_PARENT" -- lists --collection "$ABS_COLLECTION"` 取得完整無截斷的 `stdout.bin` 與 `status=COMPLETE` receipt；非零 exit、`incomplete.json` 或不可解析輸出保留原狀，不進入下一步。
+2. **CUA 原件落地並讀回。** 於同一個 CUA Node runtime 實跑 `evidenceTools.captureAndPersist`，把同次截圖與完整 AX 落地，再讀回顯示同一份 bytes；只看到對話介面圖片不算落地。未實跑 helper 屬 `NOT_RUN`，不得宣稱環境不支援。實作與讀回契約見 [CUA 觀察原件落地](evidence-template.md#cua-觀察原件落地)。
+3. **入口確認與全部候選核對。** 以同次已落地讀回的截圖＋AX 確認列表角色與入口，展開全部 N 份候選，完成 `active_hint` 分流與多訊號交叉比對，依[三路列表判定契約](#候選帳本展開唯讀)得出三路之一的結果。
+4. **封裝 v2 `evidence-pack`。** 新列表固定同一組 identity，先 `list-key` → `evidence-pack`（statement 明列全部 N 份排除依據，滿足 binding 與 history_scope）→ `init`（正式日常 Prompt 涵蓋恢復授權時加 `--recovery-authorized`）→ 讀回 `list_key`；既有列表沿用原 `list_key`，仍以同次落地原件封裝當次 observation／handoff bundle。
+5. **`bind` → 舊交易 → 普通完整掃描。** `bind` 後先處理舊 attempt／命名交易與仍 open 的 scan，再 `scan start` 完成普通完整掃描；沒有未決項才直接進新 scan。
 
-   沒有相符既有帳本本身不代表帳本為空；只有完整查閱並核對全部歷史候選、未見缺損或歧義，且具備第 3 步所述完整、無歧義的新列表證據時，才走既有新列表 `init` 流程。當次來源無法唯一對應歷史候選且也不符合新列表條件，或發現輸出不完整／不可解析、索引／歷史異常時，停止相關寫入與新派送並回報具體缺口。
+### 候選帳本展開（唯讀）
 
-   只有確需刷新已選帳本摘要時，才以其原值 `records_root` 序列 capture 一次 `summary`；不為同一 lock domain 平行查 `memory`，也不沿用 hint 中的舊 Session ID 作當次 `bind`。
-2. 使用已取得的摘要核對列表、貼文／媒體狀態、缺項、`unresolved_attempts`、`dispatch_blockers`、scan binding 與本機可用性；需要 staging 目的地或 completion 細節時，依上節回到 `intent`／`download-check` 結果及追加事件。索引缺失、帳本損壞、證據鏈異常，或仍有多個可能對應當次列表的歷史候選而無法消除歧義時，停止相關動作，不建立新空帳。
-3. 新列表只有在入口、列表身分與歷史均確認，且沒有缺損／歧義時才建立。Agent 固定同一組 `visual_key`、適用 `context_id` 與 signals 輸入，以 `list-key` 取得 key；若同一完整觀察涵蓋 init 所需的 binding 與 history 命題，且 context 相同，可共用一份 v2 bundle；命題或 context 不同才分開建立。再以完全相同的 identity 參數執行 `init`，最後讀回相同 `list_key`。鏈如下；`CONTEXT_ID` 不適用時整項省略，不是空字串或 `UNKNOWN`，SIGNALS 未使用時同樣省略：
+`lists` 每一列已是 `summary()` 的完整投影，含 `identity`、`scan_coverage`、`unresolved_attempts`、`dispatch_blockers` 與每篇 `posts` 的 `source_order`／`date_summary`／`media_count`／`state`／`identity`；不需對 N 份各跑一次 `summary`，也不得用只留少數頂層欄位的 wrapper 丟掉 `posts`／`identity` 再比對。以 receipt 回傳的 `receipt_dir` 讀取 `stdout.bin`，不自行猜路徑；`status=COMPLETE` 才可展開。以下腳本只讀 JSON、不寫入，空 `lists`、空 `posts`、`active_hint=null`、`identity=null` 均照實輸出：
 
-   ```sh
-   PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes list-key \
-     --visual-key "$VISUAL_KEY" --context-id "$CONTEXT_ID" --signals "$SIGNALS_INPUT"
+```sh
+CAPTURE_PARENT="$TASK_PRIVATE_DIR/captures"
+# 步驟 1 的 capture 已完成；UNIQUE_CAPTURE_ID 取自 receipt 的 receipt_dir 目錄名。
+/usr/bin/python3 -B - "$CAPTURE_PARENT/UNIQUE_CAPTURE_ID/stdout.bin" <<'PY'
+import json
+import sys
 
-   # 同一完整觀察可同時支持 binding 與 history 時，只封裝一次。
-   PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes evidence-pack \
-     --statement "$INIT_STATEMENT" --asset screenshot "$INIT_SCREENSHOT" \
-     --output-dir "$INIT_EVIDENCE_NEW_DIR" --list-key "$LIST_KEY"
-   BINDING_BUNDLE="$INIT_BUNDLE"
-   HISTORY_BUNDLE="$INIT_BUNDLE"
-   # 若兩項命題需要不同原件或 context，才分別建立 bundle 並設定以上兩個變數。
 
-   PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes init \
-     --collection "$ABS_COLLECTION" --photo-root "$ABS_PHOTO_ROOT" \
-     --name "$DISPLAY_NAME" --visual-key "$VISUAL_KEY" \
-     --context-id "$CONTEXT_ID" --signals "$SIGNALS_INPUT" \
-     --binding-evidence "$BINDING_BUNDLE" \
-     --history-scope-evidence "$HISTORY_BUNDLE"
+def compact(value):
+    return json.dumps(value, ensure_ascii=False, sort_keys=True,
+                      separators=(',', ':'))
 
-   PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes summary \
-     --records-root "$ABS_LEDGER"
-   ```
 
-   `SIGNALS_INPUT` 是明示的 strict JSON 文字或 `@` 加指定 JSON 檔的絕對路徑；未使用 signals 時連同整個 flag 省略。當次任務已授權確認停止後的恢復時，在真正新建帳本的 `init` 命令加上 `--recovery-authorized`，並從回傳／摘要讀回 `recovery_authorized=true`；未獲授權不得加此 flag。既有帳本不重新 init，也不手改 false 的授權值。先核對所用 bundle 的 context 等於 list-key 結果，再執行 `init`；若 identity 輸入、觀察命題或明示 signals 檔在期間改變，舊 bundle 不可沿用。`init` 後只使用其回傳的 `records_root` 讀回 key，不一致或有未預期副作用就停止；不得先建空帳取得 key、手填 key／JSON，或讓適用 ID 留 `UNKNOWN`。新列表讀回成功、或既有列表從 `lists`／`memory` 找到相符帳本後，先核對當次入口與有效前景，再依序 **`bind` → 處理舊 attempt／命名交易 → `scan start`**；沒有未決項才直接進新 scan。每一命令仍須滿足自己的 scan binding／資料完整性 gate，不能因已 bind 就視為舊 attempt 已獲重送或恢復許可。不因新 Session、照片 root 改變或使用者重交前景而重新初始化。
-4. `scan start` → `page`… → `scan finish` → `post`／`media` 保存本輪完整盤點。`scan finish` 前必須已看到頂端、底端與有序重疊；`post`／`media` 需要最新完成的 scan。新 Session 必須重新看頂底與重疊，不沿用上一個 Session 的畫面 cursor。純文字貼文由 `post` 記 `NO_MEDIA`，不建立媒體下載項。
-5. 重新更換照片 root 時用 `destination` 追加綁定；舊 completion 路徑不改，UNKNOWN、活動下載、pending 命名或 `LOCAL_CHANGED` 不因換位置解鎖。
+def field(value):
+    if value is None:
+        return 'null'
+    if isinstance(value, str):
+        return value if value else 'EMPTY'
+    return compact(value)
+
+
+if len(sys.argv) != 2:
+    print('usage: /usr/bin/python3 -B - CAPTURE/stdout.bin')
+    raise SystemExit(2)
+
+with open(sys.argv[1], 'rb') as handle:
+    payload = json.load(handle)
+
+rows = payload.get('lists') or []
+if isinstance(rows, dict):
+    rows = [rows[key] for key in sorted(rows)]
+
+hint = payload.get('active_hint')
+registered = None
+if isinstance(hint, dict):
+    hint_root = hint.get('records_root')
+    hint_id = hint.get('local_list_id')
+    if (isinstance(hint_root, str) and hint_root and
+            isinstance(hint_id, str) and hint_id):
+        for row in rows:
+            if (isinstance(row, dict) and
+                    row.get('records_root') == hint_root and
+                    row.get('local_list_id') == hint_id):
+                registered = hint_id
+                break
+
+if hint is None:
+    print('active_hint: none')
+elif registered is not None:
+    print('active_hint: registered local_list_id=%s' % registered)
+elif isinstance(hint, dict):
+    print('active_hint: unregistered records_root=%s local_list_id=%s' % (
+        field(hint.get('records_root')), field(hint.get('local_list_id'))))
+else:
+    print('active_hint: unregistered raw=%s' % compact(hint))
+
+print('candidate_count=%d' % len(rows))
+for index, row in enumerate(rows, 1):
+    posts = row.get('posts') or []
+    attempts = row.get('unresolved_attempts') or []
+    blockers = row.get('dispatch_blockers') or []
+    print('')
+    print('[%d] local_list_id=%s' % (index, field(row.get('local_list_id'))))
+    print('  records_root=%s' % field(row.get('records_root')))
+    print('  list_key=%s' % field(row.get('list_key')))
+    print('  display_name=%s' % field(row.get('display_name')))
+    print('  context_id=%s' % field(row.get('context_id')))
+    print('  identity=%s' % compact(row.get('identity')))
+    print('  scan_coverage=%s post_count=%d unresolved_attempts=%d' % (
+        field(row.get('scan_coverage')), len(posts), len(attempts)))
+    print('  dispatch_blockers=%s' % compact(blockers))
+    if not posts:
+        print('  posts=EMPTY')
+        continue
+    for order, post in enumerate(posts[:5], 1):
+        print('  post[%d] source_order=%s date_summary=%s media_count=%s '
+              'state=%s identity=%s' % (
+                  order, field(post.get('source_order')),
+                  field(post.get('date_summary')),
+                  field(post.get('media_count')), field(post.get('state')),
+                  compact(post.get('identity'))))
+    if len(posts) > 5:
+        print('  posts_shown=5 post_count=%d' % len(posts))
+PY
+```
+
+**`active_hint` 分流。** 腳本以 `active_hint: registered`／`unregistered`／`none` 表示命中狀態。`active_hint` 的 `records_root` 與 `local_list_id` 同時精確命中 `lists` 內某筆已註冊帳本時，只表示前次曾操作該帳本（切換至其他列表的日常常態）；核對確認它不是當次目標後即完成分流，**不構成缺損歷史阻塞**，也不得因此改綁他帳本。只有 `active_hint` 指向未出現在 `lists` 的 `records_root`／`local_list_id`，或 `lists`／索引／帳本讀取被拒絕時，才視為潛在歷史缺損阻塞，停止 `init`／`bind` 並回報。
+
+**三路列表判定契約**（不要求 Owner 填 UUID／key／JSON）：
+
+- **A 唯一既有帳本匹配：** 恰有一份候選在當次入口與視窗脈絡、`identity`／`context_id`／signals、首屏多張可見卡片錨點（卡片順序／日期／摘要脈絡／媒體縮圖排列與數量）上交叉吻合，其餘 N−1 份均有具體差異可正面排除 → 封裝當次 observation／handoff 後 `bind`；既有帳本沿用原 `list_key`，不重新 `init`。
+- **B 證明新列表：** `lists` exit 0、全部 N 份已註冊帳本均逐一核對並以具體差異正面排除（不重疊的頁首脈絡＋`posts`／`identity` 歷史），且 `active_hint` 已核對、無未註冊／損壞歷史 → 以當次已落地多訊號建立 `visual_key`／`context_id`／`signals`（AX 標題空白時明記 `ax_window_title=EMPTY`），依序 `list-key` → `evidence-pack`（statement 明列全部 N 份已核對帳本的排除依據，滿足 binding 與 history_scope）→ `init`（正式日常 Prompt 涵蓋恢復授權時加 `--recovery-authorized`）→ 讀回 `list_key` → `bind`。
+- **C 真實候選歧義或歷史缺口：** 完成全部 N 份交叉比對（含相近候選的 `posts`／`identity`／既有事件 `statement`）後，仍有 `>= 2` 份無法區分、有空／過舊候選無法排除為目前列表，或有未註冊 `active_hint`／索引異常 → 停在 `init`／`bind` 前，零帳本寫入、零下載輸入，保留已落地原件與 `lists` capture receipt，向 Owner 回報去識別化衝突摘要與單一具體釐清動作。
+
+**未執行與真實失敗。** `NOT_RUN` 只表示該步沒有實際執行，不證明 CLI、helper 或環境不支援；不得把未執行寫成失敗，也不得改走替代入口後宣稱原路徑不可用。真實 CLI／helper 失敗必須附實際 exit code、JSON、`error`（`name`／`code`／`message`）、`stages` 或 `blockers`，才可列為環境／路徑阻塞。CUA 工具 namespace 中途撤除只記工具可用性變動並停止，不以對話摘要重建原件。
+
+以下各點為上述步驟的判準與例外：
+
+**完整 capture。** 以本節前述既有 `notes_capture` 用法執行並保存一次 `lists` 的完整 request、stdout、stderr、exit code 與 capture receipt；先確認 exit 0 且輸出完整可解析，不能以截斷畫面、`head` 或不完整摘要當成全部結果。
+
+為每一個候選列出內部短表，保留可用的 `local_list_id`、`records_root`、`list_key`、identity／context、覆蓋、六類計數、未決交易及 blockers 等辨識資訊，再讀 `.local/line-backup/active-notes-task.json` 作定位提示。hint 的 root＋ID 必須分別精確對應候選列的 `records_root` 與 `local_list_id`，仍須以本次連續入口及當次畫面核對列表身分與 context；hint 缺席或不符時保留並核對全部候選，不能因此推論新列表或建立空帳。
+
+沒有相符既有帳本本身不代表帳本為空；只有完整查閱並核對全部歷史候選、未見缺損或歧義，且具備步驟 3 與步驟 4 所述完整、無歧義的新列表證據時，才走既有新列表 `init` 流程。當次來源無法唯一對應歷史候選且也不符合新列表條件，或發現輸出不完整／不可解析、索引／歷史異常時，停止相關寫入與新派送並回報具體缺口。
+
+只有確需刷新已選帳本摘要時，才以其原值 `records_root` 序列 capture 一次 `summary`；不為同一 lock domain 平行查 `memory`，也不沿用 hint 中的舊 Session ID 作當次 `bind`。
+
+**摘要核對。** 使用已取得的摘要核對列表、貼文／媒體狀態、缺項、`unresolved_attempts`、`dispatch_blockers`、scan binding 與本機可用性；需要 staging 目的地或 completion 細節時，依上節回到 `intent`／`download-check` 結果及追加事件。索引缺失、帳本損壞、證據鏈異常，或仍有多個可能對應當次列表的歷史候選而無法消除歧義時，停止相關動作，不建立新空帳。
+
+**新列表鏈。** 新列表只有在入口、列表身分與歷史均確認，且沒有缺損／歧義時才建立。Agent 固定同一組 `visual_key`、適用 `context_id` 與 signals 輸入，以 `list-key` 取得 key；若同一完整觀察涵蓋 init 所需的 binding 與 history 命題，且 context 相同，可共用一份 v2 bundle；命題或 context 不同才分開建立。再以完全相同的 identity 參數執行 `init`，最後讀回相同 `list_key`。鏈如下；`CONTEXT_ID` 不適用時整項省略，不是空字串或 `UNKNOWN`，SIGNALS 未使用時同樣省略：
+
+```sh
+PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes list-key \
+  --visual-key "$VISUAL_KEY" --context-id "$CONTEXT_ID" --signals "$SIGNALS_INPUT"
+
+# 同一完整觀察可同時支持 binding 與 history 時，只封裝一次。
+PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes evidence-pack \
+  --statement "$INIT_STATEMENT" --asset screenshot "$INIT_SCREENSHOT" \
+  --output-dir "$INIT_EVIDENCE_NEW_DIR" --list-key "$LIST_KEY"
+BINDING_BUNDLE="$INIT_BUNDLE"
+HISTORY_BUNDLE="$INIT_BUNDLE"
+# 若兩項命題需要不同原件或 context，才分別建立 bundle 並設定以上兩個變數。
+
+PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes init \
+  --collection "$ABS_COLLECTION" --photo-root "$ABS_PHOTO_ROOT" \
+  --name "$DISPLAY_NAME" --visual-key "$VISUAL_KEY" \
+  --context-id "$CONTEXT_ID" --signals "$SIGNALS_INPUT" \
+  --binding-evidence "$BINDING_BUNDLE" \
+  --history-scope-evidence "$HISTORY_BUNDLE"
+
+PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes summary \
+  --records-root "$ABS_LEDGER"
+```
+
+`SIGNALS_INPUT` 是明示的 strict JSON 文字或 `@` 加指定 JSON 檔的絕對路徑；未使用 signals 時連同整個 flag 省略。當次任務已授權確認停止後的恢復時，在真正新建帳本的 `init` 命令加上 `--recovery-authorized`，並從回傳／摘要讀回 `recovery_authorized=true`；未獲授權不得加此 flag。既有帳本不重新 init，也不手改 false 的授權值。先核對所用 bundle 的 context 等於 list-key 結果，再執行 `init`；若 identity 輸入、觀察命題或明示 signals 檔在期間改變，舊 bundle 不可沿用。`init` 後只使用其回傳的 `records_root` 讀回 key，不一致或有未預期副作用就停止；不得先建空帳取得 key、手填 key／JSON，或讓適用 ID 留 `UNKNOWN`。新列表讀回成功、或既有列表從 `lists`／`memory` 找到相符帳本後，先核對當次入口與有效前景，再依序 **`bind` → 處理舊 attempt／命名交易 → `scan start`**；沒有未決項才直接進新 scan。每一命令仍須滿足自己的 scan binding／資料完整性 gate，不能因已 bind 就視為舊 attempt 已獲重送或恢復許可。不因新 Session、照片 root 改變或使用者重交前景而重新初始化。
+
+**完整掃描。** `scan start` → `page`… → `scan finish` → `post`／`media` 保存本輪完整盤點。`scan finish` 前必須已看到頂端、底端與有序重疊；`post`／`media` 需要最新完成的 scan。新 Session 必須重新看頂底與重疊，不沿用上一個 Session 的畫面 cursor。純文字貼文由 `post` 記 `NO_MEDIA`，不建立媒體下載項。
+
+**目的地。** 重新更換照片 root 時用 `destination` 追加綁定；舊 completion 路徑不改，UNKNOWN、活動下載、pending 命名或 `LOCAL_CHANGED` 不因換位置解鎖。
 
 ## 一次一項的派送交易
 

@@ -56,6 +56,8 @@ CUA 的觀察結果不會自動成為專案檔案。使用同一次 `getAXStateA
 
 先在終端機確認 `TASK_PRIVATE_DIR` 是本次任務在 `.local/line-backup/tasks/` 下的 canonical 私有目錄，建立尚不存在的 `OBSERVATION_DIR`，並產生只含英數、點、底線或連字號的唯一 `OBSERVATION_ID`。三個值都要代入絕對路徑；範例會再核對兩者是 canonical 路徑，且 observation directory 位於 task directory 下。檔名碰撞不是重試訊號；改用新的 observation ID。
 
+實作試跑與歸因紀律：不得僅因對話介面已呈現截圖或 AX，就推斷 CUA 無法橋接至檔案系統。Agent 必須先預建 canonical 的 `TASK_PRIVATE_DIR` 與 `OBSERVATION_DIR`，並在同一個 CUA Node runtime（例如 `mcp__cua_repl.js`）實際執行 `evidenceTools.captureAndPersist`；若當次已有同一份 capture，改以 `evidenceTools.persistObservation` 保存亦可。未實際執行屬 `NOT_RUN`，不得列為環境或工具不支援。只有實際呼叫拋錯（例如 `import('node:fs/promises')` 被拒）或回傳 `ready_for_bind=false` 時，才可保留真實 `error`（`name`／`code`／`message`）或 `OBSERVATION.stages`／`blockers` 作為實證阻塞。若 CUA 工具 namespace 於任務中途被撤除，只記錄工具可用性變動並停止，不可用對話摘要重建 AX 或截圖原件。
+
 下列第一段只在 CUA Node runtime 定義工具，第二段才實際取得並保存同一次回傳。`util.types.isUint8Array` 可接受真正的 Buffer／Uint8Array，包括 CUA 跨 realm 回傳值；`instanceof`、constructor 名稱或任意 array-like 都不是型別證明。副本只取 view 的 `byteLength`，不會把整個 backing buffer 當成影像。兩段之間不要另做 capture，也不要用 statement 或聊天摘要重建原件。
 
 同一次 API 呼叫不證明 AX 與截圖是同一瞬間的原子快照。Agent 另記可取得的最早 call 前時間、call 回傳時間，以及 AX／截圖各自可證明的觀察時間與來源；任一時間沒有可信來源就記 `UNKNOWN`，不得用檔案 mtime 或 helper 寫 diagnostic 的 `created_at` 冒充 capture 時間。兩來源狀態不同時分開記錄，不互相補值，也不為把兩者湊成一致而重做 capture。
@@ -1111,6 +1113,7 @@ const evidenceTools = await (async () => {
 ```
 <!-- cua-evidence-tools:end -->
 
+<!-- cua-initial-observation:start -->
 ```js
 const OBSERVATION = await evidenceTools.captureAndPersist({
   taskDir: '/ABS/TASK_PRIVATE_DIR',
@@ -1121,7 +1124,27 @@ nodeRepl.write(JSON.stringify(OBSERVATION, null, 2));
 if (!OBSERVATION.ready_for_bind) {
   throw new Error('CUA_RAW_OBSERVATION_INCOMPLETE: ' + OBSERVATION.blockers.join(', '));
 }
+{
+  const fs = await import('node:fs/promises');
+  const screenshotAsset = OBSERVATION.assets.screenshot;
+  const axAsset = OBSERVATION.assets.ax;
+  const savedScreenshot = await fs.readFile(screenshotAsset.path);
+  const savedAx = await fs.readFile(axAsset.path);
+  const readbackMatches =
+    savedScreenshot.length === screenshotAsset.bytes &&
+    evidenceTools.sha256(savedScreenshot) === screenshotAsset.sha256 &&
+    savedAx.length === axAsset.bytes &&
+    evidenceTools.sha256(savedAx) === axAsset.sha256;
+  if (!readbackMatches) {
+    throw new Error('CUA_OBSERVATION_EMIT_READBACK_MISMATCH');
+  }
+  await nodeRepl.emitImage(new Uint8Array(savedScreenshot));
+  nodeRepl.write(savedAx.toString('utf8'));
+}
 ```
+<!-- cua-initial-observation:end -->
+
+成功落地後才顯示同一份原件：範例在 `ready_for_bind === true` 時，於獨立區塊作用域內重新讀回已落地的截圖與 AX，以既有 `evidenceTools.sha256` 與位元組長度核對一致，再以 `nodeRepl.emitImage` 與 `nodeRepl.write` 呈現供 Agent 判讀。這是零第二次 capture 的讀回顯示；區塊作用域宣告 `fs` 是為了不與後續 intent 讀回區塊的頂層 `const fs` 衝突。讀回內容與 `OBSERVATION.assets` 不符即拋 `CUA_OBSERVATION_EMIT_READBACK_MISMATCH`，不得改以原始 capture 變數直接顯示。
 
 `stages` 會分別留下 `CAPTURE`、`CAPTURE_SHAPE`、`AX`、`SCREENSHOT_TYPE`、`SCREENSHOT_LENGTH` 與各 asset 的 `*_PERSISTENCE`；`assets` 另記實際路徑、長度、SHA-256、寫入與讀回，`metadata_persistence` 則記 diagnostic 的寫入與讀回。寫入 diagnostic 前，helper 先以當次 capture／asset 結果定稿 `metadata.ready_for_bind` 與 `metadata.blockers`；diagnostic 自身的寫入／讀回是外層結果，不要求它記錄自己尚未產生的最終 hash。只有 AX 與非空截圖都存在、兩者都以 `wx` 寫入並逐 bytes 讀回 MATCH，且 diagnostic 的寫入／讀回也 MATCH，runtime 輸出與落地 diagnostic 的 readiness／blockers 才可一致為 `true`／空陣列。若 diagnostic 寫入或讀回失敗，runtime 一律回 `ready_for_bind=false` 並保留 `DIAGNOSTIC_PERSISTENCE:FAILED`，不得消費未驗證的 diagnostic；原檔碰撞時也不覆寫。AX 合格但截圖型別錯、空值或寫入失敗時，合格 AX 仍會保存；反向情況亦同。這些部分原件可用於唯讀診斷，但 blocker 未消除前不得 bind。
 

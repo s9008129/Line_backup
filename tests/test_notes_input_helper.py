@@ -1,4 +1,5 @@
 """Execute the single-input helper documented in the Notes evidence template."""
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -11,6 +12,8 @@ TEMPLATE = ROOT / '.agents' / 'skills' / 'line-notes-agent-cua' / 'references' /
 TASKS = ROOT / '.local' / 'line-backup' / 'tasks'
 START = '<!-- cua-evidence-tools:start -->'
 END = '<!-- cua-evidence-tools:end -->'
+INITIAL_START = '<!-- cua-initial-observation:start -->'
+INITIAL_END = '<!-- cua-initial-observation:end -->'
 REVEAL_START = '<!-- notes-reveal-capture:start -->'
 REVEAL_END = '<!-- notes-reveal-capture:end -->'
 DISPATCH_START = '<!-- notes-intent-dispatch:start -->'
@@ -23,6 +26,22 @@ def documented_tools_source():
     code_start = text.index('```js', start) + len('```js')
     code_end = text.index('```', code_start)
     return text[code_start:code_end]
+
+
+def documented_initial_observation_source():
+    text = TEMPLATE.read_text(encoding='utf-8')
+    start = text.index(INITIAL_START) + len(INITIAL_START)
+    end = text.index(INITIAL_END, start)
+    section = text[start:end]
+    if section.count('```js') != 1 or section.count('```') != 2:
+        raise AssertionError(
+            'cua-initial-observation must enclose exactly one js block')
+    code_start = section.index('```js') + len('```js')
+    code_end = section.index('```', code_start)
+    if section[code_end + 3:].strip():
+        raise AssertionError(
+            'unexpected content after cua-initial-observation js block')
+    return section[code_start:code_end]
 
 
 def documented_reveal_source():
@@ -3241,6 +3260,290 @@ return {results: results.map(([label, outcome]) => ({
         for label in expected:
             self.assert_no_files(result['filesAfter'],
                                  'notes-reveal-c2-attempt-a5-' + label)
+
+
+class NotesInitialObservationBlockTests(NodeHelperRunner):
+    INITIAL_HARNESS = r'''
+const fsSync = await import('node:fs');
+const initialWritesFile = process.env.INITIAL_WRITES_FILE;
+const initialEmitsFile = process.env.INITIAL_EMITS_FILE;
+const initialCaptureCallsFile = process.env.INITIAL_CAPTURE_CALLS_FILE;
+let initialCaptureCalls = 0;
+globalThis.cua = {
+  getApp: async bundleId => {
+    if (bundleId !== 'jp.naver.line.mac') {
+      throw new Error('UNEXPECTED_BUNDLE_ID: ' + bundleId);
+    }
+    return {
+      getAXStateAndScreenshot: async options => {
+        initialCaptureCalls += 1;
+        fsSync.writeFileSync(initialCaptureCallsFile,
+                             String(initialCaptureCalls));
+        if (options.emit !== false || options.disableDiffing !== true) {
+          throw new Error('UNEXPECTED_CAPTURE_OPTIONS');
+        }
+@@CAPTURE_BODY@@
+      },
+    };
+  },
+};
+const nodeRepl = {
+  writes: [],
+  emitted: [],
+  write(value) {
+    const text = String(value);
+    this.writes.push(text);
+    fsSync.appendFileSync(initialWritesFile, JSON.stringify(text) + '\n');
+    if (process.env.INITIAL_TAMPER && this.writes.length === 1) {
+      const screenshotPath = OBSERVATION.assets.screenshot.path;
+      if (process.env.INITIAL_TAMPER === 'SCREENSHOT_APPEND') {
+        fsSync.appendFileSync(screenshotPath, new Uint8Array([0x00]));
+      } else if (process.env.INITIAL_TAMPER === 'AX_REWRITE_SAME_LENGTH') {
+        const axPath = OBSERVATION.assets.ax.path;
+        const mutated = Buffer.from(fsSync.readFileSync(axPath));
+        mutated[0] = mutated[0] === 0x7b ? 0x5b : 0x7b;
+        fsSync.writeFileSync(axPath, mutated);
+      }
+    }
+  },
+  async emitImage(value) {
+    const entry = {
+      isUint8Array: value instanceof Uint8Array,
+      bytes: Array.from(value),
+    };
+    this.emitted.push(entry);
+    fsSync.appendFileSync(initialEmitsFile, JSON.stringify(entry) + '\n');
+  },
+};
+'''
+
+    CAPTURE_OK = r'''
+        return {
+          state: '{"role":"AXWindow","marker":"initial-observation"}',
+          screenshot: new Uint8Array([
+            0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+            0xde, 0xad, 0xbe, 0xef,
+          ]),
+        };
+'''
+
+    CAPTURE_THROW = r'''
+        throw Object.assign(new Error('synthetic initial capture throw'),
+                            {code: 'ESYNTHETIC'});
+'''
+
+    SUCCESS_EPILOGUE = r'''
+const fs = await import('node:fs/promises');
+const savedScreenshot = await fs.readFile(OBSERVATION.assets.screenshot.path);
+const savedAx = await fs.readFile(OBSERVATION.assets.ax.path, 'utf8');
+const diagnostic = JSON.parse(
+  await fs.readFile(OBSERVATION.files.diagnostic, 'utf8'));
+console.log(JSON.stringify({
+  captureCalls: initialCaptureCalls,
+  observation: OBSERVATION,
+  savedScreenshotBytes: Array.from(savedScreenshot),
+  savedAx,
+  diagnostic,
+  emitted: nodeRepl.emitted,
+  writes: nodeRepl.writes,
+}));
+'''
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.initial_source = documented_initial_observation_source()
+
+    def run_initial_observation(self, *, capture_body,
+                                create_observation_dir=True, tamper=None,
+                                epilogue=''):
+        with tempfile.TemporaryDirectory(
+                prefix='.notes-initial-observation-', dir=TASKS) as temp:
+            root = Path(temp).resolve()
+            observation_dir = root / 'observations'
+            if create_observation_dir:
+                observation_dir.mkdir()
+            writes_file = root / 'node-writes.jsonl'
+            emits_file = root / 'node-emits.jsonl'
+            calls_file = root / 'capture-calls.txt'
+            observation_id = 'initial-observation-sample'
+            source = (self.initial_source
+                      .replace('/ABS/TASK_PRIVATE_DIR', str(root))
+                      .replace('/ABS/OBSERVATION_DIR', str(observation_dir))
+                      .replace('UNIQUE_OBSERVATION_ID', observation_id))
+            script = '\n'.join([
+                self.tools_source,
+                self.INITIAL_HARNESS.replace('@@CAPTURE_BODY@@', capture_body),
+                source,
+                epilogue,
+            ])
+            env = dict(
+                os.environ,
+                INITIAL_WRITES_FILE=str(writes_file),
+                INITIAL_EMITS_FILE=str(emits_file),
+                INITIAL_CAPTURE_CALLS_FILE=str(calls_file),
+            )
+            if tamper:
+                env['INITIAL_TAMPER'] = tamper
+            completed = subprocess.run(
+                ['node', '--input-type=module', '-e', script],
+                cwd=ROOT, env=env, text=True, capture_output=True, check=False)
+            writes = ([json.loads(line) for line in
+                       writes_file.read_text(encoding='utf-8').splitlines()]
+                      if writes_file.is_file() else [])
+            emits = ([json.loads(line) for line in
+                      emits_file.read_text(encoding='utf-8').splitlines()]
+                     if emits_file.is_file() else [])
+            screenshot_path = observation_dir / (observation_id + '.screenshot.bin')
+            ax_path = observation_dir / (observation_id + '.ax.txt')
+            diagnostic_path = observation_dir / (observation_id + '.diagnostic.json')
+            return {
+                'returncode': completed.returncode,
+                'stdout': completed.stdout,
+                'stderr': completed.stderr,
+                'writes': writes,
+                'emits': emits,
+                'captureCalls': (int(calls_file.read_text(encoding='utf-8'))
+                                 if calls_file.is_file() else 0),
+                'observationDirExists': observation_dir.is_dir(),
+                'screenshotBytes': (list(screenshot_path.read_bytes())
+                                    if screenshot_path.is_file() else None),
+                'axText': (ax_path.read_text(encoding='utf-8')
+                           if ax_path.is_file() else None),
+                'diagnostic': (
+                    json.loads(diagnostic_path.read_text(encoding='utf-8'))
+                    if diagnostic_path.is_file() else None),
+                'fileNames': (sorted(path.name for path in observation_dir.iterdir())
+                              if observation_dir.is_dir() else []),
+            }
+
+    def test_initial_observation_marker_encloses_one_js_block(self):
+        text = TEMPLATE.read_text(encoding='utf-8')
+        self.assertEqual(text.count(INITIAL_START), 1)
+        self.assertEqual(text.count(INITIAL_END), 1)
+        start = text.index(INITIAL_START)
+        end = text.index(INITIAL_END, start)
+        section = text[start:end]
+        self.assertEqual(section.count('```js'), 1)
+        self.assertEqual(section.count('```'), 2)
+        code_start = section.index('```js') + len('```js')
+        code_end = section.index('```', code_start)
+        self.assertEqual(section[code_end + 3:].strip(), '')
+        source = documented_initial_observation_source()
+        self.assertIn('const OBSERVATION = await evidenceTools.captureAndPersist',
+                      source)
+        self.assertIn('CUA_RAW_OBSERVATION_INCOMPLETE', source)
+        self.assertIn('CUA_OBSERVATION_EMIT_READBACK_MISMATCH', source)
+        self.assertIn("const fs = await import('node:fs/promises');", source)
+        self.assertIn('await nodeRepl.emitImage(new Uint8Array(savedScreenshot));',
+                      source)
+        self.assertIn("nodeRepl.write(savedAx.toString('utf8'));", source)
+        self.assertEqual(section.count('nodeRepl.emitImage'), 1)
+
+    def test_initial_observation_success_emits_landed_bytes_once(self):
+        run = self.run_initial_observation(
+            capture_body=self.CAPTURE_OK, epilogue=self.SUCCESS_EPILOGUE)
+        self.assertEqual(run['returncode'], 0, msg=run['stderr'])
+        result = json.loads(run['stdout'])
+        observation = result['observation']
+        self.assertTrue(observation['ready_for_bind'])
+        self.assertEqual(observation['blockers'], [])
+        self.assertEqual(observation['stages']['PRIVATE_PATHS']['status'], 'OK')
+        self.assertEqual(observation['stages']['CAPTURE']['status'], 'OK')
+        self.assertEqual(observation['stages']['AX_PERSISTENCE']['status'],
+                         'MATCH')
+        self.assertEqual(observation['stages']['SCREENSHOT_PERSISTENCE']['status'],
+                         'MATCH')
+        self.assertEqual(run['captureCalls'], 1)
+        self.assertEqual(result['captureCalls'], 1)
+        self.assertIsNotNone(run['screenshotBytes'])
+        self.assertIsNotNone(run['axText'])
+        self.assertEqual(result['savedScreenshotBytes'], run['screenshotBytes'])
+        self.assertEqual(result['savedAx'], run['axText'])
+        self.assertEqual(len(run['emits']), 1)
+        self.assertTrue(run['emits'][0]['isUint8Array'])
+        self.assertEqual(run['emits'][0]['bytes'], run['screenshotBytes'])
+        self.assertEqual(len(run['writes']), 2)
+        self.assertEqual(json.loads(run['writes'][0]), observation)
+        self.assertEqual(run['writes'][1], run['axText'])
+        self.assertEqual(result['writes'], run['writes'])
+        self.assertTrue(run['diagnostic']['ready_for_bind'])
+        self.assertIn('initial-observation-sample.diagnostic.json',
+                      run['fileNames'])
+        screenshot_asset = observation['assets']['screenshot']
+        ax_asset = observation['assets']['ax']
+        self.assertEqual(screenshot_asset['bytes'], len(run['screenshotBytes']))
+        self.assertEqual(
+            screenshot_asset['sha256'],
+            hashlib.sha256(bytes(run['screenshotBytes'])).hexdigest())
+        self.assertEqual(
+            ax_asset['sha256'],
+            hashlib.sha256(run['axText'].encode('utf-8')).hexdigest())
+
+    def test_initial_observation_blocked_paths_and_capture_never_emit(self):
+        cases = (
+            ('PRIVATE_PATHS:FAILED', self.CAPTURE_OK, False, 'PRIVATE_PATHS'),
+            ('CAPTURE:FAILED', self.CAPTURE_THROW, True, 'CAPTURE'),
+        )
+        for blocker, capture_body, create_dir, stage in cases:
+            with self.subTest(blocker=blocker):
+                run = self.run_initial_observation(
+                    capture_body=capture_body,
+                    create_observation_dir=create_dir)
+                self.assertNotEqual(run['returncode'], 0)
+                self.assertIn('CUA_RAW_OBSERVATION_INCOMPLETE', run['stderr'])
+                self.assertIn(blocker, run['stderr'])
+                self.assertEqual(run['emits'], [])
+                self.assertEqual(run['captureCalls'], 1)
+                self.assertEqual(len(run['writes']), 1)
+                observation = json.loads(run['writes'][0])
+                self.assertFalse(observation['ready_for_bind'])
+                self.assertIn(blocker, observation['blockers'])
+                self.assertEqual(observation['stages'][stage]['status'], 'FAILED')
+                if blocker == 'PRIVATE_PATHS:FAILED':
+                    self.assertFalse(run['observationDirExists'])
+                    self.assertEqual(
+                        observation['stages']['PRIVATE_PATHS']['error']['code'],
+                        'ENOENT')
+                    self.assertIsNone(run['diagnostic'])
+                else:
+                    self.assertEqual(observation['stages']['AX']['status'],
+                                     'NOT_AVAILABLE')
+                    self.assertEqual(
+                        observation['stages']['CAPTURE']['error'],
+                        {'name': 'Error', 'code': 'ESYNTHETIC',
+                         'message': 'synthetic initial capture throw'})
+
+    def test_initial_observation_readback_drift_never_emits(self):
+        for tamper in ('SCREENSHOT_APPEND', 'AX_REWRITE_SAME_LENGTH'):
+            with self.subTest(tamper=tamper):
+                run = self.run_initial_observation(
+                    capture_body=self.CAPTURE_OK, tamper=tamper,
+                    epilogue=self.SUCCESS_EPILOGUE)
+                self.assertNotEqual(run['returncode'], 0)
+                self.assertIn('CUA_OBSERVATION_EMIT_READBACK_MISMATCH',
+                              run['stderr'])
+                self.assertNotIn('CUA_RAW_OBSERVATION_INCOMPLETE', run['stderr'])
+                self.assertEqual(run['emits'], [])
+                self.assertEqual(run['captureCalls'], 1)
+                self.assertEqual(len(run['writes']), 1)
+                observation = json.loads(run['writes'][0])
+                self.assertTrue(observation['ready_for_bind'])
+                self.assertEqual(observation['blockers'], [])
+                if tamper == 'SCREENSHOT_APPEND':
+                    asset = observation['assets']['screenshot']
+                    self.assertEqual(len(run['screenshotBytes']),
+                                     asset['bytes'] + 1)
+                    self.assertNotEqual(
+                        hashlib.sha256(bytes(run['screenshotBytes'])).hexdigest(),
+                        asset['sha256'])
+                else:
+                    ax_bytes = run['axText'].encode('utf-8')
+                    self.assertEqual(len(ax_bytes),
+                                     observation['assets']['ax']['bytes'])
+                    self.assertNotEqual(
+                        hashlib.sha256(ax_bytes).hexdigest(),
+                        observation['assets']['ax']['sha256'])
 
 
 if __name__ == '__main__':
