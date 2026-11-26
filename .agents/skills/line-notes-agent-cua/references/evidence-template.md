@@ -56,7 +56,7 @@ CUA 的觀察結果不會自動成為專案檔案。使用同一次 `getAXStateA
 
 先在終端機確認 `TASK_PRIVATE_DIR` 是本次任務在 `.local/line-backup/tasks/` 下的 canonical 私有目錄，建立尚不存在的 `OBSERVATION_DIR`，並產生只含英數、點、底線或連字號的唯一 `OBSERVATION_ID`。三個值都要代入絕對路徑；範例會再核對兩者是 canonical 路徑，且 observation directory 位於 task directory 下。檔名碰撞不是重試訊號；改用新的 observation ID。
 
-實作試跑與歸因紀律：不得僅因對話介面已呈現截圖或 AX，就推斷 CUA 無法橋接至檔案系統。`evidenceTools` 並非 CUA runtime 預先注入的全域物件，而是由本節下方 `cua-evidence-tools` 定義區塊建立；首次使用前必須先於同一 CUA Node runtime（例如 `mcp__cua_repl.js`）按「先定義、後呼叫」順序執行該定義區塊，再執行 `evidenceTools.captureAndPersist`（或對既有 capture 執行 `evidenceTools.persistObservation`）。僅檢查 `typeof evidenceTools === "undefined"` 只代表尚未載入定義區塊，屬 `NOT_RUN`，不得宣稱環境不支援落地或缺少 helper。Agent 必須先預建 canonical 的 `TASK_PRIVATE_DIR` 與 `OBSERVATION_DIR`，並在同一個 CUA Node runtime 實際執行 `evidenceTools.captureAndPersist`；未實際執行屬 `NOT_RUN`，不得列為環境或工具不支援。只有載入後實跑拋出真實 `error`（例如 `import('node:fs/promises')` 被拒）或回傳 `ready_for_bind=false`（附 `stages`／`blockers`）時，才屬實證保存阻塞，可保留 `error` 的 `name`／`code`／`message` 或 `OBSERVATION.stages`／`blockers`。若 CUA 工具 namespace 於任務中途被撤除，只記錄工具可用性變動並停止，不可用對話摘要重建 AX 或截圖原件。
+實作試跑與歸因紀律：不得僅因對話介面已呈現截圖或 AX，就推斷 CUA 無法橋接至檔案系統。`evidenceTools` 並非 CUA runtime 預先注入的全域物件，而是由本節下方 `cua-evidence-tools` 定義區塊建立；首次使用前必須先於同一 CUA Node runtime（例如 `mcp__cua_repl.js`）按「先定義、後呼叫」順序執行該定義區塊，再執行 `evidenceTools.captureAndPersist`。`bind` 與 `reacquire` 的新觀察一律使用 `evidenceTools.captureAndPersist`，或使用具備同次實時 `hostCalls`、使 `stages.CAPTURE_BOUNDARY.status === 'RECORDED'` 的等價路徑；低階 `persistObservation` 僅用於同次 callback 內已有真實捕捉與 `hostCalls` 的保存（例如 `persistRevealWithDirectAfter`），嚴禁對舊 capture 變數呼叫 bare `persistObservation` 充當新觀察，也不得以手寫 curated diagnostic JSON 取代 helper 落地。僅檢查 `typeof evidenceTools === "undefined"` 只代表尚未載入定義區塊，屬 `NOT_RUN`，不得宣稱環境不支援落地或缺少 helper。Agent 必須先預建 canonical 的 `TASK_PRIVATE_DIR` 與 `OBSERVATION_DIR`，並在同一個 CUA Node runtime 實際執行 `evidenceTools.captureAndPersist`；未實際執行屬 `NOT_RUN`，不得列為環境或工具不支援。只有載入後實跑拋出真實 `error`（例如 `import('node:fs/promises')` 被拒）或回傳 `ready_for_bind=false`（附 `stages`／`blockers`）時，才屬實證保存阻塞，可保留 `error` 的 `name`／`code`／`message` 或 `OBSERVATION.stages`／`blockers`。若 CUA 工具 namespace 於任務中途被撤除，只記錄工具可用性變動並停止，不可用對話摘要重建 AX 或截圖原件。
 
 下列第一段只在 CUA Node runtime 定義工具，第二段才實際取得並保存同一次回傳。`util.types.isUint8Array` 可接受真正的 Buffer／Uint8Array，包括 CUA 跨 realm 回傳值；`instanceof`、constructor 名稱或任意 array-like 都不是型別證明。副本只取 view 的 `byteLength`，不會把整個 backing buffer 當成影像。兩段之間不要另做 capture，也不要用 statement 或聊天摘要重建原件。
 
@@ -182,6 +182,18 @@ const evidenceTools = await (async () => {
     }
   }
 
+  function isAxNoChangeStub(stateText) {
+    if (typeof stateText !== 'string') return false;
+    const trimmed = stateText.trim();
+    if (!trimmed || trimmed.length > 512) return false;
+    const lines = trimmed.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+    if (lines.length === 0 || lines.length > 3) return false;
+    if (!/^There has been no change in the accessibility tree\b/i.test(lines[0])) {
+      return false;
+    }
+    return lines.slice(1).every(line => !/^\d+\s+/.test(line));
+  }
+
   async function persistObservation(options) {
     const metadata = {
       schema_version: 1,
@@ -234,6 +246,18 @@ const evidenceTools = await (async () => {
     }
     setStage('PRIVATE_PATHS', 'OK');
 
+    const hasCaptureBoundary = key => {
+      const value = metadata.hostCalls[key];
+      return typeof value === 'string' && value.trim().length > 0 &&
+        value !== 'NOT_RUN' && value !== 'UNKNOWN';
+    };
+    setStage(
+      'CAPTURE_BOUNDARY',
+      hasCaptureBoundary('capture_call_started_at') &&
+        hasCaptureBoundary('capture_call_returned_at')
+        ? 'RECORDED' : 'MISSING',
+    );
+
     const capture = options.capture;
     const blockers = [];
     if (options.captureError) {
@@ -253,12 +277,29 @@ const evidenceTools = await (async () => {
     }
 
     let axBytes = null;
-    if (capture && typeof capture.state === 'string' && capture.state.length > 0) {
-      axBytes = Buffer.from(capture.state, 'utf8');
-      setStage('AX', 'OK', { utf8_bytes: axBytes.length });
-    } else if (capture && typeof capture.state === 'string') {
-      setStage('AX', 'EMPTY');
-      blockers.push('AX:EMPTY');
+    if (capture && typeof capture.state === 'string') {
+      if (capture.state.trim().length === 0) {
+        setStage('AX', 'EMPTY');
+        blockers.push('AX:EMPTY');
+      } else if (isAxNoChangeStub(capture.state)) {
+        // A no-change line is a diff notification, not a usable tree. Keep the
+        // raw bytes for read-only diagnosis but fail closed for bind/download.
+        axBytes = Buffer.from(capture.state, 'utf8');
+        setStage('AX', 'DIFF_NO_CHANGE', {
+          utf8_bytes: axBytes.length,
+          full_tree: false,
+          diff_only: true,
+          stale_index_warning: true,
+        });
+        blockers.push('AX:DIFF_NO_CHANGE');
+      } else {
+        axBytes = Buffer.from(capture.state, 'utf8');
+        setStage('AX', 'OK', {
+          utf8_bytes: axBytes.length,
+          full_tree: true,
+          diff_only: false,
+        });
+      }
     } else if (capture) {
       setStage('AX', 'INVALID_TYPE',
                { observed_type: capture.state === null ? 'null' : typeof capture.state });
@@ -1129,8 +1170,14 @@ const OBSERVATION = await evidenceTools.captureAndPersist({
   observationId: 'UNIQUE_OBSERVATION_ID',
 });
 nodeRepl.write(JSON.stringify(OBSERVATION, null, 2));
-if (!OBSERVATION.ready_for_bind) {
-  throw new Error('CUA_RAW_OBSERVATION_INCOMPLETE: ' + OBSERVATION.blockers.join(', '));
+const captureBoundaryMissing =
+  !OBSERVATION.stages ||
+  !OBSERVATION.stages.CAPTURE_BOUNDARY ||
+  OBSERVATION.stages.CAPTURE_BOUNDARY.status !== 'RECORDED';
+if (!OBSERVATION.ready_for_bind || captureBoundaryMissing) {
+  const reasons = [...(OBSERVATION.blockers || [])];
+  if (captureBoundaryMissing) reasons.push('CAPTURE_BOUNDARY:MISSING');
+  throw new Error('CUA_RAW_OBSERVATION_INCOMPLETE: ' + reasons.join(', '));
 }
 {
   const fs = await import('node:fs/promises');
@@ -1154,7 +1201,11 @@ if (!OBSERVATION.ready_for_bind) {
 
 成功落地後才顯示同一份原件：範例在 `ready_for_bind === true` 時，於獨立區塊作用域內重新讀回已落地的截圖與 AX，以既有 `evidenceTools.sha256` 與位元組長度核對一致，再以 `nodeRepl.emitImage` 與 `nodeRepl.write` 呈現供 Agent 判讀。這是零第二次 capture 的讀回顯示；區塊作用域宣告 `fs` 是為了不與後續 intent 讀回區塊的頂層 `const fs` 衝突。讀回內容與 `OBSERVATION.assets` 不符即拋 `CUA_OBSERVATION_EMIT_READBACK_MISMATCH`，不得改以原始 capture 變數直接顯示。本初始觀察範例要求先於同一 Node runtime 執行 `cua-evidence-tools` 定義區塊；若未先載入（或物件缺少 `captureAndPersist`）即直接執行此範例，會先拋出 `CUA_EVIDENCE_TOOLS_NOT_LOADED`（屬 `NOT_RUN`，非環境不支援），不觸發任何 capture 或 emit；若在同一個 module 內誤把 `const evidenceTools` 定義排於本段之後，則屬拼接順序錯誤。
 
-`stages` 會分別留下 `CAPTURE`、`CAPTURE_SHAPE`、`AX`、`SCREENSHOT_TYPE`、`SCREENSHOT_LENGTH` 與各 asset 的 `*_PERSISTENCE`；`assets` 另記實際路徑、長度、SHA-256、寫入與讀回，`metadata_persistence` 則記 diagnostic 的寫入與讀回。寫入 diagnostic 前，helper 先以當次 capture／asset 結果定稿 `metadata.ready_for_bind` 與 `metadata.blockers`；diagnostic 自身的寫入／讀回是外層結果，不要求它記錄自己尚未產生的最終 hash。只有 AX 與非空截圖都存在、兩者都以 `wx` 寫入並逐 bytes 讀回 MATCH，且 diagnostic 的寫入／讀回也 MATCH，runtime 輸出與落地 diagnostic 的 readiness／blockers 才可一致為 `true`／空陣列。若 diagnostic 寫入或讀回失敗，runtime 一律回 `ready_for_bind=false` 並保留 `DIAGNOSTIC_PERSISTENCE:FAILED`，不得消費未驗證的 diagnostic；原檔碰撞時也不覆寫。AX 合格但截圖型別錯、空值或寫入失敗時，合格 AX 仍會保存；反向情況亦同。這些部分原件可用於唯讀診斷，但 blocker 未消除前不得 bind。
+`stages` 會分別留下 `CAPTURE`、`CAPTURE_SHAPE`、`CAPTURE_BOUNDARY`、`AX`、`SCREENSHOT_TYPE`、`SCREENSHOT_LENGTH` 與各 asset 的 `*_PERSISTENCE`；`assets` 另記實際路徑、長度、SHA-256、寫入與讀回，`metadata_persistence` 則記 diagnostic 的寫入與讀回。寫入 diagnostic 前，helper 先以當次 capture／asset 結果定稿 `metadata.ready_for_bind` 與 `metadata.blockers`；diagnostic 自身的寫入／讀回是外層結果，不要求它記錄自己尚未產生的最終 hash。只有 AX 與非空截圖都存在、兩者都以 `wx` 寫入並逐 bytes 讀回 MATCH，且 diagnostic 的寫入／讀回也 MATCH，runtime 輸出與落地 diagnostic 的 readiness／blockers 才可一致為 `true`／空陣列。若 diagnostic 寫入或讀回失敗，runtime 一律回 `ready_for_bind=false` 並保留 `DIAGNOSTIC_PERSISTENCE:FAILED`，不得消費未驗證的 diagnostic；原檔碰撞時也不覆寫。AX 合格但截圖型別錯、空值或寫入失敗時，合格 AX 仍會保存；反向情況亦同。這些部分原件可用於唯讀診斷，但 blocker 未消除前不得 bind。
+
+`stages.CAPTURE_BOUNDARY` 記 `RECORDED`／`MISSING`：只有 `capture_call_started_at` 與 `capture_call_returned_at` 都是實時 `HOST_JS_DATE` 值才為 `RECORDED`；未傳 `hostCalls`、gate 在呼叫前拒絕或 `getApp` 失敗時為 `MISSING`。`MISSING` 不推入低階 `persistObservation` 的 `blockers`，以維持既有 bare 呼叫契約；但採信任何落地 observation 作為 `bind` 或 `reacquire` 前，必須同時核對 `ready_for_bind === true` 與 `stages.CAPTURE_BOUNDARY.status === 'RECORDED'`，`cua-initial-observation` 入口也對非 `RECORDED` fail-closed 並拋 `CUA_RAW_OBSERVATION_INCOMPLETE`。靜止畫面在 `CAPTURE_BOUNDARY=RECORDED` 下出現相同 bytes、不同 inode 時只記新鮮度註記，不自動阻擋；`CAPTURE_BOUNDARY=MISSING` 一律不得作為新鮮 `bind`／`reacquire` 證據，若同時出現相同 bytes 須標 `STALE_CAPTURE_SUSPECTED` 並停止消費。
+
+`AX` 階段另有 `DIFF_NO_CHANGE`：`getAXState()` 的 no-change 一行輸出只是變更通知，不是可用樹。命中時仍以 `wx` 保存原始 `.ax.txt` 並讀回 `MATCH` 供唯讀診斷，但 `stages.AX` 記 `full_tree: false`、`diff_only: true`、`stale_index_warning: true`，推入 `AX:DIFF_NO_CHANGE` 使 `ready_for_bind=false`，同時阻擋 `cua-initial-observation` emit 與 `checkDownloadReadiness`；純空白 `state` 記 `AX:EMPTY`。判定只接受前綴錨定、長度不超過 512 字元、非空行不超過 3 行且後續行不是編號 AX 節點，避免把內文含該字串的完整樹誤判。`disableDiffing: true` 不是平台絕對保證：若 CUA 回傳「有變更之局部 diff」，helper 仍記 `AX:OK`，Agent 必須自行核對完整樹結構，不可把 `AX:OK`／`full_tree: true` 當成完整樹的絕對證明。
 
 日後讀取落地 diagnostic 時仍要核對其 bytes／SHA-256／原 asset 讀回與適用的 helper `metadata_persistence`，不能只因檔案內寫 `ready_for_bind=true` 就宣稱 bind 成功。這個欄位只表示本地 observation 保存所需檔案完整，不是 GUI 權限、畫面真實、viewer 身分、control 命中或下載成功的證明。
 
@@ -1176,6 +1227,8 @@ nodeRepl.write(JSON.stringify(inputReceipt, null, 2));
 ```
 
 helper 先把 request 以 `wx` 寫入私有目錄，再以既有 hash／readback helper 逐 bytes 核對。只有讀回 `MATCH` 才呼叫一次 `invoke`。結果或錯誤另存 raw 檔；diagnostic 摘要是另一檔。三者都不覆寫。request 寫入／讀回失敗時不呼叫。任何 `persistSingleInput` 的 `invoke` 若回傳頂層 `undefined`，raw 只保存 typed `NATIVE_RETURN_UNDEFINED`／`value_type=undefined`；這只表示回傳型別可無損序列化，不是成功、控制命中或 `NOT_SENT`。巢狀 `undefined`、函式、Symbol、循環或其他不可無損 JSON 保存的欄位仍使 raw 不完整並拒絕完整宣稱。
+
+入口恢復紀律（A12）：所有 entry-recovery 的 CUA pointer／導覽點擊與所有 CUA handle reacquire 呼叫，一律經 `evidenceTools.persistSingleInput` 落地 `.input.request.json`、`.input.raw.json` 與 `.input.diagnostic.json`，不得以手寫 curated blocker JSON 取代原始 receipt。三個操作邊界：(1) 工具若以回傳值而非 throw 回報錯誤，raw 記為 `kind=RETURN`，Agent 仍須依實際內容歸類為錯誤，不得宣稱成功；(2) handle reacquire 若回傳不可序列化之 live handle，須在 `invoke` closure 內暫存該 handle 並回傳純 JSON 投影（例如 `{ ok, bundle_id, window_id, title }`），否則 raw 會因不可序列化欄位而不完整；(3) 入口恢復／reacquire 不得使用 `input_phase: 'DOWNLOAD_CONTROL'`（應標如 `ENTRY_RECOVERY`／`HANDLE_REACQUIRE`），每次重試須使用新的唯一 `operationId` 以遵守 `wx` 不覆寫；需要時間邊界時由 Agent 另以 `HOST_JS_DATE` 記錄並標 `os_event_time=UNKNOWN`。
 
 `persistSingleInput` 是一般輸入 helper；若 request 的 `input_phase` 或 `phase` 是 `DOWNLOAD_CONTROL`，它會直接拒絕，要求改用下列下載控制 wrapper。wrapper 不尋找控制、不選 action、不導覽，也不接受外部 `invoke`／`readbackExact`；它只使用已保存 request 讀回後的 `prepared_target` 呼叫一次已傳入 app handle 的 `click`。
 

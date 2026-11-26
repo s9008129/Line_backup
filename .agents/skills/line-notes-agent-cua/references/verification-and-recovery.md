@@ -144,7 +144,7 @@ ffmpeg 完整解碼仍不能保證偵測所有靜默損壞，也不代表與服�
 - `LOCAL_CHANGED`：目錄仍存在，但有部分缺檔、非屬合格環境附屬項的額外檔、檔名／大小／SHA-256 不符、symlink、非預期 hardlink、或 manifest／授權路徑身分不符。完成媒體與已驗證 candidate 的歷史 device／inode／mtime／ctime 是診斷資料，不能單獨否決內容與布局；每次仍須穩定讀回內容，讀取期間的替換或變動照常拒絕，不重寫舊紀錄。普通列表綁定仍核對 path／inode，reattest 仍採既有嚴格規則；pending 發布仍核對交易 inode／時間／journal，僅容忍歷史 device-only 差異。保護原件，scope 外停止新派送並回報差異；只有 fresh `restart preview` 精確列出該篇且 Owner 明示確認該批後，才保留舊目錄並在新 `versions/gNNNNNNNN/` 目錄重建。仍不重下補帳、不原地覆寫、不重建空目錄、不手改紀錄。合格環境附屬項的存在、bytes 改變或消失不列入 witness、manifest 或媒體計數，也不改變 completion 或 `LOCAL_VERIFIED`。
 - 目錄讀取權限異常、只有部分目錄可見或不能區分是缺席還是損壞時，不自動歸類為 `LOCAL_MISSING`；先保留阻塞並查證。
 
-`LOCAL_MISSING`／`LOCAL_CHANGED` 都不是六類業務狀態，也不得自行解除 `UNKNOWN`、活動下載或未完成命名交易；只有精確 restart 批次可在已確認 scope 內以新版本重建 `LOCAL_CHANGED`。照片區可被 Owner 搬走或整個刪除；帳本、證據與 completion 必須留在照片區外。
+`LOCAL_MISSING`／`LOCAL_CHANGED` 都不是六類業務狀態，也不得自行解除 `UNKNOWN`、活動下載或未完成命名交易；只有精確 restart 批次可在已確認 scope 內以新版本重建 `LOCAL_CHANGED`。`LOCAL_MISSING`／`LOCAL_CHANGED` 僅核對已完成貼文目錄及其保存內容，不以交易 staging 目錄存否判定；成功發布後原 staging 不存在不是 `LOCAL_CHANGED`，舊 `STOPPED` 空 staging 照常保留並註記晚到風險。照片區可被 Owner 搬走或整個刪除；帳本、證據與 completion 必須留在照片區外。
 
 `memory`／`summary` 的 `local_counts` 固定包含四類：`VERIFIED_PRESENT`、`LOCAL_MISSING`、`LOCAL_CHANGED`、`NOT_APPLICABLE`。`VERIFIED_PRESENT` 僅表示本機檔案符合保存紀錄；對 `assurance=DOWNLOAD_ONLY` 不代表完整解碼或來源內容已驗證。回報本機可用性時應完整列示；只有 `LOCAL_MISSING`、`LOCAL_CHANGED` 是本機異常說明，四者都不是六類業務狀態。
 
@@ -202,9 +202,14 @@ notes 功能至少需以合成 fixture 覆蓋以下驗證，實際執行結果�
 每次完成、遇阻或暫停時分開列示：
 
 ```text
-業務狀態：COMPLETED / EXCLUDED / PENDING / PREVIOUSLY_INCOMPLETE / UNKNOWN / PROTECTED_HISTORY
+最新帳本基準：expected_tip.sequence=... / expected_tip.sha256=...
+業務狀態（scope=...）：COMPLETED / EXCLUDED / PENDING / PREVIOUSLY_INCOMPLETE / UNKNOWN / PROTECTED_HISTORY；current_incomplete=...（僅計 scoped media，不等於全列表完成）
 來源可用性：UNKNOWN / EXPIRED；未決 attempt：列出 action 或 NOT_APPLICABLE
-貼文層：NO_MEDIA=...；本機可用性：VERIFIED_PRESENT=... / LOCAL_MISSING=... / LOCAL_CHANGED=... / NOT_APPLICABLE=...
+貼文層（.state）：總數=... / MEDIA=... / NO_MEDIA=... / DETAIL_PENDING=...
+本機可用性：VERIFIED_PRESENT=... / LOCAL_MISSING=... / LOCAL_CHANGED=... / NOT_APPLICABLE=...
+GUI／入口與通道狀態：page_role=... / entry_status=... / foreground=... / observe_capability=... / input_capability=... / gui_blockers=...（與 notes CLI dispatch_blockers 分開；CLI 不觀察 GUI）
+CLI blockers：dispatch_blockers=...（只反映帳本簿記，不代表 GUI 入口可用）
+舊 staging：保留原狀；晚到風險=...
 工具簿記：命令、exit code、驗證範圍
 檔案驗證：ImageIO / ffmpeg / manifest / completion
 真人觀察：OBSERVED / 未觀察

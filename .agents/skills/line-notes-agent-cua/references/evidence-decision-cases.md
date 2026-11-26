@@ -233,9 +233,9 @@
 
 ## C27 全域 UNKNOWN 不可由排程或 Session 跳過
 
-- **前提（假設）：** 列表完整覆蓋尚可核對，但存在未隔離 `UNKNOWN`、無 outcome、活動下載、pending naming、`LOCAL_CHANGED`、列表覆蓋缺口或身分歧義等任一全域 blocker；另有一項表面合格的媒體，當次前景與返回契約可能成立。
+- **前提（假設）：** 列表完整覆蓋尚可核對，但存在未隔離 `UNKNOWN`、無 outcome、活動下載、pending naming、`LOCAL_CHANGED`、列表覆蓋缺口或身分歧義等任一 CLI 全域 blocker，或 GUI 級全域阻塞（`ENTRY_LOST`、`INPUT_UNAVAILABLE`／`PARTIAL_AX_ONLY` 缺所需通道）；另有一項表面合格的媒體，當次前景與返回契約可能成立。
 - **觀察（假設）：** 另一個項目看似可派送，或新 Session／重開 viewer／空 staging／零計數提供了新的畫面，但沒有收斂原 blocker 的正面證據。
-- **可支持命題：** 全域 blocker 仍阻止新的 intent、下載與排程跳過；其他項目的 B1 合格或返回成功不能解除它。沒有新的結果證據時，`UNKNOWN` 只維持未知，不能改寫成 `NOT_SENT`、`STOPPED` 或完成。
+- **可支持命題：** 全域 blocker 仍阻止新的 intent、下載與排程跳過；其他項目的 B1 合格或返回成功不能解除它。GUI 級全域阻塞與 notes CLI `dispatch_blockers` 分開；兩者都停止依賴該前提的新派送。沒有新的結果證據時，`UNKNOWN` 只維持未知，不能改寫成 `NOT_SENT`、`STOPPED` 或完成。
 - **允許動作：** 保存全部原件、blocker 與原 attempt，停止依賴該前提的新派送；只有符合既有安全隔離、精確 restart 或正式恢復路徑時，才依各自 gate 另案處理。
 - **禁止推論：** 換 Session、重開、重新掃描、空目錄、控制重新出現或另一項可下載即可繞過；`UNKNOWN` 可因等待或截圖未見檔而改寫 `NOT_SENT`；可以平行建立新 attempt。
 - **缺少證據：** 可歸屬且排除晚到作用的停止 receipt，或安全隔離／正式 restart 的完整證據；沒有時保留 `UNKNOWN`，真實恢復結果 `NOT_RUN`。
@@ -253,7 +253,7 @@
 
 - **前提：** 已從 viewer 送出一次有證據的返回輸入。
 - **觀察（假設）：** 新 observation 顯示畫面仍是 viewer、已變成聊天，或無法連回來源貼文錨點。
-- **可支持命題：** 頁面未變或觀察不足時只記 `RETURN_NOT_OBSERVED`，不能宣稱 `ENTRY_LOST`；只有充分觀察正面顯示頁面角色／身分或 entry 連續性已失去，才記 `ENTRY_LOST`。
+- **可支持命題：** 頁面未變或觀察不足時只記 `RETURN_NOT_OBSERVED`，不能宣稱 `ENTRY_LOST`；只有充分觀察正面顯示頁面角色／身分或 entry 連續性已失去，才記 `ENTRY_LOST`。`AX:DIFF_NO_CHANGE`（`full_tree=false`）只可支撐 `RETURN_NOT_OBSERVED`／`UNKNOWN`，不可判 `RETURNED` 或沿用舊索引；須依[證據範本](evidence-template.md#cua-觀察原件落地)重取完整 AX。
 - **允許動作：** 停止原返回方法，保存前後 observation 與輸入 receipt；分開記錄頁面角色、前景、觀察及輸入能力。
 - **禁止推論：** 再按一次 Escape／Command-W、改猜關閉鍵或沿用舊座標可安全退一層。
 - **缺少證據：** 真實返回控制命中、後續 GUI 行為與 LINE E2E 均 `NOT_RUN`。
@@ -266,7 +266,7 @@
 | **長卡資訊不足**（假設文件案例、非實機驗證） | 只有長卡，或只有單一 hash／scroll，缺列表身分或 anchor；沒有正面角色／導覽證據。 | 記 `UNKNOWN`／`RETURN_NOT_OBSERVED`；若已正面觀察仍在 viewer，保留 `page_role=VIEWER` 並記 `RETURN_NOT_OBSERVED`，不洗成 `UNKNOWN`。不得因看不到搜尋列、卡頭或返回控制就猜 `POST_DETAIL`，也不得猜第二次 close。 |
 | **真實詳情頁**（假設文件案例、非實機驗證） | 當次可引用原件正面支持詳情頁角色或導覽轉換；可位於同一 app／window，不要求另開視窗。 | 可判 `page_role=POST_DETAIL`；返回結果依實際 `expected_return_role` 與 anchor／身分判讀，不強制 `LIST`。不得因長卡反例否定真實詳情頁。 |
 | **正面偏離**（假設文件案例、非實機驗證） | 充分觀察正面顯示變成其他列表／聊天／貼文，或來源 anchor 與連續身分已失去。 | 保留 `ENTRY_LOST`；長卡不等於 `POST_DETAIL` 的反例不能豁免正面偏離證據。 |
-| **摘要待盤**（假設文件案例、非實機驗證） | 其他貼文為 `DETAIL_PENDING`，但目標貼文細盤合格；另有 notes 摘要 blocker。 | `POST_DETAIL_PENDING` 只是列表級摘要狀態，不得映射成 GUI `page_role=POST_DETAIL`。整份列表仍未完成，也不自動授予派送；不可當成目標 viewer 返回失敗或下載授權。 |
+| **摘要待盤**（假設文件案例、非實機驗證） | 其他貼文為 `DETAIL_PENDING`，但目標貼文細盤合格；另有 notes 摘要 blocker。 | `POST_DETAIL_PENDING` 只是列表級摘要狀態，不得映射成 GUI `page_role=POST_DETAIL`。貼文欄位為 `.state`；`current_incomplete=0` 只代表 scoped media 無未完成狀態，不代表全列表完成。整份列表仍未完成，也不自動授予派送；不可當成目標 viewer 返回失敗或下載授權。 |
 
 ## D3 AX 沒有 Notes 控制但視覺可見
 
@@ -279,20 +279,20 @@
 
 ## D4 輸入失效但唯讀觀察可用
 
-- **前提：** CUA 輸入回傳錯誤，AX／截圖仍可讀。
-- **觀察（假設）：** 工具原始錯誤含 `noWindowsAvailable`；app／window 綁定或輸入能力尚未恢復。
-- **可支持命題：** 只證明這次輸入回傳錯誤；`ENTRY_LOST` 與 `INPUT_UNAVAILABLE` 可同時成立。底層原因仍為 `UNKNOWN`。
-- **允許動作：** 依當次工具文件唯讀列舉 app／window 並重新取得 handle；每步後重新觀察。只有新證據顯示通道恢復才考慮一次有證據輸入。
-- **禁止推論：** 換 API、全螢幕切換、測試按鍵、重複 reset 或同一錯誤重試能恢復通道。
-- **缺少證據：** 真實 `noWindowsAvailable` 根因與可恢復條件仍 `UNKNOWN`。
+- **前提：** CUA 輸入回傳錯誤，AX／截圖仍可讀；可能為 `PARTIAL_AX_ONLY`（AX 元素／選單輸入可用、pointer 座標通道不可用）。
+- **觀察（假設）：** 工具原始錯誤含 `noWindowsAvailable`；pointer 座標通道不可用，app／window 綁定或輸入能力尚未恢復。
+- **可支持命題：** 只證明這次輸入回傳錯誤；`ENTRY_LOST` 與 `INPUT_UNAVAILABLE` 可同時成立。`noWindowsAvailable` 是視窗層錯誤，不是座標映射錯誤。底層原因仍為 `UNKNOWN`。
+- **允許動作：** 只依當次 CUA 工具文件支援的唯讀列舉與 handle reacquire；不得猜測未記載的參數形狀（如 `getApp({windowId})`）。`osascript`／System Events 非 CUA reacquire，只能標為非 CUA OS 唯讀診斷。所有恢復 pointer／導覽與 handle reacquire 均須經 `persistSingleInput` 保存原始 request／raw／diagnostic（見[單次 CUA 輸入保存 helper](evidence-template.md#單次-cua-輸入保存-helper)）。每步後重新觀察；只有新證據顯示通道恢復才考慮一次有證據輸入；連續兩次無新資訊即停並進 `HANDOFF_REQUIRED`。
+- **禁止推論：** 換 API、全螢幕切換、測試按鍵、重複 reset、同一錯誤重試或輪換截圖像素／螢幕點／視窗相對座標空間能恢復通道；`osascript` 查詢可冒充 CUA reacquire。
+- **缺少證據：** 真實 `noWindowsAvailable` 根因與可恢復條件仍 `UNKNOWN`；手寫 curated 摘要不得取代 `persistSingleInput` 的原始 receipt。
 
 ## D5 同前景 reacquire 與新 Session 交接
 
-- **前提：** 重新取得 CUA app／window handle，或 Owner 將中斷的指定列表重新帶回前景。
+- **前提：** 重新取得 CUA app／window handle，或 Owner 將中斷的指定列表重新帶回前景；新觀察須經 `captureAndPersist` 取得 `CAPTURE_BOUNDARY=RECORDED`。
 - **觀察（假設）：** 前者仍是同一有效前景；後者是新的正式前景交接，可能仍在相同對話。
-- **可支持命題：** 同一有效前景內的平台 reacquire 沿用 notes Session，不重跑 `bind`。真正中斷後重新交接須使用新 notes Session ID；新 Session、reopen 或新目錄都不重置同一媒體的 reveal 額度。
-- **允許動作：** 新 Session 保存新 observation、核對列表，先處理舊交易，再顯式 interrupt 舊 open scan，之後以普通完整 scan 接續。
-- **禁止推論：** `bind` 會替舊 scan interrupt；新 scan 可解鎖 UNKNOWN；一般入口恢復可使用 restart／recovery scan；帳本內既有完成或待盤狀態可改寫。本匿名事故案例的兩項 ACTIVE 與 49 篇 `DETAIL_PENDING` 是案例事實，不是所有列表的固定數值。
+- **可支持命題：** 同一有效前景內的平台 reacquire 沿用 notes Session，不重跑 `bind`。`foreground=VALID` 不覆蓋 `ENTRY_LOST`；`CAPTURE_BOUNDARY=MISSING` 不可採信為新鮮觀察，合併相同 bytes 時標 `STALE_CAPTURE_SUSPECTED` 並停止消費。真正中斷後重新交接須使用新 notes Session ID；新 Session、reopen 或新目錄都不重置同一媒體的 reveal 額度。
+- **允許動作：** 新 Session 保存新 observation、重核頁面角色與入口連續性，先處理舊交易，再顯式 interrupt 舊 open scan，之後以普通完整 scan 接續；`ENTRY_LOST` 仍停止派送。
+- **禁止推論：** `bind` 會替舊 scan interrupt；新 scan 可解鎖 UNKNOWN；一般入口恢復可使用 restart／recovery scan；`foreground=VALID` 等於入口可用；`CAPTURE_BOUNDARY=MISSING` 可作新鮮 bind／reacquire 證據；帳本內既有完成或待盤狀態可改寫。本匿名事故案例的兩項 ACTIVE 與 49 篇 `DETAIL_PENDING` 是案例事實，不是所有列表的固定數值。
 - **缺少證據：** 跨 Session 真實恢復及完整 51 篇 E2E 仍 `NOT_RUN`。
 
 ## D6 多候選帳本、已註冊他帳本 active_hint 與 AX 標題空白

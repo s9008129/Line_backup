@@ -126,7 +126,7 @@
 ## 導覽與輸入紀律
 
 - 每次輸入前確認授權、有效前景、頁面角色、焦點、目標控制項及預期結果；輸入後重新觀察，不以 API 回傳、OS 慣例或舊座標代替畫面證據。
-- **先判讀定位來源，再輸入。** 使用 AX 元素索引時，先讀最新完整 AX，或能由該完整樹連續還原的最新 diff，才選定元素；在當次操作紀錄連同原件引用記下「索引→目前角色／所屬列表→預期效果」。捲動前反查該索引仍是當前列表或其捲軸，不能只因前一次數字可用就沿用；若已變成視窗按鈕等其他角色，該目標不可用。不要把取得新 AX 與使用尚未核對的舊索引輸入合併成一次預寫呼叫。充分視覺定位不要求 AX 節點，截圖也不得補成 AX 節點；視覺路徑仍須有當次原件、viewer／控制歸屬、啟用、選取、幾何與完整座標映射全部成立。AX 索引失效時重取完整 AX；視覺映射失效時重取當次視覺原件並重建映射，不沿用舊座標。
+- **先判讀定位來源，再輸入。** 使用 AX 元素索引時，先讀最新完整 AX，或能由該完整樹連續還原的最新 diff，才選定元素；在當次操作紀錄連同原件引用記下「索引→目前角色／所屬列表→預期效果」。捲動前反查該索引仍是當前列表或其捲軸，不能只因前一次數字可用就沿用；若已變成視窗按鈕等其他角色，該目標不可用。不要把取得新 AX 與使用尚未核對的舊索引輸入合併成一次預寫呼叫。AX 回傳 `AX:DIFF_NO_CHANGE`（`full_tree=false`、`diff_only=true`）只代表變更通知，不是完整目前樹；不得據此選定索引或沿用舊索引，須依[證據範本](evidence-template.md#cua-觀察原件落地)重取完整 AX。充分視覺定位不要求 AX 節點，截圖也不得補成 AX 節點；視覺路徑仍須有當次原件、viewer／控制歸屬、啟用、選取、幾何與完整座標映射全部成立。AX 索引失效時重取完整 AX；視覺映射失效時重取當次視覺原件並重建映射，不沿用舊座標。
 - 捲動的方法與單位依當次工具文件；macOS native scroll 使用 page count，不從型別範例猜 pixels、捲軸值或未支援按鍵。原始輸入回傳與事後畫面一併保存；工具拒絕或角色不符的呼叫不算有效邊界探測，停止依賴該前提的操作，不換入口繞過。
 - 座標、AX 元素與快捷鍵只在當次映射成立時使用。視窗移動、縮放、換頁、popup 重開、前景中斷或觀察來源變化都會使舊定位失效。
 - 主視窗截圖／AX 可能漏掉獨立 popup 或 chooser；這不代表控制項沒有出現。必要時依當次 Owner 授權與平台能力使用指定區域的唯讀截圖，只保存任務需要的私有區域，不上傳外部服務。
@@ -134,7 +134,7 @@
 - 對可用來源，在同一媒體、同一幾何下做最小對照並保存各自原件。記錄來源、觀察時間、焦點、hover／其他輸入、幾何及變化／漂移；不同來源不是原子快照，須保留時間差並核對媒體與視窗連續性。需要比較狀態時，保留等時長靜置對照；這種唯讀對照不授予 reveal 或額度。任何 hover／pointer move 與 selected-filmstrip `NAVIGATION` 都只在 B1 的 intent 後單一路徑送出，不能提前探測。
 - 除 [B1](#目標與下載控制就緒b1) 明列的 intent 後單次 hover 與 selected-filmstrip `NAVIGATION` 外，不可額外 click 探索，且候選不是 hover 或下載控制。不得切換五格反覆查找；控制歸屬、作用或下載映射未證明時不得按下載控制，但工具列隱藏分支仍只有在 B1 的安全方法與額度均成立時才可進 intent。不得重播 reveal／intent、使用舊點位、以固定等待當成修復，或把 fresh capture 本身當成新證據。
 - 任何下載控制、chooser 與「確認」都是獨立輸入；不要用反覆點選、猜 Return 或重開選單查證。下載派送限制與 notes CLI 交易見 [下載與 notes CLI](download-and-ledger.md)。
-- 一般查證維持同一根因最多三次有證據嘗試，連續兩次沒有新資訊就停止相同方法；B1 的每個 `list_key + post_key + media_key` 最多兩次已派送 reveal 候選，跨 viewer、reopen、Session 與 restart 累計，不可被其他查證次數擴充。更換觀察來源只有在帶來決策相關新資訊時才可支持下一步，不得改下載入口、跨列表或繞過工具拒絕。
+- 一般查證維持同一根因最多三次有證據嘗試，連續兩次沒有新資訊就停止相同方法；B1 的每個 `list_key + post_key + media_key` 最多兩次已派送 reveal 候選，跨 viewer、reopen、Session 與 restart 累計，不可被其他查證次數擴充。更換觀察來源只有在帶來決策相關新資訊時才可支持下一步，不得改下載入口、跨列表或繞過工具拒絕。同一 `-10005 noWindowsAvailable` 錯誤下輪換截圖像素／螢幕點／視窗相對座標空間不是新方法或新證據，也不是有效映射修正；兩次無新資訊即停（見[有界恢復階梯](#有界恢復階梯)）。
 
 ## 返回契約與有限恢復
 
@@ -165,24 +165,26 @@
 | 欄位 | 值 | 證據 |
 |---|---|---|
 | `page_role` | `LIST`、`POST_DETAIL`、`VIEWER`、`CHAT`、`UNKNOWN` | 當次可引用 AX／畫面正面支持的角色；充分截圖可作直接證據。hash、row 結構、scroll 或單一缺項不能單獨決定；矛盾或不足記 `UNKNOWN`。 |
-| `foreground` | `VALID`、`INTERRUPTED`、`UNKNOWN` | app／window 綁定、交接及連續性 |
+| `foreground` | `VALID`、`INTERRUPTED`、`UNKNOWN` | app／window 綁定、交接及連續性；`VALID` 僅覆蓋綁定與交接，不代表頁面角色為 `LIST`、入口仍可用或控制可達，可與 `ENTRY_LOST` 同時成立。 |
 | `observe_capability` | `AVAILABLE`、`UNAVAILABLE`、`UNKNOWN` | AX／截圖的當次可用性與範圍 |
-| `input_capability` | `AVAILABLE`、`UNAVAILABLE`、`UNKNOWN` | 工具文件支持的輸入能力與原始回傳 |
+| `input_capability` | `AVAILABLE`、`UNAVAILABLE`、`PARTIAL_AX_ONLY`、`UNKNOWN` | 工具文件支持的輸入能力與原始回傳；`PARTIAL_AX_ONLY` 表示 AX 元素／選單輸入可用但 pointer 座標通道不可用，僅視覺可見且須座標點擊的控制不得當 `AVAILABLE`，該路徑按 `INPUT_UNAVAILABLE` 處理。 |
 
-`ENTRY_LOST` 表示頁面角色或指定列表連續性失去；`INPUT_UNAVAILABLE` 表示輸入通道不可用。兩者可同時成立，分開記錄。`noWindowsAvailable` 只記實際錯誤欄位；底層原因維持 `UNKNOWN`。
+`ENTRY_LOST` 表示頁面角色或指定列表連續性失去；`INPUT_UNAVAILABLE` 表示輸入通道不可用。兩者可同時成立，分開記錄。`noWindowsAvailable` 只記實際錯誤欄位；底層原因維持 `UNKNOWN`。`foreground=VALID` 只證明 app／window 綁定與交接仍有效，不能單獨支持入口可用；`PARTIAL_AX_ONLY` 也不是完整輸入能力。
 
 ### 有界恢復階梯
 
 1. 若觀察能力可用，保存當次 AX／截圖、app／window 綁定與錯誤原件；先不輸入。
-2. 若前景有效、來源仍可證明是同一指定列表所屬聊天、輸入通道可用，且 Notes 控制在當次可唯一辨識與定位，可用該控制導覽一次。AX 缺失時，必須有足夠的視覺歸屬、控制區域與座標映射；不得搜尋或選擇其他聊天室。
-3. 若輸入通道失效，只使用當次工具文件支援的唯讀 app／window 列舉與 handle 重新取得。這是 CUA reacquire；不等同 notes `bind`，也不證明輸入能力已恢復。
+2. 若前景有效、來源仍可證明是同一指定列表所屬聊天、輸入通道可用，且 Notes 控制在當次可唯一辨識與定位，可用該控制導覽一次。`PARTIAL_AX_ONLY` 不算輸入通道可用；AX 缺失時，視覺路徑另需可送出的 pointer 通道，且必須有足夠的視覺歸屬、控制區域與座標映射；不得搜尋或選擇其他聊天室。
+3. 若輸入通道失效，只使用當次 CUA 工具文件支援的唯讀 app／window 列舉與 handle 重新取得；只可呼叫文件明載的形狀，未記載的參數形狀（例如 `getApp({windowId})`）不得試探。這是 CUA reacquire；不等同 notes `bind`，也不證明輸入能力已恢復。`osascript`／System Events／外部 CGWindow 查詢不是 CUA reacquire，不得作為前景／handle 恢復或座標輸入依據，只能標為非 CUA OS 唯讀診斷。
 4. 每一步後重新觀察 app／window、前景、頁面角色、觀察及輸入能力。只有新證據顯示輸入能力恢復，才可考慮下一步；重新映射後才可定位控制。
-5. 沒有新證據不重試。同根因最多三次有證據嘗試；連續兩次沒有新資訊即停止。不得用換 API、全螢幕切換、測試按鍵、舊座標或反覆 reset 繞過失效通道。
-6. 若可用的唯讀 app/window 列舉與 handle reacquire 取得同一已授權列表，並以當次證據核對身分與有效前景，則恢復操作；無法安全取得時進入 `HANDOFF_REQUIRED`，停止 GUI 輸入並回報具體全域阻塞。重新取得同一授權前景後再從既有入口接續。
+5. 沒有新證據不重試。同根因最多三次有證據嘗試；連續兩次沒有新資訊即停止。連續 `-10005 noWindowsAvailable` 下輪換截圖像素／螢幕點／視窗相對座標空間不計新方法或新證據，也不是映射修正；兩次無新資訊即停並依步驟 6 進 `HANDOFF_REQUIRED`。不得用換 API、全螢幕切換、測試按鍵、舊座標或反覆 reset 繞過失效通道。
+6. 若當次 CUA 工具文件支援的唯讀 app/window 列舉與 handle reacquire 取得同一已授權列表，並以當次證據核對身分與有效前景，則恢復操作；無法安全取得時進入 `HANDOFF_REQUIRED`，停止 GUI 輸入並回報具體全域阻塞。重新取得同一授權前景後仍須重新核對入口，再從既有入口接續。
+
+所有入口恢復之 pointer／導覽嘗試與 CUA handle reacquire 呼叫，均須透過 `evidenceTools.persistSingleInput` 保存原始 request／raw／diagnostic（見[單次 CUA 輸入保存 helper](evidence-template.md#單次-cua-輸入保存-helper)），不得僅留手寫 curated 摘要。
 
 ### 重新交接與帳本 Session
 
-同一有效前景內重新取得 CUA app／window handle，沿用目前 notes 帳本 Session，不重跑 `bind`。前景中斷後由 Owner 重新交接，必須建立新的 notes 帳本 Session ID，即使仍是同一對話或 app；取得新 observation 並重新核對列表身分。
+同一有效前景內重新取得 CUA app／window handle，沿用目前 notes 帳本 Session，不重跑 `bind`；此沿用只影響帳本綁定，不代表入口仍可用，仍須經 `captureAndPersist` 取得 `CAPTURE_BOUNDARY=RECORDED` 之新觀察（不得以 bare `persistObservation` 充當新觀察；`CAPTURE_BOUNDARY=MISSING` 不可採信，合併相同 bytes 時標 `STALE_CAPTURE_SUSPECTED` 並停止消費），重新核對頁面角色與入口連續性，`ENTRY_LOST` 仍停止派送。前景中斷後由 Owner 重新交接，必須建立新的 notes 帳本 Session ID，即使仍是同一對話或 app；取得新 observation 並重新核對列表身分。
 
 新 `bind` 不會自動中斷舊 open scan。新 Session 先唯讀查歷史並核對當次新前景與列表，成功 `bind` 後才收斂舊 attempt 與命名交易；若仍有 open scan，再明確 `scan interrupt`，然後以普通 `scan start` 重新完成卡片覆蓋。不得以 restart 或 recovery scan 繞過普通入口阻塞；新 scan 本身不解鎖 UNKNOWN，只有同一媒體的安全隔離事件持久讀回後，才可由目前 Session 以新的普通完整掃描接續一次補下載。保留帳本中實際的完成、ACTIVE 與待細盤分類；待盤貼文不得改成 `NO_MEDIA` 或宣稱完成。
 

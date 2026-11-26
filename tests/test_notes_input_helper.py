@@ -1256,6 +1256,203 @@ return {
         self.assertEqual(observation['metadata_persistence']['readback'], 'NOT_RUN')
         self.assertEqual(result['saved'], 'keep original diagnostic')
 
+    def test_observation_ax_no_change_stub_persists_raw_and_fails_closed(self):
+        result, _ = self.run_dispatch(DISPATCH_SETUP + r'''
+const counters = {};
+const app = dispatchReadinessApp(counters);
+const cases = [
+  {
+    observationId: 'ax-no-change-line',
+    state: 'There has been no change in the accessibility tree for ' +
+      'Window: "LINE".\nThe focused UI element is 39 文字',
+  },
+  {
+    observationId: 'ax-no-change-empty-title',
+    state: 'There has been no change in the accessibility tree for ' +
+      'Window: "".',
+  },
+];
+const results = [];
+for (const item of cases) {
+  const observation = await evidenceTools.persistObservation({
+    taskDir: process.env.INPUT_TEST_ROOT,
+    observationDir: process.env.INPUT_TEST_DIR,
+    observationId: item.observationId,
+    capture: {
+      state: item.state,
+      screenshot: dispatchFreshCapture(item.observationId).screenshot,
+    },
+  });
+  const diagnostic = JSON.parse(await fsTest.readFile(
+    observation.files.diagnostic, 'utf8'));
+  results.push({
+    observationId: item.observationId,
+    expectedState: item.state,
+    observation,
+    diagnostic,
+    axText: await fsTest.readFile(observation.files.ax, 'utf8'),
+    screenshotBytes: Array.from(
+      await fsTest.readFile(observation.files.screenshot)),
+    readiness: notesIntentDispatch.checkDownloadReadiness({
+      app,
+      observation,
+      windowBinding: dispatchWindowBinding(),
+      branch: 'DIRECT',
+      decision: dispatchDirectReadinessDecision(observation),
+    }),
+  });
+}
+return {results, counters};
+''')
+        self.assertEqual(result['counters'].get('clicks', 0), 0)
+        self.assertEqual(result['counters'].get('captures', 0), 0)
+        for item in result['results']:
+            with self.subTest(case=item['observationId']):
+                observation = item['observation']
+                stages = observation['stages']
+                self.assertEqual(item['axText'], item['expectedState'])
+                self.assertTrue(item['screenshotBytes'])
+                self.assertEqual(stages['AX']['status'], 'DIFF_NO_CHANGE')
+                self.assertFalse(stages['AX']['full_tree'])
+                self.assertTrue(stages['AX']['diff_only'])
+                self.assertTrue(stages['AX']['stale_index_warning'])
+                self.assertEqual(stages['AX']['utf8_bytes'],
+                                 len(item['expectedState'].encode('utf-8')))
+                self.assertEqual(stages['AX_PERSISTENCE']['status'], 'MATCH')
+                self.assertIn('AX:DIFF_NO_CHANGE', observation['blockers'])
+                self.assertFalse(observation['ready_for_bind'])
+                self.assertEqual(item['diagnostic']['stages'], stages)
+                self.assertFalse(item['diagnostic']['ready_for_bind'])
+                self.assertEqual(item['readiness']['status'], 'STOP')
+                self.assertIn('DOWNLOAD_OBSERVATION_INVALID',
+                              item['readiness']['blockers'])
+
+    def test_observation_ax_no_change_guard_avoids_false_positives_and_rejects_whitespace(self):
+        result, _ = self.run_helper(r'''
+const cases = [
+  {
+    observationId: 'ax-phrase-in-tree',
+    expectedStatus: 'OK',
+    state: 'Window: "LINE".\n0 標準視窗\n1 列表\n' +
+      '\t2 row 文字 There has been no change in the accessibility tree\n' +
+      '\t3 row\n',
+  },
+  {
+    observationId: 'ax-phrase-in-json',
+    expectedStatus: 'OK',
+    state: '{"role":"AXWindow","text":"There has been no change in the ' +
+      'accessibility tree"}',
+  },
+  {
+    observationId: 'ax-short-popup-tree',
+    expectedStatus: 'OK',
+    state: 'Window: "", App: LINE.\n0 浮動視窗 Secondary Actions: Raise\n' +
+      '1 menu bar\n\t2 LINE\n\t3 顯示\n\t4 好友\n\t5 視窗\n\t6 常見問題\n\n' +
+      'The focused UI element is 0 浮動視窗 Secondary Actions: Raise',
+  },
+  {
+    observationId: 'ax-stub-followed-by-numbered-node',
+    expectedStatus: 'OK',
+    state: 'There has been no change in the accessibility tree for ' +
+      'Window: "LINE".\n0 標準視窗',
+  },
+  {
+    observationId: 'ax-whitespace',
+    expectedStatus: 'EMPTY',
+    state: ' \n\t ',
+  },
+];
+const results = [];
+for (const item of cases) {
+  const observation = await evidenceTools.persistObservation({
+    taskDir: process.env.INPUT_TEST_ROOT,
+    observationDir: process.env.INPUT_TEST_DIR,
+    observationId: item.observationId,
+    capture: {
+      state: item.state,
+      screenshot: new TextEncoder().encode('AX-GUARD:' + item.observationId),
+    },
+  });
+  results.push({
+    observationId: item.observationId,
+    expectedStatus: item.expectedStatus,
+    stateBytes: new TextEncoder().encode(item.state).length,
+    observation,
+  });
+}
+return {results};
+''')
+        for item in result['results']:
+            with self.subTest(case=item['observationId']):
+                observation = item['observation']
+                ax_stage = observation['stages']['AX']
+                if item['expectedStatus'] == 'OK':
+                    self.assertEqual(ax_stage['status'], 'OK')
+                    self.assertTrue(ax_stage['full_tree'])
+                    self.assertFalse(ax_stage['diff_only'])
+                    self.assertEqual(ax_stage['utf8_bytes'], item['stateBytes'])
+                    self.assertEqual(observation['blockers'], [])
+                    self.assertTrue(observation['ready_for_bind'])
+                else:
+                    self.assertEqual(ax_stage['status'], 'EMPTY')
+                    self.assertIn('AX:EMPTY', observation['blockers'])
+                    self.assertFalse(observation['ready_for_bind'])
+
+    def test_observation_capture_boundary_stage_distinguishes_recorded_and_missing(self):
+        result, _ = self.run_helper(r'''
+const paths = () => ({
+  taskDir: process.env.INPUT_TEST_ROOT,
+  observationDir: process.env.INPUT_TEST_DIR,
+});
+globalThis.cua = {
+  getApp: async () => ({
+    getAXStateAndScreenshot: async () => ({
+      state: '{"role":"AXWindow","marker":"boundary-ok"}',
+      screenshot: new TextEncoder().encode('BOUNDARY-OK'),
+    }),
+  }),
+};
+const recorded = await evidenceTools.captureAndPersist({
+  ...paths(), observationId: 'boundary-recorded'});
+globalThis.cua = {
+  getApp: async () => ({
+    getAXStateAndScreenshot: async () => {
+      throw new Error('synthetic boundary capture throw');
+    },
+  }),
+};
+const thrown = await evidenceTools.captureAndPersist({
+  ...paths(), observationId: 'boundary-thrown'});
+globalThis.cua = {
+  getApp: async () => {
+    throw new Error('synthetic boundary pre-call rejection');
+  },
+};
+const preCall = await evidenceTools.captureAndPersist({
+  ...paths(), observationId: 'boundary-pre-call'});
+const bare = await evidenceTools.persistObservation({
+  ...paths(), observationId: 'boundary-bare',
+  capture: {state: '{"role":"AXWindow","marker":"boundary-bare"}',
+            screenshot: new TextEncoder().encode('BOUNDARY-BARE')},
+});
+return {recorded, thrown, preCall, bare};
+''')
+        self.assertEqual(
+            result['recorded']['stages']['CAPTURE_BOUNDARY']['status'],
+            'RECORDED')
+        self.assertTrue(result['recorded']['ready_for_bind'])
+        self.assertEqual(
+            result['thrown']['stages']['CAPTURE_BOUNDARY']['status'],
+            'RECORDED')
+        self.assertEqual(result['thrown']['blockers'], ['CAPTURE:FAILED'])
+        self.assertEqual(
+            result['preCall']['stages']['CAPTURE_BOUNDARY']['status'],
+            'MISSING')
+        self.assertEqual(
+            result['bare']['stages']['CAPTURE_BOUNDARY']['status'], 'MISSING')
+        self.assertTrue(result['bare']['ready_for_bind'])
+        self.assertEqual(result['bare']['blockers'], [])
+
     def test_dispatch_direct_path_checks_intent_event_and_same_observation(self):
         result, _ = self.run_dispatch(DISPATCH_SETUP + r'''
 let clicks = 0;
@@ -3377,6 +3574,17 @@ console.log(JSON.stringify({
                 preload = ''
             elif tools_mode == 'empty':
                 preload = 'const evidenceTools = {};'
+            elif tools_mode == 'stub-missing-boundary':
+                preload = (
+                    'const evidenceTools = {\n'
+                    '  captureAndPersist: async () => ({\n'
+                    '    ready_for_bind: true, blockers: [],\n'
+                    "    observation_id: 'stub-observation', files: {},\n"
+                    "    stages: {CAPTURE_BOUNDARY: {status: 'MISSING'}},\n"
+                    '    assets: {},\n'
+                    '  }),\n'
+                    '};\n'
+                )
             else:
                 raise AssertionError('unknown tools_mode: %r' % (tools_mode,))
             script = '\n'.join([
@@ -3442,6 +3650,8 @@ console.log(JSON.stringify({
                       source)
         self.assertIn('CUA_RAW_OBSERVATION_INCOMPLETE', source)
         self.assertIn('CUA_EVIDENCE_TOOLS_NOT_LOADED', source)
+        self.assertIn('CAPTURE_BOUNDARY', source)
+        self.assertIn('CAPTURE_BOUNDARY:MISSING', source)
         self.assertIn('CUA_OBSERVATION_EMIT_READBACK_MISMATCH', source)
         self.assertIn("const fs = await import('node:fs/promises');", source)
         self.assertIn('await nodeRepl.emitImage(new Uint8Array(savedScreenshot));',
@@ -3536,6 +3746,55 @@ console.log(JSON.stringify({
                         observation['stages']['CAPTURE']['error'],
                         {'name': 'Error', 'code': 'ESYNTHETIC',
                          'message': 'synthetic initial capture throw'})
+
+    def test_initial_observation_no_change_ax_persists_but_never_emits(self):
+        no_change_state = ('There has been no change in the accessibility '
+                           'tree for Window: "LINE".\n'
+                           'The focused UI element is 39 文字')
+        run = self.run_initial_observation(
+            capture_body=r'''
+        return {
+          state: 'There has been no change in the accessibility tree for ' +
+            'Window: "LINE".\nThe focused UI element is 39 文字',
+          screenshot: new Uint8Array([
+            0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+          ]),
+        };
+''')
+        self.assertNotEqual(run['returncode'], 0)
+        self.assertIn('CUA_RAW_OBSERVATION_INCOMPLETE', run['stderr'])
+        self.assertIn('AX:DIFF_NO_CHANGE', run['stderr'])
+        self.assertEqual(run['emits'], [])
+        self.assertEqual(len(run['writes']), 1)
+        observation = json.loads(run['writes'][0])
+        self.assertFalse(observation['ready_for_bind'])
+        self.assertIn('AX:DIFF_NO_CHANGE', observation['blockers'])
+        self.assertEqual(observation['stages']['AX']['status'],
+                         'DIFF_NO_CHANGE')
+        self.assertEqual(observation['stages']['AX_PERSISTENCE']['status'],
+                         'MATCH')
+        self.assertEqual(run['axText'], no_change_state)
+        self.assertIsNotNone(run['screenshotBytes'])
+        self.assertIsNotNone(run['diagnostic'])
+        self.assertFalse(run['diagnostic']['ready_for_bind'])
+        self.assertEqual(run['diagnostic']['stages']['AX']['status'],
+                         'DIFF_NO_CHANGE')
+        self.assertIn('initial-observation-sample.diagnostic.json',
+                      run['fileNames'])
+
+    def test_initial_observation_missing_capture_boundary_fails_closed_without_emit(self):
+        run = self.run_initial_observation(
+            capture_body=self.CAPTURE_OK,
+            tools_mode='stub-missing-boundary')
+        self.assertNotEqual(run['returncode'], 0)
+        self.assertIn('CUA_RAW_OBSERVATION_INCOMPLETE', run['stderr'])
+        self.assertIn('CAPTURE_BOUNDARY:MISSING', run['stderr'])
+        self.assertEqual(run['emits'], [])
+        self.assertEqual(len(run['writes']), 1)
+        observation = json.loads(run['writes'][0])
+        self.assertTrue(observation['ready_for_bind'])
+        self.assertEqual(
+            observation['stages']['CAPTURE_BOUNDARY']['status'], 'MISSING')
 
     def test_initial_observation_readback_drift_never_emits(self):
         for tamper in ('SCREENSHOT_APPEND', 'AX_REWRITE_SAME_LENGTH'):

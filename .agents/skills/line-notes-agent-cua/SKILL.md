@@ -27,11 +27,11 @@ Reveal 的 intent 前方法與額度 gate、固定 slot、intent 後直接定位
 
 Owner 先人工開啟指定的 LINE 記事本列表，指定目的地（未指定時使用本專案 `backup/記事本/`），並在同一次正式 Prompt 中授權備份及交接有效前景。這次提交同時是任務授權與當次前景交接，不要求 Owner 再選盤點／接續模式、逐篇下令，或手填 UUID、內部 key、JSON。
 
-正式 Prompt 的恢復授權涵蓋原任務範圍內的自動接續、隔離及有界補下載，Agent 自行選擇合格的恢復方法並判讀單項證據。若前景暫失，先用可用的唯讀 app/window 列舉與 handle reacquire 取得同一已授權列表；只有取得當次證據且能核對列表身分與有效前景後才繼續。前景無法安全重新取得時，保存進度並回報具體阻塞。
+正式 Prompt 的恢復授權涵蓋原任務範圍內的自動接續、隔離及有界補下載，Agent 自行選擇合格的恢復方法並判讀單項證據。若前景暫失，先用當次 CUA 工具文件支援的唯讀 app/window 列舉與 handle reacquire 取得同一已授權列表（`osascript`／System Events 非 CUA reacquire，只能作非 CUA OS 唯讀診斷）；只有取得當次證據且能核對列表身分與有效前景後才繼續。前景無法安全重新取得時，保存進度並回報具體阻塞。
 
 Agent 的任務是完成整份列表，而不是等 Owner 逐步操作：
 
-1. 自動查全部記事本帳本、目前任務與相符的永久記憶，先讀 `summary` 的 `unresolved_attempts`、`dispatch_blockers` 與掃描覆蓋。普通 intent 以同一 media key 全歷史最多三筆為限（含首次及最多兩次恢復）；UNKNOWN v5 最多一筆，額度不因 Session、重掃或結果轉換重置。額度耗盡是該項欠件，安全隔離不了的 UNKNOWN／no-outcome 才是全域阻塞。`bind` 前（Pre-Bind）另依[啟動與帳本對帳](references/download-and-ledger.md#啟動與帳本對帳)固定五步：完整 `lists` capture → CUA 同次截圖／AX 落地讀回 → 入口與全部 N 份候選（含 `active_hint` 分流）交叉核對 → 新列表 `list-key`／`evidence-pack`／`init` 並讀回 → `bind`、舊交易、普通完整掃描。
+1. 自動查全部記事本帳本、目前任務與相符的永久記憶，先讀 `summary` 的 `unresolved_attempts`、`dispatch_blockers` 與掃描覆蓋。普通 intent 以同一 media key 全歷史最多三筆為限（含首次及最多兩次恢復）；UNKNOWN v5 最多一筆，額度不因 Session、重掃或結果轉換重置。額度耗盡是該項欠件，安全隔離不了的 UNKNOWN／no-outcome 才是全域阻塞。同一 `--records-root`／`--collection` 的 notes CLI 命令一律嚴格序列執行，禁止並行 `summary` 與 `resume`（見[下載與 notes CLI](references/download-and-ledger.md#cli-共同契約)）。`bind` 前（Pre-Bind）另依[啟動與帳本對帳](references/download-and-ledger.md#啟動與帳本對帳)固定五步：完整 `lists` capture → CUA 同次截圖／AX 落地讀回 → 入口與全部 N 份候選（含 `active_hint` 分流）交叉核對 → 新列表 `list-key`／`evidence-pack`／`init` 並讀回 → `bind`、舊交易、普通完整掃描。
 2. 核對列表；證明是新列表且沒有缺損歷史或候選歧義時自動初始化，既有列表則綁定原帳本。禁止未先於同一 CUA Node runtime 載入 `cua-evidence-tools` 定義區塊再實跑 `evidenceTools.captureAndPersist` 就宣稱環境不支援落地；未載入（含 `typeof evidenceTools === "undefined"`）或未執行記 `NOT_RUN`，只有實際 `error`／`stages`／`blockers` 才是阻塞。禁止因 `lists` 終端截斷、名稱相近或查無同名帳本（零同名候選）就跳過 `posts`／`identity` 交叉比對提前停止；`display_name`／中文標題同名或不同名皆不可單獨決定 `bind`、`init` 或停止；`active_hint` 精確指向另一已註冊帳本屬日常切換，不是缺損阻塞。回報 Pre-Bind 阻塞必須指出具體未成立的身分證據、候選衝突或 helper 階段錯誤，不得以「名稱不符」要求重新交接。每個新 Session 在 `bind` 前，依[證據範本](references/evidence-template.md#cua-觀察原件落地)把同次 CUA 回傳的完整 AX 與截圖 bytes 寫入專案私有 task directory，讀回核對後才封裝 observation／handoff bundle；並依[列表](references/gui-inventory.md#列表)與全部候選帳本交叉核對。無法取得或保存原件就停在 `bind` 前，不手寫或補造。新掃描前先處理舊 attempt。已 `DOWNLOAD_FINISHED` 的原交易若只因新 scan 而 `scan_binding_match=false`，依 `resume` 分流：`VERIFY_REQUIRED` 使用原 attempt 的 `download-check`，`SCAN_BINDING_REVIEW_REQUIRED` 表示原來源證據不足，保留原件並回報受影響範圍。已有歷史來源可核對的 STOPPED／NOT_SENT 則使用原停止證據與本次完整掃描，按下文建立新 attempt。
 3. 先建立完整來源卡片台帳，從頂端到底端盤點貼文並完成頁面雙向對帳；之後逐篇細盤媒體並處理合格項，不要求其他貼文的媒體細盤先全部完成。
 4. 依紀錄跳過已處理項，對每個合格項只送出一次下載派送，並在結果後做基本檔案檢查、發布及讀回 completion。
@@ -58,7 +58,7 @@ Agent 的任務是完成整份列表，而不是等 Owner 逐步操作：
 
 viewer 進入前由實際 entry anchor 保存預期返回角色：通常由貼文詳細頁進入時是 `POST_DETAIL`，只有實際由列表或其他角色進入時才填該角色，不固定預設 `LIST`。進入後依唯一本文[返回契約與有限恢復](references/gui-inventory.md#返回契約與有限恢復)核對控制歸屬，再開始下載交易。每次只返回一層並重新觀察；同頁未變或資訊不足記 `RETURN_NOT_OBSERVED`，只有正面證明頁面角色／身分／入口連續性已失去才記 `ENTRY_LOST`，且與 `INPUT_UNAVAILABLE` 分開、可同時成立。通道失效後，只做工具文件支持的唯讀 app／window 列舉與 handle reacquire；沒有新證據不重試。通道無法恢復時保存進度並回報確切環境阻塞。
 
-同一有效前景內重取 CUA handle 不重跑 notes `bind` 或更換帳本 Session。真正前景中斷後，重新取得有效的同一授權前景時建立新的 notes Session ID。新 bind 不會 interrupt 舊 open scan：先收斂舊交易，再明確 interrupt 舊 scan，之後以普通完整掃描接續；不得以 scan 解鎖 UNKNOWN，亦不自行使用 restart／recovery scan 繞過普通阻塞。
+同一有效前景內重取 CUA handle 不重跑 notes `bind` 或更換帳本 Session；此沿用只影響帳本綁定，仍須經 `captureAndPersist` 取得 `CAPTURE_BOUNDARY=RECORDED` 之新觀察（不得以 bare `persistObservation` 充當新觀察；`CAPTURE_BOUNDARY=MISSING` 不可採信，合併相同 bytes 時標 `STALE_CAPTURE_SUSPECTED`）並重新核對頁面角色與入口；`foreground=VALID` 不等於入口可用，`ENTRY_LOST` 仍停止派送。真正前景中斷後，重新取得有效的同一授權前景時建立新的 notes Session ID。新 bind 不會 interrupt 舊 open scan：先收斂舊交易，再明確 interrupt 舊 scan，之後以普通完整掃描接續；不得以 scan 解鎖 UNKNOWN，亦不自行使用 restart／recovery scan 繞過普通阻塞。
 
 每次導覽／輸入的原件保存方式依[單次輸入證據範本](references/evidence-template.md#單次-cua-輸入保存-helper)；input receipt 不是 OS event trace。狀態案例見[證據判定案例](references/evidence-decision-cases.md#d1-viewer-返回契約在進入後核對)。
 
@@ -116,10 +116,12 @@ page 前的來源卡片台帳、部分／高卡片、雙向對帳及 finish 前�
 
 在「歷史／入口核對完成、完整盤點完成、每個貼文／媒體完成或遇阻、最終對帳」節點主動用繁體中文回報，內容至少包含：
 
-- 列表與貼文總數、來源逐卡對帳結果、未解卡片／缺頁、`NO_MEDIA` 篇數、六類媒體狀態及目前項目；六類狀態以 `status_counts_scope` 與 `all_known_media_status_counts` 分開回報，舊 `status_counts` 不可當全列表或本批次 attempt 成功。
+- 列表與貼文總數、來源逐卡對帳結果、未解卡片／缺頁、`NO_MEDIA` 篇數、六類媒體狀態及目前項目；六類狀態以 `status_counts_scope` 與 `all_known_media_status_counts` 分開回報，`status_counts` 僅代表 `status_counts_scope` 範圍，不可當全列表或本批次 attempt 成功。
+- 最新序列讀回 `summary` 的 `expected_tip`（`sequence`＋`sha256`）是所有回報與 fencing 的基準；較低 `sequence` 的舊快照只作歷史，不得混用其 `unresolved_attempts`／blockers。貼文層須列 `.state` 計數（總數／`MEDIA`／`NO_MEDIA`／`DETAIL_PENDING`）；`current_incomplete` 僅計 scoped media，`0` 不代表全列表完成。
+- GUI／入口與通道阻塞（`ENTRY_LOST`、`INPUT_UNAVAILABLE`、`PARTIAL_AX_ONLY`、入口控制未暴露等）須獨立列 `gui_blockers`，與 notes CLI `dispatch_blockers` 分欄；CLI 不觀察 GUI，`dispatch_blockers` 只反映帳本簿記，不代表 GUI 入口可用。
 - `open_restart.scope_unresolved_attempts` 與 `dispatch_blockers` 的 restart 阻塞要明列；restart 欄位語意見[下載與 notes CLI](references/download-and-ledger.md#恢復與不可解鎖狀態)。
 - 已保存圖片數、已保存影片數及其 `DOWNLOAD_ONLY` 範圍、未解缺項及下一步。
-- 單次自動恢復的舊 attempt 隔離、補下載額度已用或已耗盡、舊 staging 晚到檔風險與仍未完成項要分開列示，不把安全耗盡計入完成。
+- 單次自動恢復的舊 attempt 隔離、補下載額度已用或已耗盡、舊 staging 晚到檔風險（即使目前為空目錄亦保留）與仍未完成項要分開列示，不把安全耗盡計入完成。
 - 工具簿記結果、基本檔案檢查結果、真人 `OBSERVED` 與真實 LINE E2E 分別列示。
 - `dispatch_authorized=false` 只是簿記欄位，不是 GUI grant、實機 PASS 或獨立驗收。
 
