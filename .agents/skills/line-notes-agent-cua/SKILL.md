@@ -114,6 +114,12 @@ page 前的來源卡片台帳、部分／高卡片、雙向對帳及 finish 前�
 
 ## 回報與證據界限
 
+既有有效備份中的主動進度節點、壓縮後狀態及 Owner 進度追問都以中途訊息回報，之後依[工作流程](#工作流程)執行當前可行的安全動作。有格式化進度輸出時，標明進行中並保持 LINE 前景。單純追問不新增授權，也不解除暫停、撤回或全域阻塞。最後對帳後、Owner 明示暫停／停止／撤回，或已無安全下一步時才作最終回覆，按事實列欠件。
+
+壓縮或進度追問後返回操作前，依[工作流程](#工作流程)核對授權、序列讀回的最新 `summary`、必要的原交易事件／私有持久進度及同次 `captureAndPersist` 原件。須有 `CAPTURE_BOUNDARY=RECORDED`，排除 `STALE_CAPTURE_SUSPECTED`，並依[Viewer 返回與中斷恢復](#viewer-返回與中斷恢復)重核前景、頁面角色與入口。同一有效前景沿用綁定，實際中斷依既有恢復流程。回讀不到或證據衝突時停止依賴該前提的動作，不猜返回錨點、reveal 額度或舊交易狀態。
+
+先依[既有交易恢復規則](references/download-and-ledger.md#恢復與不可解鎖狀態)查證或收斂未決交易。若已細盤的待處理媒體尚無 intent 且無全域阻塞，依 [B1](references/gui-inventory.md#目標與下載控制就緒b1) 核對，再以 [`checkDownloadReadiness`](references/evidence-template.md#intent-前下載就緒-gate) 取得 `READY` 才建立 intent。已有 attempt 依其 phase 與既有分流接續。單項遇阻時，若無全域阻塞且返回契約成立，就繼續其他合格項。全域阻塞時只保留已授權的安全查證與既有恢復方式。
+
 在「歷史／入口核對完成、完整盤點完成、每個貼文／媒體完成或遇阻、最終對帳」節點主動用繁體中文回報，內容至少包含：
 
 - 列表與貼文總數、來源逐卡對帳結果、未解卡片／缺頁、`NO_MEDIA` 篇數、六類媒體狀態及目前項目；六類狀態以 `status_counts_scope` 與 `all_known_media_status_counts` 分開回報，`status_counts` 僅代表 `status_counts_scope` 範圍，不可當全列表或本批次 attempt 成功。
