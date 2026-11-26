@@ -3,6 +3,7 @@
 These tests use only generated records and local process fixtures. They do not
 observe LINE, operate a GUI, or touch private media or permanent ledgers.
 """
+import base64
 import contextlib
 import copy
 import hashlib
@@ -38,6 +39,9 @@ from line_backup_batch.notes import (
 ROOT = Path(__file__).resolve().parents[1]
 PRIVATE_TASKS = ROOT / '.local' / 'line-backup' / 'tasks'
 STRICT_VERIFY_SIGNATURE = inspect.signature(media_verify.verify_media)
+PNG_1X1 = base64.b64decode(
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO'
+    '+nmAAAAABJRU5ErkJggg==')
 
 
 class _Ledger(SimpleNamespace):
@@ -201,6 +205,53 @@ class NotesRegressionTests(unittest.TestCase):
         with mock.patch('sys.stdout', new=output):
             code = notes.main([str(value) for value in args])
         return code, json.loads(output.getvalue())
+
+    def run_notes_process(self, *args):
+        env = os.environ.copy()
+        source = str(ROOT / 'src')
+        env['PYTHONPATH'] = (source if not env.get('PYTHONPATH') else
+                             source + os.pathsep + env['PYTHONPATH'])
+        return subprocess.run(
+            [sys.executable, '-B', '-m', 'line_backup_batch.notes',
+             *[str(value) for value in args]],
+            cwd=str(ROOT), env=env, capture_output=True, text=True,
+            check=False)
+
+    @staticmethod
+    def ledger_file_snapshot(records):
+        snapshot = {}
+        for name in ('events', 'evidence'):
+            root = records.records / name
+            snapshot[name] = ({
+                path.name: path.read_bytes()
+                for path in sorted(root.iterdir())
+            } if root.exists() else {})
+        return snapshot
+
+    def fresh_evidence(self, ledger, label, **context):
+        token = uuid.uuid4().hex
+        statement = ledger.evidence_packs / ('statement-' + token + '.txt')
+        statement.write_bytes(('fresh evidence ' + label + ' ' + token).encode(
+            'utf-8'))
+        screenshot = ledger.evidence_packs / ('screenshot-' + token + '.txt')
+        screenshot.write_bytes(('fresh screenshot ' + label + ' ' +
+                                token).encode('utf-8'))
+        output = ledger.evidence_packs / token
+        if not context:
+            context = dict(list_key=ledger.summary['list_key'])
+        return notes_evidence.create_bundle(
+            statement=str(statement),
+            assets=[('screenshot', str(screenshot))],
+            context=context,
+            output_dir=str(output))['bundle_path']
+
+    @staticmethod
+    def bundle_sha256s(bundle_path):
+        raw = Path(bundle_path).read_bytes()
+        data = json.loads(raw)
+        refs = [data['statement_ref'], *data['assets']]
+        return ({hashlib.sha256(raw).hexdigest()} |
+                {ref['sha256'] for ref in refs})
 
     def observe_post(self, ledger, visual_key, media_identities, *,
                      no_media=False, media_count=None):
@@ -409,6 +460,31 @@ class NotesRegressionTests(unittest.TestCase):
             session_id=ledger.session,
             attempt_id=attempt['attempt_id'],
             verifier=self.pass_verifier,
+            stability_interval=0,
+        )
+        return identity, key, attempt, completion
+
+    def complete_media_download_only(self, ledger, kind, label, *,
+                                     post_key_value=None, identity=None):
+        identity = identity or notes.media_identity(
+            kind=kind, visual_key=label)
+        if post_key_value is None:
+            _, post_key_value = self.observe_post(ledger, label, [identity])
+        key = self.media_key(ledger, post_key_value, identity)
+        attempt = ledger.records.intent(
+            session_id=ledger.session, media_key_value=key)
+        staging = Path(attempt['destination'])
+        filename = 'complete.png' if kind == PHOTO else 'complete.mp4'
+        (staging / filename).write_bytes(PNG_1X1)
+        ledger.records.outcome(
+            session_id=ledger.session,
+            attempt_id=attempt['attempt_id'],
+            outcome='DOWNLOAD_FINISHED',
+            evidence=ledger.evidence_for_attempt(attempt),
+        )
+        completion = ledger.records.download_check(
+            session_id=ledger.session,
+            attempt_id=attempt['attempt_id'],
             stability_interval=0,
         )
         return identity, key, attempt, completion
@@ -3546,6 +3622,471 @@ class NotesRegressionTests(unittest.TestCase):
             self.reopen(ledger2).summary()
         self.assertEqual(raised.exception.args[0],
                          'INTENT_AFTER_SOURCE_UNAVAILABLE')
+
+    def test_page_assert_post_keys_accepts_exact_and_new_post_slots(self):
+        ledger = self.new_ledger('page-assert-post-keys-accept')
+        identities = [
+            notes.post_identity(visual_key='page-assert-post-%d' % index)
+            for index in range(5)
+        ]
+        keys = [notes.post_key(ledger.summary['list_key'], identity)
+                for identity in identities]
+        records = ledger.records
+        list_key_value = ledger.summary['list_key']
+        scan = records.scan(
+            session_id=ledger.session, action='START',
+            evidence=ledger.evidence(list_key=list_key_value))
+
+        def rows(*indexes):
+            return [dict(identity=identities[index], date_summary='synthetic')
+                    for index in indexes]
+
+        records.page(
+            session_id=ledger.session, scan_id=scan['scan_id'],
+            page_index=0, posts=rows(0, 1), top_reached=True,
+            bottom_reached=False, overlap_keys=[], evidence=ledger.evidence(
+                list_key=list_key_value, scan_id=scan['scan_id']),
+            assert_post_keys=keys[:2])
+        records.page(
+            session_id=ledger.session, scan_id=scan['scan_id'],
+            page_index=1, posts=rows(1, 2), top_reached=False,
+            bottom_reached=False, overlap_keys=[keys[1]], evidence=ledger.evidence(
+                list_key=list_key_value, scan_id=scan['scan_id']),
+            assert_post_keys=[keys[1], None])
+        records.page(
+            session_id=ledger.session, scan_id=scan['scan_id'],
+            page_index=2, posts=rows(2, 3), top_reached=False,
+            bottom_reached=False, overlap_keys=[keys[2]], evidence=ledger.evidence(
+                list_key=list_key_value, scan_id=scan['scan_id']),
+            assert_post_keys=[None, None])
+        records.page(
+            session_id=ledger.session, scan_id=scan['scan_id'],
+            page_index=3, posts=rows(3, 4), top_reached=False,
+            bottom_reached=True, overlap_keys=[keys[3]], evidence=ledger.evidence(
+                list_key=list_key_value, scan_id=scan['scan_id']))
+        records.scan(
+            session_id=ledger.session, action='FINISH',
+            scan_id=scan['scan_id'],
+            evidence=ledger.evidence(list_key=list_key_value,
+                                     scan_id=scan['scan_id']))
+
+        events = self.read_events(records)
+        pages = [event for event in events if event['kind'] == 'page']
+        expected_data_keys = {
+            'schema', 'scan_id', 'session_id', 'page_index', 'top_reached',
+            'bottom_reached', 'overlap_keys', 'posts', 'evidence'}
+        for page in pages:
+            self.assertEqual(set(page['data']), expected_data_keys)
+        self.assertEqual(
+            [[row['post_key'] for row in page['data']['posts']]
+             for page in pages],
+            [[keys[0], keys[1]], [keys[1], keys[2]],
+             [keys[2], keys[3]], [keys[3], keys[4]]])
+
+        reopened = self.reopen(ledger)
+        summary = reopened.summary()
+        self.assertEqual(summary['scan_coverage'], 'COMPLETE')
+        self.assertEqual([row['post_key'] for row in summary['posts']], keys)
+        audit = reopened.evidence_audit()
+        self.assertEqual(audit['event_chain'], 'VERIFIED')
+        self.assertTrue(audit['integrity_ok'])
+
+    def test_page_assert_post_keys_mismatch_refuses_before_append_and_allows_fixed_retry(self):
+        ledger = self.new_ledger('page-assert-post-keys-mismatch')
+        records = ledger.records
+        list_key_value = ledger.summary['list_key']
+        lead = notes.post_identity(visual_key='page-key-mismatch-lead')
+        historical_visual = 'page-key-mismatch-target-' + ('v' * 70)
+        historical_anchor = 'a' * 191
+        target = notes.post_identity(
+            visual_key=historical_visual,
+            signals={'text_anchor': historical_anchor})
+        original_text_sha256 = hashlib.sha256(b'historical post text').hexdigest()
+        media = notes.media_identity(
+            kind=PHOTO, visual_key='page-key-mismatch-target-media')
+        self.scan_with_pages(ledger, [([lead, target], [])])
+        lead_key = notes.post_key(list_key_value, lead)
+        target_key = notes.post_key(list_key_value, target)
+        records.record_post(
+            session_id=ledger.session, post_key_value=lead_key,
+            date_summary='synthetic', media_count=0, text_sha256=None,
+            evidence=ledger.evidence_for_post(lead_key), no_media=True)
+        records.record_post(
+            session_id=ledger.session, post_key_value=target_key,
+            date_summary='synthetic', media_count=1,
+            text_sha256=original_text_sha256,
+            evidence=ledger.evidence_for_post(target_key), no_media=False)
+        records.record_media(
+            session_id=ledger.session, post_key_value=target_key,
+            items=[dict(identity=media)], missing=[],
+            evidence=ledger.evidence_for_post(target_key))
+        (_media, media_key_value, _attempt,
+         completion) = self.complete_media_download_only(
+            ledger, PHOTO, 'page-key-mismatch-target-media',
+            post_key_value=target_key, identity=media)
+        self.assertEqual(completion['kind'], 'completion')
+        self.assertEqual(completion['data']['media_key'], media_key_value)
+        original_completion = copy.deepcopy(completion)
+
+        scan = records.scan(
+            session_id=ledger.session, action='START',
+            evidence=ledger.evidence(list_key=list_key_value))
+        records.page(
+            session_id=ledger.session, scan_id=scan['scan_id'],
+            page_index=0, posts=[dict(identity=lead,
+                                      date_summary='synthetic')],
+            top_reached=True, bottom_reached=False, overlap_keys=[],
+            evidence=ledger.evidence(list_key=list_key_value,
+                                     scan_id=scan['scan_id']),
+            assert_post_keys=[lead_key])
+        drifted = notes.post_identity(
+            visual_key=historical_visual[:63],
+            signals={'text_anchor': historical_anchor[:99]})
+        drifted_key = notes.post_key(list_key_value, drifted)
+        self.assertNotEqual(drifted_key, target_key)
+        rejected_posts = [
+            dict(identity=lead, date_summary='synthetic'),
+            dict(identity=drifted, date_summary='synthetic'),
+        ]
+        rejected_asserts = [lead_key, target_key]
+
+        api_bundle = self.fresh_evidence(
+            ledger, 'page-key-mismatch-api',
+            list_key=list_key_value, scan_id=scan['scan_id'])
+        before = self.ledger_file_snapshot(records)
+        with self.assertRaises(NotesError) as raised:
+            records.page(
+                session_id=ledger.session, scan_id=scan['scan_id'],
+                page_index=1, posts=rejected_posts, top_reached=False,
+                bottom_reached=True, overlap_keys=[lead_key],
+                evidence=api_bundle, assert_post_keys=rejected_asserts)
+        self.assertEqual(raised.exception.args[0], 'PAGE_POST_KEY_MISMATCH')
+        after = self.ledger_file_snapshot(records)
+        self.assertEqual(after, before)
+        self.assertFalse(self.bundle_sha256s(api_bundle) &
+                         set(after['evidence']))
+
+        case = ledger.evidence_packs.parent
+        rejected_posts_path = case / 'rejected-page-posts.json'
+        rejected_posts_path.write_bytes(encoded(rejected_posts))
+        rejected_asserts_path = case / 'rejected-page-asserts.json'
+        rejected_asserts_path.write_bytes(encoded(rejected_asserts))
+        cli_bundle = self.fresh_evidence(
+            ledger, 'page-key-mismatch-cli',
+            list_key=list_key_value, scan_id=scan['scan_id'])
+        before_cli = self.ledger_file_snapshot(records)
+        code, payload = self.run_notes_cli(
+            'page', '--records-root', records.records,
+            '--session-id', ledger.session, '--scan-id', scan['scan_id'],
+            '--page-index', 1, '--posts', '@' + str(rejected_posts_path),
+            '--overlap-keys', json.dumps([lead_key]),
+            '--assert-post-keys', '@' + str(rejected_asserts_path),
+            '--bottom-reached', '--evidence', cli_bundle)
+        after_cli = self.ledger_file_snapshot(records)
+        self.assertEqual(code, 4)
+        self.assertEqual(payload['status'], 'REFUSED')
+        self.assertEqual(payload['reason'], 'PAGE_POST_KEY_MISMATCH')
+        self.assertFalse(payload['dispatch_authorized'])
+        self.assertNotIn('retry_safe', payload)
+        self.assertEqual(after_cli, before_cli)
+        self.assertFalse(self.bundle_sha256s(cli_bundle) &
+                         set(after_cli['evidence']))
+        rejected_posts_bytes = rejected_posts_path.read_bytes()
+        rejected_asserts_bytes = rejected_asserts_path.read_bytes()
+        cli_bundle_bytes = Path(cli_bundle).read_bytes()
+
+        fixed_posts = [
+            dict(identity=lead, date_summary='synthetic'),
+            dict(identity=target, date_summary='synthetic'),
+        ]
+        fixed_posts_path = case / 'fixed-page-posts.json'
+        fixed_posts_path.write_bytes(encoded(fixed_posts))
+        fixed_posts_bytes = fixed_posts_path.read_bytes()
+        fixed_token = uuid.uuid4().hex
+        fixed_statement = case / ('fixed-page-statement-' + fixed_token + '.txt')
+        fixed_statement_bytes = (
+            'fixed page retry\nposts_sha256=' +
+            hashlib.sha256(fixed_posts_bytes).hexdigest() +
+            '\nposts=' + fixed_posts_bytes.decode('utf-8') +
+            '\nassert_post_keys=' + json.dumps(rejected_asserts)
+        ).encode('utf-8')
+        fixed_statement.write_bytes(fixed_statement_bytes)
+        fixed_screenshot = case / ('fixed-page-screenshot-' + fixed_token + '.txt')
+        fixed_screenshot.write_bytes(('fixed screenshot ' + fixed_token).encode(
+            'utf-8'))
+        fixed_bundle = notes_evidence.create_bundle(
+            statement=str(fixed_statement),
+            assets=[('screenshot', str(fixed_screenshot))],
+            context=dict(list_key=list_key_value, scan_id=scan['scan_id']),
+            output_dir=str(case / ('fixed-page-evidence-' + fixed_token)),
+        )['bundle_path']
+        fixed_bundle_bytes = Path(fixed_bundle).read_bytes()
+        fixed_bundle_data = json.loads(fixed_bundle_bytes)
+        fixed_bundle_sha256 = hashlib.sha256(fixed_bundle_bytes).hexdigest()
+        fixed_statement_sha256 = fixed_bundle_data['statement_ref']['sha256']
+        self.assertIn(fixed_posts_bytes, fixed_statement_bytes)
+        self.assertIn(json.dumps(rejected_asserts).encode('utf-8'),
+                      fixed_statement_bytes)
+        code, fixed_payload = self.run_notes_cli(
+            'page', '--records-root', records.records,
+            '--session-id', ledger.session, '--scan-id', scan['scan_id'],
+            '--page-index', 1, '--posts', '@' + str(fixed_posts_path),
+            '--overlap-keys', json.dumps([lead_key]),
+            '--assert-post-keys', '@' + str(rejected_asserts_path),
+            '--bottom-reached', '--evidence', fixed_bundle)
+        self.assertEqual(code, 0)
+        self.assertEqual(fixed_payload['schema'], 'line-notes-page/v1')
+        self.assertEqual(fixed_payload['posts'][1]['post_key'], target_key)
+        self.assertEqual(rejected_posts_path.read_bytes(), rejected_posts_bytes)
+        self.assertEqual(rejected_asserts_path.read_bytes(),
+                         rejected_asserts_bytes)
+        self.assertEqual(Path(cli_bundle).read_bytes(), cli_bundle_bytes)
+
+        records.scan(
+            session_id=ledger.session, action='FINISH',
+            scan_id=scan['scan_id'],
+            evidence=ledger.evidence(list_key=list_key_value,
+                                     scan_id=scan['scan_id']))
+        records.record_post(
+            session_id=ledger.session, post_key_value=lead_key,
+            date_summary='synthetic', media_count=0, text_sha256=None,
+            evidence=ledger.evidence_for_post(lead_key), no_media=True)
+        records.record_post(
+            session_id=ledger.session, post_key_value=target_key,
+            date_summary='synthetic', media_count=1,
+            text_sha256=original_text_sha256,
+            evidence=ledger.evidence_for_post(target_key), no_media=False)
+        records.record_media(
+            session_id=ledger.session, post_key_value=target_key,
+            items=[dict(identity=media)], missing=[],
+            evidence=ledger.evidence_for_post(target_key))
+
+        reopened = self.reopen(ledger)
+        summary = reopened.summary()
+        self.assertEqual(summary['scan_coverage'], 'COMPLETE')
+        self.assertEqual([row['source_order'] for row in summary['posts']],
+                         [0, 1])
+        target_row = next(row for row in summary['posts']
+                          if row['post_key'] == target_key)
+        target_media = next(row for row in target_row['media']
+                            if row['media_key'] == media_key_value)
+        self.assertEqual(target_media['status'], 'COMPLETED')
+        self.assertEqual(summary['status_counts']['COMPLETED'], 1)
+        self.assertTrue(summary['all_known_media_complete'])
+
+        events = self.read_events(records)
+        completion_after = next(event for event in events
+                                if event['kind'] == 'completion')
+        self.assertEqual(completion_after, original_completion)
+        self.assertNotIn(drifted_key, encoded(events).decode('utf-8'))
+        page_after = [
+            event for event in events
+            if event['kind'] == 'page' and
+            event['data']['scan_id'] == scan['scan_id']][-1]
+        self.assertEqual(page_after['data']['posts'][1]['post_key'],
+                         target_key)
+        retry_evidence = self.ledger_file_snapshot(records)['evidence']
+        self.assertEqual(page_after['data']['evidence']['sha256'],
+                         fixed_bundle_sha256)
+        self.assertNotEqual(page_after['data']['evidence']['sha256'],
+                            hashlib.sha256(cli_bundle_bytes).hexdigest())
+        self.assertFalse(self.bundle_sha256s(cli_bundle) & set(retry_evidence))
+        self.assertIn(fixed_bundle_sha256, retry_evidence)
+        self.assertIn(fixed_statement_sha256, retry_evidence)
+        self.assertEqual(retry_evidence[fixed_statement_sha256],
+                         fixed_statement_bytes)
+        self.assertTrue(reopened.evidence_audit()['integrity_ok'])
+
+    def test_page_assert_post_keys_cross_run_text_edit_preserves_completed_media(self):
+        ledger = self.new_ledger('page-assert-cross-run-text')
+        records = ledger.records
+        list_key_value = ledger.summary['list_key']
+        stable_visual = 'page-assert-cross-run-stable-post'
+        post = notes.post_identity(visual_key=stable_visual)
+        post_key_value = notes.post_key(list_key_value, post)
+        media = notes.media_identity(
+            kind=PHOTO, visual_key='page-assert-cross-run-media')
+        media_key_value = notes.media_key(list_key_value, post_key_value, media)
+        original_text_sha256 = hashlib.sha256(b'original text').hexdigest()
+        edited_text_sha256 = hashlib.sha256(b'edited text').hexdigest()
+        self.scan_with_pages(ledger, [([post], [])])
+        records.record_post(
+            session_id=ledger.session, post_key_value=post_key_value,
+            date_summary='synthetic', media_count=1,
+            text_sha256=original_text_sha256,
+            evidence=ledger.evidence_for_post(post_key_value), no_media=False)
+        records.record_media(
+            session_id=ledger.session, post_key_value=post_key_value,
+            items=[dict(identity=media)], missing=[],
+            evidence=ledger.evidence_for_post(post_key_value))
+        _identity, completed_key, _attempt, completion = self.complete_media(
+            ledger, PHOTO, 'page-assert-cross-run-media',
+            post_key_value=post_key_value, identity=media)
+        self.assertEqual(completed_key, media_key_value)
+        self.assertEqual(completion['data']['media_key'], media_key_value)
+
+        scan = records.scan(
+            session_id=ledger.session, action='START',
+            evidence=ledger.evidence(list_key=list_key_value))
+        records.page(
+            session_id=ledger.session, scan_id=scan['scan_id'],
+            page_index=0, posts=[dict(identity=post,
+                                      date_summary='synthetic')],
+            top_reached=True, bottom_reached=True, overlap_keys=[],
+            evidence=ledger.evidence(list_key=list_key_value,
+                                     scan_id=scan['scan_id']),
+            assert_post_keys=[post_key_value])
+        records.scan(
+            session_id=ledger.session, action='FINISH',
+            scan_id=scan['scan_id'],
+            evidence=ledger.evidence(list_key=list_key_value,
+                                     scan_id=scan['scan_id']))
+        records.record_post(
+            session_id=ledger.session, post_key_value=post_key_value,
+            date_summary='synthetic', media_count=1,
+            text_sha256=edited_text_sha256,
+            evidence=ledger.evidence_for_post(post_key_value), no_media=False)
+        records.record_media(
+            session_id=ledger.session, post_key_value=post_key_value,
+            items=[dict(identity=media)], missing=[],
+            evidence=ledger.evidence_for_post(post_key_value))
+
+        reopened = self.reopen(ledger)
+        summary = reopened.summary()
+        self.assertEqual(len(summary['posts']), 1)
+        self.assertEqual(summary['posts'][0]['post_key'], post_key_value)
+        self.assertEqual(summary['posts'][0]['text_sha256'],
+                         edited_text_sha256)
+        self.assertEqual(summary['posts'][0]['media'][0]['media_key'],
+                         media_key_value)
+        self.assertEqual(summary['posts'][0]['media'][0]['status'],
+                         'COMPLETED')
+        self.assertEqual(summary['status_counts']['COMPLETED'], 1)
+        self.assertTrue(summary['all_known_media_complete'])
+
+        counter_scan = records.scan(
+            session_id=ledger.session, action='START',
+            evidence=ledger.evidence(list_key=list_key_value))
+        drifted = notes.post_identity(
+            visual_key=stable_visual,
+            signals={'text_sha256': edited_text_sha256})
+        drifted_key = notes.post_key(list_key_value, drifted)
+        self.assertNotEqual(drifted_key, post_key_value)
+        counter_bundle = self.fresh_evidence(
+            ledger, 'page-assert-cross-run-counter',
+            list_key=list_key_value, scan_id=counter_scan['scan_id'])
+        before = self.ledger_file_snapshot(records)
+        with self.assertRaises(NotesError) as raised:
+            records.page(
+                session_id=ledger.session, scan_id=counter_scan['scan_id'],
+                page_index=0,
+                posts=[dict(identity=drifted, date_summary='synthetic')],
+                top_reached=True, bottom_reached=True, overlap_keys=[],
+                evidence=counter_bundle,
+                assert_post_keys=[post_key_value])
+        self.assertEqual(raised.exception.args[0], 'PAGE_POST_KEY_MISMATCH')
+        after = self.ledger_file_snapshot(records)
+        self.assertEqual(after, before)
+        self.assertFalse(self.bundle_sha256s(counter_bundle) &
+                         set(after['evidence']))
+        self.assertNotIn(drifted_key,
+                         encoded(self.read_events(records)).decode('utf-8'))
+
+    def test_page_assert_post_keys_rejects_invalid_shapes_and_preserves_evidence_abbrev(self):
+        ledger = self.new_ledger('page-assert-invalid-shapes')
+        records = ledger.records
+        list_key_value = ledger.summary['list_key']
+        post = notes.post_identity(visual_key='page-assert-invalid-post')
+        second_post = notes.post_identity(
+            visual_key='page-assert-invalid-second-post')
+        post_key_value = notes.post_key(list_key_value, post)
+        second_key = notes.post_key(list_key_value, second_post)
+        scan = records.scan(
+            session_id=ledger.session, action='START',
+            evidence=ledger.evidence(list_key=list_key_value))
+        row = dict(identity=post, date_summary='synthetic')
+        second_row = dict(identity=second_post, date_summary='synthetic')
+        cases = [
+            ('dict', [row], {'key': post_key_value}),
+            ('string', [row], 'not-a-list'),
+            ('int', [row], 1),
+            ('short-list', [row], []),
+            ('long-list', [row], [post_key_value, None]),
+            ('empty-element', [row], ['']),
+            ('uppercase-element', [row], [post_key_value.upper()]),
+            ('short-hex-element', [row], ['a' * 63]),
+            ('int-element', [row], [1]),
+            ('bool-element', [row], [True]),
+            ('dict-element', [row], [{}]),
+            ('duplicate-element', [row, second_row],
+             [post_key_value, post_key_value]),
+        ]
+        for label, posts, invalid in cases:
+            with self.subTest(label=label):
+                bundle = self.fresh_evidence(
+                    ledger, 'page-assert-invalid-' + label,
+                    list_key=list_key_value, scan_id=scan['scan_id'])
+                before = self.ledger_file_snapshot(records)
+                with self.assertRaises(NotesError) as raised:
+                    records.page(
+                        session_id=ledger.session,
+                        scan_id=scan['scan_id'], page_index=0, posts=posts,
+                        top_reached=True, bottom_reached=True,
+                        overlap_keys=[], evidence=bundle,
+                        assert_post_keys=invalid)
+                self.assertEqual(raised.exception.args[0],
+                                 'INVALID_ASSERT_POST_KEYS')
+                after = self.ledger_file_snapshot(records)
+                self.assertEqual(after, before)
+                self.assertFalse(self.bundle_sha256s(bundle) &
+                                 set(after['evidence']))
+
+        case_root = ledger.evidence_packs.parent
+        null_file = case_root / 'assert-post-keys-null.json'
+        null_file.write_bytes(b'null')
+        for label, value in (('inline', 'null'),
+                             ('file', '@' + str(null_file))):
+            with self.subTest(label='cli-null-' + label):
+                bundle = self.fresh_evidence(
+                    ledger, 'page-assert-cli-null-' + label,
+                    list_key=list_key_value, scan_id=scan['scan_id'])
+                before = self.ledger_file_snapshot(records)
+                code, payload = self.run_notes_cli(
+                    'page', '--records-root', records.records,
+                    '--session-id', ledger.session,
+                    '--scan-id', scan['scan_id'], '--page-index', 0,
+                    '--posts', json.dumps([row]), '--top-reached',
+                    '--bottom-reached', '--assert-post-keys', value,
+                    '--evidence', bundle)
+                self.assertEqual(code, 4)
+                self.assertEqual(payload['status'], 'REFUSED')
+                self.assertEqual(payload['reason'],
+                                 'INVALID_ASSERT_POST_KEYS')
+                self.assertFalse(payload['dispatch_authorized'])
+                self.assertNotIn('retry_safe', payload)
+                self.assertEqual(self.ledger_file_snapshot(records), before)
+
+        invalid_json_bundle = self.fresh_evidence(
+            ledger, 'page-assert-invalid-json',
+            list_key=list_key_value, scan_id=scan['scan_id'])
+        before_invalid_json = self.ledger_file_snapshot(records)
+        result = self.run_notes_process(
+            'page', '--records-root', records.records,
+            '--session-id', ledger.session, '--scan-id', scan['scan_id'],
+            '--page-index', 0, '--posts', json.dumps([row]),
+            '--top-reached', '--bottom-reached', '--assert-post-keys', '[',
+            '--evidence', invalid_json_bundle)
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(self.ledger_file_snapshot(records),
+                         before_invalid_json)
+
+        parsed = notes._build_notes_parser().parse_args([
+            'page', '--records-root', '/tmp/records', '--session-id',
+            'synthetic-session', '--scan-id', 'synthetic-scan',
+            '--page-index', '0', '--posts', '[]', '--top-reached',
+            '--bottom-reached', '--e', '/tmp/e'])
+        self.assertEqual(parsed.evidence, '/tmp/e')
+        self.assertIsNone(parsed.assert_post_keys)
 
 
 if __name__ == '__main__':

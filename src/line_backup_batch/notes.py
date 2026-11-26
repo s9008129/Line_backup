@@ -3770,13 +3770,25 @@ class NotesRecords:
             return data
 
     def page(self, *, session_id, scan_id, page_index, posts,
-             top_reached, bottom_reached, overlap_keys, evidence):
+             top_reached, bottom_reached, overlap_keys, evidence,
+             assert_post_keys=None):
         need(type(page_index) is int and page_index >= 0,
              'INVALID_PAGE_INDEX')
         need(isinstance(posts, list), 'INVALID_PAGE_POSTS')
         need(isinstance(overlap_keys, list) and
              all(isinstance(key, str) for key in overlap_keys),
              'INVALID_OVERLAP_KEYS')
+        if assert_post_keys is not None:
+            need(isinstance(assert_post_keys, list) and
+                 len(assert_post_keys) == len(posts),
+                 'INVALID_ASSERT_POST_KEYS')
+            seen_expected = set()
+            for expected in assert_post_keys:
+                if expected is not None:
+                    _hex(expected, 'INVALID_ASSERT_POST_KEYS')
+                    need(expected not in seen_expected,
+                         'INVALID_ASSERT_POST_KEYS')
+                    seen_expected.add(expected)
         with self.locked():
             latest, scans = self._open_scan()
             need(latest is not None and latest == scan_id,
@@ -3797,7 +3809,7 @@ class NotesRecords:
                         next_order = max(next_order, row['source_order'] + 1)
             page_posts = []
             page_keys = set()
-            for row in posts:
+            for index, row in enumerate(posts):
                 need(isinstance(row, dict) and
                      set(row) <= {'identity', 'date_summary'} and
                      {'identity', 'date_summary'} <= set(row),
@@ -3805,6 +3817,10 @@ class NotesRecords:
                 identity = row['identity']
                 key = post_key(self.list_data['list_key'], identity)
                 need(key not in page_keys, 'DUPLICATE_POST_IN_PAGE')
+                if assert_post_keys is not None:
+                    expected_key = assert_post_keys[index]
+                    if expected_key is not None:
+                        need(key == expected_key, 'PAGE_POST_KEY_MISMATCH')
                 page_keys.add(key)
                 date_summary = row['date_summary']
                 need(isinstance(date_summary, str) and
@@ -8034,6 +8050,9 @@ def _build_notes_parser():
                       help='JSON array of {identity,date_summary} objects')
     page.add_argument('--overlap-keys', default='[]',
                       help='JSON array of post keys overlapping previous page')
+    page.add_argument(
+        '--assert-post-keys',
+        help='Optional JSON array or @JSON-file of expected 64-hex post keys (or null for new posts) aligned with --posts')
     page.add_argument('--top-reached', action='store_true')
     page.add_argument('--bottom-reached', action='store_true')
     page.add_argument('--evidence', required=True,
@@ -8295,12 +8314,19 @@ def main(argv=None):
                 posts = _json_cli_argument(parser, args.posts, '--posts')
                 overlap = _json_cli_argument(parser, args.overlap_keys,
                                              '--overlap-keys', [])
+                assert_post_keys = None
+                if args.assert_post_keys is not None:
+                    assert_post_keys = _json_cli_argument(
+                        parser, args.assert_post_keys, '--assert-post-keys')
+                    if assert_post_keys is None:
+                        raise NotesError('INVALID_ASSERT_POST_KEYS')
                 result = records.page(
                     session_id=args.session_id, scan_id=args.scan_id,
                     page_index=args.page_index, posts=posts,
                     top_reached=args.top_reached,
                     bottom_reached=args.bottom_reached,
-                    overlap_keys=overlap, evidence=args.evidence)
+                    overlap_keys=overlap, evidence=args.evidence,
+                    assert_post_keys=assert_post_keys)
             elif args.command == 'post':
                 if args.no_media:
                     if args.media_count not in (None, 0):

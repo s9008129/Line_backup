@@ -14,7 +14,12 @@
 - 同一 `--records-root`（`records` lock）或同一 `--collection`（`collection` lock）的所有 notes CLI 命令一律嚴格序列執行；不得以平行 shell 工作、背景程序或同回合並行工具呼叫同時執行 `summary`／`memory`／`evidence-audit` 與 `resume` 或其他帳本命令。`summary` 雖是唯讀業務命令，仍持 exclusive non-blocking `flock`，read-only 不代表可並行。
 - 成功的 JSON 與業務拒絕 JSON 固定含 `dispatch_authorized=false`；參數／必填欄位錯誤以 exit 2 結束，只在 stderr 顯示 argparse 錯誤，不輸出 JSON；已列業務拒絕以 exit 4 回傳 JSON；未預期內部錯誤以 exit 70 回傳 `status=INTERNAL_ERROR`、`reason=UNEXPECTED_EXCEPTION`、`dispatch_authorized=false`。`dispatch_authorized=false` 是簿記聲明，不是 GUI grant、已派送證明或 E2E PASS；不得把它改成 true 或當成 Owner 同意。
 - exit 70 不是可重試業務拒絕，不得據此重送、改寫 ledger、建立新 attempt、換目的地或換入口繞過；先停止並保留現場、原始 JSON、命令與證據，回報實作者／維護者。
-- 成功以 exit 0 回傳 JSON；實際使用時記錄命令、exit code 與原始輸出摘要。看到 70 時必須原樣記錄並停止，不能降格成 exit 4 或其他業務狀態。exit 2 僅表示參數／必填欄位錯誤；在尚無派送或不明寫入、可由現有輸出確定正確值時，可修正命令前置條件後重跑相同的唯讀／綁定操作。exit 4 只有在明確業務原因、`retry_safe` 與可證明無資料變更均成立時，才可依輸出修正前置條件。`NOTES_LOCK_BUSY` 時，唯讀命令（`lists`／`memory`／`summary`／`evidence-audit`／`restart preview`／`reattest preview`）回 `retry_safe=true`，可於鎖釋放後序列重試一次；寫入／交易命令（含 `resume`）回 `retry_safe=false`，須先停止並序列查帳本狀態，不得盲目重試。同一根因最多三次有證據嘗試，連續兩次無新資訊就停止。不得重播 intent／GUI、改帳本／目的地、手改 events，或把 exit 70 當可重試拒絕。
+- 成功以 exit 0 回傳 JSON；實際使用時記錄命令、exit code 與原始輸出摘要。看到 70 時必須原樣記錄並停止，不能降格成 exit 4 或其他業務狀態。exit 2 僅表示參數／必填欄位錯誤；在尚無派送或不明寫入、可由現有輸出確定正確值時，可修正命令前置條件後重跑相同的唯讀／綁定操作。除下列 `page` 寫入前預檢分支外，exit 4 只有在明確業務原因、`retry_safe` 與可證明無資料變更均成立時，才可依輸出修正前置條件。`NOTES_LOCK_BUSY` 時，唯讀命令（`lists`／`memory`／`summary`／`evidence-audit`／`restart preview`／`reattest preview`）回 `retry_safe=true`，可於鎖釋放後序列重試一次；寫入／交易命令（含 `resume`）回 `retry_safe=false`，須先停止並序列查帳本狀態，不得盲目重試。同一根因最多三次有證據嘗試，連續兩次無新資訊就停止。不得重播 intent／GUI、改帳本／目的地、手改 events，或把 exit 70 當可重試拒絕。
+- `page --assert-post-keys` 的 `PAGE_POST_KEY_MISMATCH` 與已解析輸入後的 `INVALID_ASSERT_POST_KEYS` 是寫入前預檢的 exit-4 業務拒絕；兩者都不含 `retry_safe`，且 CLI 在 `_preserve_evidence` 與 `append` 前中止，事件與 evidence 均零寫入。`retry_safe` 仍只屬 `NOTES_LOCK_BUSY` 鎖競爭契約；非法 JSON 語法或不存在的 `@file` 屬 exit 2，不是此 exit-4 分支。`INVALID_ASSERT_POST_KEYS` 的陣列形狀／元素／對齊條件見[必填參數矩陣](#必填參數矩陣)。
+- 重試前置核對（兩分支共用）：必須以本頁提交前已讀回的 `summary.expected_tip` 為基準。拒絕後先序列讀回 `summary`，確認 `expected_tip` 與基準完全相同；再唯讀核對既有 `scan`／`page` 事件，確認原 `scan_id` 仍開放（既無 `COMPLETE` 亦無 `INTERRUPTED`）、綁定 `session_id` 與下一 `page_index` 均相符。`summary` 對開放與中斷掃描都顯示 `IN_PROGRESS` 且不列 `scan_id`，不能取代這項事件核對；最後仍由 `page` 的 records lock 內部以 `CURRENT_SCAN_REQUIRED`／`SCAN_ALREADY_COMPLETE`／`PAGE_SESSION_CHANGED`／`PAGE_SEQUENCE_CHANGED` 決定是否接受重試。前置不符時保留原檔與現場，不把鎖內拒絕當成可繞過。
+- 統一重試證據規則（兩分支共用）：無論 `PAGE_POST_KEY_MISMATCH` 或 `INVALID_ASSERT_POST_KEYS`，一律保留被拒絕的原 `--posts`、原 `--assert-post-keys`（若有存檔）與原 v2 bundle，不覆寫。將修正後的 `--posts` 及／或修正後的 `--assert-post-keys` 另存新私有檔案，撰寫反映實際重試輸入（修正後 rows 與斷言陣列）的新 statement，以既有 `evidence-pack` 封裝至新 `--output-dir` 產生新 v2 bundle，再傳入重試 `--evidence`；當次觀察仍有效時，可沿用原始 AX 與截圖檔，但不得覆寫原 asset、沿用引用舊輸入的舊 bundle 或省略 `--assert-post-keys` 繞過拒絕。重試仍受同一根因最多三次有證據嘗試、連續兩次無新資訊即停的上限約束。
+- `PAGE_POST_KEY_MISMATCH` 分流：核對待提交 `--posts`、獨立核對過的完成掃描／歷史事件／前頁成功讀回 row 與當次觀察。若確認來源卡為未變歷史貼文（或跨輪可唯一確認同一篇之文字編輯），且差異源自 payload 轉錄／組裝漂移，保留原已核對的 `--assert-post-keys`，依統一規則從權威來源原樣重建新 `--posts` 與新 bundle 後重試；若無法唯一確認為同一篇或屬本輪覆蓋漂移，依 `gui-inventory.md` 保護／停止，不得硬套舊 `identity`。
+- `INVALID_ASSERT_POST_KEYS` 分流：從獨立核對過的完成掃描／既有歷史事件／前頁成功讀回 row（排除失敗頁 row）重建合法且與 `--posts` 等長的 `--assert-post-keys` 陣列，另存新陣列檔，再依統一規則封裝與實際重試輸入一致的新 bundle 後重試。
 - 業務拒絕後不得改寫事件、另開空帳、重設 ledger、換目的地或改走相簿流程繞過。先讀拒絕原因及既有事件，仍不能安全處理就保留阻塞。
 
 ## 合格環境附屬項
@@ -35,7 +40,7 @@
 | `init` | 建立新的記事本帳本 | 只用於已證明的新列表；歷史缺損、索引毀損或候選歧義時拒絕 |
 | `bind` | 將當次列表與既有帳本綁定 | 須有真實前景／觀察 evidence；不靠名稱、日期或張數猜配 |
 | `scan` | 建立本次 Session 的新盤點 | 每個新 Session 開新 scan；不重用舊 cursor、舊座標或舊畫面 |
-| `page` | 保存有頂底／重疊證據的列表頁 | 前後頁要有序重疊；未解卡片不得省略或假裝完成 |
+| `page` | 保存有頂底／重疊證據的列表頁 | 前後頁要有序重疊；未解卡片不得省略或假裝完成；可選 `--assert-post-keys` 於寫入前預檢對齊的預期 `post_key` |
 | `post` | 保存貼文身分、順序、媒體候選及 `NO_MEDIA` | 文字／日期／總數不能單獨認領；貼文層與媒體層分開 |
 | `media` | 保存逐媒體觀察與來源順序 | 同外觀／同 hash 仍各自保存；新媒體取目前最大編號加一 |
 | `intent` | 在派送前保存 attempt、新空白暫存目錄及禁止重送 | 必須先持久保存並讀回；寫入後按「可能已派送」對待。`--restart-id` 只限已確認批次；安全隔離後由 CLI 建立 `line-notes-intent/v5`，只有這次 append 消耗跨 Session 一次額度 |
@@ -77,7 +82,8 @@ scan start   --records-root RECORDS_ROOT --session-id SESSION_ID --evidence FILE
 scan finish  --records-root RECORDS_ROOT --session-id SESSION_ID
              --scan-id SCAN_ID --evidence FILE
 page         --records-root RECORDS_ROOT --session-id SESSION_ID
-             --scan-id SCAN_ID --page-index N --posts JSON --evidence FILE
+             --scan-id SCAN_ID --page-index N --posts JSON
+             [--assert-post-keys JSON_OR_@FILE] --evidence FILE
 post         --records-root RECORDS_ROOT --session-id SESSION_ID
              --post-key KEY --date-summary TEXT
              (--media-count N | --no-media) --evidence FILE
@@ -125,6 +131,8 @@ protect      --records-root RECORDS_ROOT --media-key KEY
 ```
 
 `--items` 是當次可下載、仍存在的媒體，依相對來源順序排列；`--missing` 只接受先前已存在的 media key，格式為 `{media_key, source_order, reason}`。`source_order` 是當次整體 slot 的 0-based 位置，writer 會讓 present items 填入其餘 slot；不得用猜測的序號建立新身分。
+
+`page --assert-post-keys` 接受 strict JSON 陣列或 `@JSON_FILE`，必須與 `--posts` 等長且逐槽對齊：既有歷史貼文／前頁 overlap 填預期 64 位小寫十六進位 `post_key`，確實新發現貼文填 `null`（可有多個 `null`）。明確傳入 JSON `null`、非陣列、長度不符、非法元素（含空字串、大寫 hex、非 64 字元、數字、布林、物件／陣列）或重複非空鍵，回 exit 4 `INVALID_ASSERT_POST_KEYS`；非法 JSON 語法或不存在的 `@file` 仍為 exit 2。此旗標僅作寫入前斷言，不變更 `line-notes-page/v1` 事件欄位或既有帳本；省略時保留既有相容行為。日常 page 對帳仍須傳入對齊陣列；`--a` 前綴不與既有 `--e`／`--evidence` 縮寫衝突。
 
 `scan start` 禁止 `--scan-id`；`scan finish` 必須有 `--scan-id`。日常 `download-check` 不需 decoder；舊 `verify` 的照片 decoder 參數仍按舊介面成對提供、影片不傳照片參數。`download-check` 只有在 magic MIME 明確為 `text/plain`、`text/html`、`application/pdf` 或 `application/zip` 時才追加 `line-notes-download-exclusion/v1` 並保留 staging；不寫 completion，也不推論來源原件的類別。未知 MIME、`application/octet-stream` 或 MIME／suffix 不相符時維持 pending 並拒絕完成。`post` 的 `--no-media` 與非零 `--media-count` 衝突。未知種類使用 `identity.kind=UNCLASSIFIED`；既有媒體沿用原 key／identity，不為取得種類或避開歷史另建 key。`isolate --expected-tip` 只接受 strict JSON 字串或 `@JSON-file`，物件為目前鏈頭的精確 `{"sequence":N,"sha256":"…"}`；caller 不填 media key、scan id、destination、disposition、額度或 event refs，均由 CLI 從 exact `--attempt-id` 與帳本導出。
 
