@@ -1,0 +1,62 @@
+{
+  "schema": "line-notes-planning-sources/v1",
+  "planning_input_head": "3b12e41cd12e458118e94f62feab8da3c6054db9",
+  "plan_version": "draft-v1",
+  "plan_sha256": "b94e307fecd12e5ddf29a6296d56492fc883318f77f2ba10cc957d8f18b43ac2",
+  "sources": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "951d88cb6baed66e1feb2301822efa2b45bab198eaba9a94d99dbe1b15fd3e00"
+    },
+    {
+      "path": "docs/plans/20261112-notes-download-control/startup-resumption-review/issue-analysis.md",
+      "sha256": "d7783c0b02b22cda42e9a387b5f028813ae7292efd5716a02d28d7d191a9797e"
+    },
+    {
+      "path": "docs/plans/20261112-notes-download-control/問題提報單-啟動阻塞與流程負擔.md",
+      "sha256": "34796a1b985a038061c98ea8ae21f7504ed90591fa4b363aa31e34067f288c4b"
+    },
+    {
+      "path": "docs/plans/20261112-notes-download-control/issue-analysis.md",
+      "sha256": "52bc6a7304aa6110ee8a95e7080760d064b5108301b3c36a5701aceefeac9750"
+    },
+    {
+      "path": "docs/plans/20261112-notes-download-control/plan.md",
+      "sha256": "fba0ca1fa9b4618b29ce424cde251405220eba0e4f092a8ad81421098d6fd437"
+    },
+    {
+      "path": "docs/plans/20261112-notes-download-control/handoff.md",
+      "sha256": "168d96c216f2b7352e5f2730218798cf5d0d73aab92095a2478dda7bbb702b46"
+    },
+    {
+      "path": "docs/plans/20261112-notes-download-control/next-agent-prompt.md",
+      "sha256": "d9755340c2df5a56fc7ec23edd61c2bf39a7551167a875ab4b44e6910646a023"
+    },
+    {
+      "path": ".agents/skills/line-notes-agent-cua/SKILL.md",
+      "sha256": "6ec7361e5cb2c932df11951484555348d760ed30e1c35d23e58a6dbedd44cf32"
+    },
+    {
+      "path": ".agents/skills/line-notes-agent-cua/references/gui-inventory.md",
+      "sha256": "05e7763eb3c30571dfe2a07950577324fff3e731c6edb90c8de33b0c80289731"
+    },
+    {
+      "path": ".agents/skills/line-notes-agent-cua/references/download-and-ledger.md",
+      "sha256": "1b1d5890f49d1327929a2ac64993c86e3d714857d3d8eb460fdbcf5dbdd5e814"
+    },
+    {
+      "path": "docs/LINE相簿備份_使用手冊.md",
+      "sha256": "2839bd4c9e3a3febf44fd6cbb136d332b3aea9163bd3a27ff6ecf909c2f9625e"
+    },
+    {
+      "path": "src/line_backup_batch/notes.py",
+      "sha256": "75bf2f7663fbd21106ea61da3c50da66262f962a9a36fe0a3b021a89909654aa"
+    }
+  ],
+  "evidence_limitations": [
+    "source reports are not current LINE observations",
+    "no live ledger or media read",
+    "no product tests or GUI executed",
+    "commit carrying the plan differs from planning input head"
+  ]
+}
