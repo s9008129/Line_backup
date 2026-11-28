@@ -9,6 +9,8 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = ROOT / '.agents' / 'skills' / 'line-notes-agent-cua' / 'references' / 'evidence-template.md'
+MODULE = TEMPLATE.with_name('cua-evidence-tools.mjs')
+MODULE_PLACEHOLDER = "'/ABS/REPO_ROOT/%s'" % MODULE.relative_to(ROOT).as_posix()
 TASKS = ROOT / '.local' / 'line-backup' / 'tasks'
 START = '<!-- cua-evidence-tools:start -->'
 END = '<!-- cua-evidence-tools:end -->'
@@ -18,14 +20,24 @@ REVEAL_START = '<!-- notes-reveal-capture:start -->'
 REVEAL_END = '<!-- notes-reveal-capture:end -->'
 DISPATCH_START = '<!-- notes-intent-dispatch:start -->'
 DISPATCH_END = '<!-- notes-intent-dispatch:end -->'
+SYNTHETIC_CUA = r'''
+const cua = {
+  getApp: (...args) => globalThis.cua.getApp(...args),
+};
+'''
 
 
 def documented_tools_source():
     text = TEMPLATE.read_text(encoding='utf-8')
     start = text.index(START) + len(START)
-    code_start = text.index('```js', start) + len('```js')
-    code_end = text.index('```', code_start)
-    return text[code_start:code_end]
+    end = text.index(END, start)
+    section = text[start:end]
+    code_start = section.index('```js') + len('```js')
+    code_end = section.index('```', code_start)
+    loader = section[code_start:code_end]
+    if loader.count(MODULE_PLACEHOLDER) != 1:
+        raise AssertionError('cua-evidence-tools loader must use the module path placeholder')
+    return loader.replace(MODULE_PLACEHOLDER, json.dumps(MODULE.as_uri()))
 
 
 def documented_initial_observation_source():
@@ -320,7 +332,7 @@ class NodeHelperRunner(unittest.TestCase):
                 ('INTENT_AFTER_OBSERVATION_ID', observation_id),
             ):
                 body = body.replace(old, new)
-            script = self.tools_source + '\n' + r'''
+            script = SYNTHETIC_CUA + '\n' + self.tools_source + '\n' + r'''
 const fsTest = await import('node:fs/promises');
 const nodeRepl = {
   writes: [],
@@ -351,6 +363,25 @@ class NotesInputHelperTests(NodeHelperRunner):
     def run_dispatch(self, body):
         return self.run_helper(
             body, extra_source=self.reveal_source + '\n' + self.dispatch_source)
+
+    def test_module_import_and_factory_do_not_touch_cua(self):
+        script = '\n'.join([
+            "const cua = new Proxy({}, {get() { throw new Error('CUA_TOUCHED'); }});",
+            'const tools = (await import(%s)).createEvidenceTools(cua);'
+            % json.dumps(str(MODULE.as_uri())),
+            'console.log(JSON.stringify(Object.keys(tools).sort()));',
+        ])
+        completed = subprocess.run(
+            ['node', '--disallow-code-generation-from-strings',
+             '--input-type=module', '-e', script],
+            cwd=ROOT, text=True, capture_output=True, check=False)
+        self.assertEqual(completed.returncode, 0, msg=completed.stderr)
+        self.assertEqual(json.loads(completed.stdout), [
+            'captureAndPersist', 'copyExactUint8Array', 'describeError',
+            'groundedCoordinateBlockers', 'groundedGeometryBlockers',
+            'groundedWindowBlockers', 'persistGroundedDownloadClick',
+            'persistObservation', 'persistSingleInput',
+            'readbackExact', 'sha256', 'snapshotJsonValue', 'writeExclusive'])
 
     def test_cross_realm_error_preserves_numeric_code_full_message_and_own_fields_once(self):
         result, output_dir = self.run_helper(r'''
@@ -3588,8 +3619,9 @@ console.log(JSON.stringify({
             else:
                 raise AssertionError('unknown tools_mode: %r' % (tools_mode,))
             script = '\n'.join([
-                preload,
+                SYNTHETIC_CUA,
                 self.INITIAL_HARNESS.replace('@@CAPTURE_BODY@@', capture_body),
+                preload,
                 source,
                 epilogue,
             ])
@@ -3602,7 +3634,8 @@ console.log(JSON.stringify({
             if tamper:
                 env['INITIAL_TAMPER'] = tamper
             completed = subprocess.run(
-                ['node', '--input-type=module', '-e', script],
+                ['node', '--disallow-code-generation-from-strings',
+                 '--input-type=module', '-e', script],
                 cwd=ROOT, env=env, text=True, capture_output=True, check=False)
             writes = ([json.loads(line) for line in
                        writes_file.read_text(encoding='utf-8').splitlines()]

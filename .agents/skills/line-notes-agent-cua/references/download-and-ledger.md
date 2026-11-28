@@ -276,7 +276,7 @@ PYTHONPATH=src /usr/bin/python3 -B -m line_backup_batch.notes \
 `bind` 前（Pre-Bind）固定五步，不得跳步、調換或提前停止：
 
 1. **完整 `lists` capture。** 以 `notes_capture --output-root "$CAPTURE_PARENT" -- lists --collection "$ABS_COLLECTION"` 取得完整無截斷的 `stdout.bin` 與 `status=COMPLETE` receipt；非零 exit、`incomplete.json` 或不可解析輸出保留原狀，不進入下一步。
-2. **CUA 原件落地並讀回。** 須先於同一 CUA Node runtime 載入 `evidence-template.md` 的 `cua-evidence-tools` 定義區塊，再實跑 `evidenceTools.captureAndPersist`，把同次截圖與完整 AX 落地，再讀回顯示同一份 bytes；只看到對話介面圖片不算落地。未載入（`typeof evidenceTools === "undefined"` 或 `CUA_EVIDENCE_TOOLS_NOT_LOADED`）或未實跑 helper 屬 `NOT_RUN`，不得宣稱環境不支援。實作與讀回契約見 [CUA 觀察原件落地](evidence-template.md#cua-觀察原件落地)。
+2. **CUA 原件落地並讀回。** 須先於同一 CUA Node runtime 執行 `evidence-template.md` 的 `cua-evidence-tools` 短 loader（`await import(...)` 匯入 `references/cua-evidence-tools.mjs` 並以當次 `cua` 呼叫 `createEvidenceTools(cua)`），再實跑 `evidenceTools.captureAndPersist`，把同次截圖與完整 AX 落地，再讀回顯示同一份 bytes；只看到對話介面圖片不算落地。未載入（`typeof evidenceTools === "undefined"` 或 `CUA_EVIDENCE_TOOLS_NOT_LOADED`）或未實跑 helper 屬 `NOT_RUN`，不得宣稱環境不支援。實作與讀回契約見 [CUA 觀察原件落地](evidence-template.md#cua-觀察原件落地)。
 3. **入口確認與全部候選核對。** 以同次已落地讀回的截圖＋AX 確認列表角色與入口，展開全部 N 份候選，完成 `active_hint` 分流與多訊號交叉比對，依[三路列表判定契約](#候選帳本展開唯讀)得出三路之一的結果。
 4. **封裝 v2 `evidence-pack`。** 新列表固定同一組 identity，先 `list-key` → `evidence-pack`（statement 明列全部 N 份排除依據，滿足 binding 與 history_scope）→ `init`（正式日常 Prompt 涵蓋恢復授權時加 `--recovery-authorized`）→ 讀回 `list_key`；既有列表沿用原 `list_key`，仍以同次落地原件封裝當次 observation／handoff bundle。
 5. **`bind` → 舊交易 → 普通完整掃描。** `bind` 後先處理舊 attempt／命名交易與仍 open 的 scan，再 `scan start` 完成普通完整掃描；沒有未決項才直接進新 scan。
@@ -381,7 +381,7 @@ PY
 - **B 證明新列表：** `lists` exit 0、全部 N 份已註冊帳本均逐一核對並以具體差異正面排除（不重疊的頁首脈絡＋`posts`／`identity` 歷史），且 `active_hint` 已核對、無未註冊／損壞歷史 → 以當次已落地多訊號建立 `visual_key`／`context_id`／`signals`（AX 標題空白時明記 `ax_window_title=EMPTY`），依序 `list-key` → `evidence-pack`（statement 明列全部 N 份已核對帳本的排除依據，滿足 binding 與 history_scope）→ `init`（正式日常 Prompt 涵蓋恢復授權時加 `--recovery-authorized`）→ 讀回 `list_key` → `bind`。
 - **C 真實候選歧義或歷史缺口：** 完成全部 N 份交叉比對（含相近候選的 `posts`／`identity`／既有事件 `statement`）後，仍有 `>= 2` 份無法區分、有空／過舊候選無法排除為目前列表，或有未註冊 `active_hint`／索引異常 → 停在 `init`／`bind` 前，零帳本寫入、零下載輸入，保留已落地原件與 `lists` capture receipt，向 Owner 回報去識別化衝突摘要與單一具體釐清動作。**Blocker 證據契約：** 停止回報必須指出具體未成立的身分證據、衝突候選之去識別化 ID 與 `identity`／`posts` 差異，或實跑 CLI／helper 之 exit code／`error`／`stages`／`blockers`；不得以抽象的「找不到同名帳本」「名稱不符」或「`typeof evidenceTools === "undefined"`」要求 Owner 重新交接。
 
-**未執行與真實失敗。** `NOT_RUN` 只表示該步沒有實際執行，不證明 CLI、helper 或環境不支援；不得把未執行寫成失敗，也不得改走替代入口後宣稱原路徑不可用。僅測得 `typeof evidenceTools === "undefined"`（尚未載入 `cua-evidence-tools` 定義區塊）不是 helper 失敗，須先載入再實跑。真實 CLI／helper 失敗必須附實際 exit code、JSON、`error`（`name`／`code`／`message`）、`stages` 或 `blockers`，才可列為環境／路徑阻塞。Pre-Bind 阻塞回報同受上述 Blocker 證據契約約束，不得以「找不到同名帳本」「名稱不符」或未載入 helper 要求 Owner 重新交接。CUA 工具 namespace 中途撤除只記工具可用性變動並停止，不以對話摘要重建原件。
+**未執行與真實失敗。** `NOT_RUN` 只表示該步沒有實際執行，不證明 CLI、helper 或環境不支援；不得把未執行寫成失敗，也不得改走替代入口後宣稱原路徑不可用。僅測得 `typeof evidenceTools === "undefined"`（尚未執行 `cua-evidence-tools` 短 loader 或載入模組）不是 helper 失敗，須先載入再實跑。真實 CLI／helper 失敗必須附實際 exit code、JSON、`error`（`name`／`code`／`message`）、`stages` 或 `blockers`，才可列為環境／路徑阻塞。Pre-Bind 阻塞回報同受上述 Blocker 證據契約約束，不得以「找不到同名帳本」「名稱不符」或未載入 helper 要求 Owner 重新交接。CUA 工具 namespace 中途撤除只記工具可用性變動並停止，不以對話摘要重建原件。
 
 以下各點為上述步驟的判準與例外：
 
