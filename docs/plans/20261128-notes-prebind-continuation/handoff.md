@@ -2,7 +2,7 @@
 
 ## 任務與版本
 
-- 任務 `20261128-notes-prebind-continuation`，計畫 [rev1](plan.md)。產品基準為 `feature/line-notes-media` 的 `988a5095f18a8cd569cef59648e7442ed27b3194`。本次提交只包含計畫和交接稿。
+- 任務 `20261128-notes-prebind-continuation`，計畫 [rev2](plan.md)。產品基準為 `feature/line-notes-media` 的 `988a5095f18a8cd569cef59648e7442ed27b3194`。本次提交只包含計畫和交接稿。
 - `PLAN_DRAFT_COMPLETE`。主要 worktree 的原有三處未追蹤工作保留。私有提報、捕捉證據及進度留在專案的 `.local/line-backup/tasks/notes-daily-20261128/`。
 
 ## 已核對事項
@@ -15,7 +15,7 @@
 
 1. Owner 將計畫提交 SHA、本交接、原始需求與必要的去識別化證據帶到另外的主 Session，啟動計畫簡化審查，之後依適用關卡安排獨立 Plan Review。第一項審查核對第 2 點的文案是否足以防止跳過既有安全操作，以及是否有冗餘、語意衝突或會削弱原有 gate。
 2. Owner 審閱結果並決定是否交付實作。計畫的可寫範圍是單一記事本 `SKILL.md`，實作及各項驗證以確切候選 SHA 交接。出現拒絕或實質範圍變動時，交回 Owner 決定。
-3. 實際備份確認由 Owner 另以使用手冊附錄 C 的日常正式 Prompt 交接當次前景。提報中的歷史授權、既有 Pane、合成測試及本交接均不提供當次 GUI 授權。
+3. 需要實機 E2E 時，測試 Agent 先向 Owner 申請 LINE 前景。等 Owner 用使用手冊附錄 C 的日常正式 Prompt 授權並交接當次前景，核對後才開始。等待期間實機 E2E 維持 `NOT_RUN`。
 
 ## 狀態
 

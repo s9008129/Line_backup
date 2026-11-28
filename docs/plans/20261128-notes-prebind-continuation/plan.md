@@ -1,4 +1,4 @@
-# 計畫 rev1｜LINE 記事本啟動時接續未完成的步驟
+# 計畫 rev2｜LINE 記事本啟動時接續未完成的步驟
 
 ## 決策摘要
 
@@ -42,7 +42,7 @@
 | Implementer 離線回歸 | `PYTHONPATH=src /usr/bin/python3 -B -m unittest discover -s tests -p test_notes_input_helper.py -k NotesInitialObservationBlockTests` 與 `PYTHONPATH=src /usr/bin/python3 -B -m unittest discover -s tests -p test_notes_capture.py`。保存候選 SHA、結果、退出碼。兩組只驗證既有 helper 和 wrapper。 |
 | Owner 啟動的 Reviewer | 對計畫做簡化和獨立審查。候選完成後對確切 diff 做實作簡化與獨立審查，核對待辦、可前進、真實阻塞三個分支及原有門檻。 |
 | Owner 指定的獨立驗證 | 以本計畫成功條件 1–3 的合成情境做盲測。使用既有正式入口文字及確切候選 Skill，從工具呼叫紀錄確認行為。比較基準與候選時固定情境、模型與可用工具，另記各次實際顯示和未測範圍。測不到實際呼叫時，保留為未驗證。 |
-| Owner 透過正式記事本 Prompt 的日常確認 | 以合格 capture receipt、當次原件、全候選摘要、`bind`、最新 `summary` 和最終逐項對帳記錄結果。若沒有實際授權與前景則標 `NOT_RUN`。 |
+| Owner 透過正式記事本 Prompt 的日常確認 | 到達實機 E2E 階段後，測試 Agent 先向 Owner 申請 LINE 前景。等 Owner 用正式 Prompt 授權並交接前景，核對後才開始。以合格 capture receipt、當次原件、全候選摘要、`bind`、最新 `summary` 和最終逐項對帳記錄結果。等待前景時標 `NOT_RUN`。 |
 
 由 Owner 傳遞精確版本並啟動下一角色。一個切片即可接受實作簡化及獨立差異審查。審查拒絕或出現授權、資料、前景、介面或驗證範圍變化時，保留證據並交由 Owner 決定。後續若改變候選，依受影響範圍重新取得證據。
 
